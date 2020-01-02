@@ -103,12 +103,14 @@ class MutableEntitySchema(name: String, override var fields: List<MutableFieldSc
 
 // Fields
 
-abstract class MutableFieldSchema(override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableElementSchema(), FieldSchema
+abstract class MutableFieldSchema(name: String,
+                                  override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+) : MutableElementSchema(name), FieldSchema
 
-class MutablePrimitiveFieldSchema(override var primitive: MutablePrimitiveSchema,
+class MutablePrimitiveFieldSchema(name: String,
+                                  override var primitive: MutablePrimitiveSchema,
                                   multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(multiplicity), PrimitiveFieldSchema {
+) : MutableFieldSchema(name, multiplicity), PrimitiveFieldSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         try {
             // Visit the primitive field.
@@ -125,9 +127,10 @@ class MutablePrimitiveFieldSchema(override var primitive: MutablePrimitiveSchema
     }
 }
 
-class MutableAliasFieldSchema(override var alias: MutableAliasSchema,
+class MutableAliasFieldSchema(name: String,
+                              override var alias: MutableAliasSchema,
                               multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(multiplicity), AliasFieldSchema {
+) : MutableFieldSchema(name, multiplicity), AliasFieldSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         try {
             // Visit the alias field.
@@ -144,9 +147,10 @@ class MutableAliasFieldSchema(override var alias: MutableAliasSchema,
     }
 }
 
-class MutableEnumerationFieldSchema(override var enumeration: MutableEnumerationSchema,
+class MutableEnumerationFieldSchema(name: String,
+                                    override var enumeration: MutableEnumerationSchema,
                                     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(multiplicity), EnumerationFieldSchema {
+) : MutableFieldSchema(name, multiplicity), EnumerationFieldSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         try {
             // Visit the enumeration field.
@@ -163,9 +167,10 @@ class MutableEnumerationFieldSchema(override var enumeration: MutableEnumeration
     }
 }
 
-class MutableEntityFieldSchema(override var entity: MutableEntitySchema,
+class MutableEntityFieldSchema(name: String,
+                               override var entity: MutableEntitySchema,
                                multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(multiplicity), EntityFieldSchema {
+) : MutableFieldSchema(name, multiplicity), EntityFieldSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         try {
             // Visit the enumeration field.

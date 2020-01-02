@@ -55,6 +55,8 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     // SchemaVisitor methods for fields
 
     override fun visit(primitiveField: PrimitiveFieldSchema): Boolean {
+        // TODO(deepak-nulu): call super.visit() for inherited fields?
+        wireFormatEncoder.encodeStringField("name", primitiveField.name)
         return true
     }
 
