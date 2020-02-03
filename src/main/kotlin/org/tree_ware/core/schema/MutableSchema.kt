@@ -1,103 +1,113 @@
 package org.tree_ware.core.schema
 
-abstract class MutableElementSchema(override var name: String = "") : ElementSchema
+abstract class MutableElementSchema(override var name: String = "") : ElementSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        try {
+            (visitor as? BracketedVisitor)?.objectStart(objectType)
+            if (!visitSelf(visitor)) return false
+            if (!traverseChildren(visitor)) return false
+            return true
+        } finally {
+            (visitor as? BracketedVisitor)?.objectEnd()
+        }
+    }
+
+    abstract val objectType: String
+
+    protected open fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    protected open fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return true
+    }
+}
 
 class MutablePackageSchema(name: String,
                            override var aliases: List<MutableAliasSchema> = listOf(),
                            override var enumerations: List<MutableEnumerationSchema> = listOf(),
                            override var entities: List<MutableEntitySchema> = listOf()
 ) : MutableElementSchema(name), PackageSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the package.
-            (visitor as? BracketedVisitor)?.objectStart("package")
-            if (!visitor.visit(this)) return false
+    override val objectType = "package"
 
-            // Traverse the children.
-            if (aliases.isNotEmpty()) try {
-                (visitor as? BracketedVisitor)?.listStart("aliases")
-                for (alias in aliases) {
-                    if (!alias.accept(visitor)) return false
-                }
-            } finally {
-                (visitor as? BracketedVisitor)?.listEnd()
-            }
-            if (enumerations.isNotEmpty()) try {
-                (visitor as? BracketedVisitor)?.listStart("enumerations")
-                for (enumeration in enumerations) {
-                    if (!enumeration.accept(visitor)) return false
-                }
-            } finally {
-                (visitor as? BracketedVisitor)?.listEnd()
-            }
-            if (entities.isNotEmpty()) try {
-                (visitor as? BracketedVisitor)?.listStart("entities")
-                for (entity in entities) {
-                    if (!entity.accept(visitor)) return false
-                }
-            } finally {
-                (visitor as? BracketedVisitor)?.listEnd()
-            }
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
 
-            return true
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        if (!super.traverseChildren(visitor)) return false
+
+        if (aliases.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("aliases")
+            for (alias in aliases) {
+                if (!alias.accept(visitor)) return false
+            }
         } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
+            (visitor as? BracketedVisitor)?.listEnd()
         }
+        if (enumerations.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("enumerations")
+            for (enumeration in enumerations) {
+                if (!enumeration.accept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+        if (entities.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("entities")
+            for (entity in entities) {
+                if (!entity.accept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+
+        return true
     }
 }
 
 class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveSchema
 ) : MutableElementSchema(name), AliasSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the alias.
-            (visitor as? BracketedVisitor)?.objectStart("alias")
-            if (!visitor.visit(this)) return false
+    override val objectType = "alias"
 
-            // Traverse the children.
-            if (!primitive.accept(visitor)) return false
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
 
-            return true
-        } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
-        }
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return super.traverseChildren(visitor) && primitive.accept(visitor)
     }
 }
 
 class MutableEnumerationSchema(name: String, override var values: List<String>) : MutableElementSchema(name), EnumerationSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the enumeration.
-            (visitor as? BracketedVisitor)?.objectStart("enumeration")
-            return visitor.visit(this)
-        } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
-        }
+    override val objectType = "enumeration"
+
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
     }
 }
 
 class MutableEntitySchema(name: String, override var fields: List<MutableFieldSchema>
 ) : MutableElementSchema(name), EntitySchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the entity.
-            (visitor as? BracketedVisitor)?.objectStart("entity")
-            if (!visitor.visit(this)) return false
+    override val objectType = "entity"
 
-            // Traverse the children.
-            if (fields.isNotEmpty()) try {
-                (visitor as? BracketedVisitor)?.listStart("fields")
-                for (field in fields) {
-                    if (!field.accept(visitor)) return false
-                }
-            } finally {
-                (visitor as? BracketedVisitor)?.listEnd()
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        if (!super.traverseChildren(visitor)) return false
+
+        if (fields.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("fields")
+            for (field in fields) {
+                if (!field.accept(visitor)) return false
             }
-
-            return true
         } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
+            (visitor as? BracketedVisitor)?.listEnd()
         }
+
+        return true
     }
 }
 
@@ -105,25 +115,24 @@ class MutableEntitySchema(name: String, override var fields: List<MutableFieldSc
 
 abstract class MutableFieldSchema(name: String,
                                   override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableElementSchema(name), FieldSchema
+) : MutableElementSchema(name), FieldSchema {
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+}
 
 class MutablePrimitiveFieldSchema(name: String,
                                   override var primitive: MutablePrimitiveSchema,
                                   multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), PrimitiveFieldSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the primitive field.
-            (visitor as? BracketedVisitor)?.objectStart("primitive_field")
-            if (!visitor.visit(this)) return false
+    override val objectType = "primitive_field"
 
-            // Traverse the children.
-            if (!primitive.accept(visitor)) return false
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
 
-            return true
-        } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
-        }
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return super.traverseChildren(visitor) && primitive.accept(visitor)
     }
 }
 
@@ -131,19 +140,14 @@ class MutableAliasFieldSchema(name: String,
                               override var alias: MutableAliasSchema,
                               multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), AliasFieldSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the alias field.
-            (visitor as? BracketedVisitor)?.objectStart("alias_field")
-            if (!visitor.visit(this)) return false
+    override val objectType = "alias_field"
 
-            // Traverse the children.
-            if (!alias.accept(visitor)) return false
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
 
-            return true
-        } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
-        }
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return super.traverseChildren(visitor) && alias.accept(visitor)
     }
 }
 
@@ -151,19 +155,14 @@ class MutableEnumerationFieldSchema(name: String,
                                     override var enumeration: MutableEnumerationSchema,
                                     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), EnumerationFieldSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the enumeration field.
-            (visitor as? BracketedVisitor)?.objectStart("enumeration_field")
-            if (!visitor.visit(this)) return false
+    override val objectType = "enumeration_field"
 
-            // Traverse the children.
-            if (!enumeration.accept(visitor)) return false
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
 
-            return true
-        } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
-        }
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return super.traverseChildren(visitor) && enumeration.accept(visitor)
     }
 }
 
@@ -171,19 +170,14 @@ class MutableEntityFieldSchema(name: String,
                                override var entity: MutableEntitySchema,
                                multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), EntityFieldSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        try {
-            // Visit the enumeration field.
-            (visitor as? BracketedVisitor)?.objectStart("entity_field")
-            if (!visitor.visit(this)) return false
+    override val objectType = "entity_field"
 
-            // Traverse the children.
-            if (!entity.accept(visitor)) return false
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
 
-            return true
-        } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
-        }
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return super.traverseChildren(visitor) && entity.accept(visitor)
     }
 }
 

@@ -24,18 +24,20 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
 
     // SchemaVisitor methods for user-defined types
 
+    override fun visit(element: ElementSchema): Boolean {
+        wireFormatEncoder.encodeStringField("name", element.name)
+        return true
+    }
+
     override fun visit(pkg: PackageSchema): Boolean {
-        wireFormatEncoder.encodeStringField("name", pkg.name)
         return true
     }
 
     override fun visit(alias: AliasSchema): Boolean {
-        wireFormatEncoder.encodeStringField("name", alias.name)
         return true
     }
 
     override fun visit(enumeration: EnumerationSchema): Boolean {
-        wireFormatEncoder.encodeStringField("name", enumeration.name)
         try {
             wireFormatEncoder.encodeListStart("values")
             for (value in enumeration.values) {
@@ -48,15 +50,16 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     }
 
     override fun visit(entity: EntitySchema): Boolean {
-        wireFormatEncoder.encodeStringField("name", entity.name)
         return true
     }
 
     // SchemaVisitor methods for fields
 
+    override fun visit(field: FieldSchema): Boolean {
+        return true
+    }
+
     override fun visit(primitiveField: PrimitiveFieldSchema): Boolean {
-        // TODO(deepak-nulu): call super.visit() for inherited fields?
-        wireFormatEncoder.encodeStringField("name", primitiveField.name)
         return true
     }
 

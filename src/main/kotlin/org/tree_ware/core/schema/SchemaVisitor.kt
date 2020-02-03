@@ -1,10 +1,14 @@
 package org.tree_ware.core.schema
 
+import java.lang.reflect.Field
+
 /** Schema visitor (Visitor Pattern).
  *
  * `visit()` methods should return `true` to proceed with schema traversal and `false` to stop schema traversal.
  */
 public interface SchemaVisitor {
+    fun visit(element: ElementSchema): Boolean
+
     fun visit(pkg: PackageSchema): Boolean
 
     fun visit(alias: AliasSchema): Boolean
@@ -12,6 +16,8 @@ public interface SchemaVisitor {
     fun visit(entity: EntitySchema): Boolean
 
     // Fields
+
+    fun visit(field: FieldSchema): Boolean
 
     fun visit(primitiveField: PrimitiveFieldSchema): Boolean
     fun visit(aliasField: AliasFieldSchema): Boolean
