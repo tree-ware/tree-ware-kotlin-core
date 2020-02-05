@@ -116,6 +116,26 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
         return true
     }
 
+    override fun visit(timestamp: TimestampSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "timestamp")
+        return true
+    }
+
+    override fun visit(ipv4Address: Ipv4AddressSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "ipv4_address")
+        return true
+    }
+
+    override fun visit(ipv6Address: Ipv6AddressSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "ipv6_address")
+        return true
+    }
+
+    override fun visit(macAddress: MacAddressSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "mac_address")
+        return true
+    }
+
     // Helper methods for constraints
 
     private fun <T : Number> encodeNumericConstraints(constraints: NumericConstraints<T>) = try {

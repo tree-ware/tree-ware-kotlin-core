@@ -1,7 +1,5 @@
 package org.tree_ware.core.schema
 
-import java.lang.reflect.Field
-
 /** Schema visitor (Visitor Pattern).
  *
  * `visit()` methods should return `true` to proceed with schema traversal and `false` to stop schema traversal.
@@ -33,4 +31,8 @@ public interface SchemaVisitor {
     fun visit(password2Way: Password2WaySchema): Boolean
     fun visit(uuid: UuidSchema): Boolean
     fun visit(blob: BlobSchema): Boolean
+    fun visit(timestamp: TimestampSchema): Boolean
+    fun visit(ipv4Address: Ipv4AddressSchema): Boolean
+    fun visit(ipv6Address: Ipv6AddressSchema): Boolean
+    fun visit(macAddress: MacAddressSchema): Boolean
 }
