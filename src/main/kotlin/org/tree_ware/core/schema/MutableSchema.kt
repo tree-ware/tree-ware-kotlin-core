@@ -1,6 +1,8 @@
 package org.tree_ware.core.schema
 
 abstract class MutableElementSchema(override var name: String = "") : ElementSchema {
+    abstract val objectType: String
+
     override fun accept(visitor: SchemaVisitor): Boolean {
         try {
             (visitor as? BracketedVisitor)?.objectStart(objectType)
@@ -12,13 +14,30 @@ abstract class MutableElementSchema(override var name: String = "") : ElementSch
         }
     }
 
-    abstract val objectType: String
+    fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        try {
+            (visitor as? BracketedVisitor)?.objectStart(objectType)
+            if (!mutableVisitSelf(visitor)) return false
+            if (!mutableTraverseChildren(visitor)) return false
+            return true
+        } finally {
+            (visitor as? BracketedVisitor)?.objectEnd()
+        }
+    }
 
     protected open fun visitSelf(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
     }
 
+    protected open fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+
     protected open fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        return true
+    }
+
+    protected open fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
         return true
     }
 }
@@ -32,6 +51,10 @@ class MutablePackageSchema(name: String,
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
@@ -64,6 +87,37 @@ class MutablePackageSchema(name: String,
 
         return true
     }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        if (!super.mutableTraverseChildren(visitor)) return false
+
+        if (aliases.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("aliases")
+            for (alias in aliases) {
+                if (!alias.mutableAccept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+        if (enumerations.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("enumerations")
+            for (enumeration in enumerations) {
+                if (!enumeration.mutableAccept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+        if (entities.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("entities")
+            for (entity in entities) {
+                if (!entity.mutableAccept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+
+        return true
+    }
 }
 
 class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveSchema
@@ -74,8 +128,16 @@ class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveS
         return super.visitSelf(visitor) && visitor.visit(this)
     }
 
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         return super.traverseChildren(visitor) && primitive.accept(visitor)
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableTraverseChildren(visitor) && primitive.mutableAccept(visitor)
     }
 }
 
@@ -84,6 +146,10 @@ class MutableEnumerationSchema(name: String, override var values: List<String>) 
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
     }
 }
 
@@ -95,6 +161,10 @@ class MutableEntitySchema(name: String, override var fields: List<MutableFieldSc
         return super.visitSelf(visitor) && visitor.visit(this)
     }
 
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         if (!super.traverseChildren(visitor)) return false
 
@@ -102,6 +172,21 @@ class MutableEntitySchema(name: String, override var fields: List<MutableFieldSc
             (visitor as? BracketedVisitor)?.listStart("fields")
             for (field in fields) {
                 if (!field.accept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+
+        return true
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        if (!super.mutableTraverseChildren(visitor)) return false
+
+        if (fields.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("fields")
+            for (field in fields) {
+                if (!field.mutableAccept(visitor)) return false
             }
         } finally {
             (visitor as? BracketedVisitor)?.listEnd()
@@ -119,6 +204,10 @@ abstract class MutableFieldSchema(name: String,
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
 }
 
 class MutablePrimitiveFieldSchema(name: String,
@@ -131,8 +220,16 @@ class MutablePrimitiveFieldSchema(name: String,
         return super.visitSelf(visitor) && visitor.visit(this)
     }
 
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         return super.traverseChildren(visitor) && primitive.accept(visitor)
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableTraverseChildren(visitor) && primitive.mutableAccept(visitor)
     }
 }
 
@@ -146,8 +243,16 @@ class MutableAliasFieldSchema(name: String,
         return super.visitSelf(visitor) && visitor.visit(this)
     }
 
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         return super.traverseChildren(visitor) && alias.accept(visitor)
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableTraverseChildren(visitor) && alias.mutableAccept(visitor)
     }
 }
 
@@ -161,8 +266,16 @@ class MutableEnumerationFieldSchema(name: String,
         return super.visitSelf(visitor) && visitor.visit(this)
     }
 
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         return super.traverseChildren(visitor) && enumeration.accept(visitor)
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableTraverseChildren(visitor) && enumeration.mutableAccept(visitor)
     }
 }
 
@@ -176,18 +289,32 @@ class MutableEntityFieldSchema(name: String,
         return super.visitSelf(visitor) && visitor.visit(this)
     }
 
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         return super.traverseChildren(visitor) && entity.accept(visitor)
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableTraverseChildren(visitor) && entity.mutableAccept(visitor)
     }
 }
 
 // Predefined Primitives
 
-abstract class MutablePrimitiveSchema : PrimitiveSchema
+abstract class MutablePrimitiveSchema : PrimitiveSchema {
+    abstract fun mutableAccept(visitor: MutableSchemaVisitor): Boolean
+}
 
 class MutableBooleanSchema : MutablePrimitiveSchema(), BooleanSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -196,12 +323,20 @@ class MutableNumericSchema<T : Number>(override var constraints: MutableNumericC
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
     }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
 }
 
 open class MutableStringSchema(override var constraints: MutableStringConstraints? = null
 ) : MutablePrimitiveSchema(), StringSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -210,6 +345,10 @@ class MutablePassword1WaySchema(constraints: MutableStringConstraints? = null
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
     }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutablePassword2WaySchema(constraints: MutableStringConstraints? = null
@@ -217,11 +356,19 @@ class MutablePassword2WaySchema(constraints: MutableStringConstraints? = null
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
     }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutableUuidSchema : MutablePrimitiveSchema(), UuidSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -229,6 +376,50 @@ class MutableBlobSchema(override var constraints: MutableBlobConstraints? = null
 ) : MutablePrimitiveSchema(), BlobSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableTimestampSchema : MutablePrimitiveSchema(), TimestampSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableIpv4AddressSchema : MutablePrimitiveSchema(), Ipv4AddressSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableIpv6AddressSchema : MutablePrimitiveSchema(), Ipv6AddressSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableMacAddressSchema : MutablePrimitiveSchema(), MacAddressSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
     }
 }
 
