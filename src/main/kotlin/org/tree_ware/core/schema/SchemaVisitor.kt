@@ -7,7 +7,9 @@ package org.tree_ware.core.schema
  */
 public interface SchemaVisitor {
     fun visit(element: ElementSchema): Boolean
+    fun visit(namedElement: NamedElementSchema): Boolean
 
+    fun visit(schema: Schema): Boolean
     fun visit(pkg: PackageSchema): Boolean
 
     fun visit(alias: AliasSchema): Boolean

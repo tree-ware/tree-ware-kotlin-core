@@ -1,6 +1,17 @@
 package org.tree_ware.core.schema
 
-abstract class MutableElementSchema(override var name: String = "") : ElementSchema {
+interface VisitableMutableSchema {
+    /**
+     * Accepts a visitor and traverses the mutable schema with it (Visitor Pattern).
+     *
+     * If the visitor implements `BracketedVisitor`, then those methods will be called as well.
+     *
+     * @returns `true` to proceed with schema traversal, `false` to stop schema traversal.
+     */
+    fun mutableAccept(visitor: MutableSchemaVisitor): Boolean
+}
+
+abstract class MutableElementSchema() : ElementSchema, VisitableMutableSchema {
     abstract val objectType: String
 
     override fun accept(visitor: SchemaVisitor): Boolean {
@@ -14,7 +25,7 @@ abstract class MutableElementSchema(override var name: String = "") : ElementSch
         }
     }
 
-    fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
         try {
             (visitor as? BracketedVisitor)?.objectStart(objectType)
             if (!mutableVisitSelf(visitor)) return false
@@ -42,11 +53,61 @@ abstract class MutableElementSchema(override var name: String = "") : ElementSch
     }
 }
 
+abstract class MutableNamedElementSchema(override var name: String = "") : MutableElementSchema(), NamedElementSchema {
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+}
+
+class MutableSchema(override var packages: List<MutablePackageSchema> = listOf()) : MutableElementSchema(), Schema {
+    override val objectType = "schema"
+
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        if (!super.traverseChildren(visitor)) return false
+
+        if (packages.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("packages")
+            for (pkg in packages) {
+                if (!pkg.accept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+        return true
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        if (!super.mutableTraverseChildren(visitor)) return false
+
+        if (packages.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("packages")
+            for (pkg in packages) {
+                if (!pkg.mutableAccept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+        return true
+    }
+}
+
 class MutablePackageSchema(name: String,
                            override var aliases: List<MutableAliasSchema> = listOf(),
                            override var enumerations: List<MutableEnumerationSchema> = listOf(),
                            override var entities: List<MutableEntitySchema> = listOf()
-) : MutableElementSchema(name), PackageSchema {
+) : MutableNamedElementSchema(name), PackageSchema {
     override val objectType = "package"
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -121,7 +182,7 @@ class MutablePackageSchema(name: String,
 }
 
 class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveSchema
-) : MutableElementSchema(name), AliasSchema {
+) : MutableNamedElementSchema(name), AliasSchema {
     override val objectType = "alias"
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -141,7 +202,7 @@ class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveS
     }
 }
 
-class MutableEnumerationSchema(name: String, override var values: List<String>) : MutableElementSchema(name), EnumerationSchema {
+class MutableEnumerationSchema(name: String, override var values: List<String>) : MutableNamedElementSchema(name), EnumerationSchema {
     override val objectType = "enumeration"
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -154,7 +215,7 @@ class MutableEnumerationSchema(name: String, override var values: List<String>) 
 }
 
 class MutableEntitySchema(name: String, override var fields: List<MutableFieldSchema>
-) : MutableElementSchema(name), EntitySchema {
+) : MutableNamedElementSchema(name), EntitySchema {
     override val objectType = "entity"
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -200,7 +261,7 @@ class MutableEntitySchema(name: String, override var fields: List<MutableFieldSc
 
 abstract class MutableFieldSchema(name: String,
                                   override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableElementSchema(name), FieldSchema {
+) : MutableNamedElementSchema(name), FieldSchema {
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -304,9 +365,7 @@ class MutableEntityFieldSchema(name: String,
 
 // Predefined Primitives
 
-abstract class MutablePrimitiveSchema : PrimitiveSchema {
-    abstract fun mutableAccept(visitor: MutableSchemaVisitor): Boolean
-}
+abstract class MutablePrimitiveSchema : PrimitiveSchema, VisitableMutableSchema
 
 class MutableBooleanSchema : MutablePrimitiveSchema(), BooleanSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {

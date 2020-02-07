@@ -25,7 +25,15 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     // SchemaVisitor methods for user-defined types
 
     override fun visit(element: ElementSchema): Boolean {
-        wireFormatEncoder.encodeStringField("name", element.name)
+        return true
+    }
+
+    override fun visit(namedElement: NamedElementSchema): Boolean {
+        wireFormatEncoder.encodeStringField("name", namedElement.name)
+        return true
+    }
+
+    override fun visit(schema: Schema): Boolean {
         return true
     }
 

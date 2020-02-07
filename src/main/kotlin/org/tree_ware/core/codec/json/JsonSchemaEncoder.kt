@@ -20,11 +20,4 @@ class JsonSchemaEncoder(private val writer: Writer,
         wireFormatEncoder.encodeObjectEnd()
         return completed
     }
-
-    override fun encode(elements: Collection<ElementSchema>): Boolean {
-        wireFormatEncoder.encodeListStart(null)
-        val completed = elements.all { encode(it) }
-        wireFormatEncoder.encodeListEnd()
-        return completed
-    }
 }

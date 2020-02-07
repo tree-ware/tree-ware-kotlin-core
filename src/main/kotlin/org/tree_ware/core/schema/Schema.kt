@@ -1,8 +1,6 @@
 package org.tree_ware.core.schema
 
-interface ElementSchema {
-    val name: String
-
+interface VisitableSchema {
     /**
      * Accepts a visitor and traverses the schema with it (Visitor Pattern).
      *
@@ -13,8 +11,19 @@ interface ElementSchema {
     fun accept(visitor: SchemaVisitor): Boolean
 }
 
+interface ElementSchema : VisitableSchema
+
+interface NamedElementSchema : ElementSchema {
+    val name: String
+}
+
+/** The entire schema. */
+interface Schema : ElementSchema {
+    val packages: List<PackageSchema>
+}
+
 /** Schema for a user-defined package. */
-interface PackageSchema : ElementSchema {
+interface PackageSchema : NamedElementSchema {
     val aliases: List<AliasSchema>
     val enumerations: List<EnumerationSchema>
     val entities: List<EntitySchema>
@@ -26,17 +35,17 @@ interface PackageSchema : ElementSchema {
  * having to repeat the constraints at every field that needs those
  * constraints.
  */
-interface AliasSchema : ElementSchema {
+interface AliasSchema : NamedElementSchema {
     val primitive: PrimitiveSchema
 }
 
 /** Schema for user-defined enumerations. */
-interface EnumerationSchema : ElementSchema {
+interface EnumerationSchema : NamedElementSchema {
     val values: List<String>
 }
 
 /** Schema for user-defined entities. */
-interface EntitySchema : ElementSchema {
+interface EntitySchema : NamedElementSchema {
     val fields: List<FieldSchema>
 }
 
@@ -47,7 +56,7 @@ interface EntitySchema : ElementSchema {
  * There are subtypes for the schema of different types of fields: primitive
  * fields, alias fields, enum fields, and entity fields.
  */
-interface FieldSchema : ElementSchema {
+interface FieldSchema : NamedElementSchema {
     val multiplicity: Multiplicity
 }
 
@@ -80,14 +89,7 @@ interface EntityFieldSchema : FieldSchema {
  * Schema for primitives.
  * There are sub-interfaces for each type of primitive.
  */
-interface PrimitiveSchema {
-    /**
-     * Accepts a visitor and traverses the schema with it (Visitor Pattern).
-     *
-     * @returns `true` to proceed with schema traversal, `false` to stop schema traversal.
-     */
-    fun accept(visitor: SchemaVisitor): Boolean
-}
+interface PrimitiveSchema : VisitableSchema
 
 /** Schema for boolean primitive. */
 interface BooleanSchema : PrimitiveSchema
@@ -117,16 +119,16 @@ interface BlobSchema : PrimitiveSchema {
 }
 
 /** Schema for timestamp (milliseconds since epoch) primitive. */
-interface TimestampSchema: PrimitiveSchema
+interface TimestampSchema : PrimitiveSchema
 
 /** Schema for IPv4 address primitive. */
-interface Ipv4AddressSchema: PrimitiveSchema
+interface Ipv4AddressSchema : PrimitiveSchema
 
 /** Schema for IPv6 address primitive. */
-interface Ipv6AddressSchema: PrimitiveSchema
+interface Ipv6AddressSchema : PrimitiveSchema
 
 /** Schema for MAC address primitive. */
-interface MacAddressSchema: PrimitiveSchema
+interface MacAddressSchema : PrimitiveSchema
 
 // Constraints
 

@@ -1,23 +1,27 @@
 package org.tree_ware.core.codec.json
 
 const val goldenJsonPrettyPrintedSchema = """{
-  "package": {
-    "name": "test_package",
-    "entities": [
+  "schema": {
+    "packages": [
       {
-        "name": "entity1",
-        "fields": [
+        "name": "test_package",
+        "entities": [
           {
-            "name": "primitive_string_field",
-            "type": "string"
+            "name": "entity1",
+            "fields": [
+              {
+                "name": "primitive_string_field",
+                "type": "string"
+              }
+            ]
+          },
+          {
+            "name": "entity2"
+          },
+          {
+            "name": "entity3"
           }
         ]
-      },
-      {
-        "name": "entity2"
-      },
-      {
-        "name": "entity3"
       }
     ]
   }
