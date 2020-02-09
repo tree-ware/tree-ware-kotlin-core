@@ -63,7 +63,10 @@ abstract class MutableNamedElementSchema(override var name: String = "") : Mutab
     }
 }
 
-class MutableSchema(override var packages: List<MutablePackageSchema> = listOf()) : MutableElementSchema(), Schema {
+class MutableSchema() : MutableElementSchema(), Schema {
+    override var packages: List<MutablePackageSchema> = listOf()
+        internal set
+
     override val objectType = "schema"
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -295,11 +298,19 @@ class MutablePrimitiveFieldSchema(name: String,
 }
 
 class MutableAliasFieldSchema(name: String,
-                              override var alias: MutableAliasSchema,
+                              override var packageName: String,
+                              override var aliasName: String,
                               multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), AliasFieldSchema {
     override val objectType = "alias_field"
 
+    override var resolvedAlias: MutableAliasSchema
+        get() = _resolvedAlias ?: throw IllegalStateException("Alias ${packageName}.${aliasName} has not been resolved")
+        internal set(value) {
+            _resolvedAlias = value
+        }
+    private var _resolvedAlias: MutableAliasSchema? = null
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -308,21 +319,24 @@ class MutableAliasFieldSchema(name: String,
         return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
     }
 
-    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
-        return super.traverseChildren(visitor) && alias.accept(visitor)
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableTraverseChildren(visitor) && alias.mutableAccept(visitor)
-    }
+    // The resolved type of this field is not considered a child and is therefore not traversed.
 }
 
 class MutableEnumerationFieldSchema(name: String,
-                                    override var enumeration: MutableEnumerationSchema,
+                                    override var packageName: String,
+                                    override var enumerationName: String,
                                     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), EnumerationFieldSchema {
     override val objectType = "enumeration_field"
 
+    override var resolvedEnumeration: MutableEnumerationSchema
+        get() = _resolvedEnumeration
+                ?: throw IllegalStateException("Enumeration ${packageName}.${enumerationName} has not been resolved")
+        internal set(value) {
+            _resolvedEnumeration = value
+        }
+    private var _resolvedEnumeration: MutableEnumerationSchema? = null
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -331,21 +345,24 @@ class MutableEnumerationFieldSchema(name: String,
         return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
     }
 
-    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
-        return super.traverseChildren(visitor) && enumeration.accept(visitor)
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableTraverseChildren(visitor) && enumeration.mutableAccept(visitor)
-    }
+    // The resolved type of this field is not considered a child and is therefore not traversed.
 }
 
 class MutableEntityFieldSchema(name: String,
-                               override var entity: MutableEntitySchema,
+                               override var packageName: String,
+                               override var entityName: String,
                                multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), EntityFieldSchema {
     override val objectType = "entity_field"
 
+    override var resolvedEntity: MutableEntitySchema
+        get() = _resolvedEntity
+                ?: throw IllegalStateException("Entity ${packageName}.${entityName} has not been resolved")
+        internal set(value) {
+            _resolvedEntity = value
+        }
+    private var _resolvedEntity: MutableEntitySchema? = null
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -354,13 +371,7 @@ class MutableEntityFieldSchema(name: String,
         return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
     }
 
-    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
-        return super.traverseChildren(visitor) && entity.accept(visitor)
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableTraverseChildren(visitor) && entity.mutableAccept(visitor)
-    }
+    // The resolved type of this field is not considered a child and is therefore not traversed.
 }
 
 // Predefined Primitives

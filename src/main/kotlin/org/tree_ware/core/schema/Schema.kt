@@ -65,21 +65,28 @@ interface PrimitiveFieldSchema : FieldSchema {
     val primitive: PrimitiveSchema
 }
 
-// TODO(deepak-nulu): ability to refer to aliases, enumerations, entities defined in different packages.
-
 /** Schema for fields whose types are user-defined primitive aliases. */
 interface AliasFieldSchema : FieldSchema {
-    val alias: AliasSchema
+    val packageName: String
+    val aliasName: String
+
+    val resolvedAlias: AliasSchema
 }
 
 /** Schema for fields whose types are user-defined enumerations. */
 interface EnumerationFieldSchema : FieldSchema {
-    val enumeration: EnumerationSchema
+    val packageName: String
+    val enumerationName: String
+
+    val resolvedEnumeration: EnumerationSchema
 }
 
 /** Schema for fields whose types are user-defined entities. */
 interface EntityFieldSchema : FieldSchema {
-    val entity: EntitySchema
+    val packageName: String
+    val entityName: String
+
+    val resolvedEntity: EntitySchema
     // TODO(deepak-nulu): composition vs reference
 }
 

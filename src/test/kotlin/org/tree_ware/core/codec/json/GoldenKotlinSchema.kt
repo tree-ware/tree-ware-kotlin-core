@@ -2,25 +2,68 @@ package org.tree_ware.core.codec.json
 
 import org.tree_ware.core.schema.*
 
-fun getGoldenKotlinSchema(): Schema {
-    return MutableSchema(
-            packages = listOf(
-                    MutablePackageSchema(
-                            name = "test_package",
-                            entities = listOf(
-                                    MutableEntitySchema(
-                                            name = "entity1",
-                                            fields = listOf(
-                                                    MutablePrimitiveFieldSchema(
-                                                            name = "primitive_string_field",
-                                                            primitive = MutableStringSchema()
-                                                    )
-                                            )
+fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
+    val packageA = MutablePackageSchema(
+            name = "package_a",
+            entities = listOf(
+                    MutableEntitySchema(
+                            name = "entity1",
+                            fields = listOf(
+                                    MutablePrimitiveFieldSchema(
+                                            name = "primitive_string_field",
+                                            primitive = MutableStringSchema()
+                                    )
+                            )
+                    ),
+                    MutableEntitySchema(
+                            name = "entity2",
+                            fields = listOf(
+                                    MutableEntityFieldSchema(
+                                            name = "package_a_entity1_field",
+                                            packageName = "package_a",
+                                            entityName = "entity1"
                                     ),
-                                    MutableEntitySchema(name = "entity2", fields = listOf()),
-                                    MutableEntitySchema(name = "entity3", fields = listOf())
+                                    MutableAliasFieldSchema(
+                                            name = "package_b_string_alias1_field",
+                                            packageName = "package_b",
+                                            aliasName = "string_alias1"
+                                    ),
+                                    MutableEntityFieldSchema(
+                                            name = "package_a_entity3_field",
+                                            packageName = "package_a",
+                                            entityName = "entity3"
+                                    ),
+                                    MutableEntityFieldSchema(
+                                            name = "package_b_entity1_field",
+                                            packageName = "package_b",
+                                            entityName = "entity1"
+                                    )
+                            )
+                    ),
+                    MutableEntitySchema(name = "entity3", fields = listOf())
+            )
+    )
+
+    val packageB = MutablePackageSchema(
+            name = "package_b",
+            aliases = listOf(
+                    MutableAliasSchema(
+                            name = "string_alias1",
+                            primitive = MutableStringSchema()
+                    )
+            ),
+            entities = listOf(
+                    MutableEntitySchema(
+                            name = "entity1",
+                            fields = listOf(
+                                    MutablePrimitiveFieldSchema(
+                                            name = "primitive_boolean_field",
+                                            primitive = MutableBooleanSchema()
+                                    )
                             )
                     )
             )
     )
+
+    return listOf(packageA, packageB)
 }
