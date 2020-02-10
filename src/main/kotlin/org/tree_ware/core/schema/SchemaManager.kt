@@ -10,7 +10,10 @@ class SchemaManager {
     // so that only validated packages are available in MutableSchema. Protect access
     // to the packages setter in MutableSchema so that it cannot be set any other way.
 
-    fun addPackages(packages: List<MutablePackageSchema>) {
+    /** Adds packages to the schema if there are no errors.
+     * Returns the list of errors. Returns an empty list if there are no errors.
+     */
+    fun addPackages(packages: List<MutablePackageSchema>): List<String> {
         if (schema.packages.isNotEmpty()) {
             // TODO(deepak-nulu): return the following as an error message
             throw UnsupportedOperationException("Adding packages a second time is not yet supported")
@@ -23,20 +26,27 @@ class SchemaManager {
         val enumerations = mutableMapOf<String, MutableEnumerationSchema>()
         val entities = mutableMapOf<String, MutableEntitySchema>()
         val collectNonPrimitiveFieldTypesVisitor = CollectNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
-
-        packages.forEach {
+        packages.forEach { pkg ->
             // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
-            it.mutableAccept(SetFullNameVisitor())
-            it.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
+            pkg.mutableAccept(SetFullNameVisitor())
+            pkg.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
         }
 
-        // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
-
-        // TODO(deepak-nulu): Resolve non-primitive fields.
-
+        // Resolve non-primitive field types.
         // TODO(deepak-nulu): Validate the schema.
+        val resolveNonPrimitiveFieldTypesVisitor = ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
+        packages.forEach { pkg ->
+            // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
+            pkg.mutableAccept(resolveNonPrimitiveFieldTypesVisitor)
+        }
+        // TODO(deepak-nulu): include errors from validation.
+        val allErrors = resolveNonPrimitiveFieldTypesVisitor.errors
 
-        schema.packages = packages
+        // TODO(deepak-nulu): replace println() with logger.
+        if (allErrors.isEmpty()) schema.packages = packages
+        else println("Errors: $allErrors")
+
+        return allErrors
     }
 
     fun encodeJson(writer: Writer, prettyPrint: Boolean = false): Boolean {
