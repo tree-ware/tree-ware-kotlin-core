@@ -1,10 +1,9 @@
 package org.tree_ware.core.schema
 
+import org.apache.logging.log4j.LogManager
 import org.tree_ware.core.codec.common.SchemaEncoder
 import org.tree_ware.core.codec.json.JsonSchemaEncoder
 import java.io.Writer
-
-// TODO(deepak-nulu): replace println() with logger.
 
 class SchemaManager {
     // TODO(deepak-nulu): remove packages as a constructor parameter of MutableSchema
@@ -41,7 +40,7 @@ class SchemaManager {
             pkg.mutableAccept(setFullNameVisitor)
             pkg.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
         }
-        setFullNameVisitor.fullNames.forEach { println("fullName: $it") }
+        setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
 
         // Resolve non-primitive field types.
         val resolveNonPrimitiveFieldTypesVisitor = ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
@@ -55,7 +54,7 @@ class SchemaManager {
         val allErrors = resolveNonPrimitiveFieldTypesVisitor.errors
 
         if (allErrors.isEmpty()) schema.packages = packages
-        else println("Errors: $allErrors")
+        else allErrors.forEach { logger.error(it) }
 
         return allErrors
     }
@@ -70,4 +69,6 @@ class SchemaManager {
 
     private val schema = MutableSchema()
     private val nameToElementMap = HashMap<String, MutableElementSchema>()
+
+    private val logger = LogManager.getLogger()
 }
