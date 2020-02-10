@@ -17,13 +17,24 @@ class SchemaManager {
         }
 
         // Collect non-primitive field types to help resolve non-primitive fields.
+        // NOTE: because of "forward-references", this has to be collected from all packages before we can resolve
+        // the types in such fields.
         val aliases = mutableMapOf<String, MutableAliasSchema>()
         val enumerations = mutableMapOf<String, MutableEnumerationSchema>()
         val entities = mutableMapOf<String, MutableEntitySchema>()
         val collectNonPrimitiveFieldTypesVisitor = CollectNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
-        packages.forEach { it.mutableAccept(collectNonPrimitiveFieldTypesVisitor) }
+
+        packages.forEach {
+            // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
+            it.mutableAccept(SetFullNameVisitor())
+            it.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
+        }
+
+        // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
 
         // TODO(deepak-nulu): Resolve non-primitive fields.
+
+        // TODO(deepak-nulu): Validate the schema.
 
         schema.packages = packages
     }

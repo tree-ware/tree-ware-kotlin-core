@@ -11,31 +11,22 @@ class CollectNonPrimitiveFieldTypesVisitor(
         private val enumerations: MutableMap<String, MutableEnumerationSchema>,
         private val entities: MutableMap<String, MutableEntitySchema>
 ) : AbstractMutableSchemaVisitor() {
-    private var currentPackage: PackageSchema? = null
-
-    private fun getFullName(namedElement: NamedElementSchema): String {
-        val packageName = currentPackage?.name
-                ?: throw IllegalStateException("Schema element ${namedElement.name} is not in a package")
-        return "${packageName}.${namedElement.name}"
-    }
-
-    override fun mutableVisit(pkg: MutablePackageSchema): Boolean {
-        currentPackage = pkg
-        return true
-    }
-
     override fun mutableVisit(alias: MutableAliasSchema): Boolean {
-        aliases[getFullName(alias)] = alias
+        val fullName = alias.fullName ?: throw IllegalStateException("fullName missing for alias ${alias.name}")
+        aliases[fullName] = alias
         return true
     }
 
     override fun mutableVisit(enumeration: MutableEnumerationSchema): Boolean {
-        enumerations[getFullName(enumeration)] = enumeration
+        val fullName = enumeration.fullName
+                ?: throw IllegalStateException("fullName missing for enumeration ${enumeration.name}")
+        enumerations[fullName] = enumeration
         return true
     }
 
     override fun mutableVisit(entity: MutableEntitySchema): Boolean {
-        entities[getFullName(entity)] = entity
+        val fullName = entity.fullName ?: throw IllegalStateException("fullName missing for entity ${entity.name}")
+        entities[fullName] = entity
         return true
     }
 }

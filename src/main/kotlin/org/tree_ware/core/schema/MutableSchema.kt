@@ -54,6 +54,9 @@ abstract class MutableElementSchema() : ElementSchema, VisitableMutableSchema {
 }
 
 abstract class MutableNamedElementSchema(override var name: String = "") : MutableElementSchema(), NamedElementSchema {
+    override var fullName: String? = null
+        internal set
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
