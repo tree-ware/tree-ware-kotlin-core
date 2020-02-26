@@ -4,7 +4,7 @@ const val goldenJsonPrettyPrintedSchema = """{
   "schema": {
     "packages": [
       {
-        "name": "package_a",
+        "name": "package.a",
         "entities": [
           {
             "name": "entity1",
@@ -21,28 +21,28 @@ const val goldenJsonPrettyPrintedSchema = """{
               {
                 "name": "package_a_entity1_field",
                 "type": {
-                  "package": "package_a",
+                  "package": "package.a",
                   "entity": "entity1"
                 }
               },
               {
                 "name": "package_b_string_alias1_field",
                 "type": {
-                  "package": "package_b",
+                  "package": "package.b",
                   "alias": "string_alias1"
                 }
               },
               {
                 "name": "package_a_entity3_field",
                 "type": {
-                  "package": "package_a",
+                  "package": "package.a",
                   "entity": "entity3"
                 }
               },
               {
                 "name": "package_b_entity1_field",
                 "type": {
-                  "package": "package_b",
+                  "package": "package.b",
                   "entity": "entity1"
                 }
               }
@@ -54,7 +54,7 @@ const val goldenJsonPrettyPrintedSchema = """{
         ]
       },
       {
-        "name": "package_b",
+        "name": "package.b",
         "aliases": [
           {
             "name": "string_alias1",

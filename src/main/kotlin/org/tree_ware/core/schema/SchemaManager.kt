@@ -6,11 +6,6 @@ import org.tree_ware.core.codec.json.JsonSchemaEncoder
 import java.io.Writer
 
 class SchemaManager {
-    // TODO(deepak-nulu): remove packages as a constructor parameter of MutableSchema
-    // The only way to add packages to a schema should be thru the addPackages() method
-    // so that only validated packages are available in MutableSchema. Protect access
-    // to the packages setter in MutableSchema so that it cannot be set any other way.
-
     /** Adds packages to the schema if there are no errors.
      * Returns the list of errors. Returns an empty list if there are no errors.
      *
@@ -20,8 +15,7 @@ class SchemaManager {
      */
     fun addPackages(packages: List<MutablePackageSchema>): List<String> {
         if (schema.packages.isNotEmpty()) {
-            // TODO(deepak-nulu): return the following as an error message
-            throw UnsupportedOperationException("Adding packages a second time is not yet supported")
+            return listOf("Adding packages a second time is not yet supported")
         }
 
         // Set full-names for named elements in the packages
@@ -36,22 +30,19 @@ class SchemaManager {
         val collectNonPrimitiveFieldTypesVisitor = CollectNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
 
         packages.forEach { pkg ->
-            // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
+            // TODO(deepak-nulu): Combine the following visitors with a visitor-combinator.
             pkg.mutableAccept(setFullNameVisitor)
             pkg.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
         }
-        setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
+         setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
 
         // Resolve non-primitive field types.
         val resolveNonPrimitiveFieldTypesVisitor = ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
-        // TODO(deepak-nulu): Validate the schema.
 
         packages.forEach { pkg ->
-            // TODO(deepak-nulu): Combine the following 2 visitors with a visitor-combinator.
             pkg.mutableAccept(resolveNonPrimitiveFieldTypesVisitor)
         }
-        // TODO(deepak-nulu): include errors from validation.
-        val allErrors = resolveNonPrimitiveFieldTypesVisitor.errors
+        val allErrors = setFullNameVisitor.errors + resolveNonPrimitiveFieldTypesVisitor.errors
 
         if (allErrors.isEmpty()) schema.packages = packages
         else allErrors.forEach { logger.error(it) }
@@ -68,7 +59,6 @@ class SchemaManager {
     }
 
     private val schema = MutableSchema()
-    private val nameToElementMap = HashMap<String, MutableElementSchema>()
 
     private val logger = LogManager.getLogger()
 }

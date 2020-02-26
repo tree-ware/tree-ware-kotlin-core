@@ -5,12 +5,13 @@ class ResolveNonPrimitiveFieldTypesVisitor(
         private val enumerations: Map<String, MutableEnumerationSchema>,
         private val entities: Map<String, MutableEntitySchema>
 ) : AbstractMutableSchemaVisitor() {
-    val errors = mutableListOf<String>()
+    val errors: List<String> get() = _errors
+    private val _errors = mutableListOf<String>()
 
     override fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean {
         val aliasFullName = "${aliasField.packageName}.${aliasField.aliasName}"
         val alias = aliases[aliasFullName]
-        if (alias == null) errors.add("${aliasField.fullName}: unknown field type")
+        if (alias == null) _errors.add("Unknown field type: ${aliasField.fullName}")
         else aliasField.resolvedAlias = alias
         return true
     }
@@ -18,7 +19,7 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     override fun mutableVisit(enumerationField: MutableEnumerationFieldSchema): Boolean {
         val enumerationFullName = "${enumerationField.packageName}.${enumerationField.enumerationName}"
         val enumeration = enumerations[enumerationFullName]
-        if (enumeration == null) errors.add("${enumerationField.fullName}: unknown field type")
+        if (enumeration == null) _errors.add("Unknown field type: ${enumerationField.fullName}")
         else enumerationField.resolvedEnumeration = enumeration
         return true
     }
@@ -26,7 +27,7 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     override fun mutableVisit(entityField: MutableEntityFieldSchema): Boolean {
         val entityFullName = "${entityField.packageName}.${entityField.entityName}"
         val entity = entities[entityFullName]
-        if (entity == null) errors.add("${entityField.fullName}: unknown field type")
+        if (entity == null) _errors.add("Unknown field type: ${entityField.fullName}")
         else entityField.resolvedEntity = entity
         return true
     }
