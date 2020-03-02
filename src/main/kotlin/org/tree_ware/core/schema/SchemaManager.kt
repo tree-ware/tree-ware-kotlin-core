@@ -29,12 +29,15 @@ class SchemaManager {
         val entities = mutableMapOf<String, MutableEntitySchema>()
         val collectNonPrimitiveFieldTypesVisitor = CollectNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
 
+        val validationVisitor = ValidationVisitor()
+
         packages.forEach { pkg ->
             // TODO(deepak-nulu): Combine the following visitors with a visitor-combinator.
             pkg.mutableAccept(setFullNameVisitor)
+            pkg.mutableAccept(validationVisitor)
             pkg.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
         }
-         setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
+        setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
 
         // Resolve non-primitive field types.
         val resolveNonPrimitiveFieldTypesVisitor = ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
@@ -42,7 +45,8 @@ class SchemaManager {
         packages.forEach { pkg ->
             pkg.mutableAccept(resolveNonPrimitiveFieldTypesVisitor)
         }
-        val allErrors = setFullNameVisitor.errors + resolveNonPrimitiveFieldTypesVisitor.errors
+        val allErrors =
+                setFullNameVisitor.errors + validationVisitor.errors + resolveNonPrimitiveFieldTypesVisitor.errors
 
         if (allErrors.isEmpty()) schema.packages = packages
         else allErrors.forEach { logger.error(it) }

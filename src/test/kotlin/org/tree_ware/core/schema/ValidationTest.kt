@@ -28,6 +28,10 @@ class ValidationTest {
                 "Invalid name: package.b.hyphens-not-allowed-for-aliases",
                 "Duplicate name: package.b.duplicate_alias_name",
 
+                "Invalid multiplicity: hyphens-not-allowed-for-packages.dots.not_allowed_for.entities.invalid_string_field_multiplicity",
+                "Invalid multiplicity: package.b.entity_b.invalid_entity_field_multiplicity",
+                "Invalid multiplicity: package.b.entity_b.invalid_alias_field_multiplicity",
+
                 "Unknown field type: package.c.entity_1.invalid_entity_field",
                 "Unknown field type: package.c.entity_1.invalid_alias_field"
         )

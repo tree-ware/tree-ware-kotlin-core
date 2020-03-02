@@ -3,12 +3,9 @@ package org.tree_ware.core.schema
 private val PACKAGE_NAME_REGEX = Regex("^[a-z0-9_.]*$")
 private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
 
-class SetFullNameVisitor() : AbstractMutableSchemaVisitor(), BracketedVisitor {
+class SetFullNameVisitor() : AbstractMutableSchemaValidatingVisitor(), BracketedVisitor {
     val fullNames: List<String> get() = _fullNames
     private val _fullNames = mutableListOf<String>()
-
-    val errors: List<String> get() = _errors
-    private val _errors = mutableListOf<String>()
 
     private val nameParts = mutableListOf<String>()
     private fun getFullName(): String = nameParts.joinToString(".")

@@ -4,10 +4,7 @@ class ResolveNonPrimitiveFieldTypesVisitor(
         private val aliases: Map<String, MutableAliasSchema>,
         private val enumerations: Map<String, MutableEnumerationSchema>,
         private val entities: Map<String, MutableEntitySchema>
-) : AbstractMutableSchemaVisitor() {
-    val errors: List<String> get() = _errors
-    private val _errors = mutableListOf<String>()
-
+) : AbstractMutableSchemaValidatingVisitor() {
     override fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean {
         val aliasFullName = "${aliasField.packageName}.${aliasField.aliasName}"
         val alias = aliases[aliasFullName]
