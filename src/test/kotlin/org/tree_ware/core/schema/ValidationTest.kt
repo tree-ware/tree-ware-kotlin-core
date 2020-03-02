@@ -4,11 +4,11 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
 
-class NameValidationTest {
+class ValidationTest {
     @Test
-    fun `SchemaManager#addPackages() returns errors for invalid names`() {
+    fun `SchemaManager#addPackages() validates and returns errors`() {
         val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(getInvalidNamesKotlinPackages())
+        val errors = schemaManager.addPackages(getInvalidKotlinPackages())
 
         val expectedErrors = listOf(
                 "Invalid name: hyphens-not-allowed-for-packages",
@@ -26,7 +26,10 @@ class NameValidationTest {
 
                 "Invalid name: package.b.dots.not_allowed_for.aliases",
                 "Invalid name: package.b.hyphens-not-allowed-for-aliases",
-                "Duplicate name: package.b.duplicate_alias_name"
+                "Duplicate name: package.b.duplicate_alias_name",
+
+                "Unknown field type: package.c.entity_1.invalid_entity_field",
+                "Unknown field type: package.c.entity_1.invalid_alias_field"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())

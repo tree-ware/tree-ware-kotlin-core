@@ -1,6 +1,6 @@
 package org.tree_ware.core.schema
 
-fun getInvalidNamesKotlinPackages(): List<MutablePackageSchema> {
+fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
     val packageA = MutablePackageSchema(
             name = "hyphens-not-allowed-for-packages",
             entities = listOf(
@@ -77,5 +77,26 @@ fun getInvalidNamesKotlinPackages(): List<MutablePackageSchema> {
             )
     )
 
-    return listOf(packageA, packageB)
+    val packageC = MutablePackageSchema(
+            name = "package.c",
+            entities = listOf(
+                    MutableEntitySchema(
+                            name = "entity_1",
+                            fields = listOf(
+                                    MutableEntityFieldSchema(
+                                            name = "invalid_entity_field",
+                                            packageName = "no.such.package",
+                                            entityName = "entity_1"
+                                    ),
+                                    MutableAliasFieldSchema(
+                                            name = "invalid_alias_field",
+                                            packageName = "package.b",
+                                            aliasName = "no_such_alias"
+                                    )
+                            )
+                    )
+            )
+    )
+
+    return listOf(packageA, packageB, packageC)
 }
