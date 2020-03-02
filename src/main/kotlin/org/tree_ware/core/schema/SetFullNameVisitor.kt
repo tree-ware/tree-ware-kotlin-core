@@ -36,7 +36,8 @@ class SetFullNameVisitor() : AbstractMutableSchemaVisitor(), BracketedVisitor {
         nameParts.add(namedElement.name)
         val fullName = getFullName()
         namedElement.fullName = fullName
-        _fullNames.add(fullName)
+        if (_fullNames.contains(fullName)) _errors.add("Duplicate name: ${fullName}")
+        else _fullNames.add(fullName)
         return true
     }
 

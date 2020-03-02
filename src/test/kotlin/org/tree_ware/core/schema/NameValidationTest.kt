@@ -22,13 +22,13 @@ class NameValidationTest {
                 "Invalid name: hyphens-not-allowed-for-packages.hyphens-not-allowed-for-entities.hyphens-not-allowed-for-entity-fields",
                 "Invalid name: hyphens-not-allowed-for-packages.hyphens-not-allowed-for-entities.dots.not_allowed_for.alias_fields",
                 "Invalid name: hyphens-not-allowed-for-packages.hyphens-not-allowed-for-entities.hyphens-not-allowed-for-alias-fields",
+                "Duplicate name: hyphens-not-allowed-for-packages.hyphens-not-allowed-for-entities.duplicate_field_name",
 
                 "Invalid name: package.b.dots.not_allowed_for.aliases",
-                "Invalid name: package.b.hyphens-not-allowed-for-aliases"
+                "Invalid name: package.b.hyphens-not-allowed-for-aliases",
+                "Duplicate name: package.b.duplicate_alias_name"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
     }
-
-    // TODO(deepak-nulu): test for duplicate names
 }

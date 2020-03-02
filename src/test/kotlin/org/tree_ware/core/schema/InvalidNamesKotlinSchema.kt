@@ -1,7 +1,5 @@
 package org.tree_ware.core.schema
 
-import org.tree_ware.core.schema.*
-
 fun getInvalidNamesKotlinPackages(): List<MutablePackageSchema> {
     val packageA = MutablePackageSchema(
             name = "hyphens-not-allowed-for-packages",
@@ -41,6 +39,16 @@ fun getInvalidNamesKotlinPackages(): List<MutablePackageSchema> {
                                             name = "hyphens-not-allowed-for-alias-fields",
                                             packageName = "package.b",
                                             aliasName = "hyphens-not-allowed-for-aliases"
+                                    ),
+                                    MutableEntityFieldSchema(
+                                            name = "duplicate_field_name",
+                                            packageName = "hyphens-not-allowed-for-packages",
+                                            entityName = "dots.not_allowed_for.entities"
+                                    ),
+                                    MutableAliasFieldSchema(
+                                            name = "duplicate_field_name",
+                                            packageName = "package.b",
+                                            aliasName = "hyphens-not-allowed-for-aliases"
                                     )
                             )
                     )
@@ -56,6 +64,14 @@ fun getInvalidNamesKotlinPackages(): List<MutablePackageSchema> {
                     ),
                     MutableAliasSchema(
                             name = "hyphens-not-allowed-for-aliases",
+                            primitive = MutableStringSchema()
+                    ),
+                    MutableAliasSchema(
+                            name = "duplicate_alias_name",
+                            primitive = MutableStringSchema()
+                    ),
+                    MutableAliasSchema(
+                            name = "duplicate_alias_name",
                             primitive = MutableStringSchema()
                     )
             )
