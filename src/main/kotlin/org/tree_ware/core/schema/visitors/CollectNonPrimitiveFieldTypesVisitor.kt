@@ -1,4 +1,8 @@
-package org.tree_ware.core.schema
+package org.tree_ware.core.schema.visitors
+
+import org.tree_ware.core.schema.MutableAliasSchema
+import org.tree_ware.core.schema.MutableEntitySchema
+import org.tree_ware.core.schema.MutableEnumerationSchema
 
 /** Collects non-primitive field types in the specified maps.
  * The fully-qualified-names of the types are mapped to the types.

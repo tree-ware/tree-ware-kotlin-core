@@ -1,4 +1,6 @@
-package org.tree_ware.core.schema
+package org.tree_ware.core.schema.visitors
+
+import org.tree_ware.core.schema.*
 
 private val PACKAGE_NAME_REGEX = Regex("^[a-z0-9_.]*$")
 private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")

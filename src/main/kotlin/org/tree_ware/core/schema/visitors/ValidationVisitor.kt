@@ -1,4 +1,7 @@
-package org.tree_ware.core.schema
+package org.tree_ware.core.schema.visitors
+
+import org.tree_ware.core.schema.Multiplicity
+import org.tree_ware.core.schema.MutableFieldSchema
 
 // NOTE: validation is also done in other subclasses of AbstractMutableSchemaValidatingVisitor
 

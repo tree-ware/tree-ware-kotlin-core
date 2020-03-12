@@ -1,4 +1,6 @@
-package org.tree_ware.core.schema
+package org.tree_ware.core.schema.visitors
+
+import org.tree_ware.core.schema.*
 
 abstract class AbstractSchemaVisitor : SchemaVisitor {
     override fun visit(element: ElementSchema): Boolean {

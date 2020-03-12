@@ -3,6 +3,10 @@ package org.tree_ware.core.schema
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.core.codec.common.SchemaEncoder
 import org.tree_ware.core.codec.json.JsonSchemaEncoder
+import org.tree_ware.core.schema.visitors.CollectNonPrimitiveFieldTypesVisitor
+import org.tree_ware.core.schema.visitors.ResolveNonPrimitiveFieldTypesVisitor
+import org.tree_ware.core.schema.visitors.SetFullNameVisitor
+import org.tree_ware.core.schema.visitors.ValidationVisitor
 import java.io.Writer
 
 class SchemaManager {
