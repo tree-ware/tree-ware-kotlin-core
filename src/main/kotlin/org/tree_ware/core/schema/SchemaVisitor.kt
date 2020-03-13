@@ -14,6 +14,7 @@ public interface SchemaVisitor {
 
     fun visit(alias: AliasSchema): Boolean
     fun visit(enumeration: EnumerationSchema): Boolean
+    fun visit(enumerationValue: EnumerationValueSchema): Boolean
     fun visit(entity: EntitySchema): Boolean
 
     // Fields

@@ -80,21 +80,64 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                             primitive = MutableStringSchema()
                     )
             ),
+            enumerations = listOf(
+                    MutableEnumerationSchema(
+                            name = "dots.not_allowed_for.enumerations",
+                            values = listOf(
+                                    MutableEnumerationValueSchema("value1"),
+                                    MutableEnumerationValueSchema("value2")
+                            )
+                    ),
+                    MutableEnumerationSchema(
+                            name = "hyphens-not-allowed-for-enumerations",
+                            values = listOf(
+                                    MutableEnumerationValueSchema("value1"),
+                                    MutableEnumerationValueSchema("value2")
+                            )
+                    ),
+                    MutableEnumerationSchema(
+                            name = "duplicate_enumeration_name",
+                            values = listOf(
+                                    MutableEnumerationValueSchema("value1"),
+                                    MutableEnumerationValueSchema("value2")
+                            )
+                    ),
+                    MutableEnumerationSchema(
+                            name = "duplicate_enumeration_name",
+                            values = listOf(
+                                    MutableEnumerationValueSchema("value3"),
+                                    MutableEnumerationValueSchema("value4")
+                            )
+                    ),
+                    MutableEnumerationSchema(
+                            name = "enumeration_with_duplicate_values",
+                            values = listOf(
+                                    MutableEnumerationValueSchema("value1"),
+                                    MutableEnumerationValueSchema("duplicate_value"),
+                                    MutableEnumerationValueSchema("value2"),
+                                    MutableEnumerationValueSchema("duplicate_value")
+                            )
+                    ),
+                    MutableEnumerationSchema(
+                            name = "enumeration_with_no_values",
+                            values = listOf()
+                    )
+            ),
             entities = listOf(
                     MutableEntitySchema(
                             name = "entity_b",
                             fields = listOf(
-                                    MutableEntityFieldSchema(
-                                            name = "invalid_entity_field_multiplicity",
-                                            packageName = "package.b",
-                                            entityName = "empty_entity",
-                                            multiplicity = MutableMultiplicity(0, -1)
-                                    ),
                                     MutableAliasFieldSchema(
                                             name = "invalid_alias_field_multiplicity",
                                             packageName = "package.b",
                                             aliasName = "hyphens-not-allowed-for-aliases",
                                             multiplicity = MutableMultiplicity(2, 1)
+                                    ),
+                                    MutableEntityFieldSchema(
+                                            name = "invalid_entity_field_multiplicity",
+                                            packageName = "package.b",
+                                            entityName = "empty_entity",
+                                            multiplicity = MutableMultiplicity(0, -1)
                                     )
                             )
                     ),
@@ -111,17 +154,23 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                     MutableEntitySchema(
                             name = "entity_1",
                             fields = listOf(
-                                    MutableEntityFieldSchema(
-                                            name = "invalid_entity_field",
-                                            packageName = "no.such.package",
-                                            entityName = "entity_1",
-                                            multiplicity = MutableMultiplicity(0, 1)
-                                    ),
                                     MutableAliasFieldSchema(
                                             name = "invalid_alias_field",
                                             packageName = "package.b",
                                             aliasName = "no_such_alias",
                                             multiplicity = MutableMultiplicity(1, 10)
+                                    ),
+                                    MutableEnumerationFieldSchema(
+                                            name = "invalid_enumeration_field",
+                                            packageName = "package.b",
+                                            enumerationName = "no_such_enumeration",
+                                            multiplicity = MutableMultiplicity(0, 10)
+                                    ),
+                                    MutableEntityFieldSchema(
+                                            name = "invalid_entity_field",
+                                            packageName = "no.such.package",
+                                            entityName = "entity_1",
+                                            multiplicity = MutableMultiplicity(0, 1)
                                     )
                             )
                     )

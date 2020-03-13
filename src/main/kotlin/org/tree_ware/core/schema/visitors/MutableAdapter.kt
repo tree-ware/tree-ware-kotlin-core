@@ -34,6 +34,10 @@ class MutableAdapter(private val adaptee: SchemaVisitor) : MutableSchemaVisitor 
         return adaptee.visit(enumeration)
     }
 
+    override fun mutableVisit(enumerationValue: MutableEnumerationValueSchema): Boolean {
+        return adaptee.visit(enumerationValue)
+    }
+
     override fun mutableVisit(entity: MutableEntitySchema): Boolean {
         return adaptee.visit(entity)
     }

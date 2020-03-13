@@ -33,6 +33,13 @@ const val goldenJsonPrettyPrintedSchema = """{
                 }
               },
               {
+                "name": "package_b_enumeration1_field",
+                "type": {
+                  "package": "package.b",
+                  "enumeration": "enumeration1"
+                }
+              },
+              {
                 "name": "package_a_entity3_field",
                 "type": {
                   "package": "package.a",
@@ -59,6 +66,22 @@ const val goldenJsonPrettyPrintedSchema = """{
           {
             "name": "string_alias1",
             "type": "string"
+          }
+        ],
+        "enumerations": [
+          {
+            "name": "enumeration1",
+            "values": [
+              {
+                "name": "value1"
+              },
+              {
+                "name": "value2"
+              },
+              {
+                "name": "value3"
+              }
+            ]
           }
         ],
         "entities": [

@@ -208,8 +208,51 @@ class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveS
     }
 }
 
-class MutableEnumerationSchema(name: String, override var values: List<String>) : MutableNamedElementSchema(name), EnumerationSchema {
+class MutableEnumerationSchema(name: String, override var values: List<MutableEnumerationValueSchema>
+) : MutableNamedElementSchema(name), EnumerationSchema {
     override val objectType = "enumeration"
+
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
+    override fun traverseChildren(visitor: SchemaVisitor): Boolean {
+        if (!super.traverseChildren(visitor)) return false
+
+        if (values.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("values")
+            for (value in values) {
+                if (!value.accept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+
+        return true
+    }
+
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
+        if (!super.mutableTraverseChildren(visitor)) return false
+
+        if (values.isNotEmpty()) try {
+            (visitor as? BracketedVisitor)?.listStart("fields")
+            for (value in values) {
+                if (!value.mutableAccept(visitor)) return false
+            }
+        } finally {
+            (visitor as? BracketedVisitor)?.listEnd()
+        }
+
+        return true
+    }
+}
+
+class MutableEnumerationValueSchema(name: String) : MutableNamedElementSchema(name), EnumerationValueSchema {
+    override val objectType = "enumeration_value"
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)

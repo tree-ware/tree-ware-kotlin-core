@@ -42,8 +42,11 @@ interface AliasSchema : NamedElementSchema {
 
 /** Schema for user-defined enumerations. */
 interface EnumerationSchema : NamedElementSchema {
-    val values: List<String>
+    val values: List<EnumerationValueSchema>
 }
+
+/** Schema for user-defined enumeration values. */
+interface EnumerationValueSchema : NamedElementSchema
 
 /** Schema for user-defined entities. */
 interface EntitySchema : NamedElementSchema {

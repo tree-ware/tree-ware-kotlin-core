@@ -27,6 +27,10 @@ abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor {
         return true
     }
 
+    override fun mutableVisit(enumerationValue: MutableEnumerationValueSchema): Boolean {
+        return true
+    }
+
     override fun mutableVisit(entity: MutableEntitySchema): Boolean {
         return true
     }

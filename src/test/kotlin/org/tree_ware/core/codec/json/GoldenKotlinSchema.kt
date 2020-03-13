@@ -28,6 +28,11 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                                             packageName = "package.b",
                                             aliasName = "string_alias1"
                                     ),
+                                    MutableEnumerationFieldSchema(
+                                            name = "package_b_enumeration1_field",
+                                            packageName = "package.b",
+                                            enumerationName = "enumeration1"
+                                    ),
                                     MutableEntityFieldSchema(
                                             name = "package_a_entity3_field",
                                             packageName = "package.a",
@@ -50,6 +55,16 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                     MutableAliasSchema(
                             name = "string_alias1",
                             primitive = MutableStringSchema()
+                    )
+            ),
+            enumerations = listOf(
+                    MutableEnumerationSchema(
+                            name = "enumeration1",
+                            values = listOf(
+                                    MutableEnumerationValueSchema("value1"),
+                                    MutableEnumerationValueSchema("value2"),
+                                    MutableEnumerationValueSchema("value3")
+                            )
                     )
             ),
             entities = listOf(

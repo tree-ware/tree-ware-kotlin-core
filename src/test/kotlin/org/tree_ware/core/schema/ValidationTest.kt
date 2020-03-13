@@ -27,13 +27,19 @@ class ValidationTest {
                 "Invalid name: package.b.dots.not_allowed_for.aliases",
                 "Invalid name: package.b.hyphens-not-allowed-for-aliases",
                 "Duplicate name: package.b.duplicate_alias_name",
+                "Invalid name: package.b.dots.not_allowed_for.enumerations",
+                "Invalid name: package.b.hyphens-not-allowed-for-enumerations",
+                "Duplicate name: package.b.duplicate_enumeration_name",
+                "Duplicate name: package.b.enumeration_with_duplicate_values.duplicate_value",
 
                 "Invalid multiplicity: hyphens-not-allowed-for-packages.dots.not_allowed_for.entities.invalid_string_field_multiplicity",
-                "Invalid multiplicity: package.b.entity_b.invalid_entity_field_multiplicity",
+                "No enumeration values: package.b.enumeration_with_no_values",
                 "Invalid multiplicity: package.b.entity_b.invalid_alias_field_multiplicity",
+                "Invalid multiplicity: package.b.entity_b.invalid_entity_field_multiplicity",
 
-                "Unknown field type: package.c.entity_1.invalid_entity_field",
-                "Unknown field type: package.c.entity_1.invalid_alias_field"
+                "Unknown field type: package.c.entity_1.invalid_alias_field",
+                "Unknown field type: package.c.entity_1.invalid_enumeration_field",
+                "Unknown field type: package.c.entity_1.invalid_entity_field"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())

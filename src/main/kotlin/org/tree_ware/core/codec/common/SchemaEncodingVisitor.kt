@@ -46,15 +46,11 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     }
 
     override fun visit(enumeration: EnumerationSchema): Boolean {
-        try {
-            wireFormatEncoder.encodeListStart("values")
-            for (value in enumeration.values) {
-                wireFormatEncoder.encodeStringField("value", value)
-            }
-            return true
-        } finally {
-            wireFormatEncoder.encodeListEnd()
-        }
+        return true
+    }
+
+    override fun visit(enumerationValue: EnumerationValueSchema): Boolean {
+        return true
     }
 
     override fun visit(entity: EntitySchema): Boolean {

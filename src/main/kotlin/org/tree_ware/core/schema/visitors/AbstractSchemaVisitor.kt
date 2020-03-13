@@ -27,6 +27,10 @@ abstract class AbstractSchemaVisitor : SchemaVisitor {
         return true
     }
 
+    override fun visit(enumerationValue: EnumerationValueSchema): Boolean {
+        return true
+    }
+
     override fun visit(entity: EntitySchema): Boolean {
         return true
     }
