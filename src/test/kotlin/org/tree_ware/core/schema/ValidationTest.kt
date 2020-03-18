@@ -32,6 +32,8 @@ class ValidationTest {
                 "Duplicate name: package.b.duplicate_enumeration_name",
                 "Duplicate name: package.b.enumeration_with_duplicate_values.duplicate_value",
 
+                "Duplicate name: package_name.entity_name",
+
                 "Invalid multiplicity: hyphens-not-allowed-for-packages.dots.not_allowed_for.entities.invalid_string_field_multiplicity",
                 "No enumeration values: package.b.enumeration_with_no_values",
                 "Invalid multiplicity: package.b.entity_b.invalid_alias_field_multiplicity",
