@@ -9,8 +9,8 @@ class SetFullNameVisitor() : AbstractMutableSchemaValidatingVisitor(), Bracketed
     val fullNames: List<String> get() = _fullNames
     private val _fullNames = mutableListOf<String>()
 
-    private val nameParts = mutableListOf<String>()
-    private fun getFullName(): String = nameParts.joinToString(".")
+    private val nameParts = mutableListOf<String>("")
+    private fun getFullName(): String = nameParts.joinToString("/")
 
     private fun validateName(element: NamedElementSchema, regex: Regex) {
         val name = element.name
