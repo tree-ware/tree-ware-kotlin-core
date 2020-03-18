@@ -177,19 +177,5 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
             )
     )
 
-    // Package name in packageD  collides with the fully-qualified entity name in packageE
-    val pacakgeD = MutablePackageSchema(
-            name = "package_name.entity_name"
-    )
-    val pacakgeE = MutablePackageSchema(
-            name = "package_name",
-            entities = listOf(
-                    MutableEntitySchema(
-                            name = "entity_name",
-                            fields = listOf()
-                    )
-            )
-    )
-
-    return listOf(packageA, packageB, packageC, pacakgeD, pacakgeE)
+    return listOf(packageA, packageB, packageC)
 }
