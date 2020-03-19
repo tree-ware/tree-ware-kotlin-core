@@ -53,7 +53,10 @@ abstract class AbstractSchemaVisitor : SchemaVisitor {
         return true
     }
 
-    override fun visit(entityField: EntityFieldSchema): Boolean {
+    override fun visit(associationField: AssociationFieldSchema): Boolean {
+        return true
+    }
+    override fun visit(compositionField: CompositionFieldSchema): Boolean {
         return true
     }
 

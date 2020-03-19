@@ -60,8 +60,12 @@ class MutableAdapter(private val adaptee: SchemaVisitor) : MutableSchemaVisitor 
         return adaptee.visit(enumerationField)
     }
 
-    override fun mutableVisit(entityField: MutableEntityFieldSchema): Boolean {
-        return adaptee.visit(entityField)
+    override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
+        return adaptee.visit(associationField)
+    }
+
+    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean {
+        return adaptee.visit(compositionField)
     }
 
     // Primitives

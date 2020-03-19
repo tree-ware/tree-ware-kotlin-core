@@ -23,11 +23,16 @@ class ResolveNonPrimitiveFieldTypesVisitor(
         return true
     }
 
-    override fun mutableVisit(entityField: MutableEntityFieldSchema): Boolean {
-        val entityFullName = "/${entityField.packageName}/${entityField.entityName}"
+    override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
+        // TODO(deepak-nulu): implement resolution of associations
+        return true
+    }
+
+    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean {
+        val entityFullName = "/${compositionField.packageName}/${compositionField.entityName}"
         val entity = entities[entityFullName]
-        if (entity == null) _errors.add("Unknown field type: ${entityField.fullName}")
-        else entityField.resolvedEntity = entity
+        if (entity == null) _errors.add("Unknown field type: ${compositionField.fullName}")
+        else compositionField.resolvedEntity = entity
         return true
     }
 }

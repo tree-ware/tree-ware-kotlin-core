@@ -109,10 +109,11 @@ class MutableSchema() : MutableElementSchema(), Schema {
     }
 }
 
-class MutablePackageSchema(name: String,
-                           override var aliases: List<MutableAliasSchema> = listOf(),
-                           override var enumerations: List<MutableEnumerationSchema> = listOf(),
-                           override var entities: List<MutableEntitySchema> = listOf()
+class MutablePackageSchema(
+    name: String,
+    override var aliases: List<MutableAliasSchema> = listOf(),
+    override var enumerations: List<MutableEnumerationSchema> = listOf(),
+    override var entities: List<MutableEntitySchema> = listOf()
 ) : MutableNamedElementSchema(name), PackageSchema {
     override val objectType = "package"
 
@@ -187,7 +188,8 @@ class MutablePackageSchema(name: String,
     }
 }
 
-class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveSchema
+class MutableAliasSchema(
+    name: String, override var primitive: MutablePrimitiveSchema
 ) : MutableNamedElementSchema(name), AliasSchema {
     override val objectType = "alias"
 
@@ -208,7 +210,8 @@ class MutableAliasSchema(name: String, override var primitive: MutablePrimitiveS
     }
 }
 
-class MutableEnumerationSchema(name: String, override var values: List<MutableEnumerationValueSchema>
+class MutableEnumerationSchema(
+    name: String, override var values: List<MutableEnumerationValueSchema>
 ) : MutableNamedElementSchema(name), EnumerationSchema {
     override val objectType = "enumeration"
 
@@ -263,7 +266,8 @@ class MutableEnumerationValueSchema(name: String) : MutableNamedElementSchema(na
     }
 }
 
-class MutableEntitySchema(name: String, override var fields: List<MutableFieldSchema>
+class MutableEntitySchema(
+    name: String, override var fields: List<MutableFieldSchema>
 ) : MutableNamedElementSchema(name), EntitySchema {
     override val objectType = "entity"
 
@@ -308,8 +312,9 @@ class MutableEntitySchema(name: String, override var fields: List<MutableFieldSc
 
 // Fields
 
-abstract class MutableFieldSchema(name: String,
-                                  override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+abstract class MutableFieldSchema(
+    name: String,
+    override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableNamedElementSchema(name), FieldSchema {
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -320,9 +325,10 @@ abstract class MutableFieldSchema(name: String,
     }
 }
 
-class MutablePrimitiveFieldSchema(name: String,
-                                  override var primitive: MutablePrimitiveSchema,
-                                  multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+class MutablePrimitiveFieldSchema(
+    name: String,
+    override var primitive: MutablePrimitiveSchema,
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), PrimitiveFieldSchema {
     override val objectType = "primitive_field"
 
@@ -343,15 +349,16 @@ class MutablePrimitiveFieldSchema(name: String,
     }
 }
 
-class MutableAliasFieldSchema(name: String,
-                              override var packageName: String,
-                              override var aliasName: String,
-                              multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+class MutableAliasFieldSchema(
+    name: String,
+    override var packageName: String,
+    override var aliasName: String,
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), AliasFieldSchema {
     override val objectType = "alias_field"
 
     override var resolvedAlias: MutableAliasSchema
-        get() = _resolvedAlias ?: throw IllegalStateException("Alias ${packageName}.${aliasName} has not been resolved")
+        get() = _resolvedAlias ?: throw IllegalStateException("Alias /${packageName}/${aliasName} has not been resolved")
         internal set(value) {
             _resolvedAlias = value
         }
@@ -368,16 +375,17 @@ class MutableAliasFieldSchema(name: String,
     // The resolved type of this field is not considered a child and is therefore not traversed.
 }
 
-class MutableEnumerationFieldSchema(name: String,
-                                    override var packageName: String,
-                                    override var enumerationName: String,
-                                    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+class MutableEnumerationFieldSchema(
+    name: String,
+    override var packageName: String,
+    override var enumerationName: String,
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), EnumerationFieldSchema {
     override val objectType = "enumeration_field"
 
     override var resolvedEnumeration: MutableEnumerationSchema
         get() = _resolvedEnumeration
-                ?: throw IllegalStateException("Enumeration ${packageName}.${enumerationName} has not been resolved")
+            ?: throw IllegalStateException("Enumeration /${packageName}/${enumerationName} has not been resolved")
         internal set(value) {
             _resolvedEnumeration = value
         }
@@ -394,16 +402,43 @@ class MutableEnumerationFieldSchema(name: String,
     // The resolved type of this field is not considered a child and is therefore not traversed.
 }
 
-class MutableEntityFieldSchema(name: String,
-                               override var packageName: String,
-                               override var entityName: String,
-                               multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(name, multiplicity), EntityFieldSchema {
-    override val objectType = "entity_field"
+class MutableAssociationFieldSchema(
+    name: String,
+    override var entityPath: List<String>,
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+) : MutableFieldSchema(name, multiplicity), AssociationFieldSchema {
+    override val objectType = "association_field"
 
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
-                ?: throw IllegalStateException("Entity ${packageName}.${entityName} has not been resolved")
+            ?: throw IllegalStateException("Association ${entityPath} has not been resolved")
+        internal set(value) {
+            _resolvedEntity = value
+        }
+    private var _resolvedEntity: MutableEntitySchema? = null
+
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
+    // The resolved type of this field is not considered a child and is therefore not traversed.
+}
+
+class MutableCompositionFieldSchema(
+    name: String,
+    override var packageName: String,
+    override var entityName: String,
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+) : MutableFieldSchema(name, multiplicity), CompositionFieldSchema {
+    override val objectType = "composition_field"
+
+    override var resolvedEntity: MutableEntitySchema
+        get() = _resolvedEntity
+            ?: throw IllegalStateException("Composition /${packageName}/${entityName} has not been resolved")
         internal set(value) {
             _resolvedEntity = value
         }
@@ -434,7 +469,8 @@ class MutableBooleanSchema : MutablePrimitiveSchema(), BooleanSchema {
     }
 }
 
-class MutableNumericSchema<T : Number>(override var constraints: MutableNumericConstraints<T>? = null
+class MutableNumericSchema<T : Number>(
+    override var constraints: MutableNumericConstraints<T>? = null
 ) : MutablePrimitiveSchema(), NumericSchema<T> {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
@@ -445,7 +481,8 @@ class MutableNumericSchema<T : Number>(override var constraints: MutableNumericC
     }
 }
 
-open class MutableStringSchema(override var constraints: MutableStringConstraints? = null
+open class MutableStringSchema(
+    override var constraints: MutableStringConstraints? = null
 ) : MutablePrimitiveSchema(), StringSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
@@ -456,7 +493,8 @@ open class MutableStringSchema(override var constraints: MutableStringConstraint
     }
 }
 
-class MutablePassword1WaySchema(constraints: MutableStringConstraints? = null
+class MutablePassword1WaySchema(
+    constraints: MutableStringConstraints? = null
 ) : MutableStringSchema(constraints), Password1WaySchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
@@ -467,7 +505,8 @@ class MutablePassword1WaySchema(constraints: MutableStringConstraints? = null
     }
 }
 
-class MutablePassword2WaySchema(constraints: MutableStringConstraints? = null
+class MutablePassword2WaySchema(
+    constraints: MutableStringConstraints? = null
 ) : MutableStringSchema(constraints), Password2WaySchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
@@ -488,7 +527,8 @@ class MutableUuidSchema : MutablePrimitiveSchema(), UuidSchema {
     }
 }
 
-class MutableBlobSchema(override var constraints: MutableBlobConstraints? = null
+class MutableBlobSchema(
+    override var constraints: MutableBlobConstraints? = null
 ) : MutablePrimitiveSchema(), BlobSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
@@ -543,13 +583,17 @@ class MutableMacAddressSchema : MutablePrimitiveSchema(), MacAddressSchema {
 
 class MutableMultiplicity(override var min: Long, override var max: Long) : Multiplicity
 
-class MutableNumericConstraints<T : Number>(override var minBound: MutableNumericBound<T>?,
-                                            override var maxBound: MutableNumericBound<T>?) : NumericConstraints<T>
+class MutableNumericConstraints<T : Number>(
+    override var minBound: MutableNumericBound<T>?,
+    override var maxBound: MutableNumericBound<T>?
+) : NumericConstraints<T>
 
 class MutableNumericBound<T : Number>(override var value: T, override var inclusive: Boolean) : NumericBound<T>
 
-class MutableStringConstraints(override var minLength: Int? = null,
-                               override var maxLength: Int? = null,
-                               override var regex: String? = null) : StringConstraints
+class MutableStringConstraints(
+    override var minLength: Int? = null,
+    override var maxLength: Int? = null,
+    override var regex: String? = null
+) : StringConstraints
 
 class MutableBlobConstraints(override var minLength: Int?, override var maxLength: Int?) : BlobConstraints

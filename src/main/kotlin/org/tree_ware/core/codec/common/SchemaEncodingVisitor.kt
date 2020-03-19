@@ -83,10 +83,21 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
         return true
     }
 
-    override fun visit(entityField: EntityFieldSchema): Boolean {
+    override fun visit(associationField: AssociationFieldSchema): Boolean {
+        objectStart("type")
+        listStart("entity_path")
+        associationField.entityPath.forEach {
+            wireFormatEncoder.encodeStringField("entity_path_element", it)
+        }
+        listEnd()
+        objectEnd()
+        return true
+    }
+
+    override fun visit(compositionField: CompositionFieldSchema): Boolean {
         wireFormatEncoder.encodeObjectStart("type")
-        wireFormatEncoder.encodeStringField("package", entityField.packageName)
-        wireFormatEncoder.encodeStringField("entity", entityField.entityName)
+        wireFormatEncoder.encodeStringField("package", compositionField.packageName)
+        wireFormatEncoder.encodeStringField("entity", compositionField.entityName)
         wireFormatEncoder.encodeObjectEnd()
         return true
     }

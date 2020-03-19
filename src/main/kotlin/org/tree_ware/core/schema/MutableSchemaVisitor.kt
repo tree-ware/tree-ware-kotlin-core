@@ -27,7 +27,8 @@ interface MutableSchemaVisitor {
     fun mutableVisit(primitiveField: MutablePrimitiveFieldSchema): Boolean
     fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean
     fun mutableVisit(enumerationField: MutableEnumerationFieldSchema): Boolean
-    fun mutableVisit(entityField: MutableEntityFieldSchema): Boolean
+    fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean
+    fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean
 
     // Primitives
 

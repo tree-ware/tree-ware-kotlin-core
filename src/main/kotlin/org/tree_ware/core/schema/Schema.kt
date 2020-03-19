@@ -85,13 +85,19 @@ interface EnumerationFieldSchema : FieldSchema {
     val resolvedEnumeration: EnumerationSchema
 }
 
-/** Schema for fields whose types are user-defined entities. */
-interface EntityFieldSchema : FieldSchema {
+/** Schema for fields that are associations to user-defined entities. */
+interface AssociationFieldSchema : FieldSchema {
+    val entityPath: List<String>
+
+    val resolvedEntity: EntitySchema
+}
+
+/** Schema for fields that are compositions of user-defined entities. */
+interface CompositionFieldSchema : FieldSchema {
     val packageName: String
     val entityName: String
 
     val resolvedEntity: EntitySchema
-    // TODO(deepak-nulu): composition vs reference
 }
 
 // Predefined Primitives

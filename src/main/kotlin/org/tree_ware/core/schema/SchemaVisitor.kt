@@ -24,7 +24,8 @@ public interface SchemaVisitor {
     fun visit(primitiveField: PrimitiveFieldSchema): Boolean
     fun visit(aliasField: AliasFieldSchema): Boolean
     fun visit(enumerationField: EnumerationFieldSchema): Boolean
-    fun visit(entityField: EntityFieldSchema): Boolean
+    fun visit(associationField: AssociationFieldSchema): Boolean
+    fun visit(compositionField: CompositionFieldSchema): Boolean
 
     // Primitives
 

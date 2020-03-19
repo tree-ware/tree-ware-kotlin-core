@@ -53,7 +53,11 @@ abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor {
         return true
     }
 
-    override fun mutableVisit(entityField: MutableEntityFieldSchema): Boolean {
+    override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
+        return true
+    }
+
+    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean {
         return true
     }
 
