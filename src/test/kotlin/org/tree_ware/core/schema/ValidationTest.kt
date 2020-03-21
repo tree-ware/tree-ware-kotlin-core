@@ -33,10 +33,13 @@ class ValidationTest {
                 "Duplicate name: /package.b/enumeration_with_duplicate_values/duplicate_value",
 
                 "Invalid multiplicity: /hyphens-not-allowed-for-packages/dots.not_allowed_for.entities/invalid_string_field_multiplicity",
+
+                "Invalid additional root: /package.b/root2",
                 "No enumeration values: /package.b/enumeration_with_no_values",
                 "Invalid multiplicity: /package.b/entity_b/invalid_alias_field_multiplicity",
                 "Invalid multiplicity: /package.b/entity_b/invalid_entity_field_multiplicity",
 
+                "Invalid additional root: /package.c/root3",
                 "Unknown field type: /package.c/entity_1/invalid_alias_field",
                 "Unknown field type: /package.c/entity_1/invalid_enumeration_field",
                 "Unknown field type: /package.c/entity_1/invalid_composition_field"

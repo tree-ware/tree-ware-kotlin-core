@@ -1,12 +1,18 @@
 package org.tree_ware.core.schema.visitors
 
-import org.tree_ware.core.schema.Multiplicity
-import org.tree_ware.core.schema.MutableEnumerationSchema
-import org.tree_ware.core.schema.MutableFieldSchema
+import org.tree_ware.core.schema.*
 
 // NOTE: validation is also done in other subclasses of AbstractMutableSchemaValidatingVisitor
 
 class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
+    override fun mutableVisit(pkg: MutablePackageSchema): Boolean {
+        pkg.root?.also {
+            if (this.root == null) this.root = pkg.root
+            else _errors.add("Invalid additional root: ${it.fullName}")
+        }
+        return true
+    }
+
     override fun mutableVisit(enumeration: MutableEnumerationSchema): Boolean {
         if (enumeration.values.isEmpty()) {
             _errors.add("No enumeration values: ${enumeration.fullName}")
@@ -20,6 +26,8 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
         }
         return true
     }
+
+    private var root: MutableCompositionFieldSchema? = null
 }
 
 fun isValidMultiplicity(multiplicity: Multiplicity): Boolean {
