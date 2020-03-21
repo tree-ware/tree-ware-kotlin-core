@@ -49,8 +49,13 @@ class SchemaManager {
         packages.forEach { pkg ->
             pkg.mutableAccept(resolveNonPrimitiveFieldTypesVisitor)
         }
-        val allErrors =
-                setFullNameVisitor.errors + validationVisitor.errors + resolveNonPrimitiveFieldTypesVisitor.errors
+
+        val validationVisitors: List<SchemaValidatingVisitor> =
+            listOf(setFullNameVisitor, validationVisitor, resolveNonPrimitiveFieldTypesVisitor)
+        val allErrors = validationVisitors.flatMap {
+            it.finalizeValidation()
+            it.errors
+        }
 
         if (allErrors.isEmpty()) schema.packages = packages
         else allErrors.forEach { logger.error(it) }

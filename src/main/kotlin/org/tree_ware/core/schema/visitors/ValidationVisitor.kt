@@ -27,6 +27,12 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
         return true
     }
 
+    override fun finalizeValidation() {
+        if (root == null) {
+            _errors.add("No root entity")
+        }
+    }
+
     private var root: MutableCompositionFieldSchema? = null
 }
 
