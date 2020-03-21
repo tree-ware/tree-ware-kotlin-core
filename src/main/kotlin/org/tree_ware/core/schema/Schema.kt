@@ -25,6 +25,7 @@ interface Schema : ElementSchema {
 
 /** Schema for a user-defined package. */
 interface PackageSchema : NamedElementSchema {
+    val root: CompositionFieldSchema?
     val aliases: List<AliasSchema>
     val enumerations: List<EnumerationSchema>
     val entities: List<EntitySchema>

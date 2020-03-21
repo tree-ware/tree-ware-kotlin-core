@@ -66,7 +66,7 @@ class SchemaManager {
         return encoder.encode(schema)
     }
 
-    private val schema = MutableSchema()
+    private val schema = MutableSchema().also { it.objectId = "schema" }
 
     private val logger = LogManager.getLogger()
 }

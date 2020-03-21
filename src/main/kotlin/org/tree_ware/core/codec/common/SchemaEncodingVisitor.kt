@@ -84,13 +84,13 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     }
 
     override fun visit(associationField: AssociationFieldSchema): Boolean {
-        objectStart("type")
-        listStart("entity_path")
+        wireFormatEncoder.encodeObjectStart("type")
+        wireFormatEncoder.encodeListStart("entity_path")
         associationField.entityPath.forEach {
             wireFormatEncoder.encodeStringField("entity_path_element", it)
         }
-        listEnd()
-        objectEnd()
+        wireFormatEncoder.encodeListEnd()
+        wireFormatEncoder.encodeObjectEnd()
         return true
     }
 
@@ -166,27 +166,27 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     // Helper methods for constraints
 
     private fun <T : Number> encodeNumericConstraints(constraints: NumericConstraints<T>) = try {
-        objectStart("constraints")
+        wireFormatEncoder.encodeObjectStart("constraints")
         constraints.minBound?.let { encodeNumericBound("min_bound", it) }
         constraints.maxBound?.let { encodeNumericBound("max_bound", it) }
     } finally {
-        objectEnd()
+        wireFormatEncoder.encodeObjectEnd()
     }
 
     private fun <T : Number> encodeNumericBound(name: String, bound: NumericBound<T>) = try {
-        objectStart(name)
+        wireFormatEncoder.encodeObjectStart(name)
         wireFormatEncoder.encodeNumericField("value", bound.value)
         wireFormatEncoder.encodeBooleanField("inclusive", bound.inclusive)
     } finally {
-        objectEnd()
+        wireFormatEncoder.encodeObjectEnd()
     }
 
     private fun encodeStringConstraints(constraints: StringConstraints) = try {
-        objectStart("constraints")
+        wireFormatEncoder.encodeObjectStart("constraints")
         constraints.minLength?.let { wireFormatEncoder.encodeNumericField("min_length", it) }
         constraints.maxLength?.let { wireFormatEncoder.encodeNumericField("max_length", it) }
         constraints.regex?.let { wireFormatEncoder.encodeStringField("regex", it) }
     } finally {
-        objectEnd()
+        wireFormatEncoder.encodeObjectEnd()
     }
 }

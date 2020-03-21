@@ -5,6 +5,13 @@ const val goldenJsonPrettyPrintedSchema = """{
     "packages": [
       {
         "name": "package.a",
+        "root": {
+          "name": "test",
+          "type": {
+            "package": "package.a",
+            "entity": "entity1"
+          }
+        },
         "entities": [
           {
             "name": "entity1",

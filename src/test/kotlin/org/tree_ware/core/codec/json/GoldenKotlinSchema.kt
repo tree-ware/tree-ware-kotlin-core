@@ -5,6 +5,11 @@ import org.tree_ware.core.schema.*
 fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
     val packageA = MutablePackageSchema(
         name = "package.a",
+        root = MutableCompositionFieldSchema(
+            name = "test",
+            packageName = "package.a",
+            entityName = "entity1"
+        ),
         entities = listOf(
             MutableEntitySchema(
                 name = "entity1",

@@ -12,11 +12,11 @@ interface VisitableMutableSchema {
 }
 
 abstract class MutableElementSchema() : ElementSchema, VisitableMutableSchema {
-    abstract val objectType: String
+    var objectId = ""
 
     override fun accept(visitor: SchemaVisitor): Boolean {
         try {
-            (visitor as? BracketedVisitor)?.objectStart(objectType)
+            (visitor as? BracketedVisitor)?.objectStart(objectId)
             if (!visitSelf(visitor)) return false
             if (!traverseChildren(visitor)) return false
             return true
@@ -27,7 +27,7 @@ abstract class MutableElementSchema() : ElementSchema, VisitableMutableSchema {
 
     override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
         try {
-            (visitor as? BracketedVisitor)?.objectStart(objectType)
+            (visitor as? BracketedVisitor)?.objectStart(objectId)
             if (!mutableVisitSelf(visitor)) return false
             if (!mutableTraverseChildren(visitor)) return false
             return true
@@ -70,8 +70,6 @@ class MutableSchema() : MutableElementSchema(), Schema {
     override var packages: List<MutablePackageSchema> = listOf()
         internal set
 
-    override val objectType = "schema"
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -111,11 +109,14 @@ class MutableSchema() : MutableElementSchema(), Schema {
 
 class MutablePackageSchema(
     name: String,
+    override var root: MutableCompositionFieldSchema? = null,
     override var aliases: List<MutableAliasSchema> = listOf(),
     override var enumerations: List<MutableEnumerationSchema> = listOf(),
     override var entities: List<MutableEntitySchema> = listOf()
 ) : MutableNamedElementSchema(name), PackageSchema {
-    override val objectType = "package"
+    init {
+        root?.also { it.objectId = "root" }
+    }
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -127,6 +128,10 @@ class MutablePackageSchema(
 
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         if (!super.traverseChildren(visitor)) return false
+
+        root?.also {
+            if (!it.accept(visitor)) return false
+        }
 
         if (aliases.isNotEmpty()) try {
             (visitor as? BracketedVisitor)?.listStart("aliases")
@@ -158,6 +163,10 @@ class MutablePackageSchema(
 
     override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
         if (!super.mutableTraverseChildren(visitor)) return false
+
+        root?.also {
+            if (!it.mutableAccept(visitor)) return false
+        }
 
         if (aliases.isNotEmpty()) try {
             (visitor as? BracketedVisitor)?.listStart("aliases")
@@ -191,8 +200,6 @@ class MutablePackageSchema(
 class MutableAliasSchema(
     name: String, override var primitive: MutablePrimitiveSchema
 ) : MutableNamedElementSchema(name), AliasSchema {
-    override val objectType = "alias"
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -213,8 +220,6 @@ class MutableAliasSchema(
 class MutableEnumerationSchema(
     name: String, override var values: List<MutableEnumerationValueSchema>
 ) : MutableNamedElementSchema(name), EnumerationSchema {
-    override val objectType = "enumeration"
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -255,8 +260,6 @@ class MutableEnumerationSchema(
 }
 
 class MutableEnumerationValueSchema(name: String) : MutableNamedElementSchema(name), EnumerationValueSchema {
-    override val objectType = "enumeration_value"
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -269,8 +272,6 @@ class MutableEnumerationValueSchema(name: String) : MutableNamedElementSchema(na
 class MutableEntitySchema(
     name: String, override var fields: List<MutableFieldSchema>
 ) : MutableNamedElementSchema(name), EntitySchema {
-    override val objectType = "entity"
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -330,8 +331,6 @@ class MutablePrimitiveFieldSchema(
     override var primitive: MutablePrimitiveSchema,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), PrimitiveFieldSchema {
-    override val objectType = "primitive_field"
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -355,10 +354,9 @@ class MutableAliasFieldSchema(
     override var aliasName: String,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), AliasFieldSchema {
-    override val objectType = "alias_field"
-
     override var resolvedAlias: MutableAliasSchema
-        get() = _resolvedAlias ?: throw IllegalStateException("Alias /${packageName}/${aliasName} has not been resolved")
+        get() = _resolvedAlias
+            ?: throw IllegalStateException("Alias /${packageName}/${aliasName} has not been resolved")
         internal set(value) {
             _resolvedAlias = value
         }
@@ -381,8 +379,6 @@ class MutableEnumerationFieldSchema(
     override var enumerationName: String,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), EnumerationFieldSchema {
-    override val objectType = "enumeration_field"
-
     override var resolvedEnumeration: MutableEnumerationSchema
         get() = _resolvedEnumeration
             ?: throw IllegalStateException("Enumeration /${packageName}/${enumerationName} has not been resolved")
@@ -407,8 +403,6 @@ class MutableAssociationFieldSchema(
     override var entityPath: List<String>,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), AssociationFieldSchema {
-    override val objectType = "association_field"
-
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
             ?: throw IllegalStateException("Association ${entityPath} has not been resolved")
@@ -434,8 +428,6 @@ class MutableCompositionFieldSchema(
     override var entityName: String,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, multiplicity), CompositionFieldSchema {
-    override val objectType = "composition_field"
-
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
             ?: throw IllegalStateException("Composition /${packageName}/${entityName} has not been resolved")
