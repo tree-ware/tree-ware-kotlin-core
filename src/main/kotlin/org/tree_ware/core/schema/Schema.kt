@@ -62,6 +62,7 @@ interface EntitySchema : NamedElementSchema {
  * fields, alias fields, enum fields, and entity fields.
  */
 interface FieldSchema : NamedElementSchema {
+    val isKey: Boolean
     val multiplicity: Multiplicity
 }
 

@@ -60,6 +60,7 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     // SchemaVisitor methods for fields
 
     override fun visit(field: FieldSchema): Boolean {
+        if (field.isKey) wireFormatEncoder.encodeBooleanField("is_key", field.isKey)
         return true
     }
 

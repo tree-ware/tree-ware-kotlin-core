@@ -315,6 +315,7 @@ class MutableEntitySchema(
 
 abstract class MutableFieldSchema(
     name: String,
+    override var isKey: Boolean,
     override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableNamedElementSchema(name), FieldSchema {
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -329,8 +330,9 @@ abstract class MutableFieldSchema(
 class MutablePrimitiveFieldSchema(
     name: String,
     override var primitive: MutablePrimitiveSchema,
+    isKey: Boolean = false,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(name, multiplicity), PrimitiveFieldSchema {
+) : MutableFieldSchema(name, isKey, multiplicity), PrimitiveFieldSchema {
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -352,8 +354,9 @@ class MutableAliasFieldSchema(
     name: String,
     override var packageName: String,
     override var aliasName: String,
+    isKey: Boolean = false,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(name, multiplicity), AliasFieldSchema {
+) : MutableFieldSchema(name, isKey, multiplicity), AliasFieldSchema {
     override var resolvedAlias: MutableAliasSchema
         get() = _resolvedAlias
             ?: throw IllegalStateException("Alias /${packageName}/${aliasName} has not been resolved")
@@ -377,8 +380,9 @@ class MutableEnumerationFieldSchema(
     name: String,
     override var packageName: String,
     override var enumerationName: String,
+    isKey: Boolean = false,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(name, multiplicity), EnumerationFieldSchema {
+) : MutableFieldSchema(name, isKey, multiplicity), EnumerationFieldSchema {
     override var resolvedEnumeration: MutableEnumerationSchema
         get() = _resolvedEnumeration
             ?: throw IllegalStateException("Enumeration /${packageName}/${enumerationName} has not been resolved")
@@ -402,7 +406,7 @@ class MutableAssociationFieldSchema(
     name: String,
     override var entityPath: List<String>,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(name, multiplicity), AssociationFieldSchema {
+) : MutableFieldSchema(name, false, multiplicity), AssociationFieldSchema {
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
             ?: throw IllegalStateException("Association ${entityPath} has not been resolved")
@@ -426,8 +430,9 @@ class MutableCompositionFieldSchema(
     name: String,
     override var packageName: String,
     override var entityName: String,
+    isKey: Boolean = false,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
-) : MutableFieldSchema(name, multiplicity), CompositionFieldSchema {
+) : MutableFieldSchema(name, isKey, multiplicity), CompositionFieldSchema {
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
             ?: throw IllegalStateException("Composition /${packageName}/${entityName} has not been resolved")

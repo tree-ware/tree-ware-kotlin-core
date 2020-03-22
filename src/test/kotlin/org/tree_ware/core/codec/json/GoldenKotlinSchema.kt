@@ -16,7 +16,8 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                 fields = listOf(
                     MutablePrimitiveFieldSchema(
                         name = "primitive_string_field",
-                        primitive = MutableStringSchema()
+                        primitive = MutableStringSchema(),
+                        isKey = true
                     )
                 )
             ),
@@ -30,12 +31,14 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                     MutableAliasFieldSchema(
                         name = "package_b_string_alias1_field",
                         packageName = "package.b",
-                        aliasName = "string_alias1"
+                        aliasName = "string_alias1",
+                        isKey = true
                     ),
                     MutableEnumerationFieldSchema(
                         name = "package_b_enumeration1_field",
                         packageName = "package.b",
-                        enumerationName = "enumeration1"
+                        enumerationName = "enumeration1",
+                        isKey = true
                     ),
                     MutableAssociationFieldSchema(
                         name = "package_a_entity3_association_field",
@@ -44,7 +47,8 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                     MutableCompositionFieldSchema(
                         name = "package_b_entity1_composition_field",
                         packageName = "package.b",
-                        entityName = "entity1"
+                        entityName = "entity1",
+                        isKey = true
                     )
                 )
             ),
