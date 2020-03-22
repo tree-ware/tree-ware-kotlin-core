@@ -14,7 +14,8 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                 fields = listOf(
                     MutablePrimitiveFieldSchema(
                         name = "dots.not_allowed_for.primitive_fields",
-                        primitive = MutableStringSchema()
+                        primitive = MutableStringSchema(),
+                        isKey = true
                     ),
                     MutablePrimitiveFieldSchema(
                         name = "hyphens-not-allowed-for-primitive-fields",
@@ -170,6 +171,7 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                         name = "invalid_alias_field",
                         packageName = "package.b",
                         aliasName = "no_such_alias",
+                        isKey = true,
                         multiplicity = MutableMultiplicity(1, 10)
                     ),
                     MutableEnumerationFieldSchema(
@@ -182,6 +184,7 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                         name = "invalid_composition_field",
                         packageName = "no.such.package",
                         entityName = "entity_1",
+                        isKey = true,
                         multiplicity = MutableMultiplicity(0, 1)
                     )
                 )
