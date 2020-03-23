@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
 
+// TODO(deepak-nulu): split into multiple files based on type of validation
+
 class ValidationTest {
     @Test
     fun `SchemaManager#addPackages() returns error if root entity is missing`() {

@@ -103,6 +103,7 @@ const val goldenJsonPrettyPrintedSchema = """{
             "fields": [
               {
                 "name": "primitive_boolean_field",
+                "is_key": true,
                 "type": "boolean"
               }
             ]

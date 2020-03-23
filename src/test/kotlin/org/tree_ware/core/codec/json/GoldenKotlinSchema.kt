@@ -80,7 +80,8 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                 fields = listOf(
                     MutablePrimitiveFieldSchema(
                         name = "primitive_boolean_field",
-                        primitive = MutableBooleanSchema()
+                        primitive = MutableBooleanSchema(),
+                        isKey = true
                     )
                 )
             )

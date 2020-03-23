@@ -3,9 +3,9 @@ package org.tree_ware.core.schema.visitors
 import org.tree_ware.core.schema.*
 
 class ResolveNonPrimitiveFieldTypesVisitor(
-        private val aliases: Map<String, MutableAliasSchema>,
-        private val enumerations: Map<String, MutableEnumerationSchema>,
-        private val entities: Map<String, MutableEntitySchema>
+    private val aliases: Map<String, MutableAliasSchema>,
+    private val enumerations: Map<String, MutableEnumerationSchema>,
+    private val entities: Map<String, MutableEntitySchema>
 ) : AbstractMutableSchemaValidatingVisitor() {
     override fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean {
         val aliasFullName = "/${aliasField.packageName}/${aliasField.aliasName}"
@@ -32,7 +32,18 @@ class ResolveNonPrimitiveFieldTypesVisitor(
         val entityFullName = "/${compositionField.packageName}/${compositionField.entityName}"
         val entity = entities[entityFullName]
         if (entity == null) _errors.add("Unknown field type: ${compositionField.fullName}")
-        else compositionField.resolvedEntity = entity
+        else {
+            compositionField.resolvedEntity = entity
+            if (compositionField.isKey && !hasOnlyPrimitiveKeys(entity)) _errors.add(
+                "Target of composition key does not have only primitive keys: ${compositionField.fullName}"
+            )
+        }
         return true
     }
+}
+
+fun hasOnlyPrimitiveKeys(entity: EntitySchema): Boolean {
+    val keys = entity.fields.filter { it.isKey }
+    val primitiveKeys = keys.filterNot { it is CompositionFieldSchema }
+    return keys.isNotEmpty() && (keys.size == primitiveKeys.size)
 }
