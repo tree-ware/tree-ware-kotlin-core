@@ -59,7 +59,11 @@ class ValidationTest {
             "Multiplicity is not [1, 1] for key field: /package.c/entity_1/invalid_composition_field",
             "Unknown field type: /package.c/entity_1/invalid_alias_field",
             "Unknown field type: /package.c/entity_1/invalid_enumeration_field",
-            "Unknown field type: /package.c/entity_1/invalid_composition_field"
+            "Unknown field type: /package.c/entity_1/invalid_composition_field",
+
+            "Association path is too short: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/dots.not_allowed_for.association_fields",
+            "Association path is too short: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/hyphens-not-allowed-for-association-fields",
+            "Association path is too short: /package.b/entity_b/invalid_entity_field_multiplicity"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())

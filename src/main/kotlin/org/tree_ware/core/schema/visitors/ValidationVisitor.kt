@@ -44,5 +44,6 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
         }
     }
 
-    private var root: MutableCompositionFieldSchema? = null
+    var root: MutableCompositionFieldSchema? = null
+        private set
 }

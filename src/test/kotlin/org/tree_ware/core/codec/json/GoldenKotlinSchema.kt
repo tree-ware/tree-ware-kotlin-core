@@ -18,6 +18,11 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                         name = "primitive_string_field",
                         primitive = MutableStringSchema(),
                         isKey = true
+                    ),
+                    MutableCompositionFieldSchema(
+                        name = "package_b_entity2_composition_field",
+                        packageName = "package.b",
+                        entityName = "entity2"
                     )
                 )
             ),
@@ -25,8 +30,12 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                 name = "entity2",
                 fields = listOf(
                     MutableAssociationFieldSchema(
-                        name = "package_a_entity1_association_field",
-                        entityPath = listOf("entity1")
+                        name = "package_a_association_field",
+                        entityPath = listOf(
+                            "test",
+                            "package_b_entity2_composition_field",
+                            "package_c_entity3_composition_field"
+                        )
                     ),
                     MutableAliasFieldSchema(
                         name = "package_b_string_alias1_field",
@@ -39,10 +48,6 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                         packageName = "package.b",
                         enumerationName = "enumeration1",
                         isKey = true
-                    ),
-                    MutableAssociationFieldSchema(
-                        name = "package_a_entity3_association_field",
-                        entityPath = listOf("entity3")
                     ),
                     MutableCompositionFieldSchema(
                         name = "package_b_entity1_composition_field",
@@ -84,9 +89,40 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                         isKey = true
                     )
                 )
+            ),
+            MutableEntitySchema(
+                name = "entity2",
+                fields = listOf(
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_boolean_field",
+                        primitive = MutableBooleanSchema(),
+                        isKey = true
+                    ),
+                    MutableCompositionFieldSchema(
+                        name = "package_c_entity3_composition_field",
+                        packageName = "package.c",
+                        entityName = "entity3"
+                    )
+                )
             )
         )
     )
 
-    return listOf(packageA, packageB)
+    val packageC = MutablePackageSchema(
+        name = "package.c",
+        entities = listOf(
+            MutableEntitySchema(
+                name = "entity3",
+                fields = listOf(
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_boolean_field",
+                        primitive = MutableBooleanSchema(),
+                        isKey = true
+                    )
+                )
+            )
+        )
+    )
+
+    return listOf(packageA, packageB, packageC)
 }

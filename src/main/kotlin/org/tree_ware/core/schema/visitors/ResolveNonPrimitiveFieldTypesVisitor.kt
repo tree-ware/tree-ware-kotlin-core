@@ -2,6 +2,10 @@ package org.tree_ware.core.schema.visitors
 
 import org.tree_ware.core.schema.*
 
+/**
+ * Resolves all non-primitive field types except associations.
+ * Associations can be resolved only after compositions are resolved.
+ */
 class ResolveNonPrimitiveFieldTypesVisitor(
     private val aliases: Map<String, MutableAliasSchema>,
     private val enumerations: Map<String, MutableEnumerationSchema>,
@@ -20,11 +24,6 @@ class ResolveNonPrimitiveFieldTypesVisitor(
         val enumeration = enumerations[enumerationFullName]
         if (enumeration == null) _errors.add("Unknown field type: ${enumerationField.fullName}")
         else enumerationField.resolvedEnumeration = enumeration
-        return true
-    }
-
-    override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
-        // TODO(deepak-nulu): implement resolution of associations
         return true
     }
 

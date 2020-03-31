@@ -20,6 +20,13 @@ const val goldenJsonPrettyPrintedSchema = """{
                 "name": "primitive_string_field",
                 "is_key": true,
                 "type": "string"
+              },
+              {
+                "name": "package_b_entity2_composition_field",
+                "type": {
+                  "package": "package.b",
+                  "entity": "entity2"
+                }
               }
             ]
           },
@@ -27,10 +34,12 @@ const val goldenJsonPrettyPrintedSchema = """{
             "name": "entity2",
             "fields": [
               {
-                "name": "package_a_entity1_association_field",
+                "name": "package_a_association_field",
                 "type": {
                   "entity_path": [
-                    "entity1"
+                    "test",
+                    "package_b_entity2_composition_field",
+                    "package_c_entity3_composition_field"
                   ]
                 }
               },
@@ -48,14 +57,6 @@ const val goldenJsonPrettyPrintedSchema = """{
                 "type": {
                   "package": "package.b",
                   "enumeration": "enumeration1"
-                }
-              },
-              {
-                "name": "package_a_entity3_association_field",
-                "type": {
-                  "entity_path": [
-                    "entity3"
-                  ]
                 }
               },
               {
@@ -100,6 +101,38 @@ const val goldenJsonPrettyPrintedSchema = """{
         "entities": [
           {
             "name": "entity1",
+            "fields": [
+              {
+                "name": "primitive_boolean_field",
+                "is_key": true,
+                "type": "boolean"
+              }
+            ]
+          },
+          {
+            "name": "entity2",
+            "fields": [
+              {
+                "name": "primitive_boolean_field",
+                "is_key": true,
+                "type": "boolean"
+              },
+              {
+                "name": "package_c_entity3_composition_field",
+                "type": {
+                  "package": "package.c",
+                  "entity": "entity3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "package.c",
+        "entities": [
+          {
+            "name": "entity3",
             "fields": [
               {
                 "name": "primitive_boolean_field",

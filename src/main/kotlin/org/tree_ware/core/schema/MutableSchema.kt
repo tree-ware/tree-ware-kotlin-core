@@ -439,7 +439,8 @@ class MutableCompositionFieldSchema(
         internal set(value) {
             _resolvedEntity = value
         }
-    private var _resolvedEntity: MutableEntitySchema? = null
+    internal var _resolvedEntity: MutableEntitySchema? = null
+        private set
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)

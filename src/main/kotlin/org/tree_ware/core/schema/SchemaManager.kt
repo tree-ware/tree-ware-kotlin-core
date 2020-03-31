@@ -3,10 +3,7 @@ package org.tree_ware.core.schema
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.core.codec.common.SchemaEncoder
 import org.tree_ware.core.codec.json.JsonSchemaEncoder
-import org.tree_ware.core.schema.visitors.CollectNonPrimitiveFieldTypesVisitor
-import org.tree_ware.core.schema.visitors.ResolveNonPrimitiveFieldTypesVisitor
-import org.tree_ware.core.schema.visitors.SetFullNameVisitor
-import org.tree_ware.core.schema.visitors.ValidationVisitor
+import org.tree_ware.core.schema.visitors.*
 import java.io.Writer
 
 class SchemaManager {
@@ -43,15 +40,28 @@ class SchemaManager {
         }
         setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
 
-        // Resolve non-primitive field types.
-        val resolveNonPrimitiveFieldTypesVisitor = ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
+        // Resolve non-primitive field types, except associations.
+        // Associations can be resolved only after compositions are resolved.
+        val resolveNonPrimitiveFieldTypesVisitor =
+            ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
 
         packages.forEach { pkg ->
             pkg.mutableAccept(resolveNonPrimitiveFieldTypesVisitor)
         }
 
-        val validationVisitors: List<SchemaValidatingVisitor> =
-            listOf(setFullNameVisitor, validationVisitor, resolveNonPrimitiveFieldTypesVisitor)
+        // Resolve associations.
+        val resolveAssociationsVisitor = ResolveAssociationsVisitor(validationVisitor.root, entities)
+
+        packages.forEach { pkg ->
+            pkg.mutableAccept(resolveAssociationsVisitor)
+        }
+
+        val validationVisitors: List<SchemaValidatingVisitor> = listOf(
+            setFullNameVisitor,
+            validationVisitor,
+            resolveNonPrimitiveFieldTypesVisitor,
+            resolveAssociationsVisitor
+        )
         val allErrors = validationVisitors.flatMap {
             it.finalizeValidation()
             it.errors
