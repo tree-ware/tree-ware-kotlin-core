@@ -25,7 +25,7 @@ class KeyValidationTests {
             )
         )
         val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage, helperPackage))
+        val errors = schemaManager.addPackages(listOf(testPackage, localHelperPackage))
 
         val expectedErrors = listOf(
             "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field"
@@ -59,7 +59,7 @@ class KeyValidationTests {
             )
         )
         val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage, helperPackage))
+        val errors = schemaManager.addPackages(listOf(testPackage, localHelperPackage))
 
         val expectedErrors = listOf(
             "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field_1",
@@ -88,13 +88,13 @@ class KeyValidationTests {
             )
         )
         val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage, helperPackage))
+        val errors = schemaManager.addPackages(listOf(testPackage, localHelperPackage))
 
         assertThat(errors.isEmpty()).isTrue()
     }
 }
 
-private val helperPackage = MutablePackageSchema(
+private val localHelperPackage = MutablePackageSchema(
     name = "helper.package",
     root = MutableCompositionFieldSchema(
         name = "root",

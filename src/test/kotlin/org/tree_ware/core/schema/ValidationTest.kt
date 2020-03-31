@@ -46,24 +46,16 @@ class ValidationTest {
             "Duplicate name: /package.b/duplicate_enumeration_name",
             "Duplicate name: /package.b/enumeration_with_duplicate_values/duplicate_value",
 
-            "Multiplicity min is less than 0: /hyphens-not-allowed-for-packages/dots.not_allowed_for.entities/invalid_string_field_multiplicity",
-
             "Invalid additional root: /package.b/root2",
             "No enumeration values: /package.b/enumeration_with_no_values",
-            "Multiplicity max is less than min: /package.b/entity_b/invalid_alias_field_multiplicity",
-            "Multiplicity max is less than 0: /package.b/entity_b/invalid_entity_field_multiplicity",
-            "Multiplicity max is less than min: /package.b/entity_b/invalid_entity_field_multiplicity",
 
             "Invalid additional root: /package.c/root3",
-            "Multiplicity is not [1, 1] for key field: /package.c/entity_1/invalid_alias_field",
-            "Multiplicity is not [1, 1] for key field: /package.c/entity_1/invalid_composition_field",
             "Unknown field type: /package.c/entity_1/invalid_alias_field",
             "Unknown field type: /package.c/entity_1/invalid_enumeration_field",
             "Unknown field type: /package.c/entity_1/invalid_composition_field",
 
             "Association path is too short: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/dots.not_allowed_for.association_fields",
-            "Association path is too short: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/hyphens-not-allowed-for-association-fields",
-            "Association path is too short: /package.b/entity_b/invalid_entity_field_multiplicity"
+            "Association path is too short: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/hyphens-not-allowed-for-association-fields"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())

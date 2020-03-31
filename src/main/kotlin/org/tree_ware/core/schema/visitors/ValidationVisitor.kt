@@ -31,7 +31,7 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
         )
         if (multiplicity.min < 0) _errors.add("Multiplicity min is less than 0: ${field.fullName}")
         if (multiplicity.max < 0) _errors.add("Multiplicity max is less than 0: ${field.fullName}")
-        if (multiplicity.max < multiplicity.min) _errors.add(
+        if (multiplicity.max > 0 && multiplicity.max < multiplicity.min) _errors.add(
             "Multiplicity max is less than min: ${field.fullName}"
         )
 

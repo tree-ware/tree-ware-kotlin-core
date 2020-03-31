@@ -20,11 +20,6 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                     MutablePrimitiveFieldSchema(
                         name = "hyphens-not-allowed-for-primitive-fields",
                         primitive = MutableStringSchema()
-                    ),
-                    MutablePrimitiveFieldSchema(
-                        name = "invalid_string_field_multiplicity",
-                        primitive = MutableStringSchema(),
-                        multiplicity = MutableMultiplicity(-1, 0)
                     )
                 )
             ),
@@ -69,7 +64,7 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
         root = MutableCompositionFieldSchema(
             name = "root2",
             packageName = "package.b",
-            entityName = "entity_b"
+            entityName = "empty_entity"
         ),
         aliases = listOf(
             MutableAliasSchema(
@@ -134,22 +129,6 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
         ),
         entities = listOf(
             MutableEntitySchema(
-                name = "entity_b",
-                fields = listOf(
-                    MutableAliasFieldSchema(
-                        name = "invalid_alias_field_multiplicity",
-                        packageName = "package.b",
-                        aliasName = "hyphens-not-allowed-for-aliases",
-                        multiplicity = MutableMultiplicity(2, 1)
-                    ),
-                    MutableAssociationFieldSchema(
-                        name = "invalid_entity_field_multiplicity",
-                        entityPath = listOf(),
-                        multiplicity = MutableMultiplicity(0, -1)
-                    )
-                )
-            ),
-            MutableEntitySchema(
                 name = "empty_entity",
                 fields = listOf()
             )
@@ -161,7 +140,7 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
         root = MutableCompositionFieldSchema(
             name = "root3",
             packageName = "package.b",
-            entityName = "entity_b"
+            entityName = "empty_entity"
         ),
         entities = listOf(
             MutableEntitySchema(
@@ -170,22 +149,17 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
                     MutableAliasFieldSchema(
                         name = "invalid_alias_field",
                         packageName = "package.b",
-                        aliasName = "no_such_alias",
-                        isKey = true,
-                        multiplicity = MutableMultiplicity(1, 10)
+                        aliasName = "no_such_alias"
                     ),
                     MutableEnumerationFieldSchema(
                         name = "invalid_enumeration_field",
                         packageName = "package.b",
-                        enumerationName = "no_such_enumeration",
-                        multiplicity = MutableMultiplicity(0, 10)
+                        enumerationName = "no_such_enumeration"
                     ),
                     MutableCompositionFieldSchema(
                         name = "invalid_composition_field",
                         packageName = "no.such.package",
-                        entityName = "entity_1",
-                        isKey = true,
-                        multiplicity = MutableMultiplicity(0, 1)
+                        entityName = "entity_1"
                     )
                 )
             )

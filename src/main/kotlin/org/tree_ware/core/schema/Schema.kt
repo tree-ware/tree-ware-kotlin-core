@@ -151,7 +151,11 @@ interface MacAddressSchema : PrimitiveSchema
 
 // Constraints
 
-/** Constraints on the cardinality of a field. */
+/**
+ * Constraints on the cardinality of a field.
+ * Defaults to `[1, 1]`
+ * A `max` value of `0` indicates that there is no explicit upper bound.
+ */
 interface Multiplicity {
     val min: Long
     val max: Long
