@@ -2,6 +2,7 @@ package org.tree_ware.core.schema
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
 
 class KeyValidationTests {
@@ -89,11 +90,11 @@ class KeyValidationTests {
         val schemaManager = SchemaManager()
         val errors = schemaManager.addPackages(listOf(testPackage, helperPackage))
 
-        assertThat(errors.isEmpty())
+        assertThat(errors.isEmpty()).isTrue()
     }
 }
 
-val helperPackage = MutablePackageSchema(
+private val helperPackage = MutablePackageSchema(
     name = "helper.package",
     root = MutableCompositionFieldSchema(
         name = "root",
