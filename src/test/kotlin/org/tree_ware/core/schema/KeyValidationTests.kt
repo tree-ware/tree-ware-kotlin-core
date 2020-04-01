@@ -70,7 +70,7 @@ class KeyValidationTests {
     }
 
     @Test
-    fun `No errors if composition key target entity has only primitive keys`() {
+    fun `Composition key is valid if target entity has only primitive keys`() {
         val testPackage = MutablePackageSchema(
             name = "test.package",
             entities = listOf(
@@ -82,6 +82,71 @@ class KeyValidationTests {
                             packageName = "helper.package",
                             entityName = "entity_with_only_primitive_keys",
                             isKey = true
+                        )
+                    )
+                )
+            )
+        )
+        val schemaManager = SchemaManager()
+        val errors = schemaManager.addPackages(listOf(testPackage, localHelperPackage))
+
+        assertThat(errors.isEmpty()).isTrue()
+    }
+
+    @Test
+    fun `Composition list target entity must have keys`() {
+        val testPackage = MutablePackageSchema(
+            name = "test.package",
+            entities = listOf(
+                MutableEntitySchema(
+                    name = "test_entity",
+                    fields = listOf(
+                        MutableCompositionFieldSchema(
+                            name = "test_field1",
+                            packageName = "helper.package",
+                            entityName = "entity_with_no_keys",
+                            multiplicity = MutableMultiplicity(1, 2)
+                        ),
+                        MutableCompositionFieldSchema(
+                            name = "test_field2",
+                            packageName = "helper.package",
+                            entityName = "entity_with_no_keys",
+                            multiplicity = MutableMultiplicity(0, 0)
+                        )
+                    )
+                )
+            )
+        )
+        val schemaManager = SchemaManager()
+        val errors = schemaManager.addPackages(listOf(testPackage, localHelperPackage))
+
+        val expectedErrors = listOf(
+            "Target of composition list does not have keys: /test.package/test_entity/test_field1",
+            "Target of composition list does not have keys: /test.package/test_entity/test_field2"
+        )
+
+        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+    }
+
+    @Test
+    fun `Composition list is valid if target entity has keys`() {
+        val testPackage = MutablePackageSchema(
+            name = "test.package",
+            entities = listOf(
+                MutableEntitySchema(
+                    name = "test_entity",
+                    fields = listOf(
+                        MutableCompositionFieldSchema(
+                            name = "test_field1",
+                            packageName = "helper.package",
+                            entityName = "entity_with_primitive_and_composition_keys",
+                            multiplicity = MutableMultiplicity(1, 2)
+                        ),
+                        MutableCompositionFieldSchema(
+                            name = "test_field2",
+                            packageName = "helper.package",
+                            entityName = "entity_with_primitive_and_composition_keys",
+                            multiplicity = MutableMultiplicity(0, 0)
                         )
                     )
                 )

@@ -36,6 +36,9 @@ class ResolveNonPrimitiveFieldTypesVisitor(
             if (compositionField.isKey && !hasOnlyPrimitiveKeys(entity)) _errors.add(
                 "Target of composition key does not have only primitive keys: ${compositionField.fullName}"
             )
+            if (compositionField.multiplicity.max != 1L && !hasKeys(entity)) _errors.add(
+                "Target of composition list does not have keys: ${compositionField.fullName}"
+            )
         }
         return true
     }
@@ -45,4 +48,9 @@ fun hasOnlyPrimitiveKeys(entity: EntitySchema): Boolean {
     val keys = entity.fields.filter { it.isKey }
     val primitiveKeys = keys.filterNot { it is CompositionFieldSchema }
     return keys.isNotEmpty() && (keys.size == primitiveKeys.size)
+}
+
+fun hasKeys(entity: EntitySchema): Boolean {
+    val keys = entity.fields.filter { it.isKey }
+    return keys.isNotEmpty()
 }
