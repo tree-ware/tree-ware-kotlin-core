@@ -93,16 +93,4 @@ abstract class AbstractSchemaVisitor : SchemaVisitor {
     override fun visit(timestamp: TimestampSchema): Boolean {
         return true
     }
-
-    override fun visit(ipv4Address: Ipv4AddressSchema): Boolean {
-        return true
-    }
-
-    override fun visit(ipv6Address: Ipv6AddressSchema): Boolean {
-        return true
-    }
-
-    override fun visit(macAddress: MacAddressSchema): Boolean {
-        return true
-    }
 }

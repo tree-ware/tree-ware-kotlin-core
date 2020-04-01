@@ -140,15 +140,6 @@ interface BlobSchema : PrimitiveSchema {
 /** Schema for timestamp (milliseconds since epoch) primitive. */
 interface TimestampSchema : PrimitiveSchema
 
-/** Schema for IPv4 address primitive. */
-interface Ipv4AddressSchema : PrimitiveSchema
-
-/** Schema for IPv6 address primitive. */
-interface Ipv6AddressSchema : PrimitiveSchema
-
-/** Schema for MAC address primitive. */
-interface MacAddressSchema : PrimitiveSchema
-
 // Constraints
 
 /**

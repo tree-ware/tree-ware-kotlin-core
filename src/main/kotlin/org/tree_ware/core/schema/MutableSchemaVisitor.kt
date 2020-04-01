@@ -40,7 +40,4 @@ interface MutableSchemaVisitor {
     fun mutableVisit(uuid: MutableUuidSchema): Boolean
     fun mutableVisit(blob: MutableBlobSchema): Boolean
     fun mutableVisit(timestamp: MutableTimestampSchema): Boolean
-    fun mutableVisit(ipv4Address: MutableIpv4AddressSchema): Boolean
-    fun mutableVisit(ipv6Address: MutableIpv6AddressSchema): Boolean
-    fun mutableVisit(macAddress: MutableMacAddressSchema): Boolean
 }

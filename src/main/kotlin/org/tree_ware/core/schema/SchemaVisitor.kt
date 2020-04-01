@@ -37,7 +37,4 @@ public interface SchemaVisitor {
     fun visit(uuid: UuidSchema): Boolean
     fun visit(blob: BlobSchema): Boolean
     fun visit(timestamp: TimestampSchema): Boolean
-    fun visit(ipv4Address: Ipv4AddressSchema): Boolean
-    fun visit(ipv6Address: Ipv6AddressSchema): Boolean
-    fun visit(macAddress: MacAddressSchema): Boolean
 }

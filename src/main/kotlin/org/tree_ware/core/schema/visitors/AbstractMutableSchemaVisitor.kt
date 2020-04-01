@@ -94,16 +94,4 @@ abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor {
     override fun mutableVisit(timestamp: MutableTimestampSchema): Boolean {
         return true
     }
-
-    override fun mutableVisit(ipv4Address: MutableIpv4AddressSchema): Boolean {
-        return true
-    }
-
-    override fun mutableVisit(ipv6Address: MutableIpv6AddressSchema): Boolean {
-        return true
-    }
-
-    override fun mutableVisit(macAddress: MutableMacAddressSchema): Boolean {
-        return true
-    }
 }

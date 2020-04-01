@@ -101,16 +101,4 @@ class MutableAdapter(private val adaptee: SchemaVisitor) : MutableSchemaVisitor 
     override fun mutableVisit(timestamp: MutableTimestampSchema): Boolean {
         return adaptee.visit(timestamp)
     }
-
-    override fun mutableVisit(ipv4Address: MutableIpv4AddressSchema): Boolean {
-        return adaptee.visit(ipv4Address)
-    }
-
-    override fun mutableVisit(ipv6Address: MutableIpv6AddressSchema): Boolean {
-        return adaptee.visit(ipv6Address)
-    }
-
-    override fun mutableVisit(macAddress: MutableMacAddressSchema): Boolean {
-        return adaptee.visit(macAddress)
-    }
 }

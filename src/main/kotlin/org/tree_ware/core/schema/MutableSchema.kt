@@ -547,36 +547,6 @@ class MutableTimestampSchema : MutablePrimitiveSchema(), TimestampSchema {
     }
 }
 
-class MutableIpv4AddressSchema : MutablePrimitiveSchema(), Ipv4AddressSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        return visitor.visit(this)
-    }
-
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
-    }
-}
-
-class MutableIpv6AddressSchema : MutablePrimitiveSchema(), Ipv6AddressSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        return visitor.visit(this)
-    }
-
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
-    }
-}
-
-class MutableMacAddressSchema : MutablePrimitiveSchema(), MacAddressSchema {
-    override fun accept(visitor: SchemaVisitor): Boolean {
-        return visitor.visit(this)
-    }
-
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
-    }
-}
-
 // Constraints
 
 class MutableMultiplicity(override var min: Long, override var max: Long) : Multiplicity
