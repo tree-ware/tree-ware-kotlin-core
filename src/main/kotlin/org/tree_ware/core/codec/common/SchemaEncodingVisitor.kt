@@ -61,6 +61,7 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
 
     override fun visit(field: FieldSchema): Boolean {
         if (field.isKey) wireFormatEncoder.encodeBooleanField("is_key", field.isKey)
+        encodeMultiplicity(field.multiplicity)
         return true
     }
 
@@ -179,7 +180,15 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
         return true
     }
 
-    // Helper methods for constraints
+    // Helper methods
+
+    private fun encodeMultiplicity(multiplicity: Multiplicity) {
+        if (multiplicity.min == 1L && multiplicity.max == 1L) return
+        wireFormatEncoder.encodeObjectStart("multiplicity")
+        wireFormatEncoder.encodeNumericField("min", multiplicity.min)
+        wireFormatEncoder.encodeNumericField("max", multiplicity.max)
+        wireFormatEncoder.encodeObjectEnd()
+    }
 
     private fun <T : Number> encodeNumericConstraints(constraints: NumericConstraints<T>) = try {
         wireFormatEncoder.encodeObjectStart("constraints")

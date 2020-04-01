@@ -22,7 +22,8 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                     MutableCompositionFieldSchema(
                         name = "package_b_entity2_composition_field",
                         packageName = "package.b",
-                        entityName = "entity2"
+                        entityName = "entity2",
+                        multiplicity = MutableMultiplicity(0, 1)
                     )
                 )
             ),
@@ -35,7 +36,8 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                             "test",
                             "package_b_entity2_composition_field",
                             "package_c_entity3_composition_field"
-                        )
+                        ),
+                        multiplicity = MutableMultiplicity(1, 10)
                     ),
                     MutableAliasFieldSchema(
                         name = "package_b_string_alias1_field",
@@ -157,7 +159,8 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                     ),
                     MutablePrimitiveFieldSchema(
                         name = "primitive_uuid_field",
-                        primitive = MutableUuidSchema()
+                        primitive = MutableUuidSchema(),
+                        multiplicity = MutableMultiplicity(1, 0)
                     ),
                     MutablePrimitiveFieldSchema(
                         name = "primitive_blob_field",

@@ -23,6 +23,10 @@ const val goldenJsonPrettyPrintedSchema = """{
               },
               {
                 "name": "package_b_entity2_composition_field",
+                "multiplicity": {
+                  "min": 0,
+                  "max": 1
+                },
                 "type": {
                   "package": "package.b",
                   "entity": "entity2"
@@ -35,6 +39,10 @@ const val goldenJsonPrettyPrintedSchema = """{
             "fields": [
               {
                 "name": "package_a_association_field",
+                "multiplicity": {
+                  "min": 1,
+                  "max": 10
+                },
                 "type": {
                   "entity_path": [
                     "test",
@@ -177,6 +185,10 @@ const val goldenJsonPrettyPrintedSchema = """{
               },
               {
                 "name": "primitive_uuid_field",
+                "multiplicity": {
+                  "min": 1,
+                  "max": 0
+                },
                 "type": "uuid"
               },
               {
