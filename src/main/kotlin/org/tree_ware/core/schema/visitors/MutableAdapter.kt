@@ -74,8 +74,28 @@ class MutableAdapter(private val adaptee: SchemaVisitor) : MutableSchemaVisitor 
         return adaptee.visit(boolean)
     }
 
-    override fun <T : Number> mutableVisit(number: MutableNumericSchema<T>): Boolean {
-        return adaptee.visit(number)
+    override fun mutableVisit(byte: ByteSchema): Boolean {
+        return adaptee.visit(byte)
+    }
+
+    override fun mutableVisit(short: ShortSchema): Boolean {
+        return adaptee.visit(short)
+    }
+
+    override fun mutableVisit(int: IntSchema): Boolean {
+        return adaptee.visit(int)
+    }
+
+    override fun mutableVisit(long: LongSchema): Boolean {
+        return adaptee.visit(long)
+    }
+
+    override fun mutableVisit(float: FloatSchema): Boolean {
+        return adaptee.visit(float)
+    }
+
+    override fun mutableVisit(double: DoubleSchema): Boolean {
+        return adaptee.visit(double)
     }
 
     override fun mutableVisit(string: MutableStringSchema): Boolean {

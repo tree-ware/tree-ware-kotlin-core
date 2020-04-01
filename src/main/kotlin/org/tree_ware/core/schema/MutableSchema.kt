@@ -467,9 +467,69 @@ class MutableBooleanSchema : MutablePrimitiveSchema(), BooleanSchema {
     }
 }
 
-class MutableNumericSchema<T : Number>(
-    override var constraints: MutableNumericConstraints<T>? = null
-) : MutablePrimitiveSchema(), NumericSchema<T> {
+class MutableByteSchema(
+    override var constraints: MutableNumericConstraints<Byte>? = null
+) : MutablePrimitiveSchema(), ByteSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableShortSchema(
+    override var constraints: MutableNumericConstraints<Short>? = null
+) : MutablePrimitiveSchema(), ShortSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableIntSchema(
+    override var constraints: MutableNumericConstraints<Int>? = null
+) : MutablePrimitiveSchema(), IntSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableLongSchema(
+    override var constraints: MutableNumericConstraints<Long>? = null
+) : MutablePrimitiveSchema(), LongSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableFloatSchema(
+    override var constraints: MutableNumericConstraints<Float>? = null
+) : MutablePrimitiveSchema(), FloatSchema {
+    override fun accept(visitor: SchemaVisitor): Boolean {
+        return visitor.visit(this)
+    }
+
+    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+        return visitor.mutableVisit(this)
+    }
+}
+
+class MutableDoubleSchema(
+    override var constraints: MutableNumericConstraints<Double>? = null
+) : MutablePrimitiveSchema(), DoubleSchema {
     override fun accept(visitor: SchemaVisitor): Boolean {
         return visitor.visit(this)
     }

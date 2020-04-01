@@ -56,6 +56,7 @@ abstract class AbstractSchemaVisitor : SchemaVisitor {
     override fun visit(associationField: AssociationFieldSchema): Boolean {
         return true
     }
+
     override fun visit(compositionField: CompositionFieldSchema): Boolean {
         return true
     }
@@ -66,7 +67,27 @@ abstract class AbstractSchemaVisitor : SchemaVisitor {
         return true
     }
 
-    override fun <T : Number> visit(number: NumericSchema<T>): Boolean {
+    override fun visit(byte: ByteSchema): Boolean {
+        return true
+    }
+
+    override fun visit(short: ShortSchema): Boolean {
+        return true
+    }
+
+    override fun visit(int: IntSchema): Boolean {
+        return true
+    }
+
+    override fun visit(long: LongSchema): Boolean {
+        return true
+    }
+
+    override fun visit(float: FloatSchema): Boolean {
+        return true
+    }
+
+    override fun visit(double: DoubleSchema): Boolean {
         return true
     }
 

@@ -59,7 +59,7 @@ internal val helperPackage = MutablePackageSchema(
             fields = listOf(
                 MutablePrimitiveFieldSchema(
                     name = "int_field",
-                    primitive = MutableNumericSchema<Int>(),
+                    primitive = MutableIntSchema(),
                     isKey = true
                 )
             )

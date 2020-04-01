@@ -33,7 +33,12 @@ interface MutableSchemaVisitor {
     // Primitives
 
     fun mutableVisit(boolean: BooleanSchema): Boolean
-    fun <T : Number> mutableVisit(number: MutableNumericSchema<T>): Boolean
+    fun mutableVisit(byte: ByteSchema): Boolean
+    fun mutableVisit(short: ShortSchema): Boolean
+    fun mutableVisit(int: IntSchema): Boolean
+    fun mutableVisit(long: LongSchema): Boolean
+    fun mutableVisit(float: FloatSchema): Boolean
+    fun mutableVisit(double: DoubleSchema): Boolean
     fun mutableVisit(string: MutableStringSchema): Boolean
     fun mutableVisit(password1Way: MutablePassword1WaySchema): Boolean
     fun mutableVisit(password2Way: MutablePassword2WaySchema): Boolean

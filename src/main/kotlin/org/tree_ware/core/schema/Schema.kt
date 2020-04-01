@@ -113,9 +113,34 @@ interface PrimitiveSchema : VisitableSchema
 /** Schema for boolean primitive. */
 interface BooleanSchema : PrimitiveSchema
 
-/** Schema for numeric primitives. */
-interface NumericSchema<T : Number> : PrimitiveSchema {
-    val constraints: NumericConstraints<T>?
+/** Schema for numeric byte primitives. */
+interface ByteSchema : PrimitiveSchema {
+    val constraints: NumericConstraints<Byte>?
+}
+
+/** Schema for numeric byte primitives. */
+interface ShortSchema : PrimitiveSchema {
+    val constraints: NumericConstraints<Short>?
+}
+
+/** Schema for numeric byte primitives. */
+interface IntSchema : PrimitiveSchema {
+    val constraints: NumericConstraints<Int>?
+}
+
+/** Schema for numeric byte primitives. */
+interface LongSchema : PrimitiveSchema {
+    val constraints: NumericConstraints<Long>?
+}
+
+/** Schema for numeric byte primitives. */
+interface FloatSchema : PrimitiveSchema {
+    val constraints: NumericConstraints<Float>?
+}
+
+/** Schema for numeric byte primitives. */
+interface DoubleSchema : PrimitiveSchema {
+    val constraints: NumericConstraints<Double>?
 }
 
 /** Schema for string primitive. */

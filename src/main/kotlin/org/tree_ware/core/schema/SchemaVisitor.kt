@@ -30,7 +30,12 @@ public interface SchemaVisitor {
     // Primitives
 
     fun visit(boolean: BooleanSchema): Boolean
-    fun <T : Number> visit(number: NumericSchema<T>): Boolean
+    fun visit(byte: ByteSchema): Boolean
+    fun visit(short: ShortSchema): Boolean
+    fun visit(int: IntSchema): Boolean
+    fun visit(long: LongSchema): Boolean
+    fun visit(float: FloatSchema): Boolean
+    fun visit(double: DoubleSchema): Boolean
     fun visit(string: StringSchema): Boolean
     fun visit(password1Way: Password1WaySchema): Boolean
     fun visit(password2Way: Password2WaySchema): Boolean

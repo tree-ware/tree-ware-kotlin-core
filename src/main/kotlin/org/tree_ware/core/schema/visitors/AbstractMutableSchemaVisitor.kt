@@ -67,7 +67,27 @@ abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor {
         return true
     }
 
-    override fun <T : Number> mutableVisit(number: MutableNumericSchema<T>): Boolean {
+    override fun mutableVisit(byte: ByteSchema): Boolean {
+        return true
+    }
+
+    override fun mutableVisit(short: ShortSchema): Boolean {
+        return true
+    }
+
+    override fun mutableVisit(int: IntSchema): Boolean {
+        return true
+    }
+
+    override fun mutableVisit(long: LongSchema): Boolean {
+        return true
+    }
+
+    override fun mutableVisit(float: FloatSchema): Boolean {
+        return true
+    }
+
+    override fun mutableVisit(double: DoubleSchema): Boolean {
         return true
     }
 

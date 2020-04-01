@@ -110,9 +110,39 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
         return true
     }
 
-    override fun <T : Number> visit(number: NumericSchema<T>): Boolean {
-        wireFormatEncoder.encodeStringField("type", "numeric")
-        number.constraints?.let { encodeNumericConstraints(it) }
+    override fun visit(byte: ByteSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "byte")
+        byte.constraints?.let { encodeNumericConstraints(it) }
+        return true
+    }
+
+    override fun visit(short: ShortSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "short")
+        short.constraints?.let { encodeNumericConstraints(it) }
+        return true
+    }
+
+    override fun visit(int: IntSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "int")
+        int.constraints?.let { encodeNumericConstraints(it) }
+        return true
+    }
+
+    override fun visit(long: LongSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "long")
+        long.constraints?.let { encodeNumericConstraints(it) }
+        return true
+    }
+
+    override fun visit(float: FloatSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "float")
+        float.constraints?.let { encodeNumericConstraints(it) }
+        return true
+    }
+
+    override fun visit(double: DoubleSchema): Boolean {
+        wireFormatEncoder.encodeStringField("type", "double")
+        double.constraints?.let { encodeNumericConstraints(it) }
         return true
     }
 
