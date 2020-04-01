@@ -138,6 +138,50 @@ const val goldenJsonPrettyPrintedSchema = """{
                 "name": "primitive_boolean_field",
                 "is_key": true,
                 "type": "boolean"
+              },
+              {
+                "name": "primitive_byte_field",
+                "type": "byte"
+              },
+              {
+                "name": "primitive_short_field",
+                "type": "short"
+              },
+              {
+                "name": "primitive_int_field",
+                "type": "int"
+              },
+              {
+                "name": "primitive_long_field",
+                "type": "long"
+              },
+              {
+                "name": "primitive_float_field",
+                "type": "float"
+              },
+              {
+                "name": "primitive_double_field",
+                "type": "double"
+              },
+              {
+                "name": "primitive_string_field",
+                "type": "string"
+              },
+              {
+                "name": "primitive_password_1_way_field",
+                "type": "password_1_way"
+              },
+              {
+                "name": "primitive_password_2_way_field",
+                "type": "password_2_way"
+              },
+              {
+                "name": "primitive_uuid_field",
+                "type": "uuid"
+              },
+              {
+                "name": "primitive_blob_field",
+                "type": "blob"
               }
             ]
           }

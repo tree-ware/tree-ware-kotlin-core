@@ -118,6 +118,50 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                         name = "primitive_boolean_field",
                         primitive = MutableBooleanSchema(),
                         isKey = true
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_byte_field",
+                        primitive = MutableByteSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_short_field",
+                        primitive = MutableShortSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_int_field",
+                        primitive = MutableIntSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_long_field",
+                        primitive = MutableLongSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_float_field",
+                        primitive = MutableFloatSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_double_field",
+                        primitive = MutableDoubleSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_string_field",
+                        primitive = MutableStringSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_password_1_way_field",
+                        primitive = MutablePassword1WaySchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_password_2_way_field",
+                        primitive = MutablePassword2WaySchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_uuid_field",
+                        primitive = MutableUuidSchema()
+                    ),
+                    MutablePrimitiveFieldSchema(
+                        name = "primitive_blob_field",
+                        primitive = MutableBlobSchema()
                     )
                 )
             )
