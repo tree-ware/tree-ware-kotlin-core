@@ -5,7 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
 
-class KeyValidationTests {
+class CompositionValidationTests {
     @Test
     fun `Composition key target entity must have keys`() {
         val testPackage = MutablePackageSchema(
