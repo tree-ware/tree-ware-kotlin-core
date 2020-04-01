@@ -15,13 +15,19 @@ class ResolveAssociationsVisitor(
         }
         root?.also { rootComposition ->
             var parentComposition = rootComposition
+            var hasEntityPathKeys = false
             // Follow the association's entityPath to the final composition.
             associationField.entityPath.forEachIndexed { index, pathElement ->
                 getChildComposition(associationField, index, pathElement, parentComposition)?.also {
                     parentComposition = it
+                    hasEntityPathKeys = hasEntityPathKeys ||
+                            parentComposition._resolvedEntity?.fields?.filter { it.isKey }?.isNotEmpty() ?: false
                 } ?: return@also
             }
             parentComposition._resolvedEntity?.also { associationField.resolvedEntity = it }
+            if (associationField.multiplicity.max != 1L && !hasEntityPathKeys) _errors.add(
+                "Association list entity path does not have keys: ${associationField.fullName}"
+            )
         }
         return true
     }

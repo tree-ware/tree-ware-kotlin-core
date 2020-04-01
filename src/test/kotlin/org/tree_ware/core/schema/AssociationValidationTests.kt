@@ -143,4 +143,69 @@ class AssociationValidationTests {
 
         assertThat(errors.isEmpty()).isTrue()
     }
+
+    @Test
+    fun `Association list entity path must have keys`() {
+        val testPackage = MutablePackageSchema(
+            name = "test.package",
+            entities = listOf(
+                MutableEntitySchema(
+                    name = "test_entity",
+                    fields = listOf(
+                        MutableAssociationFieldSchema(
+                            name = "test_association_field",
+                            entityPath = listOf(
+                                "root",
+                                "entity1_composition_field_1_1"
+                            ),
+                            multiplicity = MutableMultiplicity(1, 0)
+                        )
+                    )
+                )
+            )
+        )
+        val schemaManager = SchemaManager()
+        val errors = schemaManager.addPackages(listOf(testPackage, associationListHelperPackage))
+
+        val expectedErrors = listOf(
+            "Association list entity path does not have keys: /test.package/test_entity/test_association_field"
+        )
+
+        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+    }
+
+    @Test
+    fun `Association list is valid if entity path has keys`() {
+        val testPackage = MutablePackageSchema(
+            name = "test.package",
+            entities = listOf(
+                MutableEntitySchema(
+                    name = "test_entity",
+                    fields = listOf(
+                        MutableAssociationFieldSchema(
+                            name = "test_association_field1",
+                            entityPath = listOf(
+                                "root",
+                                "entity1_composition_field_1_1",
+                                "entity2_composition_field_0_0"
+                            ),
+                            multiplicity = MutableMultiplicity(10, 10)
+                        ),
+                        MutableAssociationFieldSchema(
+                            name = "test_association_field2",
+                            entityPath = listOf(
+                                "root",
+                                "entity1_composition_field_1_10"
+                            ),
+                            multiplicity = MutableMultiplicity(0, 0)
+                        )
+                    )
+                )
+            )
+        )
+        val schemaManager = SchemaManager()
+        val errors = schemaManager.addPackages(listOf(testPackage, associationListHelperPackage))
+
+        assertThat(errors.isEmpty()).isTrue()
+    }
 }

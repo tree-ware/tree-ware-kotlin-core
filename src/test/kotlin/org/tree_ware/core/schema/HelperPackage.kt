@@ -44,7 +44,8 @@ internal val helperPackage = MutablePackageSchema(
             fields = listOf(
                 MutablePrimitiveFieldSchema(
                     name = "boolean_field",
-                    primitive = MutableBooleanSchema()
+                    primitive = MutableBooleanSchema(),
+                    isKey = true
                 ),
                 MutableCompositionFieldSchema(
                     name = "entity2_composition_field",
