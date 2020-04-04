@@ -28,8 +28,15 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     }
 
     override fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean {
-        val entityFullName = "/${compositionField.packageName}/${compositionField.entityName}"
-        val entity = entities[entityFullName]
+        // Set parentEntity
+        val fieldFullName = compositionField.fullName ?: ""
+        val index = fieldFullName.lastIndexOf("/")
+        val parentFullName = if (index == -1) "" else fieldFullName.substring(0, index)
+        compositionField.parentEntity = entities[parentFullName]
+
+        // Set resolvedEntity
+        val targetFullName = "/${compositionField.packageName}/${compositionField.entityName}"
+        val entity = entities[targetFullName]
         if (entity == null) _errors.add("Unknown field type: ${compositionField.fullName}")
         else {
             compositionField.resolvedEntity = entity

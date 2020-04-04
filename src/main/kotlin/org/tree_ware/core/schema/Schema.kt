@@ -91,6 +91,7 @@ interface EnumerationFieldSchema : FieldSchema {
 interface AssociationFieldSchema : FieldSchema {
     val entityPath: List<String>
 
+    val parentEntity: EntitySchema?
     val resolvedEntity: EntitySchema
 }
 
@@ -99,6 +100,7 @@ interface CompositionFieldSchema : FieldSchema {
     val packageName: String
     val entityName: String
 
+    val parentEntity: EntitySchema?
     val resolvedEntity: EntitySchema
 }
 

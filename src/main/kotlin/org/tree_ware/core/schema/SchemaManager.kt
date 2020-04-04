@@ -2,6 +2,7 @@ package org.tree_ware.core.schema
 
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.core.codec.common.SchemaEncoder
+import org.tree_ware.core.codec.dot.DotSchemaEncoder
 import org.tree_ware.core.codec.json.JsonSchemaEncoder
 import org.tree_ware.core.schema.visitors.*
 import java.io.Writer
@@ -75,6 +76,10 @@ class SchemaManager {
 
     fun encodeJson(writer: Writer, prettyPrint: Boolean = false): Boolean {
         return encode(JsonSchemaEncoder(writer, prettyPrint))
+    }
+
+    fun encodeDot(writer: Writer): Boolean {
+        return encode(DotSchemaEncoder(writer))
     }
 
     fun encode(encoder: SchemaEncoder): Boolean {
