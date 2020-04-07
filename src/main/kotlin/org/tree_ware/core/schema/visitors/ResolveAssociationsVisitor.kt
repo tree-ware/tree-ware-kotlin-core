@@ -9,12 +9,6 @@ class ResolveAssociationsVisitor(
     private val entities: Map<String, MutableEntitySchema>
 ) : AbstractMutableSchemaValidatingVisitor() {
     override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
-        // Set parentEntity
-        val fieldFullName = associationField.fullName ?: ""
-        val index = fieldFullName.lastIndexOf("/")
-        val parentFullName = if (index == -1) "" else fieldFullName.substring(0, index)
-        associationField.parentEntity = entities[parentFullName]
-
         // Set resolvedEntity
         if (associationField.entityPath.size < 2) {
             _errors.add("Association path is too short: ${associationField.fullName}")

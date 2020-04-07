@@ -11,6 +11,16 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     private val enumerations: Map<String, MutableEnumerationSchema>,
     private val entities: Map<String, MutableEntitySchema>
 ) : AbstractMutableSchemaValidatingVisitor() {
+    override fun mutableVisit(field: MutableFieldSchema): Boolean {
+        // Set parentEntity
+        val fieldFullName = field.fullName ?: ""
+        val index = fieldFullName.lastIndexOf("/")
+        val parentFullName = if (index == -1) "" else fieldFullName.substring(0, index)
+        field.parentEntity = entities[parentFullName]
+
+        return true
+    }
+
     override fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean {
         val aliasFullName = "/${aliasField.packageName}/${aliasField.aliasName}"
         val alias = aliases[aliasFullName]
@@ -28,12 +38,6 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     }
 
     override fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean {
-        // Set parentEntity
-        val fieldFullName = compositionField.fullName ?: ""
-        val index = fieldFullName.lastIndexOf("/")
-        val parentFullName = if (index == -1) "" else fieldFullName.substring(0, index)
-        compositionField.parentEntity = entities[parentFullName]
-
         // Set resolvedEntity
         val targetFullName = "/${compositionField.packageName}/${compositionField.entityName}"
         val entity = entities[targetFullName]

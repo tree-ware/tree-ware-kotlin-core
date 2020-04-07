@@ -64,6 +64,8 @@ interface EntitySchema : NamedElementSchema {
 interface FieldSchema : NamedElementSchema {
     val isKey: Boolean
     val multiplicity: Multiplicity
+
+    val parentEntity: EntitySchema?
 }
 
 /** Schema for fields whose types are predefined primitives. */
@@ -91,7 +93,6 @@ interface EnumerationFieldSchema : FieldSchema {
 interface AssociationFieldSchema : FieldSchema {
     val entityPath: List<String>
 
-    val parentEntity: EntitySchema?
     val resolvedEntity: EntitySchema
 }
 
@@ -100,7 +101,6 @@ interface CompositionFieldSchema : FieldSchema {
     val packageName: String
     val entityName: String
 
-    val parentEntity: EntitySchema?
     val resolvedEntity: EntitySchema
 }
 

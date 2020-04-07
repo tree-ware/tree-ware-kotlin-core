@@ -318,6 +318,9 @@ abstract class MutableFieldSchema(
     override var isKey: Boolean,
     override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableNamedElementSchema(name), FieldSchema {
+    override var parentEntity: EntitySchema? = null
+        internal set
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -415,9 +418,6 @@ class MutableAssociationFieldSchema(
         }
     private var _resolvedEntity: MutableEntitySchema? = null
 
-    override var parentEntity: EntitySchema? = null
-        internal set
-
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -444,9 +444,6 @@ class MutableCompositionFieldSchema(
         }
     internal var _resolvedEntity: MutableEntitySchema? = null
         private set
-
-    override var parentEntity: EntitySchema? = null
-        internal set
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
