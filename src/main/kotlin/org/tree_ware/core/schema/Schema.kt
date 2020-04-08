@@ -15,6 +15,8 @@ interface ElementSchema : VisitableSchema
 
 interface NamedElementSchema : ElementSchema {
     val name: String
+    val info: String?
+
     val fullName: String?
 }
 

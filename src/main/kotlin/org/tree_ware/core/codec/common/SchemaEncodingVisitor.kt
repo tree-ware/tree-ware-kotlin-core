@@ -30,6 +30,7 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
 
     override fun visit(namedElement: NamedElementSchema): Boolean {
         wireFormatEncoder.encodeStringField("name", namedElement.name)
+        namedElement.info?.also { wireFormatEncoder.encodeStringField("info", it)}
         return true
     }
 

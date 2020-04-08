@@ -5,8 +5,10 @@ const val goldenJsonPrettyPrintedSchema = """{
     "packages": [
       {
         "name": "package.a",
+        "info": "Test package A",
         "root": {
           "name": "test",
+          "info": "Test schema root",
           "type": {
             "package": "package.a",
             "entity": "entity1"
@@ -15,14 +17,17 @@ const val goldenJsonPrettyPrintedSchema = """{
         "entities": [
           {
             "name": "entity1",
+            "info": "First entity in package.a",
             "fields": [
               {
                 "name": "primitive_string_field",
+                "info": "A primitive string field",
                 "is_key": true,
                 "type": "string"
               },
               {
                 "name": "package_b_entity2_composition_field",
+                "info": "A field that composes entity 2 in package.b",
                 "multiplicity": {
                   "min": 0,
                   "max": 1
@@ -39,6 +44,7 @@ const val goldenJsonPrettyPrintedSchema = """{
             "fields": [
               {
                 "name": "package_a_association_field",
+                "info": "A field that is an association to the entity at the end of the specified path",
                 "multiplicity": {
                   "min": 1,
                   "max": 10

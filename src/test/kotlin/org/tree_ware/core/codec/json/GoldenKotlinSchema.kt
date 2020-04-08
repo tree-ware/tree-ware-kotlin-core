@@ -5,22 +5,27 @@ import org.tree_ware.core.schema.*
 fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
     val packageA = MutablePackageSchema(
         name = "package.a",
+        info = "Test package A",
         root = MutableCompositionFieldSchema(
             name = "test",
+            info = "Test schema root",
             packageName = "package.a",
             entityName = "entity1"
         ),
         entities = listOf(
             MutableEntitySchema(
                 name = "entity1",
+                info = "First entity in package.a",
                 fields = listOf(
                     MutablePrimitiveFieldSchema(
                         name = "primitive_string_field",
+                        info = "A primitive string field",
                         primitive = MutableStringSchema(),
                         isKey = true
                     ),
                     MutableCompositionFieldSchema(
                         name = "package_b_entity2_composition_field",
+                        info = "A field that composes entity 2 in package.b",
                         packageName = "package.b",
                         entityName = "entity2",
                         multiplicity = MutableMultiplicity(0, 1)
@@ -32,6 +37,7 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
                 fields = listOf(
                     MutableAssociationFieldSchema(
                         name = "package_a_association_field",
+                        info = "A field that is an association to the entity at the end of the specified path",
                         entityPath = listOf(
                             "test",
                             "package_b_entity2_composition_field",
