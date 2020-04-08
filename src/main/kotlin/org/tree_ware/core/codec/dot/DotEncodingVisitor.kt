@@ -27,7 +27,7 @@ class DotEncodingVisitor(
     }
 
     private fun writeNodeField(field: FieldSchema, type: String) {
-        val keyIcon = if (field.isKey) "&#128477;" else ""
+        val keyIcon = if (field.isKey) "key" else ""
 
         val multiplicity = if (field.multiplicity.min == 1L && field.multiplicity.max == 1L) {
             "required"
@@ -165,37 +165,37 @@ class DotEncodingVisitor(
         return true
     }
 
-    override fun visit(field: PrimitiveFieldSchema): Boolean {
-        writeNodeField(field, getPrimitiveType(field.primitive))
+    override fun visit(primitiveField: PrimitiveFieldSchema): Boolean {
+        writeNodeField(primitiveField, getPrimitiveType(primitiveField.primitive))
         return true
     }
 
-    override fun visit(field: AliasFieldSchema): Boolean {
-        writeNodeField(field, "${field.aliasName} (${getPrimitiveType(field.resolvedAlias.primitive)})")
+    override fun visit(aliasField: AliasFieldSchema): Boolean {
+        writeNodeField(aliasField, "${aliasField.aliasName} (${getPrimitiveType(aliasField.resolvedAlias.primitive)})")
         return true
     }
 
-    override fun visit(field: EnumerationFieldSchema): Boolean {
-        writeNodeField(field, field.enumerationName)
+    override fun visit(enumerationField: EnumerationFieldSchema): Boolean {
+        writeNodeField(enumerationField, enumerationField.enumerationName)
         return true
     }
 
-    override fun visit(field: AssociationFieldSchema): Boolean {
-        writeNodeField(field, field.resolvedEntity.name)
+    override fun visit(associationField: AssociationFieldSchema): Boolean {
+        writeNodeField(associationField, associationField.resolvedEntity.name)
 
-        field.parentEntity?.also {
-            linksWriter.write("""  "${it.fullName}":"${field.name}" -> "${field.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
+        associationField.parent?.also {
+            linksWriter.write("""  "${it.fullName}":"${associationField.name}" -> "${associationField.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
             linksWriter.write(prettyPrinter.endOfLine)
         }
 
         return true
     }
 
-    override fun visit(field: CompositionFieldSchema): Boolean {
-        field.parentEntity?.also {
-            writeNodeField(field, field.resolvedEntity.name)
+    override fun visit(compositionField: CompositionFieldSchema): Boolean {
+        compositionField.parent?.also {
+            writeNodeField(compositionField, compositionField.resolvedEntity.name)
 
-            linksWriter.write("""  "${it.fullName}":"${field.name}" -> "${field.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
+            linksWriter.write("""  "${it.fullName}":"${compositionField.name}" -> "${compositionField.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
             linksWriter.write(prettyPrinter.endOfLine)
         }
 

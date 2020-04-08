@@ -69,7 +69,10 @@ abstract class MutableNamedElementSchema(override var name: String, override var
 
 class MutableSchema() : MutableElementSchema(), Schema {
     override var packages: List<MutablePackageSchema> = listOf()
-        internal set
+        internal set(value) {
+            field = value
+            field.forEach { it.parent = this }
+        }
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -118,7 +121,14 @@ class MutablePackageSchema(
 ) : MutableNamedElementSchema(name, info), PackageSchema {
     init {
         root?.also { it.objectId = "root" }
+
+        aliases.forEach { it.parent = this }
+        enumerations.forEach { it.parent = this }
+        entities.forEach { it.parent = this }
     }
+
+    override var parent: MutableSchema? = null
+        internal set
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -204,6 +214,9 @@ class MutableAliasSchema(
     info: String? = null,
     override var primitive: MutablePrimitiveSchema
 ) : MutableNamedElementSchema(name, info), AliasSchema {
+    override var parent: MutablePackageSchema? = null
+        internal set
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -226,6 +239,13 @@ class MutableEnumerationSchema(
     info: String? = null,
     override var values: List<MutableEnumerationValueSchema>
 ) : MutableNamedElementSchema(name, info), EnumerationSchema {
+    init {
+        values.forEach { it.parent = this }
+    }
+
+    override var parent: MutablePackageSchema? = null
+        internal set
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -267,6 +287,9 @@ class MutableEnumerationSchema(
 
 class MutableEnumerationValueSchema(name: String, info: String? = null) : MutableNamedElementSchema(name, info),
     EnumerationValueSchema {
+    override var parent: MutableEnumerationSchema? = null
+        internal set
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -279,6 +302,13 @@ class MutableEnumerationValueSchema(name: String, info: String? = null) : Mutabl
 class MutableEntitySchema(
     name: String, info: String? = null, override var fields: List<MutableFieldSchema>
 ) : MutableNamedElementSchema(name, info), EntitySchema {
+    init {
+        fields.forEach { it.parent = this }
+    }
+
+    override var parent: MutablePackageSchema? = null
+        internal set
+
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -326,7 +356,7 @@ abstract class MutableFieldSchema(
     override var isKey: Boolean,
     override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableNamedElementSchema(name, info), FieldSchema {
-    override var parentEntity: EntitySchema? = null
+    override var parent: MutableEntitySchema? = null
         internal set
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {

@@ -18,6 +18,7 @@ interface NamedElementSchema : ElementSchema {
     val info: String?
 
     val fullName: String?
+    val parent: ElementSchema?
 }
 
 /** The entire schema. */
@@ -31,6 +32,8 @@ interface PackageSchema : NamedElementSchema {
     val aliases: List<AliasSchema>
     val enumerations: List<EnumerationSchema>
     val entities: List<EntitySchema>
+
+    override val parent: Schema?
 }
 
 /**
@@ -41,19 +44,27 @@ interface PackageSchema : NamedElementSchema {
  */
 interface AliasSchema : NamedElementSchema {
     val primitive: PrimitiveSchema
+
+    override val parent: PackageSchema?    
 }
 
 /** Schema for user-defined enumerations. */
 interface EnumerationSchema : NamedElementSchema {
     val values: List<EnumerationValueSchema>
+
+    override val parent: PackageSchema?
 }
 
 /** Schema for user-defined enumeration values. */
-interface EnumerationValueSchema : NamedElementSchema
+interface EnumerationValueSchema : NamedElementSchema {
+    override val parent: EnumerationSchema?
+}
 
 /** Schema for user-defined entities. */
 interface EntitySchema : NamedElementSchema {
     val fields: List<FieldSchema>
+
+    override val parent: PackageSchema?
 }
 
 // Fields
@@ -67,7 +78,7 @@ interface FieldSchema : NamedElementSchema {
     val isKey: Boolean
     val multiplicity: Multiplicity
 
-    val parentEntity: EntitySchema?
+    override val parent: EntitySchema?
 }
 
 /** Schema for fields whose types are predefined primitives. */
