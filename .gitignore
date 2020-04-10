@@ -6,6 +6,9 @@
 /build/
 /out/
 
+*.dot
+*.png
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

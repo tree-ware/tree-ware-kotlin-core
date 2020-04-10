@@ -8,6 +8,10 @@ import org.tree_ware.core.schema.visitors.*
 import java.io.Writer
 
 class SchemaManager {
+    val root: RootSchema
+        get() = _root ?: throw IllegalStateException("root has not been set")
+    private var _root: MutableRootSchema? = null
+
     /** Adds packages to the schema if there are no errors.
      * Returns the list of errors. Returns an empty list if there are no errors.
      *
@@ -40,6 +44,7 @@ class SchemaManager {
             pkg.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
         }
         setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
+        _root = validationVisitor.root
 
         // Resolve non-primitive field types, except associations.
         // Associations can be resolved only after compositions are resolved.
@@ -51,7 +56,7 @@ class SchemaManager {
         }
 
         // Resolve associations.
-        val resolveAssociationsVisitor = ResolveAssociationsVisitor(validationVisitor.root)
+        val resolveAssociationsVisitor = ResolveAssociationsVisitor(_root)
 
         packages.forEach { pkg ->
             pkg.mutableAccept(resolveAssociationsVisitor)
