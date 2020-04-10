@@ -3,7 +3,7 @@ package org.tree_ware.core.schema
 /** A helper package with root and compositions. */
 internal val helperPackage = MutablePackageSchema(
     name = "helper.package",
-    root = MutableCompositionFieldSchema(
+    root = MutableRootSchema(
         name = "root",
         packageName = "helper.package",
         entityName = "entity1"

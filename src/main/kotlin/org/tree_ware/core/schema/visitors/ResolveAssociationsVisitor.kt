@@ -3,64 +3,66 @@ package org.tree_ware.core.schema.visitors
 import org.tree_ware.core.schema.MutableAssociationFieldSchema
 import org.tree_ware.core.schema.MutableCompositionFieldSchema
 import org.tree_ware.core.schema.MutableEntitySchema
+import org.tree_ware.core.schema.MutableRootSchema
 
-class ResolveAssociationsVisitor(
-    private val root: MutableCompositionFieldSchema?,
-    private val entities: Map<String, MutableEntitySchema>
-) : AbstractMutableSchemaValidatingVisitor() {
+class ResolveAssociationsVisitor(private val root: MutableRootSchema?) : AbstractMutableSchemaValidatingVisitor() {
     override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
         // Set resolvedEntity
         if (associationField.entityPath.size < 2) {
             _errors.add("Association path is too short: ${associationField.fullName}")
             return true
         }
-        root?.also { rootComposition ->
-            var parentComposition = rootComposition
-            var hasEntityPathKeys = false
-            // Follow the association's entityPath to the final composition.
-            associationField.entityPath.forEachIndexed { index, pathElement ->
-                getChildComposition(associationField, index, pathElement, parentComposition)?.also {
-                    parentComposition = it
-                    hasEntityPathKeys = hasEntityPathKeys ||
-                            parentComposition._resolvedEntity?.fields?.filter { it.isKey }?.isNotEmpty() ?: false
-                } ?: return@also
-            }
-            parentComposition._resolvedEntity?.also { associationField.resolvedEntity = it }
-            if (associationField.multiplicity.max != 1L && !hasEntityPathKeys) _errors.add(
-                "Association list entity path does not have keys: ${associationField.fullName}"
-            )
-        }
+        root?.also { resolveEntityPath(root, associationField) }
         return true
     }
 
-    private fun getChildComposition(
-        associationField: MutableAssociationFieldSchema,
-        pathIndex: Int,
-        pathElement: String,
-        parentComposition: MutableCompositionFieldSchema
-    ): MutableCompositionFieldSchema? {
-        if (pathIndex == 0) {
-            // Root case. pathElement must match root name.
-            if (pathElement == parentComposition.name) {
-                return parentComposition
+    private fun resolveEntityPath(root: MutableRootSchema, associationField: MutableAssociationFieldSchema) {
+        // Abort entity-path resolution if there is no root resolved-entity.
+        // The lack of a resolved-entity is reported by a different validation visitor.
+        var entity: MutableEntitySchema = root._resolvedEntity ?: return
+        var hasEntityPathKeys = false
+        associationField.entityPath.forEachIndexed { index, pathElement ->
+            val nextEntity = if (index == 0) {
+                getFirstEntity(pathElement, root, associationField.fullName)
             } else {
-                _errors.add("Invalid association path root: ${associationField.fullName}")
-                return null
+                getNextEntity(pathElement, entity, associationField.fullName)
             }
-        } else {
-            val parentEntity = parentComposition._resolvedEntity
-            // Abort validation if the composition does not have a resolved-entity.
+            // Abort entity-path resolution if there is no resolved-entity.
             // The lack of a resolved-entity is reported by a different validation visitor.
-            if (parentEntity == null) return null
-            else {
-                val field = parentEntity.fields.find { it.name == pathElement }
-                if (field is MutableCompositionFieldSchema) {
-                    return field
-                } else {
-                    _errors.add("Invalid association path: ${associationField.fullName}")
-                    return null
-                }
-            }
+            entity = nextEntity ?: return
+            hasEntityPathKeys = hasEntityPathKeys || entity.fields.filter { it.isKey }.isNotEmpty()
+        }
+        associationField.resolvedEntity = entity
+        if (associationField.multiplicity.max != 1L && !hasEntityPathKeys) _errors.add(
+            "Association list entity path does not have keys: ${associationField.fullName}"
+        )
+    }
+
+    private fun getFirstEntity(
+        pathElement: String,
+        root: MutableRootSchema,
+        associationFullName: String?
+    ): MutableEntitySchema? {
+        // First path-element must match root.
+        if (pathElement == root.name) {
+            return root._resolvedEntity
+        } else {
+            _errors.add("Invalid association path root: ${associationFullName}")
+            return null
+        }
+    }
+
+    private fun getNextEntity(
+        pathElement: String,
+        previousEntity: MutableEntitySchema,
+        associationFullName: String?
+    ): MutableEntitySchema? {
+        val field = previousEntity.fields.find { it.name == pathElement }
+        if (field is MutableCompositionFieldSchema) {
+            return field._resolvedEntity
+        } else {
+            _errors.add("Invalid association path: ${associationFullName}")
+            return null
         }
     }
 }

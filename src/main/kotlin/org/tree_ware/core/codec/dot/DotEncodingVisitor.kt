@@ -183,21 +183,17 @@ class DotEncodingVisitor(
     override fun visit(associationField: AssociationFieldSchema): Boolean {
         writeNodeField(associationField, associationField.resolvedEntity.name)
 
-        associationField.parent?.also {
-            linksWriter.write("""  "${it.fullName}":"${associationField.name}" -> "${associationField.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
-            linksWriter.write(prettyPrinter.endOfLine)
-        }
+        linksWriter.write("""  "${associationField.parent.fullName}":"${associationField.name}" -> "${associationField.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
+        linksWriter.write(prettyPrinter.endOfLine)
 
         return true
     }
 
     override fun visit(compositionField: CompositionFieldSchema): Boolean {
-        compositionField.parent?.also {
-            writeNodeField(compositionField, compositionField.resolvedEntity.name)
+        writeNodeField(compositionField, compositionField.resolvedEntity.name)
 
-            linksWriter.write("""  "${it.fullName}":"${compositionField.name}" -> "${compositionField.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
-            linksWriter.write(prettyPrinter.endOfLine)
-        }
+        linksWriter.write("""  "${compositionField.parent.fullName}":"${compositionField.name}" -> "${compositionField.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
+        linksWriter.write(prettyPrinter.endOfLine)
 
         return true
     }

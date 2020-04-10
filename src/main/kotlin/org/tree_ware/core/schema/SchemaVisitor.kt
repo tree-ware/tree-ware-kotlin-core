@@ -11,6 +11,7 @@ public interface SchemaVisitor {
 
     fun visit(schema: Schema): Boolean
     fun visit(pkg: PackageSchema): Boolean
+    fun visit(root: RootSchema): Boolean
 
     fun visit(alias: AliasSchema): Boolean
     fun visit(enumeration: EnumerationSchema): Boolean

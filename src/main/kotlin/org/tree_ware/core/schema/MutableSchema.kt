@@ -114,7 +114,7 @@ class MutableSchema() : MutableElementSchema(), Schema {
 class MutablePackageSchema(
     name: String,
     info: String? = null,
-    override var root: MutableCompositionFieldSchema? = null,
+    override var root: MutableRootSchema? = null,
     override var aliases: List<MutableAliasSchema> = listOf(),
     override var enumerations: List<MutableEnumerationSchema> = listOf(),
     override var entities: List<MutableEntitySchema> = listOf()
@@ -127,8 +127,12 @@ class MutablePackageSchema(
         entities.forEach { it.parent = this }
     }
 
-    override var parent: MutableSchema? = null
-        internal set
+    override var parent: MutableSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutableSchema? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -209,13 +213,50 @@ class MutablePackageSchema(
     }
 }
 
+class MutableRootSchema(
+    name: String,
+    info: String? = null,
+    override var packageName: String,
+    override var entityName: String
+) : MutableNamedElementSchema(name, info), RootSchema {
+    override var parent: MutablePackageSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutablePackageSchema? = null
+
+    override var resolvedEntity: MutableEntitySchema
+        get() = _resolvedEntity
+            ?: throw IllegalStateException("Root /${packageName}/${entityName} has not been resolved")
+        internal set(value) {
+            _resolvedEntity = value
+        }
+    internal var _resolvedEntity: MutableEntitySchema? = null
+        private set
+
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
+    // The resolved type of this field is not considered a child and is therefore not traversed.
+}
+
 class MutableAliasSchema(
     name: String,
     info: String? = null,
     override var primitive: MutablePrimitiveSchema
 ) : MutableNamedElementSchema(name, info), AliasSchema {
-    override var parent: MutablePackageSchema? = null
-        internal set
+    override var parent: MutablePackageSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutablePackageSchema? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -243,8 +284,12 @@ class MutableEnumerationSchema(
         values.forEach { it.parent = this }
     }
 
-    override var parent: MutablePackageSchema? = null
-        internal set
+    override var parent: MutablePackageSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutablePackageSchema? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -287,8 +332,12 @@ class MutableEnumerationSchema(
 
 class MutableEnumerationValueSchema(name: String, info: String? = null) : MutableNamedElementSchema(name, info),
     EnumerationValueSchema {
-    override var parent: MutableEnumerationSchema? = null
-        internal set
+    override var parent: MutableEnumerationSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutableEnumerationSchema? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -306,8 +355,12 @@ class MutableEntitySchema(
         fields.forEach { it.parent = this }
     }
 
-    override var parent: MutablePackageSchema? = null
-        internal set
+    override var parent: MutablePackageSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutablePackageSchema? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -356,8 +409,12 @@ abstract class MutableFieldSchema(
     override var isKey: Boolean,
     override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableNamedElementSchema(name, info), FieldSchema {
-    override var parent: MutableEntitySchema? = null
-        internal set
+    override var parent: MutableEntitySchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutableEntitySchema? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)

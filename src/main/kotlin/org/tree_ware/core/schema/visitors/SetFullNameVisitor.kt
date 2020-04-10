@@ -45,6 +45,11 @@ class SetFullNameVisitor() : AbstractMutableSchemaValidatingVisitor(), Bracketed
         return true
     }
 
+    override fun mutableVisit(root: MutableRootSchema): Boolean {
+        validateName(root, ELEMENT_NAME_REGEX)
+        return true
+    }
+
     override fun mutableVisit(alias: MutableAliasSchema): Boolean {
         validateName(alias, ELEMENT_NAME_REGEX)
         return true

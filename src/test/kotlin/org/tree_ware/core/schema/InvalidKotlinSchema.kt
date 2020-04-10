@@ -3,7 +3,7 @@ package org.tree_ware.core.schema
 fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
     val packageA = MutablePackageSchema(
         name = "hyphens-not-allowed-for-packages",
-        root = MutableCompositionFieldSchema(
+        root = MutableRootSchema(
             name = "root1",
             packageName = "hyphens-not-allowed-for-packages",
             entityName = "dots.not_allowed_for.entities"
@@ -61,7 +61,7 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
 
     val packageB = MutablePackageSchema(
         name = "package.b",
-        root = MutableCompositionFieldSchema(
+        root = MutableRootSchema(
             name = "root2",
             packageName = "package.b",
             entityName = "empty_entity"
@@ -137,7 +137,7 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
 
     val packageC = MutablePackageSchema(
         name = "package.c",
-        root = MutableCompositionFieldSchema(
+        root = MutableRootSchema(
             name = "root3",
             packageName = "package.b",
             entityName = "empty_entity"

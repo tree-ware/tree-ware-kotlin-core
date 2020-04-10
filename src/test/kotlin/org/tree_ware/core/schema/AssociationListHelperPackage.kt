@@ -5,7 +5,7 @@ package org.tree_ware.core.schema
  */
 internal val associationListHelperPackage = MutablePackageSchema(
     name = "helper.package",
-    root = MutableCompositionFieldSchema(
+    root = MutableRootSchema(
         name = "root",
         packageName = "helper.package",
         entityName = "entity1"

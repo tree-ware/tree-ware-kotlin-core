@@ -161,7 +161,7 @@ class CompositionValidationTests {
 
 private val localHelperPackage = MutablePackageSchema(
     name = "helper.package",
-    root = MutableCompositionFieldSchema(
+    root = MutableRootSchema(
         name = "root",
         packageName = "helper.package",
         entityName = "entity_with_no_keys"

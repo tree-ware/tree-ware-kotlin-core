@@ -19,6 +19,11 @@ abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor {
         return true
     }
 
+    override fun mutableVisit(root: MutableRootSchema): Boolean {
+        return true
+    }
+
+
     override fun mutableVisit(alias: MutableAliasSchema): Boolean {
         return true
     }

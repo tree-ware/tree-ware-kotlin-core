@@ -6,7 +6,7 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
     val packageA = MutablePackageSchema(
         name = "package.a",
         info = "Test package A",
-        root = MutableCompositionFieldSchema(
+        root = MutableRootSchema(
             name = "test",
             info = "Test schema root",
             packageName = "package.a",

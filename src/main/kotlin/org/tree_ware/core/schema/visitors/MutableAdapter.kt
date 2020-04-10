@@ -26,6 +26,10 @@ class MutableAdapter(private val adaptee: SchemaVisitor) : MutableSchemaVisitor 
         return adaptee.visit(pkg)
     }
 
+    override fun mutableVisit(root: MutableRootSchema): Boolean {
+        return adaptee.visit(root)
+    }
+
     override fun mutableVisit(alias: MutableAliasSchema): Boolean {
         return adaptee.visit(alias)
     }

@@ -1,9 +1,9 @@
 package org.tree_ware.core.schema.visitors
 
-import org.tree_ware.core.schema.MutableCompositionFieldSchema
 import org.tree_ware.core.schema.MutableEnumerationSchema
 import org.tree_ware.core.schema.MutableFieldSchema
 import org.tree_ware.core.schema.MutablePackageSchema
+import org.tree_ware.core.schema.MutableRootSchema
 
 // NOTE: validation is also done in other subclasses of AbstractMutableSchemaValidatingVisitor
 
@@ -44,6 +44,6 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
         }
     }
 
-    var root: MutableCompositionFieldSchema? = null
+    var root: MutableRootSchema? = null
         private set
 }

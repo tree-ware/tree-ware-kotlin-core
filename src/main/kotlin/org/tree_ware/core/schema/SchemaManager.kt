@@ -51,7 +51,7 @@ class SchemaManager {
         }
 
         // Resolve associations.
-        val resolveAssociationsVisitor = ResolveAssociationsVisitor(validationVisitor.root, entities)
+        val resolveAssociationsVisitor = ResolveAssociationsVisitor(validationVisitor.root)
 
         packages.forEach { pkg ->
             pkg.mutableAccept(resolveAssociationsVisitor)

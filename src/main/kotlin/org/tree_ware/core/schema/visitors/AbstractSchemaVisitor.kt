@@ -19,6 +19,10 @@ abstract class AbstractSchemaVisitor : SchemaVisitor {
         return true
     }
 
+    override fun visit(root: RootSchema): Boolean {
+        return true
+    }
+
     override fun visit(alias: AliasSchema): Boolean {
         return true
     }

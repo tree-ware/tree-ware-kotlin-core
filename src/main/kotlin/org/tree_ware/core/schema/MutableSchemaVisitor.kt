@@ -14,6 +14,7 @@ interface MutableSchemaVisitor {
 
     fun mutableVisit(schema: MutableSchema): Boolean
     fun mutableVisit(pkg: MutablePackageSchema): Boolean
+    fun mutableVisit(root: MutableRootSchema): Boolean
 
     fun mutableVisit(alias: MutableAliasSchema): Boolean
     fun mutableVisit(enumeration: MutableEnumerationSchema): Boolean

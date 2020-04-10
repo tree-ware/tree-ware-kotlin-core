@@ -30,7 +30,7 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
 
     override fun visit(namedElement: NamedElementSchema): Boolean {
         wireFormatEncoder.encodeStringField("name", namedElement.name)
-        namedElement.info?.also { wireFormatEncoder.encodeStringField("info", it)}
+        namedElement.info?.also { wireFormatEncoder.encodeStringField("info", it) }
         return true
     }
 
@@ -39,6 +39,14 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     }
 
     override fun visit(pkg: PackageSchema): Boolean {
+        return true
+    }
+
+    override fun visit(root: RootSchema): Boolean {
+        wireFormatEncoder.encodeObjectStart("type")
+        wireFormatEncoder.encodeStringField("package", root.packageName)
+        wireFormatEncoder.encodeStringField("entity", root.entityName)
+        wireFormatEncoder.encodeObjectEnd()
         return true
     }
 

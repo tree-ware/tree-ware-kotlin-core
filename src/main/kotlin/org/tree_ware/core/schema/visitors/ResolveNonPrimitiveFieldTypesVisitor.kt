@@ -11,6 +11,17 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     private val enumerations: Map<String, MutableEnumerationSchema>,
     private val entities: Map<String, MutableEntitySchema>
 ) : AbstractMutableSchemaValidatingVisitor() {
+    override fun mutableVisit(root: MutableRootSchema): Boolean {
+        // Set resolvedEntity
+        val targetFullName = "/${root.packageName}/${root.entityName}"
+        val entity = entities[targetFullName]
+        if (entity == null) _errors.add("Unknown root type: ${root.fullName}")
+        else {
+            root.resolvedEntity = entity
+        }
+        return true
+    }
+
     override fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean {
         val aliasFullName = "/${aliasField.packageName}/${aliasField.aliasName}"
         val alias = aliases[aliasFullName]
