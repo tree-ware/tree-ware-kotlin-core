@@ -55,8 +55,12 @@ abstract class MutableElementSchema() : ElementSchema, VisitableMutableSchema {
 
 abstract class MutableNamedElementSchema(override var name: String, override var info: String?) :
     MutableElementSchema(), NamedElementSchema {
-    override var fullName: String? = null
-        internal set
+    override var fullName: String
+        get() = _fullName ?: throw IllegalStateException("Full-name has not been set")
+        internal set(value) {
+            _fullName = value
+        }
+    private var _fullName: String? = null
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)

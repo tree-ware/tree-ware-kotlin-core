@@ -17,7 +17,7 @@ interface NamedElementSchema : ElementSchema {
     val name: String
     val info: String?
 
-    val fullName: String?
+    val fullName: String
     val parent: ElementSchema
 }
 

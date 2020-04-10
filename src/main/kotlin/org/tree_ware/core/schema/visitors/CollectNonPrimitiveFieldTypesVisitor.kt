@@ -16,20 +16,19 @@ class CollectNonPrimitiveFieldTypesVisitor(
         private val entities: MutableMap<String, MutableEntitySchema>
 ) : AbstractMutableSchemaVisitor() {
     override fun mutableVisit(alias: MutableAliasSchema): Boolean {
-        val fullName = alias.fullName ?: throw IllegalStateException("fullName missing for alias ${alias.name}")
+        val fullName = alias.fullName
         aliases[fullName] = alias
         return true
     }
 
     override fun mutableVisit(enumeration: MutableEnumerationSchema): Boolean {
         val fullName = enumeration.fullName
-                ?: throw IllegalStateException("fullName missing for enumeration ${enumeration.name}")
         enumerations[fullName] = enumeration
         return true
     }
 
     override fun mutableVisit(entity: MutableEntitySchema): Boolean {
-        val fullName = entity.fullName ?: throw IllegalStateException("fullName missing for entity ${entity.name}")
+        val fullName = entity.fullName
         entities[fullName] = entity
         return true
     }
