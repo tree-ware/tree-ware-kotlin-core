@@ -4,7 +4,7 @@ import org.tree_ware.common.codec.JsonWireFormatEncoder
 import org.tree_ware.model.core.ElementModel
 import java.io.Writer
 
-fun encode(
+fun encodeJson(
     element: ElementModel,
     writer: Writer,
     prettyPrint: Boolean = false,

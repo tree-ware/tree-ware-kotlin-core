@@ -22,12 +22,12 @@ class JsonCodecTests {
 
         val jsonReader = FileReader(jsonFile)
         val model = MutableModel(schema)
-        val isDecoded = decode(jsonReader, model)
+        val isDecoded = decodeJson(jsonReader, model)
         jsonReader.close()
         assertTrue(isDecoded)
 
         val jsonWriter = StringWriter()
-        val isEncoded = encode(model, jsonWriter, true)
+        val isEncoded = encodeJson(model, jsonWriter, true)
         assertTrue(isEncoded)
 
         val expected = jsonFile.readText()
