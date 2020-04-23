@@ -2,7 +2,7 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
-import org.tree_ware.core.schema.AssociationFieldSchema
+import org.tree_ware.schema.core.AssociationFieldSchema
 import org.tree_ware.model.core.MutableAssociationValueModel
 
 class AssociationStateMachine(

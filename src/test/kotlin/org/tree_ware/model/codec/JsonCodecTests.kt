@@ -1,9 +1,9 @@
 package org.tree_ware.model.codec
 
-import org.tree_ware.core.schema.RootSchema
-import org.tree_ware.core.schema.Schema
-import org.tree_ware.core.schema.SchemaManager
-import org.tree_ware.core.schema.getAddressBookPackage
+import org.tree_ware.schema.core.RootSchema
+import org.tree_ware.schema.core.Schema
+import org.tree_ware.schema.core.SchemaManager
+import org.tree_ware.schema.core.getAddressBookPackage
 import org.tree_ware.model.core.MutableModel
 import java.io.File
 import java.io.FileReader

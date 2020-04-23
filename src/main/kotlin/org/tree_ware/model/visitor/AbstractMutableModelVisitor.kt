@@ -1,7 +1,7 @@
 package org.tree_ware.model.visitor
 
-import org.tree_ware.core.schema.*
 import org.tree_ware.model.core.*
+import org.tree_ware.schema.core.*
 
 abstract class AbstractMutableModelVisitor : MutableModelVisitor {
     override fun mutableVisit(element: MutableElementModel): Boolean {

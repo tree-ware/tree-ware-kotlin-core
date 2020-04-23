@@ -1,24 +1,8 @@
-package org.tree_ware.model.core
+package org.tree_ware.schema.visitor
 
 import org.tree_ware.schema.core.*
 
-fun newMutableModel(schema: ElementSchema, parent: MutableElementModel?): MutableElementModel {
-    val newMutableModelVisitor = MutableModelFactoryVisitor(parent)
-    schema.accept(newMutableModelVisitor)
-    return newMutableModelVisitor.newModel
-}
-
-class MutableModelFactoryVisitor(private val parent: MutableElementModel?) :
-    SchemaVisitor {
-    // TODO(deepak-nulu): a non-traversing dispatch() method & visitor with template return type
-    // to avoid the following state variable
-    var newModel: MutableElementModel
-        get() = _newModel ?: throw IllegalStateException("Element has not been set")
-        internal set(value) {
-            _newModel = value
-        }
-    private var _newModel: MutableElementModel? = null
-
+abstract class AbstractSchemaVisitor : SchemaVisitor {
     override fun visit(element: ElementSchema): Boolean {
         return true
     }
@@ -28,8 +12,6 @@ class MutableModelFactoryVisitor(private val parent: MutableElementModel?) :
     }
 
     override fun visit(schema: Schema): Boolean {
-        // TODO(deepak-nulu): uncomment once rootSchema is not needed for creating MutableModel
-        // newModel = MutableModel(schema, rootSchema)
         return true
     }
 
@@ -38,8 +20,6 @@ class MutableModelFactoryVisitor(private val parent: MutableElementModel?) :
     }
 
     override fun visit(root: RootSchema): Boolean {
-        val rootParent = parent as MutableModel
-        newModel = MutableRootModel(root, rootParent)
         return true
     }
 
@@ -56,8 +36,6 @@ class MutableModelFactoryVisitor(private val parent: MutableElementModel?) :
     }
 
     override fun visit(entity: EntitySchema): Boolean {
-        val entityParent = parent as MutableFieldModel
-        newModel = MutableEntityModel(entity, entityParent)
         return true
     }
 
@@ -68,42 +46,22 @@ class MutableModelFactoryVisitor(private val parent: MutableElementModel?) :
     }
 
     override fun visit(primitiveField: PrimitiveFieldSchema): Boolean {
-        val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (primitiveField.multiplicity.isList()) MutablePrimitiveListFieldModel(primitiveField, fieldParent)
-            else MutablePrimitiveFieldModel(primitiveField, fieldParent)
         return true
     }
 
     override fun visit(aliasField: AliasFieldSchema): Boolean {
-        val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (aliasField.multiplicity.isList()) MutableAliasListFieldModel(aliasField, fieldParent)
-            else MutableAliasFieldModel(aliasField, fieldParent)
         return true
     }
 
     override fun visit(enumerationField: EnumerationFieldSchema): Boolean {
-        val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (enumerationField.multiplicity.isList()) MutableEnumerationListFieldModel(enumerationField, fieldParent)
-            else MutableEnumerationFieldModel(enumerationField, fieldParent)
         return true
     }
 
     override fun visit(associationField: AssociationFieldSchema): Boolean {
-        val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (associationField.multiplicity.isList()) MutableAssociationListFieldModel(associationField, fieldParent)
-            else MutableAssociationFieldModel(associationField, fieldParent)
         return true
     }
 
     override fun visit(compositionField: CompositionFieldSchema): Boolean {
-        val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (compositionField.multiplicity.isList()) MutableCompositionListFieldModel(compositionField, fieldParent)
-            else MutableCompositionFieldModel(compositionField, fieldParent)
         return true
     }
 

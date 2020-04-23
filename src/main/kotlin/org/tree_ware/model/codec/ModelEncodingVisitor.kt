@@ -1,9 +1,9 @@
 package org.tree_ware.model.codec
 
-import org.tree_ware.core.codec.common.WireFormatEncoder
-import org.tree_ware.core.schema.*
+import org.tree_ware.common.codec.WireFormatEncoder
 import org.tree_ware.model.core.*
 import org.tree_ware.model.visitor.AbstractModelVisitor
+import org.tree_ware.schema.core.*
 
 class ModelEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : AbstractModelVisitor() {
     override fun visit(model: Model): Boolean {

@@ -1,0 +1,10 @@
+package org.tree_ware.schema.visitor
+
+import org.tree_ware.schema.core.SchemaValidatingVisitor
+
+abstract class AbstractMutableSchemaValidatingVisitor : SchemaValidatingVisitor, AbstractMutableSchemaVisitor() {
+    override val errors: List<String> get() = _errors
+    protected val _errors = mutableListOf<String>()
+
+    override fun finalizeValidation() {}
+}

@@ -1,6 +1,6 @@
 package org.tree_ware.model.core
 
-import org.tree_ware.core.schema.*
+import org.tree_ware.schema.core.*
 
 /** Model visitor (Visitor Pattern).
  * This is an enhanced visitor with `visit()` and `leave()` methods for each

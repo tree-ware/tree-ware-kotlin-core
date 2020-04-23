@@ -1,6 +1,6 @@
 package org.tree_ware.model.core
 
-import org.tree_ware.core.schema.*
+import org.tree_ware.schema.core.*
 
 interface VisitableModel {
     /**
