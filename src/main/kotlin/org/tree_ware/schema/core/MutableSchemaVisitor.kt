@@ -1,7 +1,5 @@
 package org.tree_ware.schema.core
 
-import org.tree_ware.schema.core.*
-
 /** MutableSchema visitor (Visitor Pattern).
  *
  * The `SchemaVisitor` cannot mutate the schema elements it visits,

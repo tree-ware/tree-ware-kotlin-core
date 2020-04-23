@@ -11,7 +11,7 @@ interface VisitableMutableSchema {
     fun mutableAccept(visitor: MutableSchemaVisitor): Boolean
 }
 
-abstract class MutableElementSchema() : ElementSchema,
+abstract class MutableElementSchema : ElementSchema,
     VisitableMutableSchema {
     var objectId = ""
 
@@ -72,7 +72,7 @@ abstract class MutableNamedElementSchema(override var name: String, override var
     }
 }
 
-class MutableSchema() : MutableElementSchema(), Schema {
+class MutableSchema : MutableElementSchema(), Schema {
     override var packages: List<MutablePackageSchema> = listOf()
         internal set(value) {
             field = value
@@ -536,7 +536,7 @@ class MutableAssociationFieldSchema(
 
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
-            ?: throw IllegalStateException("Association ${entityPath} has not been resolved")
+            ?: throw IllegalStateException("Association $entityPath has not been resolved")
         internal set(value) {
             _resolvedEntity = value
         }

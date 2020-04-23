@@ -1,14 +1,13 @@
 package org.tree_ware.schema.codec
 
 import org.tree_ware.common.codec.JsonWireFormatEncoder
-import org.tree_ware.schema.codec.SchemaEncoder
-import org.tree_ware.schema.codec.SchemaEncodingVisitor
 import org.tree_ware.schema.core.ElementSchema
 import java.io.Writer
 
-class JsonSchemaEncoder(private val writer: Writer,
-                        prettyPrint: Boolean = false,
-                        indentSizeInSpaces: Int = 2
+class JsonSchemaEncoder(
+    writer: Writer,
+    prettyPrint: Boolean = false,
+    indentSizeInSpaces: Int = 2
 ) : SchemaEncoder {
     private val wireFormatEncoder =
         JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)

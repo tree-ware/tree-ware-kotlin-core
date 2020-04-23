@@ -4,7 +4,6 @@ import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.ModelType
 import org.tree_ware.model.core.MutableModel
-import org.tree_ware.model.core.MutableRootModel
 
 class ModelStateMachine(
     private val model: MutableModel, private val stack: DecodingStack

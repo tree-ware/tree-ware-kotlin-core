@@ -1,13 +1,11 @@
 package org.tree_ware.schema.core
 
-import org.tree_ware.schema.core.*
-
 /** Schema visitor (Visitor Pattern).
  *
  * `visit()` methods should return `true` to proceed with schema traversal
  * and `false` to stop schema traversal.
  */
-public interface SchemaVisitor {
+interface SchemaVisitor {
     fun visit(element: ElementSchema): Boolean
     fun visit(namedElement: NamedElementSchema): Boolean
 

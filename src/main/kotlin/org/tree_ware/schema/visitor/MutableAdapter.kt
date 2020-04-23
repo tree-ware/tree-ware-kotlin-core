@@ -9,8 +9,7 @@ import org.tree_ware.schema.core.*
  * the immutable types), but it can be used in mutable-visitor-combinators along with other MutableSchemaVisitor
  * instances.
  */
-class MutableAdapter(private val adaptee: SchemaVisitor) :
-    MutableSchemaVisitor {
+class MutableAdapter(private val adaptee: SchemaVisitor) : MutableSchemaVisitor {
     override fun mutableVisit(element: MutableElementSchema): Boolean {
         return adaptee.visit(element)
     }

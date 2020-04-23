@@ -5,12 +5,12 @@ import org.tree_ware.schema.core.*
 private val PACKAGE_NAME_REGEX = Regex("^[a-z0-9_.]*$")
 private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
 
-class SetFullNameVisitor() : AbstractMutableSchemaValidatingVisitor(),
+class SetFullNameVisitor : AbstractMutableSchemaValidatingVisitor(),
     BracketedVisitor {
     val fullNames: List<String> get() = _fullNames
     private val _fullNames = mutableListOf<String>()
 
-    private val nameParts = mutableListOf<String>("")
+    private val nameParts = mutableListOf("")
     private fun getFullName(): String = nameParts.joinToString("/")
 
     private fun validateName(element: NamedElementSchema, regex: Regex) {
@@ -36,7 +36,7 @@ class SetFullNameVisitor() : AbstractMutableSchemaValidatingVisitor(),
         nameParts.add(namedElement.name)
         val fullName = getFullName()
         namedElement.fullName = fullName
-        if (_fullNames.contains(fullName)) _errors.add("Duplicate name: ${fullName}")
+        if (_fullNames.contains(fullName)) _errors.add("Duplicate name: $fullName")
         else _fullNames.add(fullName)
         return true
     }

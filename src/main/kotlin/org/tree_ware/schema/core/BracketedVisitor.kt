@@ -5,7 +5,7 @@ package org.tree_ware.schema.core
  *
  * `name` parameter values will be in snake_case.
  */
-public interface BracketedVisitor {
+interface BracketedVisitor {
     fun objectStart(name: String)
     fun objectEnd()
     fun listStart(name: String)

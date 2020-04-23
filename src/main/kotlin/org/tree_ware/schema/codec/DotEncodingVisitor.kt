@@ -1,8 +1,8 @@
 package org.tree_ware.schema.codec
 
 import org.tree_ware.common.codec.PrettyPrintHelper
-import org.tree_ware.schema.visitor.AbstractSchemaVisitor
 import org.tree_ware.schema.core.*
+import org.tree_ware.schema.visitor.AbstractSchemaVisitor
 import java.io.Writer
 import java.util.*
 
@@ -29,13 +29,13 @@ class DotEncodingVisitor(
     private fun writeNodeField(field: FieldSchema, type: String) {
         val keyIcon = if (field.isKey) "key" else ""
 
-        val multiplicity = if (field.multiplicity.isRequired()) {
-            "required"
-        } else if (field.multiplicity.isOptional()) {
-            "optional"
-        } else {
-            val max = if (field.multiplicity.max == 0L) "*" else field.multiplicity.max.toString()
-            "[${field.multiplicity.min}..$max]"
+        val multiplicity = when {
+            field.multiplicity.isRequired() -> "required"
+            field.multiplicity.isOptional() -> "optional"
+            else -> {
+                val max = if (field.multiplicity.max == 0L) "*" else field.multiplicity.max.toString()
+                "[${field.multiplicity.min}..$max]"
+            }
         }
 
         writeLine(nodesWriter, "<TR>")

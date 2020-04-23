@@ -43,11 +43,11 @@ class ResolveAssociationsVisitor(private val root: MutableRootSchema?) : Abstrac
         associationFullName: String?
     ): MutableEntitySchema? {
         // First path-element must match root.
-        if (pathElement == root.name) {
-            return root._resolvedEntity
+        return if (pathElement == root.name) {
+            root._resolvedEntity
         } else {
-            _errors.add("Invalid association path root: ${associationFullName}")
-            return null
+            _errors.add("Invalid association path root: $associationFullName")
+            null
         }
     }
 
@@ -57,11 +57,11 @@ class ResolveAssociationsVisitor(private val root: MutableRootSchema?) : Abstrac
         associationFullName: String?
     ): MutableEntitySchema? {
         val field = previousEntity.fields.find { it.name == pathElement }
-        if (field is MutableCompositionFieldSchema) {
-            return field._resolvedEntity
+        return if (field is MutableCompositionFieldSchema) {
+            field._resolvedEntity
         } else {
-            _errors.add("Invalid association path: ${associationFullName}")
-            return null
+            _errors.add("Invalid association path: $associationFullName")
+            null
         }
     }
 }
