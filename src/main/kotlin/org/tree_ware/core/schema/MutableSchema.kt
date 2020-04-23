@@ -513,6 +513,8 @@ class MutableAssociationFieldSchema(
     override var entityPath: List<String>,
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, false, multiplicity), AssociationFieldSchema {
+    override val keyEntities: MutableList<MutableEntitySchema> = mutableListOf()
+
     override var resolvedEntity: MutableEntitySchema
         get() = _resolvedEntity
             ?: throw IllegalStateException("Association ${entityPath} has not been resolved")

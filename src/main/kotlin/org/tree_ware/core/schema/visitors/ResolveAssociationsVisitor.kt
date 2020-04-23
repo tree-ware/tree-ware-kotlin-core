@@ -20,7 +20,6 @@ class ResolveAssociationsVisitor(private val root: MutableRootSchema?) : Abstrac
         // Abort entity-path resolution if there is no root resolved-entity.
         // The lack of a resolved-entity is reported by a different validation visitor.
         var entity: MutableEntitySchema = root._resolvedEntity ?: return
-        var hasEntityPathKeys = false
         associationField.entityPath.forEachIndexed { index, pathElement ->
             val nextEntity = if (index == 0) {
                 getFirstEntity(pathElement, root, associationField.fullName)
@@ -30,10 +29,10 @@ class ResolveAssociationsVisitor(private val root: MutableRootSchema?) : Abstrac
             // Abort entity-path resolution if there is no resolved-entity.
             // The lack of a resolved-entity is reported by a different validation visitor.
             entity = nextEntity ?: return
-            hasEntityPathKeys = hasEntityPathKeys || entity.fields.filter { it.isKey }.isNotEmpty()
+            if (entity.fields.any { it.isKey }) associationField.keyEntities.add(entity)
         }
         associationField.resolvedEntity = entity
-        if (associationField.multiplicity.max != 1L && !hasEntityPathKeys) _errors.add(
+        if (associationField.multiplicity.isList() && associationField.keyEntities.isEmpty()) _errors.add(
             "Association list entity path does not have keys: ${associationField.fullName}"
         )
     }

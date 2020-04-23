@@ -26,7 +26,7 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
     override fun mutableVisit(field: MutableFieldSchema): Boolean {
         val multiplicity = field.multiplicity
 
-        if (field.isKey && (multiplicity.min != 1L || multiplicity.max != 1L)) _errors.add(
+        if (field.isKey && !multiplicity.isRequired()) _errors.add(
             "Multiplicity is not [1, 1] for key field: ${field.fullName}"
         )
         if (multiplicity.min < 0) _errors.add("Multiplicity min is less than 0: ${field.fullName}")

@@ -29,9 +29,9 @@ class DotEncodingVisitor(
     private fun writeNodeField(field: FieldSchema, type: String) {
         val keyIcon = if (field.isKey) "key" else ""
 
-        val multiplicity = if (field.multiplicity.min == 1L && field.multiplicity.max == 1L) {
+        val multiplicity = if (field.multiplicity.isRequired()) {
             "required"
-        } else if (field.multiplicity.min == 0L && field.multiplicity.max == 1L) {
+        } else if (field.multiplicity.isOptional()) {
             "optional"
         } else {
             val max = if (field.multiplicity.max == 0L) "*" else field.multiplicity.max.toString()

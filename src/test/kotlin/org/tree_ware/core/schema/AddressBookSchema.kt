@@ -1,6 +1,6 @@
 package org.tree_ware.core.schema
 
-val addressBookPackage = MutablePackageSchema(
+fun getAddressBookPackage() = MutablePackageSchema(
     name = "address_book",
     info = "Schema for storing address book information",
     root = MutableRootSchema(
@@ -12,16 +12,52 @@ val addressBookPackage = MutablePackageSchema(
         MutableEntitySchema(
             name = "address_book_root",
             fields = listOf(
+                MutablePrimitiveFieldSchema(
+                    name = "name",
+                    info = "A name for the address book",
+                    primitive = MutableStringSchema()
+                ),
+                MutablePrimitiveFieldSchema(
+                    name = "last_updated",
+                    primitive = MutableTimestampSchema()
+                ),
+                MutableCompositionFieldSchema(
+                    name = "settings",
+                    packageName = "address_book",
+                    entityName = "address_book_settings",
+                    multiplicity = MutableMultiplicity(0, 1)
+                ),
                 MutableCompositionFieldSchema(
                     name = "person",
                     packageName = "address_book",
-                    entityName = "person",
+                    entityName = "address_book_person",
                     multiplicity = MutableMultiplicity(0, 0)
                 )
             )
         ),
         MutableEntitySchema(
-            name = "person",
+            name = "address_book_settings",
+            fields = listOf(
+                MutablePrimitiveFieldSchema(
+                    name = "last_name_first",
+                    primitive = MutableBooleanSchema(),
+                    multiplicity = MutableMultiplicity(0, 1)
+                ),
+                MutablePrimitiveFieldSchema(
+                    name = "encrypt_hero_name",
+                    primitive = MutableBooleanSchema(),
+                    multiplicity = MutableMultiplicity(0, 1)
+                ),
+                MutableEnumerationFieldSchema(
+                    name = "card_colors",
+                    packageName = "address_book",
+                    enumerationName = "address_book_color",
+                    multiplicity = MutableMultiplicity(0, 5)
+                )
+            )
+        ),
+        MutableEntitySchema(
+            name = "address_book_person",
             fields = listOf(
                 MutablePrimitiveFieldSchema(
                     name = "id",
@@ -37,20 +73,25 @@ val addressBookPackage = MutablePackageSchema(
                     primitive = MutableStringSchema()
                 ),
                 MutablePrimitiveFieldSchema(
-                    name = "email",
+                    name = "hero_name",
                     primitive = MutableStringSchema(),
                     multiplicity = MutableMultiplicity(0, 1)
+                ),
+                MutablePrimitiveFieldSchema(
+                    name = "email",
+                    primitive = MutableStringSchema(),
+                    multiplicity = MutableMultiplicity(0, 0)
                 ),
                 MutableCompositionFieldSchema(
                     name = "relation",
                     packageName = "address_book",
-                    entityName = "relation",
+                    entityName = "address_book_relation",
                     multiplicity = MutableMultiplicity(0, 0)
                 )
             )
         ),
         MutableEntitySchema(
-            name = "relation",
+            name = "address_book_relation",
             fields = listOf(
                 MutablePrimitiveFieldSchema(
                     name = "id",
@@ -60,7 +101,7 @@ val addressBookPackage = MutablePackageSchema(
                 MutableEnumerationFieldSchema(
                     name = "relationship",
                     packageName = "address_book",
-                    enumerationName = "relationship"
+                    enumerationName = "address_book_relationship"
                 ),
                 MutableAssociationFieldSchema(
                     name = "person",
@@ -74,7 +115,33 @@ val addressBookPackage = MutablePackageSchema(
     ),
     enumerations = listOf(
         MutableEnumerationSchema(
-            name = "relationship",
+            name = "address_book_color",
+            values = listOf(
+                MutableEnumerationValueSchema(
+                    name = "violet"
+                ),
+                MutableEnumerationValueSchema(
+                    name = "indigo"
+                ),
+                MutableEnumerationValueSchema(
+                    name = "blue"
+                ),
+                MutableEnumerationValueSchema(
+                    name = "green"
+                ),
+                MutableEnumerationValueSchema(
+                    name = "yellow"
+                ),
+                MutableEnumerationValueSchema(
+                    name = "orange"
+                ),
+                MutableEnumerationValueSchema(
+                    name = "red"
+                )
+            )
+        ),
+        MutableEnumerationSchema(
+            name = "address_book_relationship",
             values = listOf(
                 MutableEnumerationValueSchema(
                     name = "parent"

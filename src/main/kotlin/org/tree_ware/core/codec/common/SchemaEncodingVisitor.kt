@@ -192,7 +192,7 @@ class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : 
     // Helper methods
 
     private fun encodeMultiplicity(multiplicity: Multiplicity) {
-        if (multiplicity.min == 1L && multiplicity.max == 1L) return
+        if (multiplicity.isRequired()) return
         wireFormatEncoder.encodeObjectStart("multiplicity")
         wireFormatEncoder.encodeNumericField("min", multiplicity.min)
         wireFormatEncoder.encodeNumericField("max", multiplicity.max)

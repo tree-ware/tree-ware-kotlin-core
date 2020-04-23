@@ -62,6 +62,9 @@ interface EnumerationSchema : NamedElementSchema {
     val values: List<EnumerationValueSchema>
 
     override val parent: PackageSchema
+
+    // TODO(deepak-nulu): optimize
+    fun valueFromString(string: String): EnumerationValueSchema? = values.find { it.name == string }
 }
 
 /** Schema for user-defined enumeration values. */
@@ -74,6 +77,11 @@ interface EntitySchema : NamedElementSchema {
     val fields: List<FieldSchema>
 
     override val parent: PackageSchema
+
+    // TODO(deepak-nulu): optimize
+    fun getField(name: String): FieldSchema? {
+        return fields.find { it.name == name }
+    }
 }
 
 // Fields
@@ -115,6 +123,7 @@ interface EnumerationFieldSchema : FieldSchema {
 interface AssociationFieldSchema : FieldSchema {
     val entityPath: List<String>
 
+    val keyEntities: List<EntitySchema>
     val resolvedEntity: EntitySchema
 }
 
@@ -199,6 +208,18 @@ interface TimestampSchema : PrimitiveSchema
 interface Multiplicity {
     val min: Long
     val max: Long
+
+    fun isRequired(): Boolean {
+        return min == 1L && max == 1L
+    }
+
+    fun isOptional(): Boolean {
+        return min == 0L && max == 1L
+    }
+
+    fun isList(): Boolean {
+        return max != 1L
+    }
 }
 
 /** Constraints for numeric fields. */
