@@ -23,17 +23,8 @@ interface NamedElementSchema : ElementSchema {
 
 /** The entire schema. */
 interface Schema : ElementSchema {
+    val root: RootSchema
     val packages: List<PackageSchema>
-}
-
-/** Schema for a user-defined package. */
-interface PackageSchema : NamedElementSchema {
-    val root: RootSchema?
-    val aliases: List<AliasSchema>
-    val enumerations: List<EnumerationSchema>
-    val entities: List<EntitySchema>
-
-    override val parent: Schema
 }
 
 /** Schema for the root of the model tree. */
@@ -43,6 +34,15 @@ interface RootSchema : NamedElementSchema {
 
     override val parent: PackageSchema
     val resolvedEntity: EntitySchema
+}
+
+/** Schema for a user-defined package. */
+interface PackageSchema : NamedElementSchema {
+    val aliases: List<AliasSchema>
+    val enumerations: List<EnumerationSchema>
+    val entities: List<EntitySchema>
+
+    override val parent: Schema
 }
 
 /**

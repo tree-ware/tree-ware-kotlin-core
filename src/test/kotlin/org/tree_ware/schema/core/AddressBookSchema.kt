@@ -1,15 +1,17 @@
 package org.tree_ware.schema.core
 
-import org.tree_ware.schema.core.*
-
-fun getAddressBookPackage() = MutablePackageSchema(
-    name = "address_book",
-    info = "Schema for storing address book information",
-    root = MutableRootSchema(
+fun newAddressBookSchema() = MutableSchema(
+    MutableRootSchema(
         name = "address_book",
-        packageName = "address_book",
+        packageName = "address_book.main",
         entityName = "address_book_root"
     ),
+    listOf(newAddressBookPackage())
+)
+
+private fun newAddressBookPackage() = MutablePackageSchema(
+    name = "address_book.main",
+    info = "Schema for storing address book information",
     entities = listOf(
         MutableEntitySchema(
             name = "address_book_root",
@@ -25,13 +27,13 @@ fun getAddressBookPackage() = MutablePackageSchema(
                 ),
                 MutableCompositionFieldSchema(
                     name = "settings",
-                    packageName = "address_book",
+                    packageName = "address_book.main",
                     entityName = "address_book_settings",
                     multiplicity = MutableMultiplicity(0, 1)
                 ),
                 MutableCompositionFieldSchema(
                     name = "person",
-                    packageName = "address_book",
+                    packageName = "address_book.main",
                     entityName = "address_book_person",
                     multiplicity = MutableMultiplicity(0, 0)
                 )
@@ -52,7 +54,7 @@ fun getAddressBookPackage() = MutablePackageSchema(
                 ),
                 MutableEnumerationFieldSchema(
                     name = "card_colors",
-                    packageName = "address_book",
+                    packageName = "address_book.main",
                     enumerationName = "address_book_color",
                     multiplicity = MutableMultiplicity(0, 5)
                 )
@@ -86,7 +88,7 @@ fun getAddressBookPackage() = MutablePackageSchema(
                 ),
                 MutableCompositionFieldSchema(
                     name = "relation",
-                    packageName = "address_book",
+                    packageName = "address_book.main",
                     entityName = "address_book_relation",
                     multiplicity = MutableMultiplicity(0, 0)
                 )
@@ -102,7 +104,7 @@ fun getAddressBookPackage() = MutablePackageSchema(
                 ),
                 MutableEnumerationFieldSchema(
                     name = "relationship",
-                    packageName = "address_book",
+                    packageName = "address_book.main",
                     enumerationName = "address_book_relationship"
                 ),
                 MutableAssociationFieldSchema(

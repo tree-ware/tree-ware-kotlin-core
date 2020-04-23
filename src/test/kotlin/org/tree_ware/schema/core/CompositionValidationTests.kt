@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
-import org.tree_ware.schema.core.*
 
 class CompositionValidationTests {
     @Test
@@ -25,10 +24,11 @@ class CompositionValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val schema = MutableSchema(
+            newLocalHelperRoot(),
+            listOf(testPackage, newLocalHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field"
@@ -61,10 +61,11 @@ class CompositionValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val schema = MutableSchema(
+            newLocalHelperRoot(),
+            listOf(testPackage, newLocalHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field_1",
@@ -92,10 +93,11 @@ class CompositionValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val schema = MutableSchema(
+            newLocalHelperRoot(),
+            listOf(testPackage, newLocalHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
@@ -124,10 +126,11 @@ class CompositionValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val schema = MutableSchema(
+            newLocalHelperRoot(),
+            listOf(testPackage, newLocalHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Target of composition list does not have keys: /test.package/test_entity/test_field1",
@@ -161,22 +164,24 @@ class CompositionValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val schema = MutableSchema(
+            newLocalHelperRoot(),
+            listOf(testPackage, newLocalHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
 }
 
-private val localHelperPackage = MutablePackageSchema(
+private fun newLocalHelperRoot() = MutableRootSchema(
+    name = "root",
+    packageName = "helper.package",
+    entityName = "entity_with_no_keys"
+)
+
+private fun newLocalHelperPackage() = MutablePackageSchema(
     name = "helper.package",
-    root = MutableRootSchema(
-        name = "root",
-        packageName = "helper.package",
-        entityName = "entity_with_no_keys"
-    ),
     entities = listOf(
         MutableEntitySchema(
             name = "entity_with_no_keys",

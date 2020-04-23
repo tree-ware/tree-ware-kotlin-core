@@ -1,15 +1,14 @@
 package org.tree_ware.schema.core
 
-import org.tree_ware.schema.core.*
+internal fun newHelperRoot() = MutableRootSchema(
+    name = "root",
+    packageName = "helper.package",
+    entityName = "entity1"
+)
 
 /** A helper package with root and compositions. */
-internal val helperPackage = MutablePackageSchema(
+internal fun newHelperPackage() = MutablePackageSchema(
     name = "helper.package",
-    root = MutableRootSchema(
-        name = "root",
-        packageName = "helper.package",
-        entityName = "entity1"
-    ),
     aliases = listOf(
         MutableAliasSchema(
             name = "alias1",

@@ -4,26 +4,22 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
-import org.tree_ware.schema.core.*
 
 class RootValidationTests {
     @Test
     fun `Root must have a valid name`() {
-        val testPackage = MutablePackageSchema(
-            name = "test.package",
-            root = MutableRootSchema(
+        val schema = MutableSchema(
+            MutableRootSchema(
                 name = "invalid.root-name",
                 packageName = "helper.package",
                 entityName = "helper_entity"
-            )
+            ),
+            listOf(newLocalHelperPackage())
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
-            "Invalid name: /test.package/invalid.root-name"
+            "Invalid name: /invalid.root-name"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
@@ -31,21 +27,18 @@ class RootValidationTests {
 
     @Test
     fun `Root must point to a valid entity`() {
-        val testPackage = MutablePackageSchema(
-            name = "test.package",
-            root = MutableRootSchema(
+        val schema = MutableSchema(
+            MutableRootSchema(
                 name = "test_root",
                 packageName = "invalid.package",
                 entityName = "invalid_entity"
-            )
+            ),
+            listOf(newLocalHelperPackage())
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
-            "Unknown root type: /test.package/test_root"
+            "Unknown root type: /test_root"
         )
 
         assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
@@ -53,24 +46,21 @@ class RootValidationTests {
 
     @Test
     fun `A valid root must not result in errors`() {
-        val testPackage = MutablePackageSchema(
-            name = "test.package",
-            root = MutableRootSchema(
+        val schema = MutableSchema(
+            MutableRootSchema(
                 name = "test_root",
                 packageName = "helper.package",
                 entityName = "helper_entity"
-            )
+            ),
+            listOf(newLocalHelperPackage())
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            localHelperPackage
-        ))
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
 }
 
-private val localHelperPackage = MutablePackageSchema(
+private fun newLocalHelperPackage() = MutablePackageSchema(
     name = "helper.package",
     entities = listOf(
         MutableEntitySchema(

@@ -72,12 +72,31 @@ abstract class MutableNamedElementSchema(override var name: String, override var
     }
 }
 
-class MutableSchema : MutableElementSchema(), Schema {
-    override var packages: List<MutablePackageSchema> = listOf()
+class MutableSchema(
+    root: MutableRootSchema? = null,
+    packages: List<MutablePackageSchema> = listOf()
+) : MutableElementSchema(), Schema {
+    init {
+        objectId = "schema"
+    }
+
+    internal var _root: MutableRootSchema? = root
+
+    override var root: MutableRootSchema
+        get() = _root ?: throw IllegalStateException("Root has not been set")
+        internal set(value) {
+            _root = value
+        }
+
+    override var packages: MutableList<MutablePackageSchema> = packages.toMutableList()
         internal set(value) {
             field = value
             field.forEach { it.parent = this }
         }
+
+    init {
+        packages.forEach { it.parent = this }
+    }
 
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
@@ -89,6 +108,10 @@ class MutableSchema : MutableElementSchema(), Schema {
 
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         if (!super.traverseChildren(visitor)) return false
+
+        _root?.also {
+            if (!it.accept(visitor)) return false
+        }
 
         if (packages.isNotEmpty()) try {
             (visitor as? BracketedVisitor)?.listStart("packages")
@@ -104,6 +127,10 @@ class MutableSchema : MutableElementSchema(), Schema {
     override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
         if (!super.mutableTraverseChildren(visitor)) return false
 
+        _root?.also {
+            if (!it.mutableAccept(visitor)) return false
+        }
+
         if (packages.isNotEmpty()) try {
             (visitor as? BracketedVisitor)?.listStart("packages")
             for (pkg in packages) {
@@ -116,17 +143,51 @@ class MutableSchema : MutableElementSchema(), Schema {
     }
 }
 
+class MutableRootSchema(
+    name: String,
+    info: String? = null,
+    override var packageName: String,
+    override var entityName: String
+) : MutableNamedElementSchema(name, info), RootSchema {
+    init {
+        objectId = "root"
+    }
+
+    override var parent: MutablePackageSchema
+        get() = _parent ?: throw IllegalStateException("Parent has not been set")
+        internal set(value) {
+            _parent = value
+        }
+    private var _parent: MutablePackageSchema? = null
+
+    override var resolvedEntity: MutableEntitySchema
+        get() = _resolvedEntity
+            ?: throw IllegalStateException("Root /${packageName}/${entityName} has not been resolved")
+        internal set(value) {
+            _resolvedEntity = value
+        }
+    internal var _resolvedEntity: MutableEntitySchema? = null
+        private set
+
+    override fun visitSelf(visitor: SchemaVisitor): Boolean {
+        return super.visitSelf(visitor) && visitor.visit(this)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    }
+
+    // The resolved type of this field is not considered a child and is therefore not traversed.
+}
+
 class MutablePackageSchema(
     name: String,
     info: String? = null,
-    override var root: MutableRootSchema? = null,
     override var aliases: List<MutableAliasSchema> = listOf(),
     override var enumerations: List<MutableEnumerationSchema> = listOf(),
     override var entities: List<MutableEntitySchema> = listOf()
 ) : MutableNamedElementSchema(name, info), PackageSchema {
     init {
-        root?.also { it.objectId = "root" }
-
         aliases.forEach { it.parent = this }
         enumerations.forEach { it.parent = this }
         entities.forEach { it.parent = this }
@@ -149,10 +210,6 @@ class MutablePackageSchema(
 
     override fun traverseChildren(visitor: SchemaVisitor): Boolean {
         if (!super.traverseChildren(visitor)) return false
-
-        root?.also {
-            if (!it.accept(visitor)) return false
-        }
 
         if (aliases.isNotEmpty()) try {
             (visitor as? BracketedVisitor)?.listStart("aliases")
@@ -185,10 +242,6 @@ class MutablePackageSchema(
     override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
         if (!super.mutableTraverseChildren(visitor)) return false
 
-        root?.also {
-            if (!it.mutableAccept(visitor)) return false
-        }
-
         if (aliases.isNotEmpty()) try {
             (visitor as? BracketedVisitor)?.listStart("aliases")
             for (alias in aliases) {
@@ -216,39 +269,6 @@ class MutablePackageSchema(
 
         return true
     }
-}
-
-class MutableRootSchema(
-    name: String,
-    info: String? = null,
-    override var packageName: String,
-    override var entityName: String
-) : MutableNamedElementSchema(name, info), RootSchema {
-    override var parent: MutablePackageSchema
-        get() = _parent ?: throw IllegalStateException("Parent has not been set")
-        internal set(value) {
-            _parent = value
-        }
-    private var _parent: MutablePackageSchema? = null
-
-    override var resolvedEntity: MutableEntitySchema
-        get() = _resolvedEntity
-            ?: throw IllegalStateException("Root /${packageName}/${entityName} has not been resolved")
-        internal set(value) {
-            _resolvedEntity = value
-        }
-    internal var _resolvedEntity: MutableEntitySchema? = null
-        private set
-
-    override fun visitSelf(visitor: SchemaVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
-    }
-
-    // The resolved type of this field is not considered a child and is therefore not traversed.
 }
 
 class MutableAliasSchema(

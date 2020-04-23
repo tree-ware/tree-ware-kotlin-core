@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
-import org.tree_ware.schema.core.*
 
 class AssociationValidationTests {
     @Test
@@ -23,10 +22,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Association path is too short: /test.package/test_entity/test_association_field"
@@ -53,10 +53,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Association path is too short: /test.package/test_entity/test_association_field"
@@ -84,10 +85,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Invalid association path root: /test.package/test_entity/test_association_field"
@@ -115,10 +117,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Invalid association path: /test.package/test_entity/test_association_field"
@@ -147,10 +150,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
@@ -175,10 +179,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            associationListHelperPackage
-        ))
+        val schema = MutableSchema(
+            newAssociationListHelperRoot(),
+            listOf(testPackage, newAssociationListHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Association list entity path does not have keys: /test.package/test_entity/test_association_field"
@@ -216,10 +221,11 @@ class AssociationValidationTests {
                 )
             )
         )
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            associationListHelperPackage
-        ))
+        val schema = MutableSchema(
+            newAssociationListHelperRoot(),
+            listOf(testPackage, newAssociationListHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }

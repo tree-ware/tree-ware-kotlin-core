@@ -64,8 +64,7 @@ abstract class MutableElementModel : ElementModel, VisitableMutableModel {
     }
 }
 
-// TODO(deepak-nulu): remove rootSchema param once it is available from schema
-class MutableModel(override val schema: Schema, private val rootSchema: RootSchema) : MutableElementModel(), Model {
+class MutableModel(override val schema: Schema) : MutableElementModel(), Model {
     override val parent: ElementModel? = null
 
     override var type = ModelType.data
@@ -83,7 +82,7 @@ class MutableModel(override val schema: Schema, private val rootSchema: RootSche
     private var _root: MutableRootModel? = null
 
     fun getOrNewRoot(): MutableRootModel {
-        if (_root == null) _root = newMutableModel(rootSchema, this) as MutableRootModel
+        if (_root == null) _root = newMutableModel(schema.root, this) as MutableRootModel
         return root
     }
 

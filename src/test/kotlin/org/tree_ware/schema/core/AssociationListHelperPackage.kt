@@ -1,17 +1,19 @@
 package org.tree_ware.schema.core
 
-import org.tree_ware.schema.core.*
+/**
+ * A helper package for association list validation tests.
+ */
+internal fun newAssociationListHelperRoot() = MutableRootSchema(
+    name = "root",
+    packageName = "helper.package",
+    entityName = "entity1"
+)
 
 /**
  * A helper package for association list validation tests.
  */
-internal val associationListHelperPackage = MutablePackageSchema(
+internal fun newAssociationListHelperPackage() = MutablePackageSchema(
     name = "helper.package",
-    root = MutableRootSchema(
-        name = "root",
-        packageName = "helper.package",
-        entityName = "entity1"
-    ),
     entities = listOf(
         MutableEntitySchema(
             name = "entity1",

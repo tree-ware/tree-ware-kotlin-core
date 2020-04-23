@@ -4,16 +4,16 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
-import org.tree_ware.schema.core.*
 
 class MultiplicityValidationTests {
     @Test
     fun `Multiplicity min must not be negative`() {
         val testPackage = getTestPackage(-1, 1)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = allFieldPaths.map { "Multiplicity min is less than 0: $it" }
 
@@ -23,10 +23,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity max must not be less than 0`() {
         val testPackage = getTestPackage(0, -1)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = allFieldPaths.map { "Multiplicity max is less than 0: $it" }
 
@@ -36,10 +37,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity max must not be less than min if max is not 0`() {
         val testPackage = getTestPackage(2, 1)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = allFieldPaths.map { "Multiplicity max is less than min: $it" }
 
@@ -49,10 +51,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity max of 0 for unbounded is valid even if min is higher`() {
         val testPackage = getTestPackage(1, 0)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
@@ -60,10 +63,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity is valid if max is equal to min`() {
         val testPackage = getTestPackage(1, 1)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
@@ -71,10 +75,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity is valid if max is greater than min`() {
         val testPackage = getTestPackage(1, 2)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }
@@ -82,10 +87,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity must be {1, 1} for key fields`() {
         val testPackage = getTestPackage(0, 2, true)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         val expectedErrors = nonAssociationFieldPaths.map { "Multiplicity is not [1, 1] for key field: $it" }
 
@@ -95,10 +101,11 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity {1, 1} is valid for key fields`() {
         val testPackage = getTestPackage(1, 1, true)
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(testPackage,
-            helperPackage
-        ))
+        val schema = MutableSchema(
+            newHelperRoot(),
+            listOf(testPackage, newHelperPackage())
+        )
+        val errors = validate(schema)
 
         assertThat(errors.isEmpty()).isTrue()
     }

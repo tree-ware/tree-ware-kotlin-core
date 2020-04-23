@@ -2,16 +2,10 @@ package org.tree_ware.schema.codec
 
 import org.tree_ware.schema.core.*
 
-fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
+fun getGoldenKotlinSchema(): MutableSchema {
     val packageA = MutablePackageSchema(
         name = "package.a",
         info = "Test package A",
-        root = MutableRootSchema(
-            name = "test",
-            info = "Test schema root",
-            packageName = "package.a",
-            entityName = "entity1"
-        ),
         entities = listOf(
             MutableEntitySchema(
                 name = "entity1",
@@ -177,5 +171,13 @@ fun getGoldenKotlinPackages(): List<MutablePackageSchema> {
         )
     )
 
-    return listOf(packageA, packageB, packageC)
+    return MutableSchema(
+        MutableRootSchema(
+            name = "test",
+            info = "Test schema root",
+            packageName = "package.a",
+            entityName = "entity1"
+        ),
+        listOf(packageA, packageB, packageC)
+    )
 }

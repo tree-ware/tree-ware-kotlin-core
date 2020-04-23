@@ -3,18 +3,14 @@ package org.tree_ware.schema.core
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
-import org.tree_ware.schema.core.MutablePackageSchema
-import org.tree_ware.schema.core.SchemaManager
 
 // TODO(deepak-nulu): split into multiple files based on type of validation
 
 class ValidationTest {
     @Test
-    fun `SchemaManager#addPackages() returns error if root entity is missing`() {
-        val noRootPackage = MutablePackageSchema(name = "no.root.package")
-
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(listOf(noRootPackage))
+    fun `validate() returns error if root entity is missing`() {
+        val schema = MutableSchema()
+        val errors = validate(schema)
 
         val expectedErrors = listOf("No root entity")
 
@@ -22,9 +18,9 @@ class ValidationTest {
     }
 
     @Test
-    fun `SchemaManager#addPackages() validates and returns errors`() {
-        val schemaManager = SchemaManager()
-        val errors = schemaManager.addPackages(getInvalidKotlinPackages())
+    fun `validate() validates and returns errors`() {
+        val schema = getInvalidKotlinSchema()
+        val errors = validate(schema)
 
         val expectedErrors = listOf(
             "Invalid name: /hyphens-not-allowed-for-packages",
@@ -48,10 +44,8 @@ class ValidationTest {
             "Duplicate name: /package.b/duplicate_enumeration_name",
             "Duplicate name: /package.b/enumeration_with_duplicate_values/duplicate_value",
 
-            "Invalid additional root: /package.b/root2",
             "No enumeration values: /package.b/enumeration_with_no_values",
 
-            "Invalid additional root: /package.c/root3",
             "Unknown field type: /package.c/entity_1/invalid_alias_field",
             "Unknown field type: /package.c/entity_1/invalid_enumeration_field",
             "Unknown field type: /package.c/entity_1/invalid_composition_field",

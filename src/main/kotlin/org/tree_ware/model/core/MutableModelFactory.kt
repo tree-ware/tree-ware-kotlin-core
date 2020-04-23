@@ -28,8 +28,7 @@ class MutableModelFactoryVisitor(private val parent: MutableElementModel?) :
     }
 
     override fun visit(schema: Schema): Boolean {
-        // TODO(deepak-nulu): uncomment once rootSchema is not needed for creating MutableModel
-        // newModel = MutableModel(schema, rootSchema)
+        newModel = MutableModel(schema)
         return true
     }
 

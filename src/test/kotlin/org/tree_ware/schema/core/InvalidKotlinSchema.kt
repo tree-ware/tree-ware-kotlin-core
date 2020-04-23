@@ -1,15 +1,8 @@
 package org.tree_ware.schema.core
 
-import org.tree_ware.schema.core.*
-
-fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
+fun getInvalidKotlinSchema(): MutableSchema {
     val packageA = MutablePackageSchema(
         name = "hyphens-not-allowed-for-packages",
-        root = MutableRootSchema(
-            name = "root1",
-            packageName = "hyphens-not-allowed-for-packages",
-            entityName = "dots.not_allowed_for.entities"
-        ),
         entities = listOf(
             MutableEntitySchema(
                 name = "dots.not_allowed_for.entities",
@@ -63,11 +56,6 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
 
     val packageB = MutablePackageSchema(
         name = "package.b",
-        root = MutableRootSchema(
-            name = "root2",
-            packageName = "package.b",
-            entityName = "empty_entity"
-        ),
         aliases = listOf(
             MutableAliasSchema(
                 name = "dots.not_allowed_for.aliases",
@@ -139,11 +127,6 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
 
     val packageC = MutablePackageSchema(
         name = "package.c",
-        root = MutableRootSchema(
-            name = "root3",
-            packageName = "package.b",
-            entityName = "empty_entity"
-        ),
         entities = listOf(
             MutableEntitySchema(
                 name = "entity_1",
@@ -168,5 +151,12 @@ fun getInvalidKotlinPackages(): List<MutablePackageSchema> {
         )
     )
 
-    return listOf(packageA, packageB, packageC)
+    return MutableSchema(
+        MutableRootSchema(
+            name = "root1",
+            packageName = "hyphens-not-allowed-for-packages",
+            entityName = "dots.not_allowed_for.entities"
+        ),
+        listOf(packageA, packageB, packageC)
+    )
 }

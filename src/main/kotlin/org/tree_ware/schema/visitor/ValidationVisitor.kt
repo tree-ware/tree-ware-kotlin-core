@@ -2,17 +2,13 @@ package org.tree_ware.schema.visitor
 
 import org.tree_ware.schema.core.MutableEnumerationSchema
 import org.tree_ware.schema.core.MutableFieldSchema
-import org.tree_ware.schema.core.MutablePackageSchema
-import org.tree_ware.schema.core.MutableRootSchema
+import org.tree_ware.schema.core.MutableSchema
 
 // NOTE: validation is also done in other subclasses of AbstractMutableSchemaValidatingVisitor
 
 class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
-    override fun mutableVisit(pkg: MutablePackageSchema): Boolean {
-        pkg.root?.also {
-            if (this.root == null) this.root = pkg.root
-            else _errors.add("Invalid additional root: ${it.fullName}")
-        }
+    override fun mutableVisit(schema: MutableSchema): Boolean {
+        if (schema._root == null) _errors.add("No root entity")
         return true
     }
 
@@ -37,13 +33,4 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
 
         return true
     }
-
-    override fun finalizeValidation() {
-        if (root == null) {
-            _errors.add("No root entity")
-        }
-    }
-
-    var root: MutableRootSchema? = null
-        private set
 }

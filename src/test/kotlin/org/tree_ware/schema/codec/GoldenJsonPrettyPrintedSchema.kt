@@ -2,18 +2,18 @@ package org.tree_ware.schema.codec
 
 const val goldenJsonPrettyPrintedSchema = """{
   "schema": {
+    "root": {
+      "name": "test",
+      "info": "Test schema root",
+      "type": {
+        "package": "package.a",
+        "entity": "entity1"
+      }
+    },
     "packages": [
       {
         "name": "package.a",
         "info": "Test package A",
-        "root": {
-          "name": "test",
-          "info": "Test schema root",
-          "type": {
-            "package": "package.a",
-            "entity": "entity1"
-          }
-        },
         "entities": [
           {
             "name": "entity1",
