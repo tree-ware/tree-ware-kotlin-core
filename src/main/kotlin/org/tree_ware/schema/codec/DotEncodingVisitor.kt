@@ -48,6 +48,39 @@ class DotEncodingVisitor(
         writeLine(nodesWriter, "</TR>")
     }
 
+    private fun writeLegend() {
+        graphWriter.write(
+            """
+            |  subgraph "cluster_legend" {
+            |    label="legend"
+            |    color=lightgray
+            |    "source" [label=<
+            |      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+            |        <TR><TD ALIGN="RIGHT" PORT="0">parent</TD></TR>
+            |        <TR><TD ALIGN="RIGHT" PORT="1">source</TD></TR>
+            |      </TABLE>
+            |    >]
+            |    "target" [label=<
+            |      <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+            |        <TR>
+            |          <TD ALIGN="LEFT" PORT="0">child</TD>
+            |          <TD>:</TD>
+            |          <TD ALIGN="LEFT">composition (deleting the parent will delete the child)</TD>
+            |        </TR>
+            |        <TR>
+            |          <TD ALIGN="LEFT" PORT="1">target</TD>
+            |          <TD>:</TD>
+            |          <TD ALIGN="LEFT">association (deleting the source will NOT delete the target)</TD>
+            |        </TR>
+            |      </TABLE>
+            |    >]
+            |    source:0 -> target:0 [dir=both arrowtail=diamond color=orangered]
+            |    source:1 -> target:1 [style="dashed" color=sienna]
+            |  }
+            """.trimMargin()
+        )
+    }
+
     private fun getPrimitiveType(primitive: PrimitiveSchema): String = when (primitive) {
         is BooleanSchema -> "boolean"
         is ByteSchema -> "byte"
@@ -90,6 +123,9 @@ class DotEncodingVisitor(
         prettyPrinter.indent()
         writeLine(graphWriter, "rankdir=LR")
         writeLine(graphWriter, "node[shape=plaintext]")
+        writeEmptyLine(graphWriter)
+        writeLegend()
+        writeEmptyLine(graphWriter)
         writeEmptyLine(graphWriter)
 
         // Replace default end-handler with custom end-handler
