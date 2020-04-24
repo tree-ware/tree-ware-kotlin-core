@@ -8,7 +8,6 @@ val jsonVersion = "1.1.4"
 val log4j2Version = "2.12.1"
 
 val junitVersion = "5.4.2"
-val assertKVersion = "0.20"
 
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.3.40")
@@ -31,7 +30,6 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
-    testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
 }
 

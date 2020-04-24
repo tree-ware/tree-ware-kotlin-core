@@ -1,9 +1,8 @@
 package org.tree_ware.schema.core
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class RootValidationTests {
     @Test
@@ -22,7 +21,7 @@ class RootValidationTests {
             "Invalid name: /invalid.root-name"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -41,7 +40,7 @@ class RootValidationTests {
             "Unknown root type: /test_root"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -56,7 +55,7 @@ class RootValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 }
 

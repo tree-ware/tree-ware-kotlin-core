@@ -1,9 +1,8 @@
 package org.tree_ware.schema.core
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CompositionValidationTests {
     @Test
@@ -34,7 +33,7 @@ class CompositionValidationTests {
             "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -72,7 +71,7 @@ class CompositionValidationTests {
             "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field_2"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -99,7 +98,7 @@ class CompositionValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 
     @Test
@@ -137,7 +136,7 @@ class CompositionValidationTests {
             "Target of composition list does not have keys: /test.package/test_entity/test_field2"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -170,7 +169,7 @@ class CompositionValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 }
 

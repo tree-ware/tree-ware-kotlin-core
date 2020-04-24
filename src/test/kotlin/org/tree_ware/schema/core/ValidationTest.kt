@@ -1,8 +1,7 @@
 package org.tree_ware.schema.core
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 // TODO(deepak-nulu): split into multiple files based on type of validation
 
@@ -14,7 +13,7 @@ class ValidationTest {
 
         val expectedErrors = listOf("No root entity")
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -54,6 +53,6 @@ class ValidationTest {
             "Association path is too short: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/hyphens-not-allowed-for-association-fields"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 }

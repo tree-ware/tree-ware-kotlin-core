@@ -1,9 +1,8 @@
 package org.tree_ware.schema.core
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class AssociationValidationTests {
     @Test
@@ -32,7 +31,7 @@ class AssociationValidationTests {
             "Association path is too short: /test.package/test_entity/test_association_field"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -63,7 +62,7 @@ class AssociationValidationTests {
             "Association path is too short: /test.package/test_entity/test_association_field"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -95,7 +94,7 @@ class AssociationValidationTests {
             "Invalid association path root: /test.package/test_entity/test_association_field"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -127,7 +126,7 @@ class AssociationValidationTests {
             "Invalid association path: /test.package/test_entity/test_association_field"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -156,7 +155,7 @@ class AssociationValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 
     @Test
@@ -189,7 +188,7 @@ class AssociationValidationTests {
             "Association list entity path does not have keys: /test.package/test_entity/test_association_field"
         )
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -227,6 +226,6 @@ class AssociationValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 }

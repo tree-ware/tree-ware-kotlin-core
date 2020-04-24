@@ -1,9 +1,8 @@
 package org.tree_ware.schema.core
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class MultiplicityValidationTests {
     @Test
@@ -17,7 +16,7 @@ class MultiplicityValidationTests {
 
         val expectedErrors = allFieldPaths.map { "Multiplicity min is less than 0: $it" }
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -31,7 +30,7 @@ class MultiplicityValidationTests {
 
         val expectedErrors = allFieldPaths.map { "Multiplicity max is less than 0: $it" }
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -45,7 +44,7 @@ class MultiplicityValidationTests {
 
         val expectedErrors = allFieldPaths.map { "Multiplicity max is less than min: $it" }
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -57,7 +56,7 @@ class MultiplicityValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 
     @Test
@@ -69,7 +68,7 @@ class MultiplicityValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 
     @Test
@@ -81,7 +80,7 @@ class MultiplicityValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 
     @Test
@@ -95,7 +94,7 @@ class MultiplicityValidationTests {
 
         val expectedErrors = nonAssociationFieldPaths.map { "Multiplicity is not [1, 1] for key field: $it" }
 
-        assertThat(errors.toString()).isEqualTo(expectedErrors.toString())
+        assertEquals(expectedErrors.toString(), errors.toString())
     }
 
     @Test
@@ -107,7 +106,7 @@ class MultiplicityValidationTests {
         )
         val errors = validate(schema)
 
-        assertThat(errors.isEmpty()).isTrue()
+        assertTrue(errors.isEmpty())
     }
 }
 

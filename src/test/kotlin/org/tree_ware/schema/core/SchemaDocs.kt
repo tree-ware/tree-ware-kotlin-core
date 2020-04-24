@@ -1,8 +1,8 @@
 package org.tree_ware.schema.core
 
-import org.junit.jupiter.api.Test
 import org.tree_ware.schema.codec.encodeDot
 import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 // TODO(deepak-nulu): make doc generation a gradle task
