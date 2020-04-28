@@ -219,7 +219,7 @@ class DotEncodingVisitor(
     override fun visit(associationField: AssociationFieldSchema): Boolean {
         writeNodeField(associationField, associationField.resolvedEntity.name)
 
-        linksWriter.write("""  "${associationField.parent.fullName}":"${associationField.name}" -> "${associationField.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
+        linksWriter.write("""  "${associationField.parent.fullName}":"${associationField.name}:e" -> "${associationField.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
         linksWriter.write(prettyPrinter.endOfLine)
 
         return true
@@ -228,7 +228,7 @@ class DotEncodingVisitor(
     override fun visit(compositionField: CompositionFieldSchema): Boolean {
         writeNodeField(compositionField, compositionField.resolvedEntity.name)
 
-        linksWriter.write("""  "${compositionField.parent.fullName}":"${compositionField.name}" -> "${compositionField.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
+        linksWriter.write("""  "${compositionField.parent.fullName}":"${compositionField.name}:e" -> "${compositionField.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
         linksWriter.write(prettyPrinter.endOfLine)
 
         return true
