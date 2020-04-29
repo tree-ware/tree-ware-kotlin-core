@@ -19,6 +19,11 @@ repositories {
     mavenCentral()
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    // Compile for Java 8 (default is Java 6)
+    kotlinOptions.jvmTarget = "1.8"
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
