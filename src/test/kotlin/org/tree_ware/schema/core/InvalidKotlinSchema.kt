@@ -23,11 +23,11 @@ fun getInvalidKotlinSchema(): MutableSchema {
                 fields = listOf(
                     MutableAssociationFieldSchema(
                         name = "dots.not_allowed_for.association_fields",
-                        entityPath = listOf()
+                        entityPathSchema = MutableEntityPathSchema(listOf())
                     ),
                     MutableAssociationFieldSchema(
                         name = "hyphens-not-allowed-for-association-fields",
-                        entityPath = listOf()
+                        entityPathSchema = MutableEntityPathSchema(listOf())
                     ),
                     MutableAliasFieldSchema(
                         name = "dots.not_allowed_for.alias_fields",

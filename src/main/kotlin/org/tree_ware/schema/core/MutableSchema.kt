@@ -432,10 +432,7 @@ abstract class MutableFieldSchema(
     name: String,
     info: String? = null,
     override var isKey: Boolean,
-    override var multiplicity: MutableMultiplicity = MutableMultiplicity(
-        1,
-        1
-    )
+    override var multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableNamedElementSchema(name, info), FieldSchema {
     override var parent: MutableEntitySchema
         get() = _parent ?: throw IllegalStateException("Parent has not been set")
@@ -458,10 +455,7 @@ class MutablePrimitiveFieldSchema(
     info: String? = null,
     override var primitive: MutablePrimitiveSchema,
     isKey: Boolean = false,
-    multiplicity: MutableMultiplicity = MutableMultiplicity(
-        1,
-        1
-    )
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, isKey, multiplicity),
     PrimitiveFieldSchema {
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
@@ -487,10 +481,7 @@ class MutableAliasFieldSchema(
     override var packageName: String,
     override var aliasName: String,
     isKey: Boolean = false,
-    multiplicity: MutableMultiplicity = MutableMultiplicity(
-        1,
-        1
-    )
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, isKey, multiplicity), AliasFieldSchema {
     override var resolvedAlias: MutableAliasSchema
         get() = _resolvedAlias
@@ -517,10 +508,7 @@ class MutableEnumerationFieldSchema(
     override var packageName: String,
     override var enumerationName: String,
     isKey: Boolean = false,
-    multiplicity: MutableMultiplicity = MutableMultiplicity(
-        1,
-        1
-    )
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, isKey, multiplicity),
     EnumerationFieldSchema {
     override var resolvedEnumeration: MutableEnumerationSchema
@@ -545,23 +533,9 @@ class MutableEnumerationFieldSchema(
 class MutableAssociationFieldSchema(
     name: String,
     info: String? = null,
-    override var entityPath: List<String>,
-    multiplicity: MutableMultiplicity = MutableMultiplicity(
-        1,
-        1
-    )
-) : MutableFieldSchema(name, info, false, multiplicity),
-    AssociationFieldSchema {
-    override val keyEntities: MutableList<MutableEntitySchema> = mutableListOf()
-
-    override var resolvedEntity: MutableEntitySchema
-        get() = _resolvedEntity
-            ?: throw IllegalStateException("Association $entityPath has not been resolved")
-        internal set(value) {
-            _resolvedEntity = value
-        }
-    private var _resolvedEntity: MutableEntitySchema? = null
-
+    internal val entityPathSchema: MutableEntityPathSchema,
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
+) : MutableFieldSchema(name, info, false, multiplicity), AssociationFieldSchema, EntityPathSchema by entityPathSchema {
     override fun visitSelf(visitor: SchemaVisitor): Boolean {
         return super.visitSelf(visitor) && visitor.visit(this)
     }
@@ -579,10 +553,7 @@ class MutableCompositionFieldSchema(
     override var packageName: String,
     override var entityName: String,
     isKey: Boolean = false,
-    multiplicity: MutableMultiplicity = MutableMultiplicity(
-        1,
-        1
-    )
+    multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, isKey, multiplicity),
     CompositionFieldSchema {
     override var resolvedEntity: MutableEntitySchema
@@ -603,6 +574,20 @@ class MutableCompositionFieldSchema(
     }
 
     // The resolved type of this field is not considered a child and is therefore not traversed.
+}
+
+// Special Values
+
+class MutableEntityPathSchema(override var entityPath: List<String>) : EntityPathSchema {
+    override val keyEntities: MutableList<EntitySchema> = mutableListOf()
+
+    override var resolvedEntity: EntitySchema
+        get() = _resolvedEntity
+            ?: throw IllegalStateException("Association $entityPath has not been resolved")
+        internal set(value) {
+            _resolvedEntity = value
+        }
+    private var _resolvedEntity: EntitySchema? = null
 }
 
 // Predefined Primitives

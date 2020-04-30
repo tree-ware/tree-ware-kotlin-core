@@ -15,7 +15,7 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field",
-                            entityPath = listOf()
+                            entityPathSchema = MutableEntityPathSchema(listOf())
                         )
                     )
                 )
@@ -44,8 +44,10 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field",
-                            entityPath = listOf(
-                                "root"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "root"
+                                )
                             )
                         )
                     )
@@ -75,9 +77,11 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field",
-                            entityPath = listOf(
-                                "invalid_root",
-                                "invalid_field_1"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "invalid_root",
+                                    "invalid_field_1"
+                                )
                             )
                         )
                     )
@@ -107,9 +111,11 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field",
-                            entityPath = listOf(
-                                "root",
-                                "invalid_field_1"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "root",
+                                    "invalid_field_1"
+                                )
                             )
                         )
                     )
@@ -139,10 +145,12 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field",
-                            entityPath = listOf(
-                                "root",
-                                "entity1_composition_field",
-                                "entity2_composition_field"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "root",
+                                    "entity1_composition_field",
+                                    "entity2_composition_field"
+                                )
                             )
                         )
                     )
@@ -168,9 +176,11 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field",
-                            entityPath = listOf(
-                                "root",
-                                "entity1_composition_field_1_1"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "root",
+                                    "entity1_composition_field_1_1"
+                                )
                             ),
                             multiplicity = MutableMultiplicity(1, 0)
                         )
@@ -201,18 +211,22 @@ class AssociationValidationTests {
                     fields = listOf(
                         MutableAssociationFieldSchema(
                             name = "test_association_field1",
-                            entityPath = listOf(
-                                "root",
-                                "entity1_composition_field_1_1",
-                                "entity2_composition_field_0_0"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "root",
+                                    "entity1_composition_field_1_1",
+                                    "entity2_composition_field_0_0"
+                                )
                             ),
                             multiplicity = MutableMultiplicity(10, 10)
                         ),
                         MutableAssociationFieldSchema(
                             name = "test_association_field2",
-                            entityPath = listOf(
-                                "root",
-                                "entity1_composition_field_1_10"
+                            entityPathSchema = MutableEntityPathSchema(
+                                listOf(
+                                    "root",
+                                    "entity1_composition_field_1_10"
+                                )
                             ),
                             multiplicity = MutableMultiplicity(0, 0)
                         )

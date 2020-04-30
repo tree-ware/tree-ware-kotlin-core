@@ -109,9 +109,11 @@ private fun newAddressBookPackage() = MutablePackageSchema(
                 ),
                 MutableAssociationFieldSchema(
                     name = "person",
-                    entityPath = listOf(
-                        "address_book",
-                        "person"
+                    entityPathSchema = MutableEntityPathSchema(
+                        listOf(
+                            "address_book",
+                            "person"
+                        )
                     )
                 )
             )

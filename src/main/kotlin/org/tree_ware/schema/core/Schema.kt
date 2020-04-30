@@ -120,18 +120,22 @@ interface EnumerationFieldSchema : FieldSchema {
 }
 
 /** Schema for fields that are associations to user-defined entities. */
-interface AssociationFieldSchema : FieldSchema {
-    val entityPath: List<String>
-
-    val keyEntities: List<EntitySchema>
-    val resolvedEntity: EntitySchema
-}
+interface AssociationFieldSchema : FieldSchema, EntityPathSchema
 
 /** Schema for fields that are compositions of user-defined entities. */
 interface CompositionFieldSchema : FieldSchema {
     val packageName: String
     val entityName: String
 
+    val resolvedEntity: EntitySchema
+}
+
+// Special Values
+
+interface EntityPathSchema {
+    val entityPath: List<String>
+
+    val keyEntities: List<EntitySchema>
     val resolvedEntity: EntitySchema
 }
 

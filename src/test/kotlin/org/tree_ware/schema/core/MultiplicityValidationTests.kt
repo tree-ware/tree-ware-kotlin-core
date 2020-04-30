@@ -146,7 +146,7 @@ private fun getTestPackage(min: Long, max: Long, isKey: Boolean = false): Mutabl
                     ),
                     MutableAssociationFieldSchema(
                         name = "association_field",
-                        entityPath = listOf("root", "entity1_composition_field"),
+                        entityPathSchema = MutableEntityPathSchema(listOf("root", "entity1_composition_field")),
                         multiplicity = MutableMultiplicity(min, max)
                     )
                 )

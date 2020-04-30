@@ -32,10 +32,12 @@ fun getGoldenKotlinSchema(): MutableSchema {
                     MutableAssociationFieldSchema(
                         name = "package_a_association_field",
                         info = "A field that is an association to the entity at the end of the specified path",
-                        entityPath = listOf(
-                            "test",
-                            "package_b_entity2_composition_field",
-                            "package_c_entity3_composition_field"
+                        entityPathSchema = MutableEntityPathSchema(
+                            listOf(
+                                "test",
+                                "package_b_entity2_composition_field",
+                                "package_c_entity3_composition_field"
+                            )
                         ),
                         multiplicity = MutableMultiplicity(1, 10)
                     ),
