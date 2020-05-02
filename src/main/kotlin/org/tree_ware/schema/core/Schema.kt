@@ -135,6 +135,7 @@ interface CompositionFieldSchema : FieldSchema {
 interface EntityPathSchema {
     val entityPath: List<String>
 
+    val pathEntities: List<EntitySchema>
     val keyEntities: List<EntitySchema>
     val resolvedEntity: EntitySchema
 }

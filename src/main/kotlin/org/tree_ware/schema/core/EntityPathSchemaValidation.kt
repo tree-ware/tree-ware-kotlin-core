@@ -23,6 +23,7 @@ fun validate(schema: MutableEntityPathSchema, root: RootSchema, fieldFullName: S
         // Abort entity-path resolution if there is no resolved-entity.
         // The lack of a resolved-entity is reported by a different validation visitor.
         entity = nextEntityResult.entity ?: return errors
+        schema.pathEntities.add(entity)
         if (entity.fields.any { it.isKey }) schema.keyEntities.add(entity)
     }
     schema.resolvedEntity = entity
