@@ -4,16 +4,12 @@ import org.tree_ware.common.codec.PrettyPrintHelper
 import org.tree_ware.schema.core.*
 import org.tree_ware.schema.visitor.AbstractSchemaVisitor
 import java.io.Writer
-import java.util.*
-
-typealias EndHandler = () -> Unit
 
 class DotEncodingVisitor(
     private val graphWriter: Writer,
     private val nodesWriter: Writer,
     private val linksWriter: Writer
-) : BracketedVisitor, AbstractSchemaVisitor() {
-    private var endHandlers = ArrayDeque<EndHandler>()
+) : AbstractSchemaVisitor() {
     private val prettyPrinter = PrettyPrintHelper(true)
 
     private fun writeLine(writer: Writer, string: String) {
@@ -98,27 +94,9 @@ class DotEncodingVisitor(
         else -> "unknown"
     }
 
-    // BracketedVisitor methods
-
-    override fun objectStart(name: String) {
-        // Register a default end-handler that does nothing.
-        endHandlers.addFirst {}
-    }
-
-    override fun objectEnd() {
-        if (endHandlers.isNotEmpty()) {
-            val endHandler = endHandlers.pollFirst()
-            endHandler()
-        }
-    }
-
-    override fun listStart(name: String) {}
-
-    override fun listEnd() {}
-
     // SchemaVisitor methods
 
-    override fun visit(schema: Schema): Boolean {
+    override fun visit(schema: Schema): SchemaTraversalAction {
         writeEmptyLine(graphWriter)
         prettyPrinter.indent()
         writeLine(graphWriter, "rankdir=LR")
@@ -128,33 +106,29 @@ class DotEncodingVisitor(
         writeEmptyLine(graphWriter)
         writeEmptyLine(graphWriter)
 
-        // Replace default end-handler with custom end-handler
-        endHandlers.pollFirst()
-        endHandlers.addFirst {
-            prettyPrinter.unindent()
-        }
-
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(pkg: PackageSchema): Boolean {
+    override fun leave(schema: Schema) {
+        prettyPrinter.unindent()
+    }
+
+    override fun visit(pkg: PackageSchema): SchemaTraversalAction {
         writeLine(nodesWriter, """subgraph "cluster_${pkg.fullName}" {""")
         prettyPrinter.indent()
         writeLine(nodesWriter, """label="${pkg.name}"""")
         writeLine(nodesWriter, "color=lightgray")
 
-        // Replace default end-handler with custom end-handler
-        endHandlers.pollFirst()
-        endHandlers.addFirst {
-            prettyPrinter.unindent()
-            writeLine(nodesWriter, "}")
-            writeEmptyLine(nodesWriter)
-        }
-
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(enumeration: EnumerationSchema): Boolean {
+    override fun leave(pkg: PackageSchema) {
+        prettyPrinter.unindent()
+        writeLine(nodesWriter, "}")
+        writeEmptyLine(nodesWriter)
+    }
+
+    override fun visit(enumeration: EnumerationSchema): SchemaTraversalAction {
         writeLine(nodesWriter, """"${enumeration.fullName}" [label=<""")
         prettyPrinter.indent()
         writeLine(nodesWriter, """<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">""")
@@ -164,23 +138,22 @@ class DotEncodingVisitor(
             """<TR><TD ALIGN="LEFT" PORT="0" BGCOLOR="khaki1"><B>${enumeration.name} (enum)  </B></TD></TR>"""
         )
 
-        // Replace default end-handler with custom end-handler
-        endHandlers.pollFirst()
-        endHandlers.addFirst {
-            prettyPrinter.unindent()
-            writeLine(nodesWriter, "</TABLE>")
-            prettyPrinter.unindent()
-            writeLine(nodesWriter, ">]")
-        }
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(enumerationValue: EnumerationValueSchema): Boolean {
+    override fun leave(enumeration: EnumerationSchema) {
+        prettyPrinter.unindent()
+        writeLine(nodesWriter, "</TABLE>")
+        prettyPrinter.unindent()
+        writeLine(nodesWriter, ">]")
+    }
+
+    override fun visit(enumerationValue: EnumerationValueSchema): SchemaTraversalAction {
         writeLine(nodesWriter, """<TR><TD ALIGN="LEFT">${enumerationValue.name}</TD></TR>""")
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(entity: EntitySchema): Boolean {
+    override fun visit(entity: EntitySchema): SchemaTraversalAction {
         writeLine(nodesWriter, """"${entity.fullName}" [label=<""")
         prettyPrinter.indent()
         writeLine(nodesWriter, """<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">""")
@@ -190,47 +163,46 @@ class DotEncodingVisitor(
             """<TR><TD ALIGN="LEFT" PORT="0" COLSPAN="4" BGCOLOR="cadetblue1"><B>${entity.name} (entity)</B></TD></TR>"""
         )
 
-        // Replace default end-handler with custom end-handler
-        endHandlers.pollFirst()
-        endHandlers.addFirst {
-            prettyPrinter.unindent()
-            writeLine(nodesWriter, "</TABLE>")
-            prettyPrinter.unindent()
-            writeLine(nodesWriter, ">]")
-        }
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(primitiveField: PrimitiveFieldSchema): Boolean {
+    override fun leave(entity: EntitySchema) {
+        prettyPrinter.unindent()
+        writeLine(nodesWriter, "</TABLE>")
+        prettyPrinter.unindent()
+        writeLine(nodesWriter, ">]")
+    }
+
+    override fun visit(primitiveField: PrimitiveFieldSchema): SchemaTraversalAction {
         writeNodeField(primitiveField, getPrimitiveType(primitiveField.primitive))
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(aliasField: AliasFieldSchema): Boolean {
+    override fun visit(aliasField: AliasFieldSchema): SchemaTraversalAction {
         writeNodeField(aliasField, "${aliasField.aliasName} (${getPrimitiveType(aliasField.resolvedAlias.primitive)})")
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(enumerationField: EnumerationFieldSchema): Boolean {
+    override fun visit(enumerationField: EnumerationFieldSchema): SchemaTraversalAction {
         writeNodeField(enumerationField, enumerationField.enumerationName)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(associationField: AssociationFieldSchema): Boolean {
+    override fun visit(associationField: AssociationFieldSchema): SchemaTraversalAction {
         writeNodeField(associationField, associationField.resolvedEntity.name)
 
         linksWriter.write("""  "${associationField.parent.fullName}":"${associationField.name}:e" -> "${associationField.resolvedEntity.fullName}":0 [style="dashed" color=sienna]""")
         linksWriter.write(prettyPrinter.endOfLine)
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(compositionField: CompositionFieldSchema): Boolean {
+    override fun visit(compositionField: CompositionFieldSchema): SchemaTraversalAction {
         writeNodeField(compositionField, compositionField.resolvedEntity.name)
 
         linksWriter.write("""  "${compositionField.parent.fullName}":"${compositionField.name}:e" -> "${compositionField.resolvedEntity.fullName}":0 [dir=both arrowtail=diamond color=orangered]""")
         linksWriter.write(prettyPrinter.endOfLine)
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 }

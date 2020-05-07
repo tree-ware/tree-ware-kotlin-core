@@ -2,120 +2,182 @@ package org.tree_ware.schema.visitor
 
 import org.tree_ware.schema.core.*
 
-abstract class AbstractSchemaVisitor : SchemaVisitor {
-    override fun visit(element: ElementSchema): Boolean {
-        return true
+abstract class AbstractSchemaVisitor : SchemaVisitor<SchemaTraversalAction> {
+    override fun visit(element: ElementSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(namedElement: NamedElementSchema): Boolean {
-        return true
+    override fun leave(element: ElementSchema) {}
+
+    override fun visit(namedElement: NamedElementSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(schema: Schema): Boolean {
-        return true
+    override fun leave(namedElement: NamedElementSchema) {}
+
+    override fun visit(schema: Schema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(pkg: PackageSchema): Boolean {
-        return true
+    override fun leave(schema: Schema) {}
+
+    override fun visit(pkg: PackageSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(root: RootSchema): Boolean {
-        return true
+    override fun leave(pkg: PackageSchema) {}
+
+    override fun visit(root: RootSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(alias: AliasSchema): Boolean {
-        return true
+    override fun leave(root: RootSchema) {}
+
+    override fun visit(alias: AliasSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(enumeration: EnumerationSchema): Boolean {
-        return true
+    override fun leave(alias: AliasSchema) {}
+
+    override fun visit(enumeration: EnumerationSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(enumerationValue: EnumerationValueSchema): Boolean {
-        return true
+    override fun leave(enumeration: EnumerationSchema) {}
+
+    override fun visit(enumerationValue: EnumerationValueSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(entity: EntitySchema): Boolean {
-        return true
+    override fun leave(enumerationValue: EnumerationValueSchema) {}
+
+    override fun visit(entity: EntitySchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
+
+    override fun leave(entity: EntitySchema) {}
 
     // Fields
 
-    override fun visit(field: FieldSchema): Boolean {
-        return true
+    override fun visit(field: FieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(primitiveField: PrimitiveFieldSchema): Boolean {
-        return true
+    override fun leave(field: FieldSchema) {}
+
+    override fun visit(primitiveField: PrimitiveFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(aliasField: AliasFieldSchema): Boolean {
-        return true
+    override fun leave(primitiveField: PrimitiveFieldSchema) {}
+
+    override fun visit(aliasField: AliasFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(enumerationField: EnumerationFieldSchema): Boolean {
-        return true
+    override fun leave(aliasField: AliasFieldSchema) {}
+
+    override fun visit(enumerationField: EnumerationFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(associationField: AssociationFieldSchema): Boolean {
-        return true
+    override fun leave(enumerationField: EnumerationFieldSchema) {}
+
+    override fun visit(associationField: AssociationFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(compositionField: CompositionFieldSchema): Boolean {
-        return true
+    override fun leave(associationField: AssociationFieldSchema) {}
+
+    override fun visit(compositionField: CompositionFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
+
+    override fun leave(compositionField: CompositionFieldSchema) {}
 
     // Primitives
 
-    override fun visit(boolean: BooleanSchema): Boolean {
-        return true
+    override fun visit(boolean: BooleanSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(byte: ByteSchema): Boolean {
-        return true
+    override fun leave(boolean: BooleanSchema) {}
+
+    override fun visit(byte: ByteSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(short: ShortSchema): Boolean {
-        return true
+    override fun leave(byte: ByteSchema) {}
+
+    override fun visit(short: ShortSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(int: IntSchema): Boolean {
-        return true
+    override fun leave(short: ShortSchema) {}
+
+    override fun visit(int: IntSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(long: LongSchema): Boolean {
-        return true
+    override fun leave(int: IntSchema) {}
+
+    override fun visit(long: LongSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(float: FloatSchema): Boolean {
-        return true
+    override fun leave(long: LongSchema) {}
+
+    override fun visit(float: FloatSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(double: DoubleSchema): Boolean {
-        return true
+    override fun leave(float: FloatSchema) {}
+
+    override fun visit(double: DoubleSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(string: StringSchema): Boolean {
-        return true
+    override fun leave(double: DoubleSchema) {}
+
+    override fun visit(string: StringSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(password1Way: Password1WaySchema): Boolean {
-        return true
+    override fun leave(string: StringSchema) {}
+
+    override fun visit(password1Way: Password1WaySchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(password2Way: Password2WaySchema): Boolean {
-        return true
+    override fun leave(password1Way: Password1WaySchema) {}
+
+    override fun visit(password2Way: Password2WaySchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(uuid: UuidSchema): Boolean {
-        return true
+    override fun leave(password2Way: Password2WaySchema) {}
+
+    override fun visit(uuid: UuidSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(blob: BlobSchema): Boolean {
-        return true
+    override fun leave(uuid: UuidSchema) {}
+
+    override fun visit(blob: BlobSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(timestamp: TimestampSchema): Boolean {
-        return true
+    override fun leave(blob: BlobSchema) {}
+
+    override fun visit(timestamp: TimestampSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
+
+    override fun leave(timestamp: TimestampSchema) {}
+
+    // Meta
+
+    override fun visitList(name: String) {}
+
+    override fun leaveList(name: String) {}
 }

@@ -1,6 +1,7 @@
 package org.tree_ware.schema.codec
 
 import org.tree_ware.schema.core.ElementSchema
+import org.tree_ware.schema.core.SchemaTraversalAction
 import java.io.StringWriter
 import java.io.Writer
 
@@ -11,7 +12,7 @@ fun encodeDot(element: ElementSchema, writer: Writer): Boolean {
     val encodingVisitor =
         DotEncodingVisitor(graphWriter, nodesWriter, linksWriter)
 
-    val encoded = element.accept(encodingVisitor)
+    val traversalAction = element.traverse(encodingVisitor)
 
     writer.write("digraph schema {")
     writer.write(graphWriter.toString())
@@ -19,5 +20,5 @@ fun encodeDot(element: ElementSchema, writer: Writer): Boolean {
     writer.write(linksWriter.toString())
     writer.write("}")
 
-    return encoded
+    return traversalAction != SchemaTraversalAction.ABORT_TREE
 }

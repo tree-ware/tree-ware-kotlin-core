@@ -1,17 +1,38 @@
 package org.tree_ware.schema.core
 
-interface VisitableSchema {
-    /**
-     * Accepts a visitor and traverses the schema with it (Visitor Pattern).
-     *
-     * If the visitor implements `BracketedVisitor`, then those methods will be called as well.
-     *
-     * @returns `true` to proceed with schema traversal, `false` to stop schema traversal.
-     */
-    fun accept(visitor: SchemaVisitor): Boolean
+enum class SchemaTraversalAction {
+    /** Continue traversal. */
+    CONTINUE,
+
+    /** Abort traversal of the current sub-tree of the schema. */
+    ABORT_SUB_TREE,
+
+    /** Abort traversal of the entire schema. */
+    ABORT_TREE
 }
 
-interface ElementSchema : VisitableSchema
+fun or(a: SchemaTraversalAction, b: SchemaTraversalAction): SchemaTraversalAction =
+    if (a == SchemaTraversalAction.ABORT_TREE || b == SchemaTraversalAction.ABORT_TREE) SchemaTraversalAction.ABORT_TREE
+    else if (a == SchemaTraversalAction.ABORT_SUB_TREE || b == SchemaTraversalAction.ABORT_SUB_TREE) SchemaTraversalAction.ABORT_SUB_TREE
+    else SchemaTraversalAction.CONTINUE
+
+interface VisitableSchema {
+    /**
+     * Traverses the schema element and visits it and its sub-elements (Visitor Pattern).
+     * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
+     */
+    fun traverse(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction
+
+    /**
+     * Visits the schema element without traversing its sub-elements.
+     * Returns what the visitor returns.
+     */
+    // TODO(deepak-nulu): implement // fun <T> dispatch(visitor: SchemaVisitor<T>): T
+}
+
+interface ElementSchema : VisitableSchema {
+    val id: String
+}
 
 interface NamedElementSchema : ElementSchema {
     val name: String
