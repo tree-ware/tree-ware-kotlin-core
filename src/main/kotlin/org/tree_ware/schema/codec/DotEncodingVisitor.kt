@@ -9,7 +9,7 @@ class DotEncodingVisitor(
     private val graphWriter: Writer,
     private val nodesWriter: Writer,
     private val linksWriter: Writer
-) : AbstractSchemaVisitor() {
+) : AbstractSchemaVisitor<SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
     private val prettyPrinter = PrettyPrintHelper(true)
 
     private fun writeLine(writer: Writer, string: String) {

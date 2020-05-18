@@ -5,7 +5,9 @@ import org.tree_ware.schema.core.*
 import org.tree_ware.schema.visitor.AbstractSchemaVisitor
 
 /** A visitor for encoding a schema. */
-class SchemaEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : AbstractSchemaVisitor() {
+class SchemaEncodingVisitor(
+    private val wireFormatEncoder: WireFormatEncoder
+) : AbstractSchemaVisitor<SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
     // SchemaVisitor methods
     override fun visit(namedElement: NamedElementSchema): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(namedElement.id)

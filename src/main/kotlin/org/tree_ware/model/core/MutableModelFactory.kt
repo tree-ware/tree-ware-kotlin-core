@@ -5,76 +5,60 @@ import org.tree_ware.schema.visitor.AbstractSchemaVisitor
 
 fun newMutableModel(schema: ElementSchema, parent: MutableElementModel?): MutableElementModel {
     val newMutableModelVisitor = MutableModelFactoryVisitor(parent)
-    schema.traverse(newMutableModelVisitor)
-    return newMutableModelVisitor.newModel
+    return schema.dispatch(newMutableModelVisitor) ?: throw IllegalStateException("Unable to create mutable model")
 }
 
-class MutableModelFactoryVisitor(private val parent: MutableElementModel?) : AbstractSchemaVisitor() {
-    // TODO(deepak-nulu): a non-traversing dispatch() method & visitor with template return type
-    // to avoid the following state variable
-    var newModel: MutableElementModel
-        get() = _newModel ?: throw IllegalStateException("Element has not been set")
-        internal set(value) {
-            _newModel = value
-        }
-    private var _newModel: MutableElementModel? = null
-
-    override fun visit(schema: Schema): SchemaTraversalAction {
-        newModel = MutableModel(schema)
-        return SchemaTraversalAction.CONTINUE
+class MutableModelFactoryVisitor(
+    private val parent: MutableElementModel?
+) : AbstractSchemaVisitor<MutableElementModel?>(null) {
+    override fun visit(schema: Schema): MutableElementModel? {
+        return MutableModel(schema)
     }
 
-    override fun visit(root: RootSchema): SchemaTraversalAction {
+    override fun visit(root: RootSchema): MutableElementModel? {
         val rootParent = parent as MutableModel
-        newModel = MutableRootModel(root, rootParent)
-        return SchemaTraversalAction.CONTINUE
+        return MutableRootModel(root, rootParent)
     }
 
-    override fun visit(entity: EntitySchema): SchemaTraversalAction {
+    override fun visit(entity: EntitySchema): MutableElementModel? {
         val entityParent = parent as MutableFieldModel
-        newModel = MutableEntityModel(entity, entityParent)
-        return SchemaTraversalAction.CONTINUE
+        return MutableEntityModel(entity, entityParent)
     }
 
     // Fields
 
-    override fun visit(primitiveField: PrimitiveFieldSchema): SchemaTraversalAction {
+    override fun visit(primitiveField: PrimitiveFieldSchema): MutableElementModel? {
         val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (primitiveField.multiplicity.isList()) MutablePrimitiveListFieldModel(primitiveField, fieldParent)
-            else MutablePrimitiveFieldModel(primitiveField, fieldParent)
-        return SchemaTraversalAction.CONTINUE
+        val isList = primitiveField.multiplicity.isList()
+        return if (isList) MutablePrimitiveListFieldModel(primitiveField, fieldParent)
+        else MutablePrimitiveFieldModel(primitiveField, fieldParent)
     }
 
-    override fun visit(aliasField: AliasFieldSchema): SchemaTraversalAction {
+    override fun visit(aliasField: AliasFieldSchema): MutableElementModel? {
         val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (aliasField.multiplicity.isList()) MutableAliasListFieldModel(aliasField, fieldParent)
-            else MutableAliasFieldModel(aliasField, fieldParent)
-        return SchemaTraversalAction.CONTINUE
+        val isList = aliasField.multiplicity.isList()
+        return if (isList) MutableAliasListFieldModel(aliasField, fieldParent)
+        else MutableAliasFieldModel(aliasField, fieldParent)
     }
 
-    override fun visit(enumerationField: EnumerationFieldSchema): SchemaTraversalAction {
+    override fun visit(enumerationField: EnumerationFieldSchema): MutableElementModel? {
         val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (enumerationField.multiplicity.isList()) MutableEnumerationListFieldModel(enumerationField, fieldParent)
-            else MutableEnumerationFieldModel(enumerationField, fieldParent)
-        return SchemaTraversalAction.CONTINUE
+        val isList = enumerationField.multiplicity.isList()
+        return if (isList) MutableEnumerationListFieldModel(enumerationField, fieldParent)
+        else MutableEnumerationFieldModel(enumerationField, fieldParent)
     }
 
-    override fun visit(associationField: AssociationFieldSchema): SchemaTraversalAction {
+    override fun visit(associationField: AssociationFieldSchema): MutableElementModel? {
         val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (associationField.multiplicity.isList()) MutableAssociationListFieldModel(associationField, fieldParent)
-            else MutableAssociationFieldModel(associationField, fieldParent)
-        return SchemaTraversalAction.CONTINUE
+        val isList = associationField.multiplicity.isList()
+        return if (isList) MutableAssociationListFieldModel(associationField, fieldParent)
+        else MutableAssociationFieldModel(associationField, fieldParent)
     }
 
-    override fun visit(compositionField: CompositionFieldSchema): SchemaTraversalAction {
+    override fun visit(compositionField: CompositionFieldSchema): MutableElementModel? {
         val fieldParent = parent as MutableBaseEntityModel
-        newModel =
-            if (compositionField.multiplicity.isList()) MutableCompositionListFieldModel(compositionField, fieldParent)
-            else MutableCompositionFieldModel(compositionField, fieldParent)
-        return SchemaTraversalAction.CONTINUE
+        val isList = compositionField.multiplicity.isList()
+        return if (isList) MutableCompositionListFieldModel(compositionField, fieldParent)
+        else MutableCompositionFieldModel(compositionField, fieldParent)
     }
 }

@@ -2,175 +2,175 @@ package org.tree_ware.schema.visitor
 
 import org.tree_ware.schema.core.*
 
-abstract class AbstractSchemaVisitor : SchemaVisitor<SchemaTraversalAction> {
-    override fun visit(element: ElementSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+abstract class AbstractSchemaVisitor<T>(private val defaultVisitReturn: T) : SchemaVisitor<T> {
+    override fun visit(element: ElementSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(element: ElementSchema) {}
 
-    override fun visit(namedElement: NamedElementSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(namedElement: NamedElementSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(namedElement: NamedElementSchema) {}
 
-    override fun visit(schema: Schema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(schema: Schema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(schema: Schema) {}
 
-    override fun visit(pkg: PackageSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(pkg: PackageSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(pkg: PackageSchema) {}
 
-    override fun visit(root: RootSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(root: RootSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(root: RootSchema) {}
 
-    override fun visit(alias: AliasSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(alias: AliasSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(alias: AliasSchema) {}
 
-    override fun visit(enumeration: EnumerationSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(enumeration: EnumerationSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(enumeration: EnumerationSchema) {}
 
-    override fun visit(enumerationValue: EnumerationValueSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(enumerationValue: EnumerationValueSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(enumerationValue: EnumerationValueSchema) {}
 
-    override fun visit(entity: EntitySchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(entity: EntitySchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(entity: EntitySchema) {}
 
     // Fields
 
-    override fun visit(field: FieldSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(field: FieldSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(field: FieldSchema) {}
 
-    override fun visit(primitiveField: PrimitiveFieldSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(primitiveField: PrimitiveFieldSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(primitiveField: PrimitiveFieldSchema) {}
 
-    override fun visit(aliasField: AliasFieldSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(aliasField: AliasFieldSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(aliasField: AliasFieldSchema) {}
 
-    override fun visit(enumerationField: EnumerationFieldSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(enumerationField: EnumerationFieldSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(enumerationField: EnumerationFieldSchema) {}
 
-    override fun visit(associationField: AssociationFieldSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(associationField: AssociationFieldSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(associationField: AssociationFieldSchema) {}
 
-    override fun visit(compositionField: CompositionFieldSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(compositionField: CompositionFieldSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(compositionField: CompositionFieldSchema) {}
 
     // Primitives
 
-    override fun visit(boolean: BooleanSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(boolean: BooleanSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(boolean: BooleanSchema) {}
 
-    override fun visit(byte: ByteSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(byte: ByteSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(byte: ByteSchema) {}
 
-    override fun visit(short: ShortSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(short: ShortSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(short: ShortSchema) {}
 
-    override fun visit(int: IntSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(int: IntSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(int: IntSchema) {}
 
-    override fun visit(long: LongSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(long: LongSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(long: LongSchema) {}
 
-    override fun visit(float: FloatSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(float: FloatSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(float: FloatSchema) {}
 
-    override fun visit(double: DoubleSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(double: DoubleSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(double: DoubleSchema) {}
 
-    override fun visit(string: StringSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(string: StringSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(string: StringSchema) {}
 
-    override fun visit(password1Way: Password1WaySchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(password1Way: Password1WaySchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(password1Way: Password1WaySchema) {}
 
-    override fun visit(password2Way: Password2WaySchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(password2Way: Password2WaySchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(password2Way: Password2WaySchema) {}
 
-    override fun visit(uuid: UuidSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(uuid: UuidSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(uuid: UuidSchema) {}
 
-    override fun visit(blob: BlobSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(blob: BlobSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(blob: BlobSchema) {}
 
-    override fun visit(timestamp: TimestampSchema): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
+    override fun visit(timestamp: TimestampSchema): T {
+        return defaultVisitReturn
     }
 
     override fun leave(timestamp: TimestampSchema) {}
