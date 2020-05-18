@@ -9,9 +9,10 @@ interface VisitableMutableSchema {
 
     /**
      * Visits the schema element without traversing its sub-elements.
+     * Leave methods are NOT called.
      * Returns what the visitor returns.
      */
-    // TODO(deepak-nulu): implement // fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T
+    fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T
 }
 
 abstract class MutableElementSchema : ElementSchema, VisitableMutableSchema {
@@ -35,6 +36,14 @@ abstract class MutableElementSchema : ElementSchema, VisitableMutableSchema {
         } finally {
             mutableLeaveSelf(visitor)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 
     // NOTE: call super.visitSelf() FIRST when overriding this method
@@ -75,6 +84,14 @@ abstract class MutableNamedElementSchema(
             _fullName = value
         }
     private var _fullName: String? = null
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -117,6 +134,14 @@ class MutableSchema(
 
     init {
         packages.forEach { it.parent = this }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -206,6 +231,14 @@ class MutableRootSchema(
     internal var _resolvedEntity: MutableEntitySchema? = null
         private set
 
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
@@ -248,6 +281,14 @@ class MutablePackageSchema(
             _parent = value
         }
     private var _parent: MutableSchema? = null
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -352,6 +393,14 @@ class MutableAliasSchema(
         }
     private var _parent: MutablePackageSchema? = null
 
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
@@ -412,6 +461,14 @@ class MutableEnumerationSchema(
             _parent = value
         }
     private var _parent: MutablePackageSchema? = null
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -478,6 +535,14 @@ class MutableEnumerationValueSchema(
         }
     private var _parent: MutableEnumerationSchema? = null
 
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
@@ -512,6 +577,14 @@ class MutableEntitySchema(
             _parent = value
         }
     private var _parent: MutablePackageSchema? = null
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -581,6 +654,14 @@ abstract class MutableFieldSchema(
         }
     private var _parent: MutableEntitySchema? = null
 
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
@@ -608,6 +689,14 @@ class MutablePrimitiveFieldSchema(
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, isKey, multiplicity), PrimitiveFieldSchema {
     override val id = "primitive_field"
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -670,6 +759,14 @@ class MutableAliasFieldSchema(
         }
     private var _resolvedAlias: MutableAliasSchema? = null
 
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
@@ -709,6 +806,14 @@ class MutableEnumerationFieldSchema(
         }
     private var _resolvedEnumeration: MutableEnumerationSchema? = null
 
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
@@ -737,6 +842,14 @@ class MutableAssociationFieldSchema(
     multiplicity: MutableMultiplicity = MutableMultiplicity(1, 1)
 ) : MutableFieldSchema(name, info, false, multiplicity), AssociationFieldSchema, EntityPathSchema by entityPathSchema {
     override val id = "association_field"
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -777,6 +890,14 @@ class MutableCompositionFieldSchema(
         }
     internal var _resolvedEntity: MutableEntitySchema? = null
         private set
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 
     override fun visitSelf(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
@@ -835,6 +956,14 @@ class MutableBooleanSchema : MutablePrimitiveSchema(), BooleanSchema {
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutableByteSchema(
@@ -854,6 +983,14 @@ class MutableByteSchema(
         } finally {
             visitor.mutableLeave(this)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -875,6 +1012,14 @@ class MutableShortSchema(
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutableIntSchema(
@@ -894,6 +1039,14 @@ class MutableIntSchema(
         } finally {
             visitor.mutableLeave(this)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -915,6 +1068,14 @@ class MutableLongSchema(
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutableFloatSchema(
@@ -934,6 +1095,14 @@ class MutableFloatSchema(
         } finally {
             visitor.mutableLeave(this)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -955,6 +1124,14 @@ class MutableDoubleSchema(
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 open class MutableStringSchema(
@@ -974,6 +1151,14 @@ open class MutableStringSchema(
         } finally {
             visitor.mutableLeave(this)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -995,6 +1180,14 @@ class MutablePassword1WaySchema(
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutablePassword2WaySchema(
@@ -1015,6 +1208,14 @@ class MutablePassword2WaySchema(
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutableUuidSchema : MutablePrimitiveSchema(), UuidSchema {
@@ -1032,6 +1233,14 @@ class MutableUuidSchema : MutablePrimitiveSchema(), UuidSchema {
         } finally {
             visitor.mutableLeave(this)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 }
 
@@ -1053,6 +1262,14 @@ class MutableBlobSchema(
             visitor.mutableLeave(this)
         }
     }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
 }
 
 class MutableTimestampSchema : MutablePrimitiveSchema(), TimestampSchema {
@@ -1070,6 +1287,14 @@ class MutableTimestampSchema : MutablePrimitiveSchema(), TimestampSchema {
         } finally {
             visitor.mutableLeave(this)
         }
+    }
+
+    override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T {
+        return visitor.mutableVisit(this)
     }
 }
 

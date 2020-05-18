@@ -25,9 +25,10 @@ interface VisitableSchema {
 
     /**
      * Visits the schema element without traversing its sub-elements.
+     * Leave methods are NOT called.
      * Returns what the visitor returns.
      */
-    // TODO(deepak-nulu): implement // fun <T> dispatch(visitor: SchemaVisitor<T>): T
+    fun <T> dispatch(visitor: SchemaVisitor<T>): T
 }
 
 interface ElementSchema : VisitableSchema {
