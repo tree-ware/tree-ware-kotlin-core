@@ -3,23 +3,24 @@ package org.tree_ware.schema.visitor
 import org.tree_ware.schema.core.MutableEnumerationSchema
 import org.tree_ware.schema.core.MutableFieldSchema
 import org.tree_ware.schema.core.MutableSchema
+import org.tree_ware.schema.core.SchemaTraversalAction
 
 // NOTE: validation is also done in other subclasses of AbstractMutableSchemaValidatingVisitor
 
 class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
-    override fun mutableVisit(schema: MutableSchema): Boolean {
+    override fun mutableVisit(schema: MutableSchema): SchemaTraversalAction {
         if (schema._root == null) _errors.add("No root entity")
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(enumeration: MutableEnumerationSchema): Boolean {
+    override fun mutableVisit(enumeration: MutableEnumerationSchema): SchemaTraversalAction {
         if (enumeration.values.isEmpty()) {
             _errors.add("No enumeration values: ${enumeration.fullName}")
         }
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(field: MutableFieldSchema): Boolean {
+    override fun mutableVisit(field: MutableFieldSchema): SchemaTraversalAction {
         val multiplicity = field.multiplicity
 
         if (field.isKey && !multiplicity.isRequired()) _errors.add(
@@ -31,6 +32,6 @@ class ValidationVisitor : AbstractMutableSchemaValidatingVisitor() {
             "Multiplicity max is less than min: ${field.fullName}"
         )
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 }

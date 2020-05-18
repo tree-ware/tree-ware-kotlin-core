@@ -2,13 +2,16 @@ package org.tree_ware.schema.core
 
 interface VisitableMutableSchema {
     /**
-     * Accepts a visitor and traverses the mutable schema with it (Visitor Pattern).
-     *
-     * If the visitor implements `BracketedVisitor`, then those methods will be called as well.
-     *
-     * @returns `true` to proceed with schema traversal, `false` to stop schema traversal.
+     * Traverses the schema element and visits it and its sub-elements (Visitor Pattern).
+     * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
      */
-    fun mutableAccept(visitor: MutableSchemaVisitor): Boolean
+    fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction
+
+    /**
+     * Visits the schema element without traversing its sub-elements.
+     * Returns what the visitor returns.
+     */
+    // TODO(deepak-nulu): implement // fun <T> mutableDispatch(visitor: MutableSchemaVisitor<T>): T
 }
 
 abstract class MutableElementSchema : ElementSchema, VisitableMutableSchema {
@@ -23,14 +26,14 @@ abstract class MutableElementSchema : ElementSchema, VisitableMutableSchema {
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         try {
-            (visitor as? BracketedVisitor)?.objectStart(id)
-            if (!mutableVisitSelf(visitor)) return false
-            if (!mutableTraverseChildren(visitor)) return false
-            return true
+            val action = mutableVisitSelf(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return SchemaTraversalAction.ABORT_TREE
+            if (action == SchemaTraversalAction.ABORT_SUB_TREE) return SchemaTraversalAction.CONTINUE
+            return mutableTraverseChildren(visitor)
         } finally {
-            (visitor as? BracketedVisitor)?.objectEnd()
+            mutableLeaveSelf(visitor)
         }
     }
 
@@ -44,16 +47,22 @@ abstract class MutableElementSchema : ElementSchema, VisitableMutableSchema {
         visitor.leave(this)
     }
 
-    protected open fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
+    // NOTE: call super.mutableVisitSelf() FIRST when overriding this method
+    protected open fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return visitor.mutableVisit(this)
+    }
+
+    // NOTE: call super.mutableLeaveSelf() LAST when overriding this method
+    protected open fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
     }
 
     protected open fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return SchemaTraversalAction.CONTINUE
     }
 
-    protected open fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        return true
+    protected open fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -76,8 +85,13 @@ abstract class MutableNamedElementSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -114,8 +128,13 @@ class MutableSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -140,22 +159,26 @@ class MutableSchema(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         _root?.also {
-            if (!it.mutableAccept(visitor)) return false
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
 
         if (packages.isNotEmpty()) try {
-            (visitor as? BracketedVisitor)?.listStart("packages")
+            visitor.mutableVisitList("packages")
             for (pkg in packages) {
-                if (!pkg.mutableAccept(visitor)) return false
+                val action = pkg.mutableTraverse(visitor)
+                if (action == SchemaTraversalAction.ABORT_TREE) return action
             }
         } finally {
-            (visitor as? BracketedVisitor)?.listEnd()
+            visitor.mutableLeaveList("packages")
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -192,8 +215,13 @@ class MutableRootSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     // The resolved type of this field is not considered a child and is therefore not traversed.
@@ -230,8 +258,13 @@ class MutablePackageSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -269,35 +302,39 @@ class MutablePackageSchema(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         if (aliases.isNotEmpty()) try {
-            (visitor as? BracketedVisitor)?.listStart("aliases")
+            visitor.mutableVisitList("aliases")
             for (alias in aliases) {
-                if (!alias.mutableAccept(visitor)) return false
+                val action = alias.mutableTraverse(visitor)
+                if (action == SchemaTraversalAction.ABORT_TREE) return action
             }
         } finally {
-            (visitor as? BracketedVisitor)?.listEnd()
+            visitor.mutableLeaveList("aliases")
         }
         if (enumerations.isNotEmpty()) try {
-            (visitor as? BracketedVisitor)?.listStart("enumerations")
+            visitor.mutableVisitList("enumerations")
             for (enumeration in enumerations) {
-                if (!enumeration.mutableAccept(visitor)) return false
+                val action = enumeration.mutableTraverse(visitor)
+                if (action == SchemaTraversalAction.ABORT_TREE) return action
             }
         } finally {
-            (visitor as? BracketedVisitor)?.listEnd()
+            visitor.mutableLeaveList("enumerations")
         }
         if (entities.isNotEmpty()) try {
-            (visitor as? BracketedVisitor)?.listStart("entities")
+            visitor.mutableVisitList("entities")
             for (entity in entities) {
-                if (!entity.mutableAccept(visitor)) return false
+                val action = entity.mutableTraverse(visitor)
+                if (action == SchemaTraversalAction.ABORT_TREE) return action
             }
         } finally {
-            (visitor as? BracketedVisitor)?.listEnd()
+            visitor.mutableLeaveList("entities")
         }
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -324,8 +361,13 @@ class MutableAliasSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -340,8 +382,16 @@ class MutableAliasSchema(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableTraverseChildren(visitor) && primitive.mutableAccept(visitor)
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        primitive.also {
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
+        }
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -372,8 +422,13 @@ class MutableEnumerationSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -393,19 +448,21 @@ class MutableEnumerationSchema(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         if (values.isNotEmpty()) try {
-            (visitor as? BracketedVisitor)?.listStart("fields")
+            visitor.mutableVisitList("values")
             for (value in values) {
-                if (!value.mutableAccept(visitor)) return false
+                val action = value.mutableTraverse(visitor)
+                if (action == SchemaTraversalAction.ABORT_TREE) return action
             }
         } finally {
-            (visitor as? BracketedVisitor)?.listEnd()
+            visitor.mutableLeaveList("values")
         }
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -430,8 +487,13 @@ class MutableEnumerationValueSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -460,8 +522,13 @@ class MutableEntitySchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -481,19 +548,21 @@ class MutableEntitySchema(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         if (fields.isNotEmpty()) try {
-            (visitor as? BracketedVisitor)?.listStart("fields")
+            visitor.mutableVisitList("fields")
             for (field in fields) {
-                if (!field.mutableAccept(visitor)) return false
+                val action = field.mutableTraverse(visitor)
+                if (action == SchemaTraversalAction.ABORT_TREE) return action
             }
         } finally {
-            (visitor as? BracketedVisitor)?.listEnd()
+            visitor.mutableLeaveList("fields")
         }
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -521,8 +590,13 @@ abstract class MutableFieldSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -544,8 +618,13 @@ class MutablePrimitiveFieldSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     override fun traverseChildren(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
@@ -560,8 +639,16 @@ class MutablePrimitiveFieldSchema(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableTraverseChildren(visitor) && primitive.mutableAccept(visitor)
+    override fun mutableTraverseChildren(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        primitive.also {
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
+        }
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -592,8 +679,13 @@ class MutableAliasFieldSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     // The resolved type of this field is not considered a child and is therefore not traversed.
@@ -626,8 +718,13 @@ class MutableEnumerationFieldSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     // The resolved type of this field is not considered a child and is therefore not traversed.
@@ -650,8 +747,13 @@ class MutableAssociationFieldSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     // The resolved type of this field is not considered a child and is therefore not traversed.
@@ -685,8 +787,13 @@ class MutableCompositionFieldSchema(
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableSchemaVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableSchemaVisitor<SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
     }
 
     // The resolved type of this field is not considered a child and is therefore not traversed.
@@ -721,8 +828,12 @@ class MutableBooleanSchema : MutablePrimitiveSchema(), BooleanSchema {
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -737,8 +848,12 @@ class MutableByteSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -753,8 +868,12 @@ class MutableShortSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -769,8 +888,12 @@ class MutableIntSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -785,8 +908,12 @@ class MutableLongSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -801,8 +928,12 @@ class MutableFloatSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -817,8 +948,12 @@ class MutableDoubleSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -833,8 +968,12 @@ open class MutableStringSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -849,8 +988,12 @@ class MutablePassword1WaySchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -865,8 +1008,12 @@ class MutablePassword2WaySchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -879,8 +1026,12 @@ class MutableUuidSchema : MutablePrimitiveSchema(), UuidSchema {
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -895,8 +1046,12 @@ class MutableBlobSchema(
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 
@@ -909,8 +1064,12 @@ class MutableTimestampSchema : MutablePrimitiveSchema(), TimestampSchema {
         }
     }
 
-    override fun mutableAccept(visitor: MutableSchemaVisitor): Boolean {
-        return visitor.mutableVisit(this)
+    override fun mutableTraverse(visitor: MutableSchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        try {
+            return visitor.mutableVisit(this)
+        } finally {
+            visitor.mutableLeave(this)
+        }
     }
 }
 

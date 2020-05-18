@@ -2,121 +2,182 @@ package org.tree_ware.schema.visitor
 
 import org.tree_ware.schema.core.*
 
-abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor {
-    override fun mutableVisit(element: MutableElementSchema): Boolean {
-        return true
+abstract class AbstractMutableSchemaVisitor : MutableSchemaVisitor<SchemaTraversalAction> {
+    override fun mutableVisit(element: MutableElementSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(namedElement: MutableNamedElementSchema): Boolean {
-        return true
+    override fun mutableLeave(element: MutableElementSchema) {}
+
+    override fun mutableVisit(namedElement: MutableNamedElementSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(schema: MutableSchema): Boolean {
-        return true
+    override fun mutableLeave(namedElement: MutableNamedElementSchema) {}
+
+    override fun mutableVisit(schema: MutableSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(pkg: MutablePackageSchema): Boolean {
-        return true
+    override fun mutableLeave(schema: MutableSchema) {}
+
+    override fun mutableVisit(pkg: MutablePackageSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(root: MutableRootSchema): Boolean {
-        return true
+    override fun mutableLeave(pkg: MutablePackageSchema) {}
+
+    override fun mutableVisit(root: MutableRootSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
+    override fun mutableLeave(root: MutableRootSchema) {}
 
-    override fun mutableVisit(alias: MutableAliasSchema): Boolean {
-        return true
+    override fun mutableVisit(alias: MutableAliasSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(enumeration: MutableEnumerationSchema): Boolean {
-        return true
+    override fun mutableLeave(alias: MutableAliasSchema) {}
+
+    override fun mutableVisit(enumeration: MutableEnumerationSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(enumerationValue: MutableEnumerationValueSchema): Boolean {
-        return true
+    override fun mutableLeave(enumeration: MutableEnumerationSchema) {}
+
+    override fun mutableVisit(enumerationValue: MutableEnumerationValueSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(entity: MutableEntitySchema): Boolean {
-        return true
+    override fun mutableLeave(enumerationValue: MutableEnumerationValueSchema) {}
+
+    override fun mutableVisit(entity: MutableEntitySchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
+
+    override fun mutableLeave(entity: MutableEntitySchema) {}
 
     // Fields
 
-    override fun mutableVisit(field: MutableFieldSchema): Boolean {
-        return true
+    override fun mutableVisit(field: MutableFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(primitiveField: MutablePrimitiveFieldSchema): Boolean {
-        return true
+    override fun mutableLeave(field: MutableFieldSchema) {}
+
+    override fun mutableVisit(primitiveField: MutablePrimitiveFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(aliasField: MutableAliasFieldSchema): Boolean {
-        return true
+    override fun mutableLeave(primitiveField: MutablePrimitiveFieldSchema) {}
+
+    override fun mutableVisit(aliasField: MutableAliasFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(enumerationField: MutableEnumerationFieldSchema): Boolean {
-        return true
+    override fun mutableLeave(aliasField: MutableAliasFieldSchema) {}
+
+    override fun mutableVisit(enumerationField: MutableEnumerationFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(associationField: MutableAssociationFieldSchema): Boolean {
-        return true
+    override fun mutableLeave(enumerationField: MutableEnumerationFieldSchema) {}
+
+    override fun mutableVisit(associationField: MutableAssociationFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): Boolean {
-        return true
+    override fun mutableLeave(associationField: MutableAssociationFieldSchema) {}
+
+    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
+
+    override fun mutableLeave(compositionField: MutableCompositionFieldSchema) {}
 
     // Primitives
 
-    override fun mutableVisit(boolean: BooleanSchema): Boolean {
-        return true
+    override fun mutableVisit(boolean: MutableBooleanSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(byte: ByteSchema): Boolean {
-        return true
+    override fun mutableLeave(boolean: MutableBooleanSchema) {}
+
+    override fun mutableVisit(byte: MutableByteSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(short: ShortSchema): Boolean {
-        return true
+    override fun mutableLeave(byte: MutableByteSchema) {}
+
+    override fun mutableVisit(short: MutableShortSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(int: IntSchema): Boolean {
-        return true
+    override fun mutableLeave(short: MutableShortSchema) {}
+
+    override fun mutableVisit(int: MutableIntSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(long: LongSchema): Boolean {
-        return true
+    override fun mutableLeave(int: MutableIntSchema) {}
+
+    override fun mutableVisit(long: MutableLongSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(float: FloatSchema): Boolean {
-        return true
+    override fun mutableLeave(long: MutableLongSchema) {}
+
+    override fun mutableVisit(float: MutableFloatSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(double: DoubleSchema): Boolean {
-        return true
+    override fun mutableLeave(float: MutableFloatSchema) {}
+
+    override fun mutableVisit(double: MutableDoubleSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(string: MutableStringSchema): Boolean {
-        return true
+    override fun mutableLeave(double: MutableDoubleSchema) {}
+
+    override fun mutableVisit(string: MutableStringSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(password1Way: MutablePassword1WaySchema): Boolean {
-        return true
+    override fun mutableLeave(string: MutableStringSchema) {}
+
+    override fun mutableVisit(password1Way: MutablePassword1WaySchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(password2Way: MutablePassword2WaySchema): Boolean {
-        return true
+    override fun mutableLeave(password1Way: MutablePassword1WaySchema) {}
+
+    override fun mutableVisit(password2Way: MutablePassword2WaySchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(uuid: MutableUuidSchema): Boolean {
-        return true
+    override fun mutableLeave(password2Way: MutablePassword2WaySchema) {}
+
+    override fun mutableVisit(uuid: MutableUuidSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(blob: MutableBlobSchema): Boolean {
-        return true
+    override fun mutableLeave(uuid: MutableUuidSchema) {}
+
+    override fun mutableVisit(blob: MutableBlobSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(timestamp: MutableTimestampSchema): Boolean {
-        return true
+    override fun mutableLeave(blob: MutableBlobSchema) {}
+
+    override fun mutableVisit(timestamp: MutableTimestampSchema): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
+
+    override fun mutableLeave(timestamp: MutableTimestampSchema) {}
+
+    // Meta
+
+    override fun mutableVisitList(name: String) {}
+
+    override fun mutableLeaveList(name: String) {}
 }

@@ -27,9 +27,9 @@ fun validate(schema: MutableSchema): List<String> {
     val validationVisitor = ValidationVisitor()
 
     // TODO(deepak-nulu): Combine the following visitors with a visitor-combinator.
-    schema.mutableAccept(setFullNameVisitor)
-    schema.mutableAccept(validationVisitor)
-    schema.mutableAccept(collectNonPrimitiveFieldTypesVisitor)
+    schema.mutableTraverse(setFullNameVisitor)
+    schema.mutableTraverse(validationVisitor)
+    schema.mutableTraverse(collectNonPrimitiveFieldTypesVisitor)
     setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
 
     // Resolve non-primitive field types, except associations.
@@ -37,12 +37,12 @@ fun validate(schema: MutableSchema): List<String> {
     val resolveNonPrimitiveFieldTypesVisitor =
         ResolveNonPrimitiveFieldTypesVisitor(aliases, enumerations, entities)
 
-    schema.mutableAccept(resolveNonPrimitiveFieldTypesVisitor)
+    schema.mutableTraverse(resolveNonPrimitiveFieldTypesVisitor)
 
     // Resolve associations.
     val resolveAssociationsVisitor = ResolveAssociationsVisitor(schema._root)
 
-    schema.mutableAccept(resolveAssociationsVisitor)
+    schema.mutableTraverse(resolveAssociationsVisitor)
 
     val validationVisitors: List<SchemaValidatingVisitor> = listOf(
         setFullNameVisitor,
