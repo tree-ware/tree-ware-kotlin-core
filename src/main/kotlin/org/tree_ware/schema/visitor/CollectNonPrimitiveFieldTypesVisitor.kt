@@ -15,7 +15,7 @@ class CollectNonPrimitiveFieldTypesVisitor(
     private val aliases: MutableMap<String, MutableAliasSchema>,
     private val enumerations: MutableMap<String, MutableEnumerationSchema>,
     private val entities: MutableMap<String, MutableEntitySchema>
-) : AbstractMutableSchemaVisitor() {
+) : AbstractMutableSchemaVisitor<SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
     override fun mutableVisit(alias: MutableAliasSchema): SchemaTraversalAction {
         val fullName = alias.fullName
         aliases[fullName] = alias
