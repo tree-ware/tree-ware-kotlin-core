@@ -4,11 +4,17 @@ import org.tree_ware.schema.core.*
 
 interface VisitableModel {
     /**
-     * Accepts a visitor and traverses the model with it (Visitor Pattern).
-     *
-     * @returns `true` to proceed with model traversal, `false` to stop model traversal.
+     * Traverses the model element and visits it and its sub-elements (Visitor Pattern).
+     * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
      */
-    fun accept(visitor: ModelVisitor): Boolean
+    fun traverse(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction
+
+    /**
+     * Visits the model element without traversing its sub-elements.
+     * Leave methods are NOT called.
+     * Returns what the visitor returns.
+     */
+    fun <T> dispatch(visitor: ModelVisitor<T>): T
 }
 
 interface ElementModel : VisitableModel {

@@ -5,62 +5,78 @@ import java.math.BigDecimal
 
 interface VisitableMutableModel {
     /**
-     * Accepts a visitor and traverses the mutable model with it (Visitor Pattern).
-     *
-     * @returns `true` to proceed with schema traversal, `false` to stop schema traversal.
+     * Traverses the model element and visits it and its sub-elements (Visitor Pattern).
+     * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
      */
-    fun mutableAccept(visitor: MutableModelVisitor): Boolean
+    fun mutableTraverse(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction
+
+    /**
+     * Visits the model element without traversing its sub-elements.
+     * Leave methods are NOT called.
+     * Returns what the visitor returns.
+     */
+    fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T
 }
 
 abstract class MutableElementModel : ElementModel, VisitableMutableModel {
     var objectId = ""
 
-    override fun accept(visitor: ModelVisitor): Boolean {
+    override fun traverse(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         try {
-            if (!visitSelf(visitor)) return false
-            if (!traverseChildren(visitor)) return false
-            return true
+            val action = visitSelf(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return SchemaTraversalAction.ABORT_TREE
+            if (action == SchemaTraversalAction.ABORT_SUB_TREE) return SchemaTraversalAction.CONTINUE
+            return traverseChildren(visitor)
         } finally {
             leaveSelf(visitor)
         }
     }
 
-    override fun mutableAccept(visitor: MutableModelVisitor): Boolean {
+    override fun mutableTraverse(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         try {
-            if (!mutableVisitSelf(visitor)) return false
-            if (!mutableTraverseChildren(visitor)) return false
-            return true
+            val action = mutableVisitSelf(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return SchemaTraversalAction.ABORT_TREE
+            if (action == SchemaTraversalAction.ABORT_SUB_TREE) return SchemaTraversalAction.CONTINUE
+            return mutableTraverseChildren(visitor)
         } finally {
             mutableLeaveSelf(visitor)
         }
     }
 
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
+    }
+
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
     // NOTE: call super.visitSelf() FIRST when overriding this method
-    protected open fun visitSelf(visitor: ModelVisitor): Boolean {
+    protected open fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return visitor.visit(this)
     }
 
     // NOTE: call super.leaveSelf() LAST when overriding this method
-    protected open fun leaveSelf(visitor: ModelVisitor) {
+    protected open fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
     }
 
     // NOTE: call super.mutableVisitSelf() FIRST when overriding this method
-    protected open fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
+    protected open fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
         return visitor.mutableVisit(this)
     }
 
     // NOTE: call super.mutableLeaveSelf() LAST when overriding this method
-    protected open fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    protected open fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
     }
 
-    protected open fun traverseChildren(visitor: ModelVisitor): Boolean {
-        return true
+    protected open fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 
-    protected open fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        return true
+    protected open fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -86,32 +102,54 @@ class MutableModel(override val schema: Schema) : MutableElementModel(), Model {
         return root
     }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
-        return root.accept(visitor)
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        root.also {
+            val action = it.traverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
+        }
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
-        return root.mutableAccept(visitor)
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        root.also {
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
+        }
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -172,42 +210,54 @@ abstract class MutableBaseEntityModel(private val entitySchema: EntitySchema) : 
     // TODO(deepak-nulu): optimize
     private fun getField(fieldName: String): MutableFieldModel? = fields.find { it.schema.name == fieldName }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         for (field in fields) {
-            if (!field.accept(visitor)) return false
+            val action = field.traverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         for (field in fields) {
-            if (!field.mutableAccept(visitor)) return false
+            val action = field.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
 
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -215,20 +265,28 @@ class MutableRootModel(
     override val schema: RootSchema,
     override val parent: MutableModel
 ) : MutableBaseEntityModel(schema.resolvedEntity), RootModel {
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -238,40 +296,56 @@ class MutableEntityModel(
     override val schema: EntitySchema,
     override val parent: MutableFieldModel
 ) : MutableBaseEntityModel(schema), EntityModel {
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 }
 
 abstract class MutableFieldModel(override val parent: MutableBaseEntityModel) : MutableElementModel(), FieldModel {
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -284,20 +358,28 @@ abstract class MutableScalarFieldModel(parent: MutableBaseEntityModel) : Mutable
     open fun setValue(value: BigDecimal): Boolean = false
     open fun setValue(value: Boolean): Boolean = false
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -318,36 +400,52 @@ class MutablePrimitiveFieldModel(
     override fun setValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value = it }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
-        if (!visitor.visit(value, schema)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = visitor.visit(value, schema)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
         visitor.leave(value, schema)
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
-        if (!visitor.mutableVisit(value, schema)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = visitor.mutableVisit(value, schema)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
         visitor.mutableLeave(value, schema)
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -371,36 +469,52 @@ class MutableAliasFieldModel(
     override fun setValue(value: Boolean): Boolean =
         setValue(schema.resolvedAlias.primitive, value) { this.value = it }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
-        if (!visitor.visit(value, schema)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = visitor.visit(value, schema)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
         visitor.leave(value, schema)
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
-        if (!visitor.mutableVisit(value, schema)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = visitor.mutableVisit(value, schema)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
         visitor.mutableLeave(value, schema)
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -417,36 +531,52 @@ class MutableEnumerationFieldModel(
 
     override fun setValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value = it }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
-        if (!visitor.visit(value, schema)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = visitor.visit(value, schema)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
         visitor.leave(value, schema)
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
-        if (!visitor.mutableVisit(value, schema)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = visitor.mutableVisit(value, schema)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
         visitor.mutableLeave(value, schema)
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -457,34 +587,50 @@ class MutableAssociationFieldModel(
     override var value = MutableAssociationValueModel(schema)
         internal set
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
-        if (!value.accept(visitor)) return false
-        return true
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = value.traverse(visitor)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
-        if (!value.mutableAccept(visitor)) return false
-        return true
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = value.mutableTraverse(visitor)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -502,32 +648,50 @@ class MutableCompositionFieldModel(
         value.objectId = schema.name
     }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
-        return value.accept(visitor)
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = value.traverse(visitor)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
-        return value.mutableAccept(visitor)
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
+        val valueAction = value.mutableTraverse(visitor)
+        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -538,20 +702,28 @@ abstract class MutableListFieldModel(parent: MutableBaseEntityModel) : MutableFi
     open fun addValue(value: BigDecimal): Boolean = false
     open fun addValue(value: Boolean): Boolean = false
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -568,40 +740,56 @@ class MutablePrimitiveListFieldModel(
     override fun addValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value.add(it) }
     override fun addValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value.add(it) }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.visit(it, schema)) return false
+            val action = visitor.visit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.leave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.mutableVisit(it, schema)) return false
+            val action = visitor.mutableVisit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.mutableLeave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -621,40 +809,56 @@ class MutableAliasListFieldModel(
     override fun addValue(value: Boolean): Boolean =
         setValue(schema.resolvedAlias.primitive, value) { this.value.add(it) }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.visit(it, schema)) return false
+            val action = visitor.visit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.leave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.mutableVisit(it, schema)) return false
+            val action = visitor.mutableVisit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.mutableLeave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -667,40 +871,56 @@ class MutableEnumerationListFieldModel(
 
     override fun addValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value.add(it) }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.visit(it, schema)) return false
+            val action = visitor.visit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.leave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.mutableVisit(it, schema)) return false
+            val action = visitor.mutableVisit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.mutableLeave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -717,40 +937,56 @@ class MutableAssociationListFieldModel(
         return association
     }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.visit(it, schema)) return false
+            val action = visitor.visit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.leave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!visitor.mutableVisit(it, schema)) return false
+            val action = visitor.mutableVisit(it, schema)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
             visitor.mutableLeave(it, schema)
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -767,38 +1003,54 @@ class MutableCompositionListFieldModel(
         return entity
     }
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!it.accept(visitor)) return false
+            val action = it.traverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         value.forEach {
-            if (!it.mutableAccept(visitor)) return false
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -812,38 +1064,54 @@ class MutableAssociationValueModel(
     override var pathKeys: List<MutableEntityKeysModel> = schema.keyEntities.map { MutableEntityKeysModel(it) }
         internal set
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this, schema)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this, schema))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this, schema)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this, schema)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this, schema))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this, schema)
         super.mutableLeaveSelf(visitor)
     }
 
-    override fun traverseChildren(visitor: ModelVisitor): Boolean {
-        if (!super.traverseChildren(visitor)) return false
+    override fun traverseChildren(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.traverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         pathKeys.forEach {
-            if (!it.accept(visitor)) return false
+            val action = it.traverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor): Boolean {
-        if (!super.mutableTraverseChildren(visitor)) return false
+    override fun mutableTraverseChildren(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        val superAction = super.mutableTraverseChildren(visitor)
+        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
+
         pathKeys.forEach {
-            if (!it.mutableAccept(visitor)) return false
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
         }
-        return true
+
+        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -852,20 +1120,28 @@ class MutableEntityKeysModel(
 ) : MutableBaseEntityModel(schema), EntityKeysModel {
     override val parent: ElementModel? = null
 
-    override fun visitSelf(visitor: ModelVisitor): Boolean {
-        return super.visitSelf(visitor) && visitor.visit(this)
+    override fun <T> dispatch(visitor: ModelVisitor<T>): T {
+        return visitor.visit(this)
     }
 
-    override fun leaveSelf(visitor: ModelVisitor) {
+    override fun <T> mutableDispatch(visitor: MutableModelVisitor<T>): T {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<SchemaTraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor): Boolean {
-        return super.mutableVisitSelf(visitor) && visitor.mutableVisit(this)
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }

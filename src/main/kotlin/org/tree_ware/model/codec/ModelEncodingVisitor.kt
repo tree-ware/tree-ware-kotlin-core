@@ -5,11 +5,13 @@ import org.tree_ware.model.core.*
 import org.tree_ware.model.visitor.AbstractModelVisitor
 import org.tree_ware.schema.core.*
 
-class ModelEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : AbstractModelVisitor() {
-    override fun visit(model: Model): Boolean {
+class ModelEncodingVisitor(
+    private val wireFormatEncoder: WireFormatEncoder
+) : AbstractModelVisitor<SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
+    override fun visit(model: Model): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
         wireFormatEncoder.encodeObjectStart(model.type.name)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(model: Model) {
@@ -17,34 +19,34 @@ class ModelEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : A
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(root: RootModel): Boolean {
+    override fun visit(root: RootModel): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(root.schema.name)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(root: RootModel) {
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(entity: EntityModel): Boolean {
+    override fun visit(entity: EntityModel): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(entity.parent.schema.name)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(entity: EntityModel) {
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(field: ListFieldModel): Boolean {
+    override fun visit(field: ListFieldModel): SchemaTraversalAction {
         wireFormatEncoder.encodeListStart(field.schema.name)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(field: ListFieldModel) {
         wireFormatEncoder.encodeListEnd()
     }
 
-    override fun visit(value: Any, fieldSchema: PrimitiveFieldSchema): Boolean {
+    override fun visit(value: Any, fieldSchema: PrimitiveFieldSchema): SchemaTraversalAction {
         val fieldName = fieldSchema.name
         when (fieldSchema.primitive) {
             is BooleanSchema -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
@@ -58,18 +60,18 @@ class ModelEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : A
             else -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
             // TODO(deepak-nulu): special handling for Password1WaySchema, Password2WaySchema, BlobSchema
         }
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): Boolean {
+    override fun visit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): SchemaTraversalAction {
         wireFormatEncoder.encodeStringField(fieldSchema.name, value.name)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(value: AssociationValueModel, fieldSchema: AssociationFieldSchema): Boolean {
+    override fun visit(value: AssociationValueModel, fieldSchema: AssociationFieldSchema): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(fieldSchema.name)
         wireFormatEncoder.encodeListStart("path_keys")
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(value: AssociationValueModel, fieldSchema: AssociationFieldSchema) {
@@ -77,9 +79,9 @@ class ModelEncodingVisitor(private val wireFormatEncoder: WireFormatEncoder) : A
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(entityKeys: EntityKeysModel): Boolean {
+    override fun visit(entityKeys: EntityKeysModel): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(entityKeys.schema.name)
-        return true
+        return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(entityKeys: EntityKeysModel) {
