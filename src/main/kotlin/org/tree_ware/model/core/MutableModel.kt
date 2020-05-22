@@ -354,6 +354,7 @@ abstract class MutableFieldModel(override val parent: MutableBaseEntityModel) : 
 // Scalar fields
 
 abstract class MutableScalarFieldModel(parent: MutableBaseEntityModel) : MutableFieldModel(parent), ScalarFieldModel {
+    open fun setNullValue(): Boolean = false
     open fun setValue(value: String): Boolean = false
     open fun setValue(value: BigDecimal): Boolean = false
     open fun setValue(value: Boolean): Boolean = false
@@ -389,12 +390,17 @@ class MutablePrimitiveFieldModel(
     override val schema: PrimitiveFieldSchema,
     parent: MutableBaseEntityModel
 ) : MutableScalarFieldModel(parent), PrimitiveFieldModel {
-    override var value: Any
-        get() = _value ?: throw IllegalStateException("Value has not been set")
+    override var value: Any?
+        get() = _value
         internal set(value) {
             _value = value
         }
     private var _value: Any? = null
+
+    override fun setNullValue(): Boolean {
+        this.value = null
+        return true
+    }
 
     override fun setValue(value: String): Boolean = setValue(schema.primitive, value) { this.value = it }
     override fun setValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value = it }
@@ -453,12 +459,17 @@ class MutableAliasFieldModel(
     override val schema: AliasFieldSchema,
     parent: MutableBaseEntityModel
 ) : MutableScalarFieldModel(parent), AliasFieldModel {
-    override var value: Any
-        get() = _value ?: throw IllegalStateException("Value has not been set")
+    override var value: Any?
+        get() = _value
         internal set(value) {
             _value = value
         }
     private var _value: Any? = null
+
+    override fun setNullValue(): Boolean {
+        this.value = null
+        return true
+    }
 
     override fun setValue(value: String): Boolean =
         setValue(schema.resolvedAlias.primitive, value) { this.value = it }
@@ -522,12 +533,17 @@ class MutableEnumerationFieldModel(
     override val schema: EnumerationFieldSchema,
     parent: MutableBaseEntityModel
 ) : MutableScalarFieldModel(parent), EnumerationFieldModel {
-    override var value: EnumerationValueSchema
-        get() = _value ?: throw IllegalStateException("Value has not been set")
+    override var value: EnumerationValueSchema?
+        get() = _value
         internal set(value) {
             _value = value
         }
     private var _value: EnumerationValueSchema? = null
+
+    override fun setNullValue(): Boolean {
+        this.value = null
+        return true
+    }
 
     override fun setValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value = it }
 
@@ -584,8 +600,13 @@ class MutableAssociationFieldModel(
     override val schema: AssociationFieldSchema,
     parent: MutableBaseEntityModel
 ) : MutableScalarFieldModel(parent), AssociationFieldModel {
-    override var value = MutableAssociationValueModel(schema)
+    override var value: MutableAssociationValueModel? = null
         internal set
+
+    override fun setNullValue(): Boolean {
+        this.value = null
+        return true
+    }
 
     override fun <T> dispatch(visitor: ModelVisitor<T>): T {
         return visitor.visit(this)
@@ -617,7 +638,7 @@ class MutableAssociationFieldModel(
         val superAction = super.traverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        val valueAction = value.traverse(visitor)
+        val valueAction = value?.traverse(visitor)
         if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
 
         return SchemaTraversalAction.CONTINUE
@@ -627,7 +648,7 @@ class MutableAssociationFieldModel(
         val superAction = super.mutableTraverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        val valueAction = value.mutableTraverse(visitor)
+        val valueAction = value?.mutableTraverse(visitor)
         if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
 
         return SchemaTraversalAction.CONTINUE

@@ -8,6 +8,7 @@ interface DecodingStateMachine {
     fun decodeListStart(): Boolean
     fun decodeListEnd(): Boolean
     fun decodeKey(name: String): Boolean
+    fun decodeNullValue(): Boolean
     fun decodeStringValue(value: String): Boolean
     fun decodeNumericValue(value: BigDecimal): Boolean
     fun decodeBooleanValue(value: Boolean): Boolean

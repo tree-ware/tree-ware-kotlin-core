@@ -56,6 +56,12 @@ class ModelDecodingStateMachine(private val model: MutableModel) : DecodingState
         return top.decodeKey(name)
     }
 
+    override fun decodeNullValue(): Boolean {
+        if (firstTime) return false
+        val top = getTopStateMachine() ?: return false
+        return top.decodeNullValue()
+    }
+
     override fun decodeStringValue(value: String): Boolean {
         if (firstTime) return false
         val top = getTopStateMachine() ?: return false

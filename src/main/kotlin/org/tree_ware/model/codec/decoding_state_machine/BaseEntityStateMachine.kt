@@ -2,10 +2,11 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
+import org.tree_ware.model.core.MutableAssociationValueModel
+import org.tree_ware.model.core.MutableBaseEntityModel
 import org.tree_ware.schema.core.AssociationFieldSchema
 import org.tree_ware.schema.core.CompositionFieldSchema
 import org.tree_ware.schema.core.EntitySchema
-import org.tree_ware.model.core.MutableBaseEntityModel
 import java.math.BigDecimal
 
 class BaseEntityStateMachine(
@@ -40,7 +41,8 @@ class BaseEntityStateMachine(
 
     private fun handleAssociationStart(fieldSchema: AssociationFieldSchema): Boolean {
         val fieldModel = base.getOrNewAssociationField(fieldSchema.name) ?: return false
-        val association = fieldModel.value
+        val association = MutableAssociationValueModel(fieldSchema)
+        fieldModel.value = association
         stack.addFirst(AssociationStateMachine(association, fieldModel.schema, stack))
         resetKeyState()
         return true
@@ -74,6 +76,17 @@ class BaseEntityStateMachine(
         // This method should never get called
         assert(false)
         return false
+    }
+
+    override fun decodeNullValue(): Boolean {
+        try {
+            val fieldName = keyName ?: return true
+            val fieldModel = base.getOrNewScalarField(fieldName) ?: return false
+            if (!fieldModel.setNullValue()) return false
+            return true
+        } finally {
+            resetKeyState()
+        }
     }
 
     override fun decodeStringValue(value: String): Boolean {

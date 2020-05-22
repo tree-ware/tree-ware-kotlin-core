@@ -12,12 +12,27 @@ import kotlin.test.assertTrue
 
 class JsonCodecTests {
     @Test
-    fun `JSON codec round trip must be lossless`() {
+    fun `JSON codec data round trip must be lossless`() {
+        testRoundTrip("src/test/resources/model/address_book_1.json")
+    }
+
+    @Test
+    fun `JSON codec filter-branch round trip must be lossless`() {
+        testRoundTrip("src/test/resources/model/address_book_filter_person_model.json")
+        testRoundTrip("src/test/resources/model/address_book_filter_settings_model.json")
+    }
+
+    @Test
+    fun `JSON codec filter-all round trip must be lossless`() {
+        testRoundTrip("src/test/resources/model/address_book_filter_all_model.json")
+    }
+
+    private fun testRoundTrip(filePath: String) {
         val schema = newAddressBookSchema()
         val errors = validate(schema)
         assertTrue(errors.isEmpty())
 
-        val jsonFile = File("src/test/resources/model/address_book_1.json")
+        val jsonFile = File(filePath)
         assertTrue(jsonFile.exists())
 
         val jsonReader = FileReader(jsonFile)

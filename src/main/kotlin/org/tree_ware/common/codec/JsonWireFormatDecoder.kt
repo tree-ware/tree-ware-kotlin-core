@@ -19,7 +19,7 @@ class JsonWireFormatDecoder : WireFormatDecoder {
                 JsonParser.Event.VALUE_NUMBER -> decodingStateMachine.decodeNumericValue(parser.bigDecimal)
                 JsonParser.Event.VALUE_TRUE -> decodingStateMachine.decodeBooleanValue(true)
                 JsonParser.Event.VALUE_FALSE -> decodingStateMachine.decodeBooleanValue(false)
-                JsonParser.Event.VALUE_NULL -> false
+                JsonParser.Event.VALUE_NULL -> decodingStateMachine.decodeNullValue()
                 JsonParser.Event.END_OBJECT -> decodingStateMachine.decodeObjectEnd()
                 JsonParser.Event.END_ARRAY -> decodingStateMachine.decodeListEnd()
             }

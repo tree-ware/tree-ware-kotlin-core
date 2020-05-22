@@ -67,14 +67,14 @@ interface ModelVisitor<T> {
 
     // Field values
 
-    fun visit(value: Any, fieldSchema: PrimitiveFieldSchema): T
-    fun leave(value: Any, fieldSchema: PrimitiveFieldSchema)
+    fun visit(value: Any?, fieldSchema: PrimitiveFieldSchema): T
+    fun leave(value: Any?, fieldSchema: PrimitiveFieldSchema)
 
-    fun visit(value: Any, fieldSchema: AliasFieldSchema): T
-    fun leave(value: Any, fieldSchema: AliasFieldSchema)
+    fun visit(value: Any?, fieldSchema: AliasFieldSchema): T
+    fun leave(value: Any?, fieldSchema: AliasFieldSchema)
 
-    fun visit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): T
-    fun leave(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema)
+    fun visit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): T
+    fun leave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema)
 
     fun visit(value: AssociationValueModel, fieldSchema: AssociationFieldSchema): T
     fun leave(value: AssociationValueModel, fieldSchema: AssociationFieldSchema)

@@ -1,0 +1,29 @@
+{
+  "data": {
+    "address_book": {
+      "name": null,
+      "last_updated": null,
+      "settings": {
+        "last_name_first": null,
+        "encrypt_hero_name": null,
+        "card_colors": []
+      },
+      "person": [
+        {
+          "id": null,
+          "first_name": null,
+          "last_name": null,
+          "hero_name": null,
+          "email": [],
+          "relation": [
+            {
+              "id": null,
+              "relationship": null,
+              "person": null
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -37,6 +37,16 @@ class ModelEncodingVisitor(
         wireFormatEncoder.encodeObjectEnd()
     }
 
+    override fun visit(field: AssociationFieldModel): SchemaTraversalAction {
+        // NOTE: null values are encoded here. non-null values are encoded when the value is visited
+        // in visit(value: AssociationValueModel, fieldSchema: AssociationFieldSchema).
+        if (field.value == null) {
+            wireFormatEncoder.encodeNullField(field.schema.name)
+            return SchemaTraversalAction.ABORT_SUB_TREE
+        }
+        return SchemaTraversalAction.CONTINUE
+    }
+
     override fun visit(field: ListFieldModel): SchemaTraversalAction {
         wireFormatEncoder.encodeListStart(field.schema.name)
         return SchemaTraversalAction.CONTINUE
@@ -46,8 +56,12 @@ class ModelEncodingVisitor(
         wireFormatEncoder.encodeListEnd()
     }
 
-    override fun visit(value: Any, fieldSchema: PrimitiveFieldSchema): SchemaTraversalAction {
+    override fun visit(value: Any?, fieldSchema: PrimitiveFieldSchema): SchemaTraversalAction {
         val fieldName = fieldSchema.name
+        if (value == null) {
+            wireFormatEncoder.encodeNullField(fieldName)
+            return SchemaTraversalAction.CONTINUE
+        }
         when (fieldSchema.primitive) {
             is BooleanSchema -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
             is ByteSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
@@ -63,8 +77,9 @@ class ModelEncodingVisitor(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun visit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): SchemaTraversalAction {
-        wireFormatEncoder.encodeStringField(fieldSchema.name, value.name)
+    override fun visit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): SchemaTraversalAction {
+        if (value == null) wireFormatEncoder.encodeNullField(fieldSchema.name)
+        else wireFormatEncoder.encodeStringField(fieldSchema.name, value.name)
         return SchemaTraversalAction.CONTINUE
     }
 

@@ -118,6 +118,11 @@ class JsonWireFormatEncoder(private val writer: Writer,
         }
     }
 
+    override fun encodeNullField(name: String) {
+        encodeNameValue(name, "null")
+        elementEncoded()
+    }
+
     override fun encodeStringField(name: String, value: String) {
         encodeNameValue(name, "\"$value\"")
         elementEncoded()

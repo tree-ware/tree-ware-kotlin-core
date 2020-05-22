@@ -118,23 +118,23 @@ abstract class AbstractModelVisitor<T>(private val defaultVisitReturn: T) : Mode
 
     // Field values
 
-    override fun visit(value: Any, fieldSchema: PrimitiveFieldSchema): T {
+    override fun visit(value: Any?, fieldSchema: PrimitiveFieldSchema): T {
         return defaultVisitReturn
     }
 
-    override fun leave(value: Any, fieldSchema: PrimitiveFieldSchema) {}
+    override fun leave(value: Any?, fieldSchema: PrimitiveFieldSchema) {}
 
-    override fun visit(value: Any, fieldSchema: AliasFieldSchema): T {
+    override fun visit(value: Any?, fieldSchema: AliasFieldSchema): T {
         return defaultVisitReturn
     }
 
-    override fun leave(value: Any, fieldSchema: AliasFieldSchema) {}
+    override fun leave(value: Any?, fieldSchema: AliasFieldSchema) {}
 
-    override fun visit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): T {
+    override fun visit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): T {
         return defaultVisitReturn
     }
 
-    override fun leave(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema) {}
+    override fun leave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema) {}
 
     override fun visit(value: AssociationValueModel, fieldSchema: AssociationFieldSchema): T {
         return defaultVisitReturn

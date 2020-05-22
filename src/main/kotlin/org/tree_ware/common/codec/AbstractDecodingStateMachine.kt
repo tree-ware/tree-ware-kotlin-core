@@ -18,6 +18,11 @@ abstract class AbstractDecodingStateMachine(private val defaultReturn: Boolean) 
         return defaultReturn
     }
 
+    override fun decodeNullValue(): Boolean {
+        resetKeyState()
+        return defaultReturn
+    }
+
     override fun decodeStringValue(value: String): Boolean {
         resetKeyState()
         return defaultReturn

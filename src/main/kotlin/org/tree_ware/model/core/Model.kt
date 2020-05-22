@@ -62,22 +62,22 @@ interface ScalarFieldModel : FieldModel
 
 interface PrimitiveFieldModel : ScalarFieldModel {
     override val schema: PrimitiveFieldSchema
-    val value: Any
+    val value: Any?
 }
 
 interface AliasFieldModel : ScalarFieldModel {
     override val schema: AliasFieldSchema
-    val value: Any
+    val value: Any?
 }
 
 interface EnumerationFieldModel : ScalarFieldModel {
     override val schema: EnumerationFieldSchema
-    val value: EnumerationValueSchema
+    val value: EnumerationValueSchema?
 }
 
 interface AssociationFieldModel : ScalarFieldModel {
     override val schema: AssociationFieldSchema
-    val value: AssociationValueModel
+    val value: AssociationValueModel?
 }
 
 interface CompositionFieldModel : ScalarFieldModel {

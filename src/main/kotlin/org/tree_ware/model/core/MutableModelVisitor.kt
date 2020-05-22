@@ -70,14 +70,14 @@ interface MutableModelVisitor<T> {
 
     // Field values
 
-    fun mutableVisit(value: Any, fieldSchema: PrimitiveFieldSchema): T
-    fun mutableLeave(value: Any, fieldSchema: PrimitiveFieldSchema)
+    fun mutableVisit(value: Any?, fieldSchema: PrimitiveFieldSchema): T
+    fun mutableLeave(value: Any?, fieldSchema: PrimitiveFieldSchema)
 
-    fun mutableVisit(value: Any, fieldSchema: AliasFieldSchema): T
-    fun mutableLeave(value: Any, fieldSchema: AliasFieldSchema)
+    fun mutableVisit(value: Any?, fieldSchema: AliasFieldSchema): T
+    fun mutableLeave(value: Any?, fieldSchema: AliasFieldSchema)
 
-    fun mutableVisit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): T
-    fun mutableLeave(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema)
+    fun mutableVisit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): T
+    fun mutableLeave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema)
 
     fun mutableVisit(value: MutableAssociationValueModel, fieldSchema: AssociationFieldSchema): T
     fun mutableLeave(value: MutableAssociationValueModel, fieldSchema: AssociationFieldSchema)

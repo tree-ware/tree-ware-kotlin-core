@@ -118,23 +118,23 @@ abstract class AbstractMutableModelVisitor<T>(private val defaultVisitReturn: T)
 
     // Field values
 
-    override fun mutableVisit(value: Any, fieldSchema: PrimitiveFieldSchema): T {
+    override fun mutableVisit(value: Any?, fieldSchema: PrimitiveFieldSchema): T {
         return defaultVisitReturn
     }
 
-    override fun mutableLeave(value: Any, fieldSchema: PrimitiveFieldSchema) {}
+    override fun mutableLeave(value: Any?, fieldSchema: PrimitiveFieldSchema) {}
 
-    override fun mutableVisit(value: Any, fieldSchema: AliasFieldSchema): T {
+    override fun mutableVisit(value: Any?, fieldSchema: AliasFieldSchema): T {
         return defaultVisitReturn
     }
 
-    override fun mutableLeave(value: Any, fieldSchema: AliasFieldSchema) {}
+    override fun mutableLeave(value: Any?, fieldSchema: AliasFieldSchema) {}
 
-    override fun mutableVisit(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema): T {
+    override fun mutableVisit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): T {
         return defaultVisitReturn
     }
 
-    override fun mutableLeave(value: EnumerationValueSchema, fieldSchema: EnumerationFieldSchema) {}
+    override fun mutableLeave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema) {}
 
     override fun mutableVisit(value: MutableAssociationValueModel, fieldSchema: AssociationFieldSchema): T {
         return defaultVisitReturn
