@@ -36,7 +36,7 @@ class JsonCodecTests {
         assertTrue(jsonFile.exists())
 
         val jsonReader = FileReader(jsonFile)
-        val model = MutableModel(schema)
+        val model = MutableModel<Unit>(schema)
         val isDecoded = decodeJson(jsonReader, model)
         jsonReader.close()
         assertTrue(isDecoded)

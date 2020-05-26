@@ -4,8 +4,8 @@ import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.MutableRootModel
 
-class RootModelStateMachine(
-    private val root: MutableRootModel, private val stack: DecodingStack
+class RootModelStateMachine<Aux>(
+    private val root: MutableRootModel<Aux>, private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
         if (keyName == root.schema.name) {

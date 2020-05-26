@@ -7,8 +7,8 @@ import org.tree_ware.model.core.MutableCompositionListFieldModel
 import org.tree_ware.model.core.MutableListFieldModel
 import java.math.BigDecimal
 
-class ListFieldStateMachine(
-    private val listField: MutableListFieldModel,
+class ListFieldStateMachine<Aux>(
+    private val listField: MutableListFieldModel<Aux>,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
@@ -22,14 +22,14 @@ class ListFieldStateMachine(
         }
     }
 
-    private fun handleCompositionStart(compositionListField: MutableCompositionListFieldModel): Boolean {
+    private fun handleCompositionStart(compositionListField: MutableCompositionListFieldModel<Aux>): Boolean {
         val entity = compositionListField.addEntity()
         stack.addFirst(BaseEntityStateMachine(entity, entity.schema, stack))
         resetKeyState()
         return true
     }
 
-    private fun handleAssociationStart(associationListField: MutableAssociationListFieldModel): Boolean {
+    private fun handleAssociationStart(associationListField: MutableAssociationListFieldModel<Aux>): Boolean {
         val association = associationListField.addAssociation()
         stack.addFirst(AssociationStateMachine(association, associationListField.schema, stack))
         resetKeyState()

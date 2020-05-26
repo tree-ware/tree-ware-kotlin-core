@@ -8,7 +8,7 @@ import java.util.*
 
 typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 
-class ModelDecodingStateMachine(private val model: MutableModel) : DecodingStateMachine {
+class ModelDecodingStateMachine<Aux>(private val model: MutableModel<Aux>) : DecodingStateMachine {
     private var stack = DecodingStack()
     private var firstTime = true
     private val logger = LogManager.getLogger()

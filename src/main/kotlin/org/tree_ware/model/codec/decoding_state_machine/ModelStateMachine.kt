@@ -5,8 +5,8 @@ import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.ModelType
 import org.tree_ware.model.core.MutableModel
 
-class ModelStateMachine(
-    private val model: MutableModel, private val stack: DecodingStack
+class ModelStateMachine<Aux>(
+    private val model: MutableModel<Aux>, private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
         val modelType = try {

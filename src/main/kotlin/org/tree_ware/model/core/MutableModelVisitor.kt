@@ -9,81 +9,81 @@ import org.tree_ware.schema.core.*
  * `ModelVisitor` cannot mutate the model elements it visits,
  * but this interface can mutate the model elements it visits.
  */
-interface MutableModelVisitor<T> {
-    fun mutableVisit(element: MutableElementModel): T
-    fun mutableLeave(element: MutableElementModel)
+interface MutableModelVisitor<Aux, Return> {
+    fun mutableVisit(element: MutableElementModel<Aux>): Return
+    fun mutableLeave(element: MutableElementModel<Aux>)
 
-    fun mutableVisit(model: MutableModel): T
-    fun mutableLeave(model: MutableModel)
+    fun mutableVisit(model: MutableModel<Aux>): Return
+    fun mutableLeave(model: MutableModel<Aux>)
 
-    fun mutableVisit(baseEntity: MutableBaseEntityModel): T
-    fun mutableLeave(baseEntity: MutableBaseEntityModel)
+    fun mutableVisit(baseEntity: MutableBaseEntityModel<Aux>): Return
+    fun mutableLeave(baseEntity: MutableBaseEntityModel<Aux>)
 
-    fun mutableVisit(root: MutableRootModel): T
-    fun mutableLeave(root: MutableRootModel)
+    fun mutableVisit(root: MutableRootModel<Aux>): Return
+    fun mutableLeave(root: MutableRootModel<Aux>)
 
-    fun mutableVisit(entity: MutableEntityModel): T
-    fun mutableLeave(entity: MutableEntityModel)
+    fun mutableVisit(entity: MutableEntityModel<Aux>): Return
+    fun mutableLeave(entity: MutableEntityModel<Aux>)
 
-    fun mutableVisit(field: MutableFieldModel): T
-    fun mutableLeave(field: MutableFieldModel)
+    fun mutableVisit(field: MutableFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableFieldModel<Aux>)
 
     // Scalar fields
 
-    fun mutableVisit(field: MutableScalarFieldModel): T
-    fun mutableLeave(field: MutableScalarFieldModel)
+    fun mutableVisit(field: MutableScalarFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableScalarFieldModel<Aux>)
 
-    fun mutableVisit(field: MutablePrimitiveFieldModel): T
-    fun mutableLeave(field: MutablePrimitiveFieldModel)
+    fun mutableVisit(field: MutablePrimitiveFieldModel<Aux>): Return
+    fun mutableLeave(field: MutablePrimitiveFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableAliasFieldModel): T
-    fun mutableLeave(field: MutableAliasFieldModel)
+    fun mutableVisit(field: MutableAliasFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableAliasFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableEnumerationFieldModel): T
-    fun mutableLeave(field: MutableEnumerationFieldModel)
+    fun mutableVisit(field: MutableEnumerationFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableEnumerationFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableAssociationFieldModel): T
-    fun mutableLeave(field: MutableAssociationFieldModel)
+    fun mutableVisit(field: MutableAssociationFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableAssociationFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableCompositionFieldModel): T
-    fun mutableLeave(field: MutableCompositionFieldModel)
+    fun mutableVisit(field: MutableCompositionFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableCompositionFieldModel<Aux>)
 
     // List fields
 
-    fun mutableVisit(field: MutableListFieldModel): T
-    fun mutableLeave(field: MutableListFieldModel)
+    fun mutableVisit(field: MutableListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableListFieldModel<Aux>)
 
-    fun mutableVisit(field: MutablePrimitiveListFieldModel): T
-    fun mutableLeave(field: MutablePrimitiveListFieldModel)
+    fun mutableVisit(field: MutablePrimitiveListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutablePrimitiveListFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableAliasListFieldModel): T
-    fun mutableLeave(field: MutableAliasListFieldModel)
+    fun mutableVisit(field: MutableAliasListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableAliasListFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableEnumerationListFieldModel): T
-    fun mutableLeave(field: MutableEnumerationListFieldModel)
+    fun mutableVisit(field: MutableEnumerationListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableEnumerationListFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableAssociationListFieldModel): T
-    fun mutableLeave(field: MutableAssociationListFieldModel)
+    fun mutableVisit(field: MutableAssociationListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableAssociationListFieldModel<Aux>)
 
-    fun mutableVisit(field: MutableCompositionListFieldModel): T
-    fun mutableLeave(field: MutableCompositionListFieldModel)
+    fun mutableVisit(field: MutableCompositionListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableCompositionListFieldModel<Aux>)
 
     // Field values
 
-    fun mutableVisit(value: Any?, fieldSchema: PrimitiveFieldSchema): T
+    fun mutableVisit(value: Any?, fieldSchema: PrimitiveFieldSchema): Return
     fun mutableLeave(value: Any?, fieldSchema: PrimitiveFieldSchema)
 
-    fun mutableVisit(value: Any?, fieldSchema: AliasFieldSchema): T
+    fun mutableVisit(value: Any?, fieldSchema: AliasFieldSchema): Return
     fun mutableLeave(value: Any?, fieldSchema: AliasFieldSchema)
 
-    fun mutableVisit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): T
+    fun mutableVisit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): Return
     fun mutableLeave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema)
 
-    fun mutableVisit(value: MutableAssociationValueModel, fieldSchema: AssociationFieldSchema): T
-    fun mutableLeave(value: MutableAssociationValueModel, fieldSchema: AssociationFieldSchema)
+    fun mutableVisit(value: MutableAssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema): Return
+    fun mutableLeave(value: MutableAssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema)
 
-    fun mutableVisit(entityKeys: MutableEntityKeysModel): T
-    fun mutableLeave(entityKeys: MutableEntityKeysModel)
+    fun mutableVisit(entityKeys: MutableEntityKeysModel<Aux>): Return
+    fun mutableLeave(entityKeys: MutableEntityKeysModel<Aux>)
 
     // NOTE: composition-values are EntityModel instances and so they don't have separate visit/leave methods.
 }

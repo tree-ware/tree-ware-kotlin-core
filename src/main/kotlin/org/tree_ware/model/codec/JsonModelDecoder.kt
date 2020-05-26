@@ -5,7 +5,7 @@ import org.tree_ware.model.codec.decoding_state_machine.ModelDecodingStateMachin
 import org.tree_ware.model.core.MutableModel
 import java.io.Reader
 
-fun decodeJson(reader: Reader, model: MutableModel): Boolean {
+fun <Aux> decodeJson(reader: Reader, model: MutableModel<Aux>): Boolean {
     val decodingStateMachine = ModelDecodingStateMachine(model)
     val wireFormatDecoder = JsonWireFormatDecoder()
     return wireFormatDecoder.decode(reader, decodingStateMachine)

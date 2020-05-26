@@ -2,24 +2,25 @@ package org.tree_ware.model.core
 
 import org.tree_ware.schema.core.*
 
-interface VisitableModel {
+interface VisitableModel<Aux> {
     /**
      * Traverses the model element and visits it and its sub-elements (Visitor Pattern).
      * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
      */
-    fun traverse(visitor: ModelVisitor<SchemaTraversalAction>): SchemaTraversalAction
+    fun traverse(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
 
     /**
      * Visits the model element without traversing its sub-elements.
      * Leave methods are NOT called.
      * Returns what the visitor returns.
      */
-    fun <T> dispatch(visitor: ModelVisitor<T>): T
+    fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return
 }
 
-interface ElementModel : VisitableModel {
+interface ElementModel<Aux> : VisitableModel<Aux> {
     val schema: ElementSchema
-    val parent: ElementModel?
+    val parent: ElementModel<Aux>?
+    val aux: Aux?
 }
 
 enum class ModelType {
@@ -30,96 +31,96 @@ enum class ModelType {
 }
 
 /** The entire model (from the root entity). */
-interface Model : ElementModel {
+interface Model<Aux> : ElementModel<Aux> {
     val type: ModelType
-    val root: RootModel
+    val root: RootModel<Aux>
 
     override val schema: Schema
 }
 
-interface BaseEntityModel : ElementModel {
-    val fields: List<FieldModel>
+interface BaseEntityModel<Aux> : ElementModel<Aux> {
+    val fields: List<FieldModel<Aux>>
 }
 
-interface RootModel : BaseEntityModel {
+interface RootModel<Aux> : BaseEntityModel<Aux> {
     override val schema: RootSchema
-    override val parent: Model
+    override val parent: Model<Aux>
 }
 
-interface EntityModel : BaseEntityModel {
+interface EntityModel<Aux> : BaseEntityModel<Aux> {
     override val schema: EntitySchema
-    override val parent: FieldModel
+    override val parent: FieldModel<Aux>
 }
 
-interface FieldModel : ElementModel {
+interface FieldModel<Aux> : ElementModel<Aux> {
     override val schema: FieldSchema
-    override val parent: BaseEntityModel
+    override val parent: BaseEntityModel<Aux>
 }
 
 // Scalar fields
 
-interface ScalarFieldModel : FieldModel
+interface ScalarFieldModel<Aux> : FieldModel<Aux>
 
-interface PrimitiveFieldModel : ScalarFieldModel {
+interface PrimitiveFieldModel<Aux> : ScalarFieldModel<Aux> {
     override val schema: PrimitiveFieldSchema
     val value: Any?
 }
 
-interface AliasFieldModel : ScalarFieldModel {
+interface AliasFieldModel<Aux> : ScalarFieldModel<Aux> {
     override val schema: AliasFieldSchema
     val value: Any?
 }
 
-interface EnumerationFieldModel : ScalarFieldModel {
+interface EnumerationFieldModel<Aux> : ScalarFieldModel<Aux> {
     override val schema: EnumerationFieldSchema
     val value: EnumerationValueSchema?
 }
 
-interface AssociationFieldModel : ScalarFieldModel {
+interface AssociationFieldModel<Aux> : ScalarFieldModel<Aux> {
     override val schema: AssociationFieldSchema
-    val value: AssociationValueModel?
+    val value: AssociationValueModel<Aux>?
 }
 
-interface CompositionFieldModel : ScalarFieldModel {
+interface CompositionFieldModel<Aux> : ScalarFieldModel<Aux> {
     override val schema: CompositionFieldSchema
-    val value: EntityModel
+    val value: EntityModel<Aux>
 }
 
 // List fields
 
-interface ListFieldModel : FieldModel
+interface ListFieldModel<Aux> : FieldModel<Aux>
 
-interface PrimitiveListFieldModel : ListFieldModel {
+interface PrimitiveListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: PrimitiveFieldSchema
     val value: List<Any>
 }
 
-interface AliasListFieldModel : ListFieldModel {
+interface AliasListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: AliasFieldSchema
     val value: List<Any>
 }
 
-interface EnumerationListFieldModel : ListFieldModel {
+interface EnumerationListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: EnumerationFieldSchema
     val value: List<EnumerationValueSchema>
 }
 
-interface AssociationListFieldModel : ListFieldModel {
+interface AssociationListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: AssociationFieldSchema
-    val value: List<AssociationValueModel>
+    val value: List<AssociationValueModel<Aux>>
 }
 
-interface CompositionListFieldModel : ListFieldModel {
+interface CompositionListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: CompositionFieldSchema
-    val value: List<EntityModel>
+    val value: List<EntityModel<Aux>>
 }
 
 // Field values
 
-interface AssociationValueModel : ElementModel {
-    val pathKeys: List<EntityKeysModel>
+interface AssociationValueModel<Aux> : ElementModel<Aux> {
+    val pathKeys: List<EntityKeysModel<Aux>>
 }
 
-interface EntityKeysModel : BaseEntityModel {
+interface EntityKeysModel<Aux> : BaseEntityModel<Aux> {
     override val schema: EntitySchema
 }

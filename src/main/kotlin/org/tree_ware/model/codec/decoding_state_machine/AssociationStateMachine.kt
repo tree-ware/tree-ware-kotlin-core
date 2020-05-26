@@ -5,8 +5,8 @@ import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.schema.core.AssociationFieldSchema
 import org.tree_ware.model.core.MutableAssociationValueModel
 
-class AssociationStateMachine(
-    private val association: MutableAssociationValueModel,
+class AssociationStateMachine<Aux>(
+    private val association: MutableAssociationValueModel<Aux>,
     private val schema: AssociationFieldSchema,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {

@@ -5,8 +5,8 @@ import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.schema.core.EntitySchema
 import org.tree_ware.model.core.MutableEntityKeysModel
 
-class AssociationPathStateMachine(
-    private val modelList: List<MutableEntityKeysModel>,
+class AssociationPathStateMachine<Aux>(
+    private val modelList: List<MutableEntityKeysModel<Aux>>,
     private val schemaList: List<EntitySchema>,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {

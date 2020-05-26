@@ -5,14 +5,14 @@ import org.tree_ware.model.core.ElementModel
 import org.tree_ware.schema.core.SchemaTraversalAction
 import java.io.Writer
 
-fun encodeJson(
-    element: ElementModel,
+fun <Aux> encodeJson(
+    element: ElementModel<Aux>,
     writer: Writer,
     prettyPrint: Boolean = false,
     indentSizeInSpaces: Int = 2
 ): Boolean {
     val wireFormatEncoder =
         JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)
-    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder)
+    val encodingVisitor = ModelEncodingVisitor<Aux>(wireFormatEncoder)
     return element.traverse(encodingVisitor) != SchemaTraversalAction.ABORT_TREE
 }

@@ -9,8 +9,8 @@ import org.tree_ware.schema.core.CompositionFieldSchema
 import org.tree_ware.schema.core.EntitySchema
 import java.math.BigDecimal
 
-class BaseEntityStateMachine(
-    private val base: MutableBaseEntityModel,
+class BaseEntityStateMachine<Aux>(
+    private val base: MutableBaseEntityModel<Aux>,
     private val entitySchema: EntitySchema,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
@@ -41,7 +41,7 @@ class BaseEntityStateMachine(
 
     private fun handleAssociationStart(fieldSchema: AssociationFieldSchema): Boolean {
         val fieldModel = base.getOrNewAssociationField(fieldSchema.name) ?: return false
-        val association = MutableAssociationValueModel(fieldSchema)
+        val association = MutableAssociationValueModel<Aux>(fieldSchema)
         fieldModel.value = association
         stack.addFirst(AssociationStateMachine(association, fieldModel.schema, stack))
         resetKeyState()
