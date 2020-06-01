@@ -40,7 +40,6 @@ class RootModelStateMachine<Aux>(
         } else {
             stack.addFirst(SkipUnknownStateMachine(stack))
         }
-        resetKeyState()
         return true
     }
 }

@@ -37,7 +37,6 @@ class PrimitiveValueStateMachine<Aux>(
         try {
             return field.setNullValue()
         } finally {
-            resetKeyState()
             // Remove self from stack
             stack.pollFirst()
         }
@@ -47,7 +46,6 @@ class PrimitiveValueStateMachine<Aux>(
         try {
             return field.setValue(value)
         } finally {
-            resetKeyState()
             // Remove self from stack
             stack.pollFirst()
         }
@@ -57,7 +55,6 @@ class PrimitiveValueStateMachine<Aux>(
         try {
             return field.setValue(value)
         } finally {
-            resetKeyState()
             // Remove self from stack
             stack.pollFirst()
         }
@@ -67,7 +64,6 @@ class PrimitiveValueStateMachine<Aux>(
         try {
             return field.setValue(value)
         } finally {
-            resetKeyState()
             // Remove self from stack
             stack.pollFirst()
         }

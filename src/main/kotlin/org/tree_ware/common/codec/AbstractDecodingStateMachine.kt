@@ -9,32 +9,24 @@ abstract class AbstractDecodingStateMachine(private val defaultReturn: Boolean) 
         this.keyName = keyName
     }
 
-    protected open fun resetKeyState() {
-        keyName = null
-    }
-
     override fun decodeKey(name: String): Boolean {
         setKeyState(name)
         return defaultReturn
     }
 
     override fun decodeNullValue(): Boolean {
-        resetKeyState()
         return defaultReturn
     }
 
     override fun decodeStringValue(value: String): Boolean {
-        resetKeyState()
         return defaultReturn
     }
 
     override fun decodeNumericValue(value: BigDecimal): Boolean {
-        resetKeyState()
         return defaultReturn
     }
 
     override fun decodeBooleanValue(value: Boolean): Boolean {
-        resetKeyState()
         return defaultReturn
     }
 }

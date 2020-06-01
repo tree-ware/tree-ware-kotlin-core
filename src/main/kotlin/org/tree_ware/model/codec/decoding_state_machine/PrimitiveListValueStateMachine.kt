@@ -53,7 +53,6 @@ class PrimitiveListValueStateMachine<Aux>(
         try {
             return field.addValue(value)
         } finally {
-            resetKeyState()
             if (decodeAux) {
                 // Remove self from stack
                 stack.pollFirst()
@@ -65,7 +64,6 @@ class PrimitiveListValueStateMachine<Aux>(
         try {
             return field.addValue(value)
         } finally {
-            resetKeyState()
             if (decodeAux) {
                 // Remove self from stack
                 stack.pollFirst()
@@ -77,7 +75,6 @@ class PrimitiveListValueStateMachine<Aux>(
         try {
             return field.addValue(value)
         } finally {
-            resetKeyState()
             if (decodeAux) {
                 // Remove self from stack
                 stack.pollFirst()
