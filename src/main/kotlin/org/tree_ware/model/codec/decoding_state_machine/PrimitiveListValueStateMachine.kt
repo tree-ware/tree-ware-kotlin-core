@@ -31,6 +31,12 @@ class PrimitiveListValueStateMachine<Aux>(
     }
 
     override fun decodeListEnd(): Boolean {
+        if (decodeAux) {
+            // This method should never get called
+            assert(false)
+            return false
+        }
+
         // End of the list needs to be handled by parent state machine.
         // So remove self from stack and call decodeListEnd() on previous
         // state machine.
@@ -48,6 +54,10 @@ class PrimitiveListValueStateMachine<Aux>(
             return field.addValue(value)
         } finally {
             resetKeyState()
+            if (decodeAux) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 
@@ -56,6 +66,10 @@ class PrimitiveListValueStateMachine<Aux>(
             return field.addValue(value)
         } finally {
             resetKeyState()
+            if (decodeAux) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 
@@ -64,6 +78,10 @@ class PrimitiveListValueStateMachine<Aux>(
             return field.addValue(value)
         } finally {
             resetKeyState()
+            if (decodeAux) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 }

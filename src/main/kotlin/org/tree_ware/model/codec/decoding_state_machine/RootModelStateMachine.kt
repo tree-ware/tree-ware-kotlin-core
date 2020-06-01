@@ -36,7 +36,7 @@ class RootModelStateMachine<Aux>(
             val entityStateMachine =
                 BaseEntityStateMachine(false, { root }, stack, decodeAux)
             if (!decodeAux) stack.addFirst(entityStateMachine)
-            else stack.addFirst(ValueAndAuxStateMachine(entityStateMachine, stack))
+            else stack.addFirst(ValueAndAuxStateMachine(false, entityStateMachine, stack))
         } else {
             stack.addFirst(SkipUnknownStateMachine(stack))
         }

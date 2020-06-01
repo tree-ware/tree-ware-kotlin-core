@@ -1,5 +1,6 @@
 package org.tree_ware.model.codec.decoding_state_machine
 
+import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
@@ -7,8 +8,12 @@ import org.tree_ware.common.codec.SkipUnknownStateMachine
 const val VALUE_KEY = "value"
 
 class ValueAndAuxStateMachine(
-    private val valueStateMachine: DecodingStateMachine, private val stack: DecodingStack
+    private val isListElement: Boolean,
+    private val valueStateMachine: DecodingStateMachine,
+    private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
+    private val logger = LogManager.getLogger()
+
     override fun decodeKey(name: String): Boolean {
         setKeyState(name)
         if (keyName == VALUE_KEY) stack.addFirst(valueStateMachine)
@@ -21,8 +26,10 @@ class ValueAndAuxStateMachine(
     }
 
     override fun decodeObjectEnd(): Boolean {
-        // Remove self from stack
-        stack.pollFirst()
+        if (!isListElement) {
+            // Remove self from stack
+            stack.pollFirst()
+        }
         return true
     }
 
@@ -33,8 +40,21 @@ class ValueAndAuxStateMachine(
     }
 
     override fun decodeListEnd(): Boolean {
-        // This method should never get called
-        assert(false)
-        return false
+        if (isListElement) {
+            // End of the list needs to be handled by parent state machine.
+            // So remove self from stack and call decodeListEnd() on previous
+            // state machine.
+            stack.pollFirst()
+            val parentStateMachine = stack.peekFirst()
+            if (parentStateMachine == null) {
+                logger.error("No parent decoding state machine")
+                return false
+            }
+            return parentStateMachine.decodeListEnd()
+        } else {
+            // This method should never get called
+            assert(false)
+            return false
+        }
     }
 }

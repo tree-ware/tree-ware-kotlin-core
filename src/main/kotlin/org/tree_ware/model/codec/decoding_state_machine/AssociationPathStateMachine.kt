@@ -16,7 +16,8 @@ class AssociationPathStateMachine<Aux>(
         if (listIndex >= modelList.size) return false
         val model = modelList[listIndex]
         val schema = schemaList[listIndex]
-        val entityStateMachine = BaseEntityStateMachine(false, { model }, stack, decodeAux)
+        // `path_keys` list is an "internal" structure that will not have aux data, so decodeAux is hardcoded to false.
+        val entityStateMachine = BaseEntityStateMachine(true, { model }, stack, false)
         // TODO(deepak-nulu): don't call entityStateMachine.decodeObjectStart(). Instead,
         // handle objects in the "path_keys" list the way list fields are handled.
         entityStateMachine.decodeObjectStart()

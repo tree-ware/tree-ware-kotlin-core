@@ -1,5 +1,6 @@
 package org.tree_ware.model.codec
 
+import org.tree_ware.model.core.ModelType
 import org.tree_ware.model.core.MutableModel
 import org.tree_ware.schema.core.newAddressBookSchema
 import org.tree_ware.schema.core.validate
@@ -17,6 +18,16 @@ class JsonCodecTests {
     }
 
     @Test
+    fun `JSON decoder can decode values alone in error-all model`() {
+        testRoundTrip<String>(
+            "src/test/resources/model/address_book_error_all_model.json",
+            true,
+            "src/test/resources/model/address_book_1.json",
+            ModelType.data
+        )
+    }
+
+    @Test
     fun `JSON codec person filter-branch round trip must be lossless`() {
         testRoundTrip<Unit>("src/test/resources/model/address_book_filter_person_model.json")
     }
@@ -31,25 +42,39 @@ class JsonCodecTests {
         testRoundTrip<Unit>("src/test/resources/model/address_book_filter_all_model.json")
     }
 
-    private fun <Aux> testRoundTrip(filePath: String, decodeAux: Boolean = false) {
+    private fun <Aux> testRoundTrip(
+        inputFilePath: String,
+        decodeAux: Boolean = false,
+        expectedOutputFilePath: String? = null,
+        forceDecodedModelType: ModelType? = null
+    ) {
         val schema = newAddressBookSchema()
         val errors = validate(schema)
         assertTrue(errors.isEmpty())
 
-        val jsonFile = File(filePath)
-        assertTrue(jsonFile.exists())
+        val inputFile = File(inputFilePath)
+        assertTrue(inputFile.exists())
 
-        val jsonReader = FileReader(jsonFile)
+        val jsonReader = FileReader(inputFile)
         val model = MutableModel<Aux>(schema)
         val isDecoded = decodeJson(jsonReader, model, decodeAux)
         jsonReader.close()
         assertTrue(isDecoded)
 
+        forceDecodedModelType?.also { model.type = it }
+
         val jsonWriter = StringWriter()
         val isEncoded = encodeJson(model, jsonWriter, true)
         assertTrue(isEncoded)
 
-        val expected = jsonFile.readText()
+        val expected = if (expectedOutputFilePath == null) {
+            // Use input file
+            inputFile.readText()
+        } else {
+            val expectedFile = File(expectedOutputFilePath)
+            assertTrue(expectedFile.exists())
+            expectedFile.readText()
+        }
         val actual = jsonWriter.toString()
         assertEquals(expected, actual)
     }

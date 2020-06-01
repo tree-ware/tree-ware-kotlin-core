@@ -23,7 +23,7 @@ class AssociationValueStateMachine<Aux>(
     }
 
     override fun decodeObjectEnd(): Boolean {
-        if (!isListElement) {
+        if (decodeAux || !isListElement) {
             // Remove self from stack
             stack.pollFirst()
         }
