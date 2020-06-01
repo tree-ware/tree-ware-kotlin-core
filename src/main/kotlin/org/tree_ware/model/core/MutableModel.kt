@@ -157,7 +157,7 @@ class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(
 }
 
 abstract class MutableBaseEntityModel<Aux>(
-    private val entitySchema: EntitySchema
+    internal val entitySchema: EntitySchema
 ) : MutableElementModel<Aux>(), BaseEntityModel<Aux> {
     override var fields: MutableList<MutableFieldModel<Aux>> = mutableListOf()
         internal set
@@ -611,6 +611,10 @@ class MutableAssociationFieldModel<Aux>(
 ) : MutableScalarFieldModel<Aux>(parent), AssociationFieldModel<Aux> {
     override var value: MutableAssociationValueModel<Aux>? = null
         internal set
+
+    fun getOrNewAssociation(): MutableAssociationValueModel<Aux> {
+        return value ?: MutableAssociationValueModel<Aux>(schema).also { value = it }
+    }
 
     override fun setNullValue(): Boolean {
         this.value = null

@@ -8,10 +8,15 @@ import java.util.*
 
 typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 
-class ModelDecodingStateMachine<Aux>(private val model: MutableModel<Aux>) : DecodingStateMachine {
-    private var stack = DecodingStack()
-    private var firstTime = true
+class ModelDecodingStateMachine<Aux>(
+    private val model: MutableModel<Aux>, private val decodeAux: Boolean
+) : DecodingStateMachine {
+    private val stack = DecodingStack()
     private val logger = LogManager.getLogger()
+
+    init {
+        stack.addFirst(ModelStateMachine(model, stack, decodeAux))
+    }
 
     private fun getTopStateMachine(): DecodingStateMachine? {
         val top = stack.peekFirst()
@@ -22,60 +27,46 @@ class ModelDecodingStateMachine<Aux>(private val model: MutableModel<Aux>) : Dec
     // DecodingStateMachine methods
 
     override fun decodeObjectStart(): Boolean {
-        if (firstTime) {
-            firstTime = false
-            stack.addFirst(ModelStateMachine(model, stack))
-            return true
-        } else {
-            val top = getTopStateMachine() ?: return false
-            return top.decodeObjectStart()
-        }
+        val top = getTopStateMachine() ?: return false
+        return top.decodeObjectStart()
     }
 
     override fun decodeObjectEnd(): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeObjectEnd()
     }
 
     override fun decodeListStart(): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeListStart()
     }
 
     override fun decodeListEnd(): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeListEnd()
     }
 
     override fun decodeKey(name: String): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeKey(name)
     }
 
     override fun decodeNullValue(): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeNullValue()
     }
 
     override fun decodeStringValue(value: String): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeStringValue(value)
     }
 
     override fun decodeNumericValue(value: BigDecimal): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeNumericValue(value)
     }
 
     override fun decodeBooleanValue(value: Boolean): Boolean {
-        if (firstTime) return false
         val top = getTopStateMachine() ?: return false
         return top.decodeBooleanValue(value)
     }

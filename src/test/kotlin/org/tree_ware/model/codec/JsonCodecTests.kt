@@ -13,21 +13,25 @@ import kotlin.test.assertTrue
 class JsonCodecTests {
     @Test
     fun `JSON codec data round trip must be lossless`() {
-        testRoundTrip("src/test/resources/model/address_book_1.json")
+        testRoundTrip<Unit>("src/test/resources/model/address_book_1.json")
     }
 
     @Test
-    fun `JSON codec filter-branch round trip must be lossless`() {
-        testRoundTrip("src/test/resources/model/address_book_filter_person_model.json")
-        testRoundTrip("src/test/resources/model/address_book_filter_settings_model.json")
+    fun `JSON codec person filter-branch round trip must be lossless`() {
+        testRoundTrip<Unit>("src/test/resources/model/address_book_filter_person_model.json")
+    }
+
+    @Test
+    fun `JSON codec settings filter-branch round trip must be lossless`() {
+        testRoundTrip<Unit>("src/test/resources/model/address_book_filter_settings_model.json")
     }
 
     @Test
     fun `JSON codec filter-all round trip must be lossless`() {
-        testRoundTrip("src/test/resources/model/address_book_filter_all_model.json")
+        testRoundTrip<Unit>("src/test/resources/model/address_book_filter_all_model.json")
     }
 
-    private fun testRoundTrip(filePath: String) {
+    private fun <Aux> testRoundTrip(filePath: String, decodeAux: Boolean = false) {
         val schema = newAddressBookSchema()
         val errors = validate(schema)
         assertTrue(errors.isEmpty())
@@ -36,8 +40,8 @@ class JsonCodecTests {
         assertTrue(jsonFile.exists())
 
         val jsonReader = FileReader(jsonFile)
-        val model = MutableModel<Unit>(schema)
-        val isDecoded = decodeJson(jsonReader, model)
+        val model = MutableModel<Aux>(schema)
+        val isDecoded = decodeJson(jsonReader, model, decodeAux)
         jsonReader.close()
         assertTrue(isDecoded)
 

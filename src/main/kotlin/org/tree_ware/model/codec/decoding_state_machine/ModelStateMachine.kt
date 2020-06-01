@@ -6,22 +6,9 @@ import org.tree_ware.model.core.ModelType
 import org.tree_ware.model.core.MutableModel
 
 class ModelStateMachine<Aux>(
-    private val model: MutableModel<Aux>, private val stack: DecodingStack
+    private val model: MutableModel<Aux>, private val stack: DecodingStack, private val decodeAux: Boolean
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
-        val modelType = try {
-            enumValueOf<ModelType>(keyName ?: "")
-        } catch (e: IllegalArgumentException) {
-            null
-        }
-        if (modelType != null) {
-            model.type = modelType
-            val root = model.getOrNewRoot()
-            stack.addFirst(RootModelStateMachine(root, stack))
-        } else {
-            stack.addFirst(SkipUnknownStateMachine(stack))
-        }
-        resetKeyState()
         return true
     }
 
@@ -32,14 +19,32 @@ class ModelStateMachine<Aux>(
     }
 
     override fun decodeListStart(): Boolean {
-        stack.addFirst(SkipUnknownStateMachine(stack))
-        resetKeyState()
-        return true
+        // This method should never get called
+        assert(false)
+        return false
     }
 
     override fun decodeListEnd(): Boolean {
         // This method should never get called
         assert(false)
         return false
+    }
+
+    override fun decodeKey(name: String): Boolean {
+        super.decodeKey(name)
+
+        val modelType = try {
+            enumValueOf<ModelType>(keyName ?: "")
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+        if (modelType != null) {
+            model.type = modelType
+            val root = model.getOrNewRoot()
+            stack.addFirst(RootModelStateMachine(root, stack, decodeAux))
+        } else {
+            stack.addFirst(SkipUnknownStateMachine(stack))
+        }
+        return true
     }
 }

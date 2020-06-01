@@ -24,8 +24,8 @@ interface ElementModel<Aux> : VisitableModel<Aux> {
 }
 
 enum class ModelType {
-    data
-    // TODO(deepak-nulu): error
+    data,
+    error
     // TODO(deepak-nulu): filter
     // TODO(deepak-nulu): delta
 }
