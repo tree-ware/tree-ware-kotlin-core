@@ -2,13 +2,14 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
+import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.model.core.MutableListFieldModel
 import java.math.BigDecimal
 
 class PrimitiveListValueStateMachine<Aux>(
     private val field: MutableListFieldModel<Aux>,
     private val stack: DecodingStack,
-    private val decodeAux: Boolean
+    private val auxStateMachine: DecodingStateMachine?
 ) : AbstractDecodingStateMachine(true) {
     private val logger = LogManager.getLogger()
 
@@ -31,7 +32,7 @@ class PrimitiveListValueStateMachine<Aux>(
     }
 
     override fun decodeListEnd(): Boolean {
-        if (decodeAux) {
+        if (auxStateMachine != null) {
             // This method should never get called
             assert(false)
             return false
@@ -53,7 +54,7 @@ class PrimitiveListValueStateMachine<Aux>(
         try {
             return field.addValue(value)
         } finally {
-            if (decodeAux) {
+            if (auxStateMachine != null) {
                 // Remove self from stack
                 stack.pollFirst()
             }
@@ -64,7 +65,7 @@ class PrimitiveListValueStateMachine<Aux>(
         try {
             return field.addValue(value)
         } finally {
-            if (decodeAux) {
+            if (auxStateMachine != null) {
                 // Remove self from stack
                 stack.pollFirst()
             }
@@ -75,7 +76,7 @@ class PrimitiveListValueStateMachine<Aux>(
         try {
             return field.addValue(value)
         } finally {
-            if (decodeAux) {
+            if (auxStateMachine != null) {
                 // Remove self from stack
                 stack.pollFirst()
             }

@@ -21,7 +21,6 @@ class JsonCodecTests {
     fun `JSON decoder can decode values alone in error-all model`() {
         testRoundTrip<String>(
             "src/test/resources/model/address_book_error_all_model.json",
-            true,
             "src/test/resources/model/address_book_1.json",
             ModelType.data
         )
@@ -44,7 +43,6 @@ class JsonCodecTests {
 
     private fun <Aux> testRoundTrip(
         inputFilePath: String,
-        decodeAux: Boolean = false,
         expectedOutputFilePath: String? = null,
         forceDecodedModelType: ModelType? = null
     ) {
@@ -57,7 +55,7 @@ class JsonCodecTests {
 
         val jsonReader = FileReader(inputFile)
         val model = MutableModel<Aux>(schema)
-        val isDecoded = decodeJson(jsonReader, model, decodeAux)
+        val isDecoded = decodeJson(jsonReader, model)
         jsonReader.close()
         assertTrue(isDecoded)
 

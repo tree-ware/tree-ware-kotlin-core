@@ -5,8 +5,7 @@ import org.tree_ware.common.codec.DecodingStateMachine
 
 class ListValueStateMachine(
     private val listElementStateMachine: DecodingStateMachine,
-    private val stack: DecodingStack,
-    private val decodeAux: Boolean
+    private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
         // This method should never get called

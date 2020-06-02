@@ -1,11 +1,14 @@
 package org.tree_ware.model.codec.decoding_state_machine
 
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
+import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.MutableRootModel
 
 class RootModelStateMachine<Aux>(
-    private val root: MutableRootModel<Aux>, private val stack: DecodingStack, private val decodeAux: Boolean
+    private val root: MutableRootModel<Aux>,
+    private val stack: DecodingStack,
+    private val auxStateMachine: DecodingStateMachine?
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
         return true
@@ -34,9 +37,9 @@ class RootModelStateMachine<Aux>(
 
         if (keyName == root.schema.name) {
             val entityStateMachine =
-                BaseEntityStateMachine(false, { root }, stack, decodeAux)
-            if (!decodeAux) stack.addFirst(entityStateMachine)
-            else stack.addFirst(ValueAndAuxStateMachine(false, entityStateMachine, stack))
+                BaseEntityStateMachine(false, { root }, stack, auxStateMachine)
+            if (auxStateMachine == null) stack.addFirst(entityStateMachine)
+            else stack.addFirst(ValueAndAuxStateMachine(false, entityStateMachine, auxStateMachine, stack))
         } else {
             stack.addFirst(SkipUnknownStateMachine(stack))
         }

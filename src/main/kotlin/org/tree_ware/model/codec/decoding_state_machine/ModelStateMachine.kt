@@ -1,12 +1,13 @@
 package org.tree_ware.model.codec.decoding_state_machine
 
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
+import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.ModelType
 import org.tree_ware.model.core.MutableModel
 
 class ModelStateMachine<Aux>(
-    private val model: MutableModel<Aux>, private val stack: DecodingStack, private val decodeAux: Boolean
+    private val model: MutableModel<Aux>, private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
         return true
@@ -41,10 +42,15 @@ class ModelStateMachine<Aux>(
         if (modelType != null) {
             model.type = modelType
             val root = model.getOrNewRoot()
-            stack.addFirst(RootModelStateMachine(root, stack, decodeAux))
+            stack.addFirst(RootModelStateMachine(root, stack, getAuxStateMachine(modelType)))
         } else {
             stack.addFirst(SkipUnknownStateMachine(stack))
         }
         return true
+    }
+
+    private fun getAuxStateMachine(modelType: ModelType): DecodingStateMachine? = when (modelType) {
+        ModelType.data -> null
+        else -> SkipUnknownStateMachine(stack)
     }
 }

@@ -7,8 +7,7 @@ import org.tree_ware.schema.core.EntitySchema
 class AssociationPathStateMachine<Aux>(
     private val modelList: List<MutableEntityKeysModel<Aux>>,
     private val schemaList: List<EntitySchema>,
-    private val stack: DecodingStack,
-    private val decodeAux: Boolean
+    private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     private var listIndex = 0
 
@@ -16,8 +15,8 @@ class AssociationPathStateMachine<Aux>(
         if (listIndex >= modelList.size) return false
         val model = modelList[listIndex]
         val schema = schemaList[listIndex]
-        // `path_keys` list is an "internal" structure that will not have aux data, so decodeAux is hardcoded to false.
-        val entityStateMachine = BaseEntityStateMachine(true, { model }, stack, false)
+        // `path_keys` is an "internal" structure that will not have aux data, so auxStateMachine is hardcoded to null.
+        val entityStateMachine = BaseEntityStateMachine(true, { model }, stack, null)
         // TODO(deepak-nulu): don't call entityStateMachine.decodeObjectStart(). Instead,
         // handle objects in the "path_keys" list the way list fields are handled.
         entityStateMachine.decodeObjectStart()

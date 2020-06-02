@@ -6,8 +6,7 @@ import java.math.BigDecimal
 
 class PrimitiveValueStateMachine<Aux>(
     private val field: MutableScalarFieldModel<Aux>,
-    private val stack: DecodingStack,
-    private val decodeAux: Boolean
+    private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     override fun decodeObjectStart(): Boolean {
         // This method should never get called
