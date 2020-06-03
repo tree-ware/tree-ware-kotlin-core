@@ -3,18 +3,22 @@ package org.tree_ware.model.codec.decoding_state_machine
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.model.core.MutableModel
+import org.tree_ware.schema.core.Schema
 import java.math.BigDecimal
 import java.util.*
 
 typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 
-class ModelDecodingStateMachine<Aux>(private val model: MutableModel<Aux>) : DecodingStateMachine {
+class ModelDecodingStateMachine(schema: Schema) : DecodingStateMachine {
     private val stack = DecodingStack()
+    private val modelStateMachine = ModelStateMachine(schema, stack)
     private val logger = LogManager.getLogger()
 
     init {
-        stack.addFirst(ModelStateMachine(model, stack))
+        stack.addFirst(modelStateMachine)
     }
+
+    val model: MutableModel<out Any>? get() = modelStateMachine.model
 
     private fun getTopStateMachine(): DecodingStateMachine? {
         val top = stack.peekFirst()

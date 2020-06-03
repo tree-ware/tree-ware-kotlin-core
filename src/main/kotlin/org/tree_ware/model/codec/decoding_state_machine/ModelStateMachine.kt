@@ -4,10 +4,14 @@ import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.ModelType
 import org.tree_ware.model.core.MutableModel
+import org.tree_ware.schema.core.Schema
 
-class ModelStateMachine<Aux>(
-    private val model: MutableModel<Aux>, private val stack: DecodingStack
+class ModelStateMachine(
+    private val schema: Schema, private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
+    var model: MutableModel<out Any>? = null
+        private set
+
     override fun decodeObjectStart(): Boolean {
         return true
     }
@@ -38,18 +42,22 @@ class ModelStateMachine<Aux>(
         } catch (e: IllegalArgumentException) {
             null
         }
-        if (modelType != null) {
-            model.type = modelType
-            val root = model.getOrNewRoot()
-            stack.addFirst(RootModelStateMachine(root, stack, getAuxStateMachine(modelType)))
-        } else {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+        when (modelType) {
+            null -> stack.addFirst(SkipUnknownStateMachine<Unit>(stack))
+            ModelType.error -> decodeModel(modelType, MutableModel<Unit>(schema), SkipUnknownStateMachine<Unit>(stack))
+            else -> decodeModel(modelType, MutableModel<Unit>(schema), null)
         }
         return true
     }
 
-    private fun getAuxStateMachine(modelType: ModelType): AuxDecodingStateMachine<Aux>? = when (modelType) {
-        ModelType.data -> null
-        else -> SkipUnknownStateMachine(stack)
+    private fun <Aux> decodeModel(
+        modelType: ModelType,
+        newModel: MutableModel<Aux>,
+        auxStateMachine: AuxDecodingStateMachine<Aux>?
+    ) {
+        newModel.type = modelType
+        val root = newModel.getOrNewRoot()
+        stack.addFirst(RootModelStateMachine(root, stack, auxStateMachine))
+        model = newModel as MutableModel<out Any>
     }
 }
