@@ -7,7 +7,11 @@ import java.math.BigDecimal
 class PrimitiveValueStateMachine<Aux>(
     private val field: MutableScalarFieldModel<Aux>,
     private val stack: DecodingStack
-) : AbstractDecodingStateMachine(true) {
+) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
+    override fun setAux(aux: Aux) {
+        field.aux = aux
+    }
+
     override fun decodeObjectStart(): Boolean {
         // This method should never get called
         assert(false)

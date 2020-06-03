@@ -1,9 +1,12 @@
 package org.tree_ware.common.codec
 
+import org.tree_ware.model.codec.decoding_state_machine.AuxDecodingStateMachine
 import org.tree_ware.model.codec.decoding_state_machine.DecodingStack
 import java.math.BigDecimal
 
-class SkipUnknownStateMachine(private val stack: DecodingStack) : AbstractDecodingStateMachine(true) {
+class SkipUnknownStateMachine<Aux>(
+    private val stack: DecodingStack
+) : AbstractDecodingStateMachine(true), AuxDecodingStateMachine<Aux> {
     private var depth = 0
 
     private fun popIfDone() {
@@ -57,5 +60,13 @@ class SkipUnknownStateMachine(private val stack: DecodingStack) : AbstractDecodi
     override fun decodeBooleanValue(value: Boolean): Boolean {
         popIfDone()
         return true
+    }
+
+    override fun newAux() {
+        // Nothing to do
+    }
+
+    override fun getAux(): Aux? {
+        return null
     }
 }

@@ -9,9 +9,13 @@ import java.math.BigDecimal
 class PrimitiveListValueStateMachine<Aux>(
     private val field: MutableListFieldModel<Aux>,
     private val stack: DecodingStack,
-    private val auxStateMachine: DecodingStateMachine?
-) : AbstractDecodingStateMachine(true) {
+    private val auxStateMachine: AuxDecodingStateMachine<Aux>?
+) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private val logger = LogManager.getLogger()
+
+    override fun setAux(aux: Aux) {
+        field.aux = aux
+    }
 
     override fun decodeObjectStart(): Boolean {
         // This method should never get called

@@ -2,7 +2,6 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
-import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.MutableAssociationValueModel
 import org.tree_ware.schema.core.AssociationFieldSchema
@@ -12,10 +11,15 @@ class AssociationValueStateMachine<Aux>(
     private val associationFactory: () -> MutableAssociationValueModel<Aux>,
     private val schema: AssociationFieldSchema,
     private val stack: DecodingStack,
-    private val auxStateMachine: DecodingStateMachine?
-) : AbstractDecodingStateMachine(true) {
+    private val auxStateMachine: AuxDecodingStateMachine<Aux>?
+) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private var association: MutableAssociationValueModel<Aux>? = null
     private val logger = LogManager.getLogger()
+
+    override fun setAux(aux: Aux) {
+        assert(association != null)
+        association?.aux = aux
+    }
 
     override fun decodeObjectStart(): Boolean {
         association = associationFactory()
@@ -64,7 +68,7 @@ class AssociationValueStateMachine<Aux>(
                 stack.addFirst(AssociationPathStateMachine(it.pathKeys, schema.keyEntities, stack))
             }
         } else {
-            stack.addFirst(SkipUnknownStateMachine(stack))
+            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
         }
         return true
     }

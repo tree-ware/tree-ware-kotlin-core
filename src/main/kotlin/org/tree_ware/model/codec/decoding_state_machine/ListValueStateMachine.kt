@@ -2,11 +2,17 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.DecodingStateMachine
+import org.tree_ware.model.core.MutableListFieldModel
 
-class ListValueStateMachine(
+class ListValueStateMachine<Aux>(
+    private val listFieldModel: MutableListFieldModel<Aux>,
     private val listElementStateMachine: DecodingStateMachine,
     private val stack: DecodingStack
-) : AbstractDecodingStateMachine(true) {
+) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
+    override fun setAux(aux: Aux) {
+        listFieldModel.aux = aux
+    }
+
     override fun decodeObjectStart(): Boolean {
         // This method should never get called
         assert(false)

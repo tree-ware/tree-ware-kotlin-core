@@ -2,11 +2,11 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
-import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.MutableAssociationListFieldModel
 import org.tree_ware.model.core.MutableBaseEntityModel
 import org.tree_ware.model.core.MutableCompositionListFieldModel
+import org.tree_ware.model.core.MutableListFieldModel
 import org.tree_ware.schema.core.AssociationFieldSchema
 import org.tree_ware.schema.core.CompositionFieldSchema
 import org.tree_ware.schema.core.EntitySchema
@@ -16,11 +16,16 @@ class BaseEntityStateMachine<Aux>(
     private val isListElement: Boolean,
     private val baseFactory: () -> MutableBaseEntityModel<Aux>,
     private val stack: DecodingStack,
-    private val auxStateMachine: DecodingStateMachine?
-) : AbstractDecodingStateMachine(true) {
+    private val auxStateMachine: AuxDecodingStateMachine<Aux>?
+) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private var base: MutableBaseEntityModel<Aux>? = null
     private var entitySchema: EntitySchema? = null
     private val logger = LogManager.getLogger()
+
+    override fun setAux(aux: Aux) {
+        assert(base != null)
+        base?.aux = aux
+    }
 
     override fun decodeObjectStart(): Boolean {
         base = baseFactory()
@@ -69,7 +74,7 @@ class BaseEntityStateMachine<Aux>(
         val fieldName = keyName
         val fieldSchema = fieldName?.let { entitySchema?.getField(it) }
         if (fieldSchema == null) {
-            stack.addFirst(SkipUnknownStateMachine(stack))
+            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
             return true
         }
         return when (fieldSchema) {
@@ -80,80 +85,84 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun handleComposition(fieldSchema: CompositionFieldSchema): Boolean {
-        val isList = fieldSchema.multiplicity.isList()
-        val elementStateMachine = if (isList) {
+        if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
             val compositionListFieldModel = listFieldModel as? MutableCompositionListFieldModel ?: return false
-            BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachine)
+            val listElementStateMachine =
+                BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachine)
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
             val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
             val entity = fieldModel.value
-            BaseEntityStateMachine(false, { entity }, stack, auxStateMachine)
+            val elementStateMachine = BaseEntityStateMachine(false, { entity }, stack, auxStateMachine)
+            addElementStateMachineToStack(elementStateMachine)
         }
-        addElementStateMachineToStack(elementStateMachine, isList)
         return true
     }
 
     private fun handleAssociation(fieldSchema: AssociationFieldSchema): Boolean {
-        val isList = fieldSchema.multiplicity.isList()
-        val elementStateMachine = if (isList) {
+        if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
             val associationListFieldModel = listFieldModel as? MutableAssociationListFieldModel ?: return false
-            AssociationValueStateMachine(
+            val listElementStateMachine = AssociationValueStateMachine(
                 true,
                 { associationListFieldModel.addAssociation() },
                 fieldSchema,
                 stack,
                 auxStateMachine
             )
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
             val fieldModel = base?.getOrNewAssociationField(fieldSchema.name) ?: return false
-            AssociationValueStateMachine(
+            val elementStateMachine = AssociationValueStateMachine(
                 false,
                 { fieldModel.getOrNewAssociation() },
                 fieldSchema,
                 stack,
                 auxStateMachine
             )
+            addElementStateMachineToStack(elementStateMachine)
         }
-        addElementStateMachineToStack(elementStateMachine, isList)
         return true
     }
 
     private fun handlePrimitive(fieldSchema: FieldSchema): Boolean {
-        val isList = fieldSchema.multiplicity.isList()
-        val elementStateMachine = if (isList) {
+        if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            PrimitiveListValueStateMachine(listFieldModel, stack, auxStateMachine)
+            val listElementStateMachine = PrimitiveListValueStateMachine(listFieldModel, stack, auxStateMachine)
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
             val fieldModel = base?.getOrNewScalarField(fieldSchema.name) ?: return false
-            PrimitiveValueStateMachine(fieldModel, stack)
+            val elementStateMachine = PrimitiveValueStateMachine(fieldModel, stack)
+            addElementStateMachineToStack(elementStateMachine)
         }
-        addElementStateMachineToStack(elementStateMachine, isList)
         return true
     }
 
-    private fun addElementStateMachineToStack(elementStateMachine: DecodingStateMachine, isList: Boolean) {
-        if (isList) {
-            if (auxStateMachine == null) {
-                val listStateMachine = ListValueStateMachine(elementStateMachine, stack)
-                stack.addFirst(listStateMachine)
-            } else {
-                // Wrap the list state machine as well as the list element state machine
-                val wrappedElementStateMachine =
-                    ValueAndAuxStateMachine(true, elementStateMachine, auxStateMachine, stack)
-                val listStateMachine = ListValueStateMachine(wrappedElementStateMachine, stack)
-                val wrappedListStateMachine = ValueAndAuxStateMachine(false, listStateMachine, auxStateMachine, stack)
-                stack.addFirst(wrappedListStateMachine)
-            }
+    private fun addListElementStateMachineToStack(
+        listFieldModel: MutableListFieldModel<Aux>,
+        listElementStateMachine: ValueDecodingStateMachine<Aux>
+    ) {
+        if (auxStateMachine == null) {
+            val listStateMachine = ListValueStateMachine(listFieldModel, listElementStateMachine, stack)
+            stack.addFirst(listStateMachine)
         } else {
-            if (auxStateMachine == null) {
-                stack.addFirst(elementStateMachine)
-            } else {
-                val wrappedElementStateMachine =
-                    ValueAndAuxStateMachine(false, elementStateMachine, auxStateMachine, stack)
-                stack.addFirst(wrappedElementStateMachine)
-            }
+            // Wrap the list state machine as well as the list element state machine
+            val wrappedElementStateMachine =
+                ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachine, stack)
+            val listStateMachine = ListValueStateMachine(listFieldModel, wrappedElementStateMachine, stack)
+            val wrappedListStateMachine = ValueAndAuxStateMachine(false, listStateMachine, auxStateMachine, stack)
+            stack.addFirst(wrappedListStateMachine)
+        }
+    }
+
+    private fun addElementStateMachineToStack(elementStateMachine: ValueDecodingStateMachine<Aux>) {
+        if (auxStateMachine == null) {
+            stack.addFirst(elementStateMachine)
+        } else {
+            val wrappedElementStateMachine =
+                ValueAndAuxStateMachine(false, elementStateMachine, auxStateMachine, stack)
+            stack.addFirst(wrappedElementStateMachine)
         }
     }
 }

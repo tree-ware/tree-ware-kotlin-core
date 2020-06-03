@@ -2,14 +2,13 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
-import org.tree_ware.common.codec.DecodingStateMachine
 
 const val VALUE_KEY = "value"
 
-class ValueAndAuxStateMachine(
+class ValueAndAuxStateMachine<Aux>(
     private val isListElement: Boolean,
-    private val valueStateMachine: DecodingStateMachine,
-    private val auxStateMachine: DecodingStateMachine,
+    private val valueStateMachine: ValueDecodingStateMachine<Aux>,
+    private val auxStateMachine: AuxDecodingStateMachine<Aux>,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     private val logger = LogManager.getLogger()
@@ -17,15 +16,20 @@ class ValueAndAuxStateMachine(
     override fun decodeKey(name: String): Boolean {
         setKeyState(name)
         if (keyName == VALUE_KEY) stack.addFirst(valueStateMachine)
-        else stack.addFirst(auxStateMachine)
+        else {
+            stack.addFirst(auxStateMachine)
+            auxStateMachine.decodeKey(name)
+        }
         return true
     }
 
     override fun decodeObjectStart(): Boolean {
+        auxStateMachine.newAux()
         return true
     }
 
     override fun decodeObjectEnd(): Boolean {
+        auxStateMachine.getAux()?.also { valueStateMachine.setAux(it) }
         if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()
