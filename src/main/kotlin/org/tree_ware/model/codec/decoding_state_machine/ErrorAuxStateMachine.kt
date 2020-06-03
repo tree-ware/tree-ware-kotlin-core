@@ -2,7 +2,9 @@ package org.tree_ware.model.codec.decoding_state_machine
 
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 
-class ErrorAuxStateMachine : AuxDecodingStateMachine<String>, AbstractDecodingStateMachine(true) {
+class ErrorAuxStateMachine(
+    private val stack: DecodingStack
+) : AuxDecodingStateMachine<String>, AbstractDecodingStateMachine(true) {
     private var error: String? = null
 
     override fun newAux() {
@@ -15,6 +17,8 @@ class ErrorAuxStateMachine : AuxDecodingStateMachine<String>, AbstractDecodingSt
 
     override fun decodeStringValue(value: String): Boolean {
         error = value
+        // Remove self from stack
+        stack.pollFirst()
         return true
     }
 

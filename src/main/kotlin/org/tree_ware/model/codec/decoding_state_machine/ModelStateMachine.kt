@@ -43,9 +43,9 @@ class ModelStateMachine(
             null
         }
         when (modelType) {
-            null -> stack.addFirst(SkipUnknownStateMachine<Unit>(stack))
-            ModelType.error -> decodeModel(modelType, MutableModel<Unit>(schema), SkipUnknownStateMachine<Unit>(stack))
-            else -> decodeModel(modelType, MutableModel<Unit>(schema), null)
+            ModelType.data -> decodeModel(modelType, MutableModel<Unit>(schema), null)
+            ModelType.error -> decodeModel(modelType, MutableModel<String>(schema), ErrorAuxStateMachine(stack))
+            null -> decodeModel(ModelType.data, MutableModel<Unit>(schema), SkipUnknownStateMachine<Unit>(stack))
         }
         return true
     }
