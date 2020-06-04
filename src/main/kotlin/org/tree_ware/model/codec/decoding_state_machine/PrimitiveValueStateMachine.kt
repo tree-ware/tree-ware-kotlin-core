@@ -9,7 +9,7 @@ class PrimitiveValueStateMachine<Aux>(
     private val stack: DecodingStack
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     override fun setAux(aux: Aux) {
-        field.aux = aux
+        // Do nothing; aux is set on the primitive value, not the primitive field.
     }
 
     override fun decodeObjectStart(): Boolean {

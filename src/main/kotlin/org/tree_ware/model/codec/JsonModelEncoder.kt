@@ -11,8 +11,7 @@ fun <Aux> encodeJson(
     prettyPrint: Boolean = false,
     indentSizeInSpaces: Int = 2
 ): Boolean {
-    val wireFormatEncoder =
-        JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)
+    val wireFormatEncoder = JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)
     val encodingVisitor = ModelEncodingVisitor<Aux>(wireFormatEncoder)
     return element.traverse(encodingVisitor) != SchemaTraversalAction.ABORT_TREE
 }

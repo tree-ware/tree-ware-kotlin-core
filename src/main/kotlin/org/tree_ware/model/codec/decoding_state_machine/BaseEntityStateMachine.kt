@@ -16,8 +16,10 @@ class BaseEntityStateMachine<Aux>(
     private val isListElement: Boolean,
     private val baseFactory: () -> MutableBaseEntityModel<Aux>,
     private val stack: DecodingStack,
-    private val auxStateMachine: AuxDecodingStateMachine<Aux>?
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
+    private val auxStateMachine = auxStateMachineFactory()
+
     private var base: MutableBaseEntityModel<Aux>? = null
     private var entitySchema: EntitySchema? = null
     private val logger = LogManager.getLogger()
@@ -89,12 +91,12 @@ class BaseEntityStateMachine<Aux>(
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
             val compositionListFieldModel = listFieldModel as? MutableCompositionListFieldModel ?: return false
             val listElementStateMachine =
-                BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachine)
+                BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachineFactory)
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
             val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
             val entity = fieldModel.value
-            val elementStateMachine = BaseEntityStateMachine(false, { entity }, stack, auxStateMachine)
+            val elementStateMachine = BaseEntityStateMachine(false, { entity }, stack, auxStateMachineFactory)
             addElementStateMachineToStack(elementStateMachine)
         }
         return true
@@ -129,7 +131,7 @@ class BaseEntityStateMachine<Aux>(
     private fun handlePrimitive(fieldSchema: FieldSchema): Boolean {
         if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            val listElementStateMachine = PrimitiveListValueStateMachine(listFieldModel, stack, auxStateMachine)
+            val listElementStateMachine = PrimitiveListValueStateMachine(listFieldModel, stack, auxStateMachineFactory)
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
             val fieldModel = base?.getOrNewScalarField(fieldSchema.name) ?: return false
@@ -149,9 +151,10 @@ class BaseEntityStateMachine<Aux>(
         } else {
             // Wrap the list state machine as well as the list element state machine
             val wrappedElementStateMachine =
-                ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachine, stack)
+                ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachineFactory, stack)
             val listStateMachine = ListValueStateMachine(listFieldModel, wrappedElementStateMachine, stack)
-            val wrappedListStateMachine = ValueAndAuxStateMachine(false, listStateMachine, auxStateMachine, stack)
+            val wrappedListStateMachine =
+                ValueAndAuxStateMachine(false, listStateMachine, auxStateMachineFactory, stack)
             stack.addFirst(wrappedListStateMachine)
         }
     }
@@ -161,7 +164,7 @@ class BaseEntityStateMachine<Aux>(
             stack.addFirst(elementStateMachine)
         } else {
             val wrappedElementStateMachine =
-                ValueAndAuxStateMachine(false, elementStateMachine, auxStateMachine, stack)
+                ValueAndAuxStateMachine(false, elementStateMachine, auxStateMachineFactory, stack)
             stack.addFirst(wrappedElementStateMachine)
         }
     }

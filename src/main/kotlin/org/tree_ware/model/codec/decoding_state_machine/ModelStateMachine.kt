@@ -43,9 +43,9 @@ class ModelStateMachine(
             null
         }
         when (modelType) {
-            ModelType.data -> decodeModel(modelType, MutableModel<Unit>(schema), null)
-            ModelType.error -> decodeModel(modelType, MutableModel<String>(schema), ErrorAuxStateMachine(stack))
-            null -> decodeModel(ModelType.data, MutableModel<Unit>(schema), SkipUnknownStateMachine<Unit>(stack))
+            ModelType.data -> decodeModel(modelType, MutableModel<Unit>(schema)) { null }
+            ModelType.error -> decodeModel(modelType, MutableModel<String>(schema)) { ErrorAuxStateMachine(stack) }
+            null -> decodeModel(ModelType.data, MutableModel<Unit>(schema)) { SkipUnknownStateMachine<Unit>(stack) }
         }
         return true
     }
@@ -53,11 +53,11 @@ class ModelStateMachine(
     private fun <Aux> decodeModel(
         modelType: ModelType,
         newModel: MutableModel<Aux>,
-        auxStateMachine: AuxDecodingStateMachine<Aux>?
+        auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
     ) {
         newModel.type = modelType
         val root = newModel.getOrNewRoot()
-        stack.addFirst(RootModelStateMachine(root, stack, auxStateMachine))
+        stack.addFirst(RootModelStateMachine(root, stack, auxStateMachineFactory))
         model = newModel as MutableModel<out Any>
     }
 }

@@ -17,12 +17,10 @@ class JsonCodecTests {
     }
 
     @Test
-    fun `JSON decoder can decode values alone in error-all model`() {
-        testRoundTrip(
-            "src/test/resources/model/address_book_error_all_model.json",
-            "src/test/resources/model/address_book_1.json",
-            ModelType.data
-        )
+    fun `JSON codec error-model round trip must be lossless`() {
+        testRoundTrip("src/test/resources/model/address_book_error_all_except_primitives_model.json")
+        // TODO(deepak-nulu): support primitive value errors & replace above with following; remove file used above.
+        // testRoundTrip("src/test/resources/model/address_book_error_all_model.json")
     }
 
     @Test
@@ -60,7 +58,15 @@ class JsonCodecTests {
         forceDecodedModelType?.also { model.type = it }
 
         val jsonWriter = StringWriter()
-        val isEncoded = encodeJson(model, jsonWriter, true)
+        val isEncoded = try {
+            encodeJson(model, jsonWriter, true)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            println("Encoded so far:")
+            println(jsonWriter.toString())
+            println("End of encoded")
+            false
+        }
         assertTrue(isEncoded)
 
         val expected = if (expectedOutputFilePath == null) {
