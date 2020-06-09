@@ -6,7 +6,7 @@ import org.tree_ware.common.codec.SkipUnknownStateMachine
 import org.tree_ware.model.core.MutableAssociationFieldModel
 import org.tree_ware.schema.core.AssociationFieldSchema
 
-class AssociationValueStateMachine<Aux>(
+class AssociationFieldModelStateMachine<Aux>(
     private val isListElement: Boolean,
     private val associationFactory: () -> MutableAssociationFieldModel<Aux>,
     private val schema: AssociationFieldSchema,

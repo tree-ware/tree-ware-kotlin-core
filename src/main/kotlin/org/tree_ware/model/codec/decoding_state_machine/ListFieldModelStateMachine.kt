@@ -4,7 +4,7 @@ import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.DecodingStateMachine
 import org.tree_ware.model.core.MutableListFieldModel
 
-class ListValueStateMachine<Aux>(
+class ListFieldModelStateMachine<Aux>(
     private val listFieldModel: MutableListFieldModel<Aux>,
     private val listElementStateMachine: DecodingStateMachine,
     private val stack: DecodingStack

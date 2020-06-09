@@ -5,7 +5,7 @@ import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.model.core.MutableScalarFieldModel
 import java.math.BigDecimal
 
-class PrimitiveValueStateMachine<Aux>(
+class ScalarFieldModelStateMachine<Aux>(
     private val isListElement: Boolean,
     private val fieldFactory: () -> MutableScalarFieldModel<Aux>,
     private val stack: DecodingStack,
