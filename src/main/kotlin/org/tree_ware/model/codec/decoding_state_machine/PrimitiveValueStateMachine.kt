@@ -1,15 +1,23 @@
 package org.tree_ware.model.codec.decoding_state_machine
 
+import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.model.core.MutableScalarFieldModel
 import java.math.BigDecimal
 
 class PrimitiveValueStateMachine<Aux>(
-    private val field: MutableScalarFieldModel<Aux>,
-    private val stack: DecodingStack
+    private val isListElement: Boolean,
+    private val fieldFactory: () -> MutableScalarFieldModel<Aux>,
+    private val stack: DecodingStack,
+    auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
+    private val auxStateMachine = auxStateMachineFactory()
+    private var field: MutableScalarFieldModel<Aux>? = null
+    private val logger = LogManager.getLogger()
+
     override fun setAux(aux: Aux) {
-        // Do nothing; aux is set on the primitive value, not the primitive field.
+        assert(field != null)
+        field?.aux = aux
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -31,44 +39,73 @@ class PrimitiveValueStateMachine<Aux>(
     }
 
     override fun decodeListEnd(): Boolean {
-        // This method should never get called
-        assert(false)
-        return false
+        if (isListElement) {
+            // End of the list needs to be handled by parent state machine.
+            // So remove self from stack and call decodeListEnd() on previous
+            // state machine.
+            stack.pollFirst()
+            val parentStateMachine = stack.peekFirst()
+            if (parentStateMachine == null) {
+                logger.error("No parent decoding state machine")
+                return false
+            }
+            return parentStateMachine.decodeListEnd()
+        } else {
+            // This method should never get called
+            assert(false)
+            return false
+        }
     }
 
     override fun decodeNullValue(): Boolean {
         try {
-            return field.setNullValue()
+            val localField = fieldFactory()
+            field = localField
+            return localField.setNullValue()
         } finally {
-            // Remove self from stack
-            stack.pollFirst()
+            if (auxStateMachine != null || !isListElement) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 
     override fun decodeStringValue(value: String): Boolean {
         try {
-            return field.setValue(value)
+            val localField = fieldFactory()
+            field = localField
+            return localField.setValue(value)
         } finally {
-            // Remove self from stack
-            stack.pollFirst()
+            if (auxStateMachine != null || !isListElement) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 
     override fun decodeNumericValue(value: BigDecimal): Boolean {
         try {
-            return field.setValue(value)
+            val localField = fieldFactory()
+            field = localField
+            return localField.setValue(value)
         } finally {
-            // Remove self from stack
-            stack.pollFirst()
+            if (auxStateMachine != null || !isListElement) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 
     override fun decodeBooleanValue(value: Boolean): Boolean {
         try {
-            return field.setValue(value)
+            val localField = fieldFactory()
+            field = localField
+            return localField.setValue(value)
         } finally {
-            // Remove self from stack
-            stack.pollFirst()
+            if (auxStateMachine != null || !isListElement) {
+                // Remove self from stack
+                stack.pollFirst()
+            }
         }
     }
 }

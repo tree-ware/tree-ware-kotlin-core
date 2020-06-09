@@ -1,7 +1,6 @@
 package org.tree_ware.model.visitor
 
 import org.tree_ware.model.core.*
-import org.tree_ware.schema.core.*
 
 abstract class AbstractModelVisitor<Aux, Return>(private val defaultVisitReturn: Return) : ModelVisitor<Aux, Return> {
     override fun visit(element: ElementModel<Aux>): Return {
@@ -86,6 +85,12 @@ abstract class AbstractModelVisitor<Aux, Return>(private val defaultVisitReturn:
 
     override fun leave(field: ListFieldModel<Aux>) {}
 
+    override fun visit(field: ScalarListFieldModel<Aux>): Return {
+        return defaultVisitReturn
+    }
+
+    override fun leave(field: ScalarListFieldModel<Aux>) {}
+
     override fun visit(field: PrimitiveListFieldModel<Aux>): Return {
         return defaultVisitReturn
     }
@@ -117,32 +122,6 @@ abstract class AbstractModelVisitor<Aux, Return>(private val defaultVisitReturn:
     override fun leave(field: CompositionListFieldModel<Aux>) {}
 
     // Field values
-
-    override fun visit(value: Any?, fieldSchema: PrimitiveFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(value: Any?, fieldSchema: PrimitiveFieldSchema) {}
-
-    override fun visit(value: Any?, fieldSchema: AliasFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(value: Any?, fieldSchema: AliasFieldSchema) {}
-
-    override fun visit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema) {}
-
-    override fun visit(value: AssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(value: AssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema) {}
-
-    // NOTE: composition-values are EntityModel instances and so they don't have separate visit/leave methods.
 
     override fun visit(entityKeys: EntityKeysModel<Aux>): Return {
         return defaultVisitReturn

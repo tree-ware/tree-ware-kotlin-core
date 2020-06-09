@@ -12,8 +12,8 @@ const val VALUE_KEY = "value"
 class ModelEncodingVisitor<Aux>(
     private val wireFormatEncoder: WireFormatEncoder
 ) : AbstractModelVisitor<Aux, SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
-    var auxEncoder: AuxEncoder? = null
-    var encodingPathKeys = false
+    private var auxEncoder: AuxEncoder? = null
+    private var encodingPathKeys = false
 
     override fun visit(model: Model<Aux>): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
@@ -63,44 +63,18 @@ class ModelEncodingVisitor<Aux>(
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(field: AssociationFieldModel<Aux>): SchemaTraversalAction {
-        // NOTE: null values are encoded here. non-null values are encoded when the value is visited
-        // in visit(value: AssociationValueModel, fieldSchema: AssociationFieldSchema).
-        if (field.value == null) {
-            wireFormatEncoder.encodeNullField(field.schema.name)
-            return SchemaTraversalAction.ABORT_SUB_TREE
-        }
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun visit(field: ListFieldModel<Aux>): SchemaTraversalAction {
+    override fun visit(field: PrimitiveFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
-            VALUE_KEY
-        } else field.schema.name
-        wireFormatEncoder.encodeListStart(fieldName)
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun leave(field: ListFieldModel<Aux>) {
-        wireFormatEncoder.encodeListEnd()
-        if (auxEncoder != null && !encodingPathKeys) {
-            wireFormatEncoder.encodeObjectEnd()
-        }
-    }
-
-    override fun visit(value: Any?, fieldSchema: PrimitiveFieldSchema): SchemaTraversalAction {
-        val fieldName = if (auxEncoder != null && !encodingPathKeys) {
-            wireFormatEncoder.encodeObjectStart(fieldSchema.name)
             // TODO(deepak-nulu): encode aux once primitive values are enhanced to store aux
             VALUE_KEY
-        } else fieldSchema.name
+        } else field.schema.name
+        val value = field.value
         if (value == null) {
             wireFormatEncoder.encodeNullField(fieldName)
             return SchemaTraversalAction.CONTINUE
         }
-        when (fieldSchema.primitive) {
+        when (field.schema.primitive) {
             is BooleanSchema -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
             is ByteSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
             is ShortSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
@@ -115,42 +89,65 @@ class ModelEncodingVisitor<Aux>(
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun leave(value: Any?, fieldSchema: PrimitiveFieldSchema) {
+    override fun leave(field: PrimitiveFieldModel<Aux>) {
         if (auxEncoder != null && !encodingPathKeys) wireFormatEncoder.encodeObjectEnd()
     }
 
-
-    override fun visit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): SchemaTraversalAction {
+    override fun visit(field: EnumerationFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
-            wireFormatEncoder.encodeObjectStart(fieldSchema.name)
+            wireFormatEncoder.encodeObjectStart(field.schema.name)
             // TODO(deepak-nulu): encode aux once enumeration values are enhanced to store aux
             VALUE_KEY
-        } else fieldSchema.name
+        } else field.schema.name
+        val value = field.value
         if (value == null) wireFormatEncoder.encodeNullField(fieldName)
         else wireFormatEncoder.encodeStringField(fieldName, value.name)
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun leave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema) {
+    override fun leave(field: EnumerationFieldModel<Aux>) {
         if (auxEncoder != null && !encodingPathKeys) wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(value: AssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema): SchemaTraversalAction {
+    override fun visit(field: AssociationFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
-            wireFormatEncoder.encodeObjectStart(fieldSchema.name)
-            auxEncoder?.also { it.encode(value.aux, wireFormatEncoder) }
+            wireFormatEncoder.encodeObjectStart(field.schema.name)
+            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
-        } else fieldSchema.name
+        } else field.schema.name
+        if (field.pathKeys.isEmpty()) {
+            wireFormatEncoder.encodeNullField(fieldName)
+            return SchemaTraversalAction.ABORT_SUB_TREE
+        }
         wireFormatEncoder.encodeObjectStart(fieldName)
         wireFormatEncoder.encodeListStart("path_keys")
         encodingPathKeys = true
         return SchemaTraversalAction.CONTINUE
     }
 
-    override fun leave(value: AssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema) {
-        encodingPathKeys = false
+    override fun leave(field: AssociationFieldModel<Aux>) {
+        if (field.pathKeys.isNotEmpty()) {
+            encodingPathKeys = false
+            wireFormatEncoder.encodeListEnd()
+            wireFormatEncoder.encodeObjectEnd()
+        }
+        if (auxEncoder != null && !encodingPathKeys) {
+            wireFormatEncoder.encodeObjectEnd()
+        }
+    }
+
+    override fun visit(field: ListFieldModel<Aux>): SchemaTraversalAction {
+        val fieldName = if (auxEncoder != null && !encodingPathKeys) {
+            wireFormatEncoder.encodeObjectStart(field.schema.name)
+            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
+            VALUE_KEY
+        } else field.schema.name
+        wireFormatEncoder.encodeListStart(fieldName)
+        return SchemaTraversalAction.CONTINUE
+    }
+
+    override fun leave(field: ListFieldModel<Aux>) {
         wireFormatEncoder.encodeListEnd()
-        wireFormatEncoder.encodeObjectEnd()
         if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectEnd()
         }

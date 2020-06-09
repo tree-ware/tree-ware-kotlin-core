@@ -3,10 +3,7 @@ package org.tree_ware.model.codec.decoding_state_machine
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
-import org.tree_ware.model.core.MutableAssociationListFieldModel
-import org.tree_ware.model.core.MutableBaseEntityModel
-import org.tree_ware.model.core.MutableCompositionListFieldModel
-import org.tree_ware.model.core.MutableListFieldModel
+import org.tree_ware.model.core.*
 import org.tree_ware.schema.core.AssociationFieldSchema
 import org.tree_ware.schema.core.CompositionFieldSchema
 import org.tree_ware.schema.core.EntitySchema
@@ -82,21 +79,24 @@ class BaseEntityStateMachine<Aux>(
         return when (fieldSchema) {
             is CompositionFieldSchema -> handleComposition(fieldSchema)
             is AssociationFieldSchema -> handleAssociation(fieldSchema)
-            else -> handlePrimitive(fieldSchema)
+            else -> handleScalar(fieldSchema)
         }
     }
 
-    private fun handleComposition(fieldSchema: CompositionFieldSchema): Boolean {
+    private fun handleScalar(fieldSchema: FieldSchema): Boolean {
         if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            val compositionListFieldModel = listFieldModel as? MutableCompositionListFieldModel ?: return false
-            val listElementStateMachine =
-                BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachineFactory)
+            val scalarListFieldModel = listFieldModel as? MutableScalarListFieldModel ?: return false
+            val listElementStateMachine = PrimitiveValueStateMachine(
+                true,
+                { scalarListFieldModel.addElement() },
+                stack,
+                auxStateMachineFactory
+            )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
-            val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
-            val entity = fieldModel.value
-            val elementStateMachine = BaseEntityStateMachine(false, { entity }, stack, auxStateMachineFactory)
+            val fieldModel = base?.getOrNewScalarField(fieldSchema.name) ?: return false
+            val elementStateMachine = PrimitiveValueStateMachine(false, { fieldModel }, stack, auxStateMachineFactory)
             addElementStateMachineToStack(elementStateMachine)
         }
         return true
@@ -118,7 +118,7 @@ class BaseEntityStateMachine<Aux>(
             val fieldModel = base?.getOrNewAssociationField(fieldSchema.name) ?: return false
             val elementStateMachine = AssociationValueStateMachine(
                 false,
-                { fieldModel.getOrNewAssociation() },
+                { fieldModel },
                 fieldSchema,
                 stack,
                 auxStateMachine
@@ -128,14 +128,17 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handlePrimitive(fieldSchema: FieldSchema): Boolean {
+    private fun handleComposition(fieldSchema: CompositionFieldSchema): Boolean {
         if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            val listElementStateMachine = PrimitiveListValueStateMachine(listFieldModel, stack, auxStateMachineFactory)
+            val compositionListFieldModel = listFieldModel as? MutableCompositionListFieldModel ?: return false
+            val listElementStateMachine =
+                BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachineFactory)
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
-            val fieldModel = base?.getOrNewScalarField(fieldSchema.name) ?: return false
-            val elementStateMachine = PrimitiveValueStateMachine(fieldModel, stack)
+            val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
+            val entity = fieldModel.value
+            val elementStateMachine = BaseEntityStateMachine(false, { entity }, stack, auxStateMachineFactory)
             addElementStateMachineToStack(elementStateMachine)
         }
         return true

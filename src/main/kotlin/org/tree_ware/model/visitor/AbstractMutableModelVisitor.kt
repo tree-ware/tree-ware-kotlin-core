@@ -1,7 +1,6 @@
 package org.tree_ware.model.visitor
 
 import org.tree_ware.model.core.*
-import org.tree_ware.schema.core.*
 
 abstract class AbstractMutableModelVisitor<Aux, Return>(
     private val defaultVisitReturn: Return
@@ -88,6 +87,12 @@ abstract class AbstractMutableModelVisitor<Aux, Return>(
 
     override fun mutableLeave(field: MutableListFieldModel<Aux>) {}
 
+    override fun mutableVisit(field: MutableScalarListFieldModel<Aux>): Return {
+        return defaultVisitReturn
+    }
+
+    override fun mutableLeave(field: MutableScalarListFieldModel<Aux>) {}
+
     override fun mutableVisit(field: MutablePrimitiveListFieldModel<Aux>): Return {
         return defaultVisitReturn
     }
@@ -119,30 +124,6 @@ abstract class AbstractMutableModelVisitor<Aux, Return>(
     override fun mutableLeave(field: MutableCompositionListFieldModel<Aux>) {}
 
     // Field values
-
-    override fun mutableVisit(value: Any?, fieldSchema: PrimitiveFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun mutableLeave(value: Any?, fieldSchema: PrimitiveFieldSchema) {}
-
-    override fun mutableVisit(value: Any?, fieldSchema: AliasFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun mutableLeave(value: Any?, fieldSchema: AliasFieldSchema) {}
-
-    override fun mutableVisit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun mutableLeave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema) {}
-
-    override fun mutableVisit(value: MutableAssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema): Return {
-        return defaultVisitReturn
-    }
-
-    override fun mutableLeave(value: MutableAssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema) {}
 
     override fun mutableVisit(entityKeys: MutableEntityKeysModel<Aux>): Return {
         return defaultVisitReturn

@@ -9,6 +9,6 @@ import java.io.Reader
 fun decodeJson(reader: Reader, schema: Schema): MutableModel<out Any>? {
     val decodingStateMachine = ModelDecodingStateMachine(schema)
     val wireFormatDecoder = JsonWireFormatDecoder()
-    wireFormatDecoder.decode(reader, decodingStateMachine)
-    return decodingStateMachine.model
+    val decoded = wireFormatDecoder.decode(reader, decodingStateMachine)
+    return if (decoded) decodingStateMachine.model else null
 }

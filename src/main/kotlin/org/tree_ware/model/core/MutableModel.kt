@@ -328,9 +328,7 @@ class MutableEntityModel<Aux>(
     }
 }
 
-abstract class MutableFieldModel<Aux>(
-    override val parent: MutableBaseEntityModel<Aux>
-) : MutableElementModel<Aux>(), FieldModel<Aux> {
+abstract class MutableFieldModel<Aux> : MutableElementModel<Aux>(), FieldModel<Aux> {
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -361,8 +359,8 @@ abstract class MutableFieldModel<Aux>(
 // Scalar fields
 
 abstract class MutableScalarFieldModel<Aux>(
-    parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(parent), ScalarFieldModel<Aux> {
+    override val parent: MutableElementModel<Aux>
+) : MutableFieldModel<Aux>(), ScalarFieldModel<Aux> {
     open fun setNullValue(): Boolean = false
     open fun setValue(value: String): Boolean = false
     open fun setValue(value: BigDecimal): Boolean = false
@@ -397,14 +395,10 @@ abstract class MutableScalarFieldModel<Aux>(
 
 class MutablePrimitiveFieldModel<Aux>(
     override val schema: PrimitiveFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
+    parent: MutableElementModel<Aux>
 ) : MutableScalarFieldModel<Aux>(parent), PrimitiveFieldModel<Aux> {
-    override var value: Any?
-        get() = _value
-        internal set(value) {
-            _value = value
-        }
-    private var _value: Any? = null
+    override var value: Any? = null
+        internal set
 
     override fun setNullValue(): Boolean {
         this.value = null
@@ -440,40 +434,14 @@ class MutablePrimitiveFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = visitor.visit(value, schema)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-        visitor.leave(value, schema)
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = visitor.mutableVisit(value, schema)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-        visitor.mutableLeave(value, schema)
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableAliasFieldModel<Aux>(
     override val schema: AliasFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
+    parent: MutableElementModel<Aux>
 ) : MutableScalarFieldModel<Aux>(parent), AliasFieldModel<Aux> {
-    override var value: Any?
-        get() = _value
-        internal set(value) {
-            _value = value
-        }
-    private var _value: Any? = null
+    override var value: Any? = null
+        internal set
 
     override fun setNullValue(): Boolean {
         this.value = null
@@ -514,40 +482,14 @@ class MutableAliasFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = visitor.visit(value, schema)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-        visitor.leave(value, schema)
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = visitor.mutableVisit(value, schema)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-        visitor.mutableLeave(value, schema)
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableEnumerationFieldModel<Aux>(
     override val schema: EnumerationFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
+    parent: MutableElementModel<Aux>
 ) : MutableScalarFieldModel<Aux>(parent), EnumerationFieldModel<Aux> {
-    override var value: EnumerationValueSchema?
-        get() = _value
-        internal set(value) {
-            _value = value
-        }
-    private var _value: EnumerationValueSchema? = null
+    override var value: EnumerationValueSchema? = null
+        internal set
 
     override fun setNullValue(): Boolean {
         this.value = null
@@ -581,44 +523,23 @@ class MutableEnumerationFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = visitor.visit(value, schema)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-        visitor.leave(value, schema)
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = visitor.mutableVisit(value, schema)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-        visitor.mutableLeave(value, schema)
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableAssociationFieldModel<Aux>(
     override val schema: AssociationFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableScalarFieldModel<Aux>(parent), AssociationFieldModel<Aux> {
-    override var value: MutableAssociationValueModel<Aux>? = null
+    override val parent: MutableElementModel<Aux>
+) : MutableFieldModel<Aux>(), AssociationFieldModel<Aux> {
+    override var pathKeys: List<MutableEntityKeysModel<Aux>> = listOf()
         internal set
 
-    fun getOrNewAssociation(): MutableAssociationValueModel<Aux> {
-        return value ?: MutableAssociationValueModel<Aux>(schema).also { value = it }
+    fun setNullValue(): Boolean {
+        this.pathKeys = listOf()
+        return true
     }
 
-    override fun setNullValue(): Boolean {
-        this.value = null
-        return true
+    fun newPathKeys(): List<MutableEntityKeysModel<Aux>> {
+        pathKeys = schema.keyEntities.map { MutableEntityKeysModel<Aux>(it) }
+        return pathKeys
     }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
@@ -651,8 +572,10 @@ class MutableAssociationFieldModel<Aux>(
         val superAction = super.traverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        val valueAction = value?.traverse(visitor)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
+        pathKeys.forEach {
+            val action = it.traverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
+        }
 
         return SchemaTraversalAction.CONTINUE
     }
@@ -661,8 +584,10 @@ class MutableAssociationFieldModel<Aux>(
         val superAction = super.mutableTraverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        val valueAction = value?.mutableTraverse(visitor)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
+        pathKeys.forEach {
+            val action = it.mutableTraverse(visitor)
+            if (action == SchemaTraversalAction.ABORT_TREE) return action
+        }
 
         return SchemaTraversalAction.CONTINUE
     }
@@ -670,8 +595,8 @@ class MutableAssociationFieldModel<Aux>(
 
 class MutableCompositionFieldModel<Aux>(
     override val schema: CompositionFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableScalarFieldModel<Aux>(parent), CompositionFieldModel<Aux> {
+    override val parent: MutableBaseEntityModel<Aux>
+) : MutableFieldModel<Aux>(), CompositionFieldModel<Aux> {
     override var value: MutableEntityModel<Aux> = MutableEntityModel(schema.resolvedEntity, this)
         internal set(value) {
             field = value
@@ -732,11 +657,39 @@ class MutableCompositionFieldModel<Aux>(
 // List fields
 
 abstract class MutableListFieldModel<Aux>(
+    override val parent: MutableBaseEntityModel<Aux>
+) : MutableFieldModel<Aux>(), ListFieldModel<Aux> {
+    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
+        return visitor.visit(this)
+    }
+
+    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
+        return visitor.mutableVisit(this)
+    }
+
+    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.visitSelf(visitor), visitor.visit(this))
+    }
+
+    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+        visitor.leave(this)
+        super.leaveSelf(visitor)
+    }
+
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
+    }
+
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+        visitor.mutableLeave(this)
+        super.mutableLeaveSelf(visitor)
+    }
+}
+
+abstract class MutableScalarListFieldModel<Aux>(
     parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(parent), ListFieldModel<Aux> {
-    open fun addValue(value: String): Boolean = false
-    open fun addValue(value: BigDecimal): Boolean = false
-    open fun addValue(value: Boolean): Boolean = false
+) : MutableListFieldModel<Aux>(parent), ScalarListFieldModel<Aux> {
+    abstract fun addElement(): MutableScalarFieldModel<Aux>
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -768,13 +721,15 @@ abstract class MutableListFieldModel<Aux>(
 class MutablePrimitiveListFieldModel<Aux>(
     override val schema: PrimitiveFieldSchema,
     parent: MutableBaseEntityModel<Aux>
-) : MutableListFieldModel<Aux>(parent), PrimitiveListFieldModel<Aux> {
-    override var value: MutableList<Any> = mutableListOf()
+) : MutableScalarListFieldModel<Aux>(parent), PrimitiveListFieldModel<Aux> {
+    override var primitives: MutableList<MutablePrimitiveFieldModel<Aux>> = mutableListOf()
         internal set
 
-    override fun addValue(value: String): Boolean = setValue(schema.primitive, value) { this.value.add(it) }
-    override fun addValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value.add(it) }
-    override fun addValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value.add(it) }
+    override fun addElement(): MutableScalarFieldModel<Aux> {
+        val element = MutablePrimitiveFieldModel(schema, this)
+        primitives.add(element)
+        return element
+    }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -806,10 +761,10 @@ class MutablePrimitiveListFieldModel<Aux>(
         val superAction = super.traverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        value.forEach {
-            val action = visitor.visit(it, schema)
+        primitives.forEach {
+            val action = visitor.visit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it, schema)
+            visitor.leave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -819,10 +774,10 @@ class MutablePrimitiveListFieldModel<Aux>(
         val superAction = super.mutableTraverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        value.forEach {
-            val action = visitor.mutableVisit(it, schema)
+        primitives.forEach {
+            val action = visitor.mutableVisit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it, schema)
+            visitor.mutableLeave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -832,18 +787,15 @@ class MutablePrimitiveListFieldModel<Aux>(
 class MutableAliasListFieldModel<Aux>(
     override val schema: AliasFieldSchema,
     parent: MutableBaseEntityModel<Aux>
-) : MutableListFieldModel<Aux>(parent), AliasListFieldModel<Aux> {
-    override var value: MutableList<Any> = mutableListOf()
+) : MutableScalarListFieldModel<Aux>(parent), AliasListFieldModel<Aux> {
+    override var aliases: MutableList<MutableAliasFieldModel<Aux>> = mutableListOf()
         internal set
 
-    override fun addValue(value: String): Boolean =
-        setValue(schema.resolvedAlias.primitive, value) { this.value.add(it) }
-
-    override fun addValue(value: BigDecimal): Boolean =
-        setValue(schema.resolvedAlias.primitive, value) { this.value.add(it) }
-
-    override fun addValue(value: Boolean): Boolean =
-        setValue(schema.resolvedAlias.primitive, value) { this.value.add(it) }
+    override fun addElement(): MutableScalarFieldModel<Aux> {
+        val element = MutableAliasFieldModel(schema, this)
+        aliases.add(element)
+        return element
+    }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -875,10 +827,10 @@ class MutableAliasListFieldModel<Aux>(
         val superAction = super.traverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        value.forEach {
-            val action = visitor.visit(it, schema)
+        aliases.forEach {
+            val action = visitor.visit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it, schema)
+            visitor.leave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -888,10 +840,10 @@ class MutableAliasListFieldModel<Aux>(
         val superAction = super.mutableTraverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        value.forEach {
-            val action = visitor.mutableVisit(it, schema)
+        aliases.forEach {
+            val action = visitor.mutableVisit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it, schema)
+            visitor.mutableLeave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -901,11 +853,15 @@ class MutableAliasListFieldModel<Aux>(
 class MutableEnumerationListFieldModel<Aux>(
     override val schema: EnumerationFieldSchema,
     parent: MutableBaseEntityModel<Aux>
-) : MutableListFieldModel<Aux>(parent), EnumerationListFieldModel<Aux> {
-    override var value: MutableList<EnumerationValueSchema> = mutableListOf()
+) : MutableScalarListFieldModel<Aux>(parent), EnumerationListFieldModel<Aux> {
+    override var enumerations: MutableList<MutableEnumerationFieldModel<Aux>> = mutableListOf()
         internal set
 
-    override fun addValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value.add(it) }
+    override fun addElement(): MutableScalarFieldModel<Aux> {
+        val element = MutableEnumerationFieldModel(schema, this)
+        enumerations.add(element)
+        return element
+    }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -937,10 +893,10 @@ class MutableEnumerationListFieldModel<Aux>(
         val superAction = super.traverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        value.forEach {
-            val action = visitor.visit(it, schema)
+        enumerations.forEach {
+            val action = visitor.visit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it, schema)
+            visitor.leave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -950,10 +906,10 @@ class MutableEnumerationListFieldModel<Aux>(
         val superAction = super.mutableTraverseChildren(visitor)
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
-        value.forEach {
-            val action = visitor.mutableVisit(it, schema)
+        enumerations.forEach {
+            val action = visitor.mutableVisit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it, schema)
+            visitor.mutableLeave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -964,11 +920,11 @@ class MutableAssociationListFieldModel<Aux>(
     override val schema: AssociationFieldSchema,
     parent: MutableBaseEntityModel<Aux>
 ) : MutableListFieldModel<Aux>(parent), AssociationListFieldModel<Aux> {
-    override var value: MutableList<MutableAssociationValueModel<Aux>> = mutableListOf()
+    override var value: MutableList<MutableAssociationFieldModel<Aux>> = mutableListOf()
         internal set
 
-    fun addAssociation(): MutableAssociationValueModel<Aux> {
-        val association = MutableAssociationValueModel<Aux>(schema)
+    fun addAssociation(): MutableAssociationFieldModel<Aux> {
+        val association = MutableAssociationFieldModel(schema, this)
         value.add(association)
         return association
     }
@@ -1004,9 +960,9 @@ class MutableAssociationListFieldModel<Aux>(
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         value.forEach {
-            val action = visitor.visit(it, schema)
+            val action = visitor.visit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it, schema)
+            visitor.leave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -1017,9 +973,9 @@ class MutableAssociationListFieldModel<Aux>(
         if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
 
         value.forEach {
-            val action = visitor.mutableVisit(it, schema)
+            val action = visitor.mutableVisit(it)
             if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it, schema)
+            visitor.mutableLeave(it)
         }
 
         return SchemaTraversalAction.CONTINUE
@@ -1091,66 +1047,6 @@ class MutableCompositionListFieldModel<Aux>(
 }
 
 // Field values
-
-class MutableAssociationValueModel<Aux>(
-    override val schema: AssociationFieldSchema
-) : MutableElementModel<Aux>(), AssociationValueModel<Aux> {
-    override val parent: MutableElementModel<Aux>? = null
-
-    override var pathKeys: List<MutableEntityKeysModel<Aux>> =
-        schema.keyEntities.map { MutableEntityKeysModel<Aux>(it) }
-        internal set
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this, schema))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
-        visitor.leave(this, schema)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this, schema))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
-        visitor.mutableLeave(this, schema)
-        super.mutableLeaveSelf(visitor)
-    }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        pathKeys.forEach {
-            val action = it.traverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        pathKeys.forEach {
-            val action = it.mutableTraverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-}
 
 class MutableEntityKeysModel<Aux>(
     override val schema: EntitySchema

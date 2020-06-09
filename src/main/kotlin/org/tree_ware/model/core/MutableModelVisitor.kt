@@ -1,7 +1,5 @@
 package org.tree_ware.model.core
 
-import org.tree_ware.schema.core.*
-
 /** MutableModel visitor (Visitor Pattern).
  * This is an enhanced visitor with `mutableVisit()` and `mutableLeave()` methods for
  * each element instead of just a `mutableVisit()` method for each element.
@@ -53,6 +51,9 @@ interface MutableModelVisitor<Aux, Return> {
     fun mutableVisit(field: MutableListFieldModel<Aux>): Return
     fun mutableLeave(field: MutableListFieldModel<Aux>)
 
+    fun mutableVisit(field: MutableScalarListFieldModel<Aux>): Return
+    fun mutableLeave(field: MutableScalarListFieldModel<Aux>)
+
     fun mutableVisit(field: MutablePrimitiveListFieldModel<Aux>): Return
     fun mutableLeave(field: MutablePrimitiveListFieldModel<Aux>)
 
@@ -69,18 +70,6 @@ interface MutableModelVisitor<Aux, Return> {
     fun mutableLeave(field: MutableCompositionListFieldModel<Aux>)
 
     // Field values
-
-    fun mutableVisit(value: Any?, fieldSchema: PrimitiveFieldSchema): Return
-    fun mutableLeave(value: Any?, fieldSchema: PrimitiveFieldSchema)
-
-    fun mutableVisit(value: Any?, fieldSchema: AliasFieldSchema): Return
-    fun mutableLeave(value: Any?, fieldSchema: AliasFieldSchema)
-
-    fun mutableVisit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): Return
-    fun mutableLeave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema)
-
-    fun mutableVisit(value: MutableAssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema): Return
-    fun mutableLeave(value: MutableAssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema)
 
     fun mutableVisit(entityKeys: MutableEntityKeysModel<Aux>): Return
     fun mutableLeave(entityKeys: MutableEntityKeysModel<Aux>)

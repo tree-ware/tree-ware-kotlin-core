@@ -18,7 +18,7 @@ interface VisitableModel<Aux> {
 }
 
 interface ElementModel<Aux> : VisitableModel<Aux> {
-    val schema: ElementSchema
+    val schema: VisitableSchema
     val parent: ElementModel<Aux>?
     val aux: Aux?
 }
@@ -54,12 +54,13 @@ interface EntityModel<Aux> : BaseEntityModel<Aux> {
 
 interface FieldModel<Aux> : ElementModel<Aux> {
     override val schema: FieldSchema
-    override val parent: BaseEntityModel<Aux>
 }
 
 // Scalar fields
 
-interface ScalarFieldModel<Aux> : FieldModel<Aux>
+interface ScalarFieldModel<Aux> : FieldModel<Aux> {
+    override val parent: ElementModel<Aux>
+}
 
 interface PrimitiveFieldModel<Aux> : ScalarFieldModel<Aux> {
     override val schema: PrimitiveFieldSchema
@@ -76,38 +77,42 @@ interface EnumerationFieldModel<Aux> : ScalarFieldModel<Aux> {
     val value: EnumerationValueSchema?
 }
 
-interface AssociationFieldModel<Aux> : ScalarFieldModel<Aux> {
+interface AssociationFieldModel<Aux> : FieldModel<Aux> {
     override val schema: AssociationFieldSchema
-    val value: AssociationValueModel<Aux>?
+    val pathKeys: List<EntityKeysModel<Aux>>
 }
 
-interface CompositionFieldModel<Aux> : ScalarFieldModel<Aux> {
+interface CompositionFieldModel<Aux> : FieldModel<Aux> {
     override val schema: CompositionFieldSchema
     val value: EntityModel<Aux>
 }
 
 // List fields
 
-interface ListFieldModel<Aux> : FieldModel<Aux>
+interface ListFieldModel<Aux> : FieldModel<Aux> {
+    override val parent: BaseEntityModel<Aux>
+}
 
-interface PrimitiveListFieldModel<Aux> : ListFieldModel<Aux> {
+interface ScalarListFieldModel<Aux> : ListFieldModel<Aux>
+
+interface PrimitiveListFieldModel<Aux> : ScalarListFieldModel<Aux> {
     override val schema: PrimitiveFieldSchema
-    val value: List<Any>
+    val primitives: List<PrimitiveFieldModel<Aux>>
 }
 
-interface AliasListFieldModel<Aux> : ListFieldModel<Aux> {
+interface AliasListFieldModel<Aux> : ScalarListFieldModel<Aux> {
     override val schema: AliasFieldSchema
-    val value: List<Any>
+    val aliases: List<AliasFieldModel<Aux>>
 }
 
-interface EnumerationListFieldModel<Aux> : ListFieldModel<Aux> {
+interface EnumerationListFieldModel<Aux> : ScalarListFieldModel<Aux> {
     override val schema: EnumerationFieldSchema
-    val value: List<EnumerationValueSchema>
+    val enumerations: List<EnumerationFieldModel<Aux>>
 }
 
 interface AssociationListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: AssociationFieldSchema
-    val value: List<AssociationValueModel<Aux>>
+    val value: List<AssociationFieldModel<Aux>>
 }
 
 interface CompositionListFieldModel<Aux> : ListFieldModel<Aux> {
@@ -116,10 +121,6 @@ interface CompositionListFieldModel<Aux> : ListFieldModel<Aux> {
 }
 
 // Field values
-
-interface AssociationValueModel<Aux> : ElementModel<Aux> {
-    val pathKeys: List<EntityKeysModel<Aux>>
-}
 
 interface EntityKeysModel<Aux> : BaseEntityModel<Aux> {
     override val schema: EntitySchema

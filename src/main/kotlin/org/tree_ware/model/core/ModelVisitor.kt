@@ -1,7 +1,5 @@
 package org.tree_ware.model.core
 
-import org.tree_ware.schema.core.*
-
 /** Model visitor (Visitor Pattern).
  * This is an enhanced visitor with `visit()` and `leave()` methods for each
  * element instead of just a `visit()` method for each element.
@@ -50,6 +48,9 @@ interface ModelVisitor<Aux, Return> {
     fun visit(field: ListFieldModel<Aux>): Return
     fun leave(field: ListFieldModel<Aux>)
 
+    fun visit(field: ScalarListFieldModel<Aux>): Return
+    fun leave(field: ScalarListFieldModel<Aux>)
+
     fun visit(field: PrimitiveListFieldModel<Aux>): Return
     fun leave(field: PrimitiveListFieldModel<Aux>)
 
@@ -66,18 +67,6 @@ interface ModelVisitor<Aux, Return> {
     fun leave(field: CompositionListFieldModel<Aux>)
 
     // Field values
-
-    fun visit(value: Any?, fieldSchema: PrimitiveFieldSchema): Return
-    fun leave(value: Any?, fieldSchema: PrimitiveFieldSchema)
-
-    fun visit(value: Any?, fieldSchema: AliasFieldSchema): Return
-    fun leave(value: Any?, fieldSchema: AliasFieldSchema)
-
-    fun visit(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema): Return
-    fun leave(value: EnumerationValueSchema?, fieldSchema: EnumerationFieldSchema)
-
-    fun visit(value: AssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema): Return
-    fun leave(value: AssociationValueModel<Aux>, fieldSchema: AssociationFieldSchema)
 
     fun visit(entityKeys: EntityKeysModel<Aux>): Return
     fun leave(entityKeys: EntityKeysModel<Aux>)

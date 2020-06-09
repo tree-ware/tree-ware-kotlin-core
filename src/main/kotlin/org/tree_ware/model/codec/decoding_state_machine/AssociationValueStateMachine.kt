@@ -3,17 +3,17 @@ package org.tree_ware.model.codec.decoding_state_machine
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.common.codec.AbstractDecodingStateMachine
 import org.tree_ware.common.codec.SkipUnknownStateMachine
-import org.tree_ware.model.core.MutableAssociationValueModel
+import org.tree_ware.model.core.MutableAssociationFieldModel
 import org.tree_ware.schema.core.AssociationFieldSchema
 
 class AssociationValueStateMachine<Aux>(
     private val isListElement: Boolean,
-    private val associationFactory: () -> MutableAssociationValueModel<Aux>,
+    private val associationFactory: () -> MutableAssociationFieldModel<Aux>,
     private val schema: AssociationFieldSchema,
     private val stack: DecodingStack,
     private val auxStateMachine: AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private var association: MutableAssociationValueModel<Aux>? = null
+    private var association: MutableAssociationFieldModel<Aux>? = null
     private val logger = LogManager.getLogger()
 
     override fun setAux(aux: Aux) {
@@ -65,11 +65,17 @@ class AssociationValueStateMachine<Aux>(
 
         if (keyName == "path_keys") {
             association?.also {
-                stack.addFirst(AssociationPathStateMachine(it.pathKeys, schema.keyEntities, stack))
+                stack.addFirst(AssociationPathStateMachine(it.newPathKeys(), schema.keyEntities, stack))
             }
         } else {
             stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
         }
         return true
+    }
+
+    override fun decodeNullValue(): Boolean {
+        association = associationFactory()
+        assert(association != null)
+        return association?.setNullValue() ?: false
     }
 }
