@@ -66,7 +66,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(field: PrimitiveFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            // TODO(deepak-nulu): encode aux once primitive values are enhanced to store aux
+            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
         val value = field.value
@@ -96,7 +96,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(field: EnumerationFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            // TODO(deepak-nulu): encode aux once enumeration values are enhanced to store aux
+            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
         val value = field.value

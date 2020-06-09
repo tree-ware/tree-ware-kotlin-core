@@ -18,9 +18,7 @@ class JsonCodecTests {
 
     @Test
     fun `JSON codec error-model round trip must be lossless`() {
-        testRoundTrip("src/test/resources/model/address_book_error_all_except_primitives_model.json")
-        // TODO(deepak-nulu): support primitive value errors & replace above with following; remove file used above.
-        // testRoundTrip("src/test/resources/model/address_book_error_all_model.json")
+        testRoundTrip("src/test/resources/model/address_book_error_all_model.json")
     }
 
     @Test
