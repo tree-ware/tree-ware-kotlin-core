@@ -5,10 +5,16 @@ import java.math.BigDecimal
 
 interface VisitableMutableModel<Aux> {
     /**
-     * Traverses the model element and visits it and its sub-elements (Visitor Pattern).
-     * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
+     * Visits the model element and its superclasses.
+     * The superclasses are visited first and the model element itself is visited last.
      */
-    fun mutableTraverse(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
+    fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
+
+    /**
+     * Leaves the model element and its superclasses.
+     * The model element itself is left first and the superclasses are left last.
+     */
+    fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>)
 
     /**
      * Visits the model element without traversing its sub-elements.
@@ -23,28 +29,6 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux>, VisitableMutableMod
 
     override var aux: Aux? = null
         internal set
-
-    override fun traverse(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        try {
-            val action = visitSelf(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return SchemaTraversalAction.ABORT_TREE
-            if (action == SchemaTraversalAction.ABORT_SUB_TREE) return SchemaTraversalAction.CONTINUE
-            return traverseChildren(visitor)
-        } finally {
-            leaveSelf(visitor)
-        }
-    }
-
-    override fun mutableTraverse(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        try {
-            val action = mutableVisitSelf(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return SchemaTraversalAction.ABORT_TREE
-            if (action == SchemaTraversalAction.ABORT_SUB_TREE) return SchemaTraversalAction.CONTINUE
-            return mutableTraverseChildren(visitor)
-        } finally {
-            mutableLeaveSelf(visitor)
-        }
-    }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -65,21 +49,13 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux>, VisitableMutableMod
     }
 
     // NOTE: call super.mutableVisitSelf() FIRST when overriding this method
-    protected open fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
         return visitor.mutableVisit(this)
     }
 
     // NOTE: call super.mutableLeaveSelf() LAST when overriding this method
-    protected open fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.mutableLeave(this)
-    }
-
-    protected open fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    protected open fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -129,30 +105,6 @@ class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(
     override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
-    }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        root.also {
-            val action = it.traverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        root.also {
-            val action = it.mutableTraverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -239,30 +191,6 @@ abstract class MutableBaseEntityModel<Aux>(
     override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
-    }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        for (field in fields) {
-            val action = field.traverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        for (field in fields) {
-            val action = field.mutableTraverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -567,30 +495,6 @@ class MutableAssociationFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        pathKeys.forEach {
-            val action = it.traverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        pathKeys.forEach {
-            val action = it.mutableTraverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableCompositionFieldModel<Aux>(
@@ -631,26 +535,6 @@ class MutableCompositionFieldModel<Aux>(
     override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
-    }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = value.traverse(visitor)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        val valueAction = value.mutableTraverse(visitor)
-        if (valueAction == SchemaTraversalAction.ABORT_TREE) return valueAction
-
-        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -756,32 +640,6 @@ class MutablePrimitiveListFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        primitives.forEach {
-            val action = visitor.visit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        primitives.forEach {
-            val action = visitor.mutableVisit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableAliasListFieldModel<Aux>(
@@ -821,32 +679,6 @@ class MutableAliasListFieldModel<Aux>(
     override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
-    }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        aliases.forEach {
-            val action = visitor.visit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        aliases.forEach {
-            val action = visitor.mutableVisit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
     }
 }
 
@@ -888,32 +720,6 @@ class MutableEnumerationListFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        enumerations.forEach {
-            val action = visitor.visit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        enumerations.forEach {
-            val action = visitor.mutableVisit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableAssociationListFieldModel<Aux>(
@@ -954,32 +760,6 @@ class MutableAssociationListFieldModel<Aux>(
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        value.forEach {
-            val action = visitor.visit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.leave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        value.forEach {
-            val action = visitor.mutableVisit(it)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-            visitor.mutableLeave(it)
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
 }
 
 class MutableCompositionListFieldModel<Aux>(
@@ -1019,30 +799,6 @@ class MutableCompositionListFieldModel<Aux>(
     override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
-    }
-
-    override fun traverseChildren(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.traverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        value.forEach {
-            val action = it.traverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
-    }
-
-    override fun mutableTraverseChildren(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
-        val superAction = super.mutableTraverseChildren(visitor)
-        if (superAction == SchemaTraversalAction.ABORT_TREE) return superAction
-
-        value.forEach {
-            val action = it.mutableTraverse(visitor)
-            if (action == SchemaTraversalAction.ABORT_TREE) return action
-        }
-
-        return SchemaTraversalAction.CONTINUE
     }
 }
 

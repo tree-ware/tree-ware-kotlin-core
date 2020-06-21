@@ -117,7 +117,7 @@ class ModelEncodingVisitor<Aux>(
         } else field.schema.name
         if (field.pathKeys.isEmpty()) {
             wireFormatEncoder.encodeNullField(fieldName)
-            return SchemaTraversalAction.ABORT_SUB_TREE
+            return SchemaTraversalAction.CONTINUE
         }
         wireFormatEncoder.encodeObjectStart(fieldName)
         wireFormatEncoder.encodeListStart("path_keys")

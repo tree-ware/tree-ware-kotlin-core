@@ -4,12 +4,6 @@ import org.tree_ware.schema.core.*
 
 interface VisitableModel<Aux> {
     /**
-     * Traverses the model element and visits it and its sub-elements (Visitor Pattern).
-     * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
-     */
-    fun traverse(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
-
-    /**
      * Visits the model element and its superclasses.
      * The superclasses are visited first and the model element itself is visited last.
      */
