@@ -10,6 +10,18 @@ interface VisitableModel<Aux> {
     fun traverse(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
 
     /**
+     * Visits the model element and its superclasses.
+     * The superclasses are visited first and the model element itself is visited last.
+     */
+    fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
+
+    /**
+     * Leaves the model element and its superclasses.
+     * The model element itself is left first and the superclasses are left last.
+     */
+    fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>)
+
+    /**
      * Visits the model element without traversing its sub-elements.
      * Leave methods are NOT called.
      * Returns what the visitor returns.

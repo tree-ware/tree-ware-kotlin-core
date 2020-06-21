@@ -8,7 +8,7 @@ fun <Aux> newMutableModel(schema: ElementSchema, parent: MutableElementModel<Aux
     return schema.dispatch(newMutableModelVisitor) ?: throw IllegalStateException("Unable to create mutable model")
 }
 
-class MutableModelFactoryVisitor<Aux>(
+private class MutableModelFactoryVisitor<Aux>(
     private val parent: MutableElementModel<Aux>?
 ) : AbstractSchemaVisitor<MutableElementModel<Aux>?>(null) {
     override fun visit(schema: Schema): MutableElementModel<Aux>? {

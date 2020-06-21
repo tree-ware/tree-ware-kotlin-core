@@ -1,5 +1,7 @@
 package org.tree_ware.schema.core
 
+// TODO(deepak-nulu): drop "Schema" prefix from enum class name
+// TODO(deepak-nulu): move to a common package
 enum class SchemaTraversalAction {
     /** Continue traversal. */
     CONTINUE,

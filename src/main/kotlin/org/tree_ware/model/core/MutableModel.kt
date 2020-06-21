@@ -55,12 +55,12 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux>, VisitableMutableMod
     }
 
     // NOTE: call super.visitSelf() FIRST when overriding this method
-    protected open fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
         return visitor.visit(this)
     }
 
     // NOTE: call super.leaveSelf() LAST when overriding this method
-    protected open fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
         visitor.leave(this)
     }
 
