@@ -1,45 +1,55 @@
 package org.tree_ware.model.cursor
 
 import org.tree_ware.model.core.*
+import org.tree_ware.schema.core.NamedElementSchema
 
 enum class CursorMoveDirection { Visit, Leave }
 
 sealed class ModelCursorMove<Aux>(val direction: CursorMoveDirection) {
     abstract val element: ElementModel<Aux>
+
+    override fun toString(): String {
+        val schema = element.schema
+        val name = if (schema is NamedElementSchema) schema.name else ""
+        return "${this::class.simpleName}: $name"
+    }
 }
 
-data class VisitModel<Aux>(override val element: ElementModel<Aux>) :
+class VisitModel<Aux>(override val element: ElementModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
-data class LeaveModel<Aux>(override val element: Model<Aux>) :
+class LeaveModel<Aux>(override val element: Model<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)
 
-data class VisitRootModel<Aux>(override val element: RootModel<Aux>) :
+class VisitRootModel<Aux>(override val element: RootModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
-data class LeaveRootModel<Aux>(override val element: RootModel<Aux>) :
+class LeaveRootModel<Aux>(override val element: RootModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)
 
-data class VisitEntityModel<Aux>(override val element: EntityModel<Aux>) :
+class VisitEntityModel<Aux>(override val element: EntityModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
-data class LeaveEntityModel<Aux>(override val element: EntityModel<Aux>) :
+class LeaveEntityModel<Aux>(override val element: EntityModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)
 
-data class VisitFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class VisitFieldModel<Aux>(override val element: FieldModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
-data class LeaveFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class LeaveFieldModel<Aux>(override val element: FieldModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)
 
-data class VisitListFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class VisitListFieldModel<Aux>(override val element: FieldModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
-data class LeaveListFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class LeaveListFieldModel<Aux>(override val element: FieldModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)
 
-data class VisitEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
-    ModelCursorMove<Aux>(CursorMoveDirection.Visit)
+class VisitEntityKeysModel<Aux>(
+    override val element: EntityKeysModel<Aux>, val pathKeysIndex: Int
+) : ModelCursorMove<Aux>(CursorMoveDirection.Visit) {
+    override fun toString(): String = "${super.toString()}; pathKeys[$pathKeysIndex]"
+}
 
-data class LeaveEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
+class LeaveEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)

@@ -46,6 +46,9 @@ interface Model<Aux> : ElementModel<Aux> {
 
 interface BaseEntityModel<Aux> : ElementModel<Aux> {
     val fields: List<FieldModel<Aux>>
+
+    fun getField(fieldName: String): FieldModel<Aux>?
+    fun keysMatch(that: BaseEntityModel<Aux>): Boolean
 }
 
 interface RootModel<Aux> : BaseEntityModel<Aux> {
@@ -104,26 +107,34 @@ interface ScalarListFieldModel<Aux> : ListFieldModel<Aux>
 interface PrimitiveListFieldModel<Aux> : ScalarListFieldModel<Aux> {
     override val schema: PrimitiveFieldSchema
     val primitives: List<PrimitiveFieldModel<Aux>>
+
+    fun getPrimitiveField(matching: Any?): PrimitiveFieldModel<Aux>?
 }
 
 interface AliasListFieldModel<Aux> : ScalarListFieldModel<Aux> {
     override val schema: AliasFieldSchema
     val aliases: List<AliasFieldModel<Aux>>
+
+    fun getAliasField(matching: Any?): AliasFieldModel<Aux>?
 }
 
 interface EnumerationListFieldModel<Aux> : ScalarListFieldModel<Aux> {
     override val schema: EnumerationFieldSchema
     val enumerations: List<EnumerationFieldModel<Aux>>
+
+    fun getEnumerationField(matching: EnumerationValueSchema?): EnumerationFieldModel<Aux>?
 }
 
 interface AssociationListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: AssociationFieldSchema
-    val value: List<AssociationFieldModel<Aux>>
+    val associations: List<AssociationFieldModel<Aux>>
 }
 
 interface CompositionListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: CompositionFieldSchema
-    val value: List<EntityModel<Aux>>
+    val entities: List<EntityModel<Aux>>
+
+    fun getEntity(matching: EntityModel<Aux>): EntityModel<Aux>?
 }
 
 // Field values

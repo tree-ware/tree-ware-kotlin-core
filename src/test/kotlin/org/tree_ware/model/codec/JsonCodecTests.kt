@@ -1,10 +1,8 @@
 package org.tree_ware.model.codec
 
 import org.tree_ware.model.core.ModelType
-import org.tree_ware.schema.core.newAddressBookSchema
-import org.tree_ware.schema.core.validate
+import org.tree_ware.model.getModel
 import java.io.File
-import java.io.FileReader
 import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,16 +39,7 @@ class JsonCodecTests {
         expectedOutputFilePath: String? = null,
         forceDecodedModelType: ModelType? = null
     ) {
-        val schema = newAddressBookSchema()
-        val errors = validate(schema)
-        assertTrue(errors.isEmpty())
-
-        val inputFile = File(inputFilePath)
-        assertTrue(inputFile.exists())
-
-        val jsonReader = FileReader(inputFile)
-        val model = decodeJson(jsonReader, schema)
-        jsonReader.close()
+        val model = getModel(inputFilePath)
         assertTrue(model != null)
 
         forceDecodedModelType?.also { model.type = it }
@@ -69,6 +58,8 @@ class JsonCodecTests {
 
         val expected = if (expectedOutputFilePath == null) {
             // Use input file
+            val inputFile = File(inputFilePath)
+            assertTrue(inputFile.exists())
             inputFile.readText()
         } else {
             val expectedFile = File(expectedOutputFilePath)

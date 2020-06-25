@@ -114,6 +114,14 @@ abstract class MutableBaseEntityModel<Aux>(
     override var fields: MutableList<MutableFieldModel<Aux>> = mutableListOf()
         internal set
 
+    override fun keysMatch(that: BaseEntityModel<Aux>): Boolean {
+        val thisKeyFields = this.fields.filter { it.schema.isKey }
+        return thisKeyFields.all { thisKeyField ->
+            val thatKeyField = that.getField(thisKeyField.schema.name)
+            thisKeyField == thatKeyField
+        }
+    }
+
     fun getOrNewScalarField(fieldName: String): MutableScalarFieldModel<Aux>? {
         val fieldSchema = entitySchema.getField(fieldName) ?: return null
         if (fieldSchema.multiplicity.isList()) return null
@@ -165,7 +173,7 @@ abstract class MutableBaseEntityModel<Aux>(
     }
 
     // TODO(deepak-nulu): optimize
-    private fun getField(fieldName: String): MutableFieldModel<Aux>? = fields.find { it.schema.name == fieldName }
+    override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields.find { it.schema.name == fieldName }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -609,6 +617,9 @@ class MutablePrimitiveListFieldModel<Aux>(
     override var primitives: MutableList<MutablePrimitiveFieldModel<Aux>> = mutableListOf()
         internal set
 
+    override fun getPrimitiveField(matching: Any?): MutablePrimitiveFieldModel<Aux>? =
+        if (matching == null) null else primitives.find { it.value == matching }
+
     override fun addElement(): MutableScalarFieldModel<Aux> {
         val element = MutablePrimitiveFieldModel(schema, this)
         primitives.add(element)
@@ -648,6 +659,9 @@ class MutableAliasListFieldModel<Aux>(
 ) : MutableScalarListFieldModel<Aux>(parent), AliasListFieldModel<Aux> {
     override var aliases: MutableList<MutableAliasFieldModel<Aux>> = mutableListOf()
         internal set
+
+    override fun getAliasField(matching: Any?): MutableAliasFieldModel<Aux>? =
+        if (matching == null) null else aliases.find { it.value == matching }
 
     override fun addElement(): MutableScalarFieldModel<Aux> {
         val element = MutableAliasFieldModel(schema, this)
@@ -695,6 +709,9 @@ class MutableEnumerationListFieldModel<Aux>(
         return element
     }
 
+    override fun getEnumerationField(matching: EnumerationValueSchema?): MutableEnumerationFieldModel<Aux>? =
+        if (matching == null) null else enumerations.find { it.value == matching }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -726,12 +743,12 @@ class MutableAssociationListFieldModel<Aux>(
     override val schema: AssociationFieldSchema,
     parent: MutableBaseEntityModel<Aux>
 ) : MutableListFieldModel<Aux>(parent), AssociationListFieldModel<Aux> {
-    override var value: MutableList<MutableAssociationFieldModel<Aux>> = mutableListOf()
+    override var associations: MutableList<MutableAssociationFieldModel<Aux>> = mutableListOf()
         internal set
 
     fun addAssociation(): MutableAssociationFieldModel<Aux> {
         val association = MutableAssociationFieldModel(schema, this)
-        value.add(association)
+        associations.add(association)
         return association
     }
 
@@ -766,14 +783,17 @@ class MutableCompositionListFieldModel<Aux>(
     override val schema: CompositionFieldSchema,
     parent: MutableBaseEntityModel<Aux>
 ) : MutableListFieldModel<Aux>(parent), CompositionListFieldModel<Aux> {
-    override var value: MutableList<MutableEntityModel<Aux>> = mutableListOf()
+    override var entities: MutableList<MutableEntityModel<Aux>> = mutableListOf()
         internal set
 
     fun addEntity(): MutableEntityModel<Aux> {
         val entity = MutableEntityModel(schema.resolvedEntity, this)
-        value.add(entity)
+        entities.add(entity)
         return entity
     }
+
+    override fun getEntity(matching: EntityModel<Aux>): MutableEntityModel<Aux>? =
+        entities.find { matching.keysMatch(it) }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)

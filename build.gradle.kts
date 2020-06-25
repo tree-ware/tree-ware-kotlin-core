@@ -26,6 +26,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
     implementation("javax.json:javax.json-api:$jsonVersion")
     implementation("org.glassfish:javax.json:$jsonVersion")
