@@ -21,12 +21,7 @@ class ModelFollowerCursor<Aux>(private val initial: ElementModel<Aux>) {
             }
             stateStack.isNotEmpty() -> {
                 val state = stateStack.peekFirst()
-                if (state != null) {
-                    state.follow(move)
-                } else {
-                    if (move.direction == CursorMoveDirection.Visit) stateStack.addFirst(null)
-                    else stateStack.pollFirst()
-                }
+                state.follow(move)
             }
             else -> {
                 // The stack is empty and we are not at the start. This means the model has been traversed.
@@ -36,14 +31,21 @@ class ModelFollowerCursor<Aux>(private val initial: ElementModel<Aux>) {
     }
 }
 
-private typealias FollowerStateStack<Aux> = ArrayDeque<FollowerState<Aux>?>
+private typealias FollowerStateStack<Aux> = ArrayDeque<FollowerState<Aux>>
 
 private abstract class FollowerState<Aux>(
-    val element: ElementModel<Aux>,
+    val element: ElementModel<Aux>?,
     protected val stateStack: FollowerStateStack<Aux>
 ) {
     open fun follow(move: ModelCursorMove<Aux>) {
         throw IllegalStateException("Unknown move $move in state $this")
+    }
+}
+
+private class NullFollowerState<Aux>(stateStack: FollowerStateStack<Aux>) : FollowerState<Aux>(null, stateStack) {
+    override fun follow(move: ModelCursorMove<Aux>) {
+        if (move.direction == CursorMoveDirection.Visit) stateStack.addFirst(this)
+        else stateStack.pollFirst()
     }
 }
 
@@ -80,7 +82,7 @@ private abstract class BaseEntityFollowerState<Aux>(
 
     private fun visitField(leaderField: FieldModel<Aux>) {
         val followerField = baseEntity.getField(leaderField.schema.name)
-        val fieldState = if (followerField == null) null
+        val fieldState = if (followerField == null) NullFollowerState(stateStack)
         else followerField.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null field state")
         stateStack.addFirst(fieldState)
     }
@@ -178,7 +180,7 @@ private class PrimitiveListFieldFollowerState<Aux>(
                 val leaderField =
                     move.element as? PrimitiveFieldModel ?: throw IllegalStateException("expected primitive field")
                 val followerField = primitiveListField.getPrimitiveField(leaderField.value)
-                val elementState = if (followerField == null) null
+                val elementState = if (followerField == null) NullFollowerState(stateStack)
                 else followerField.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null element state")
                 stateStack.addFirst(elementState)
             }
@@ -199,7 +201,7 @@ private class AliasListFieldFollowerState<Aux>(
                 val leaderField =
                     move.element as? AliasFieldModel ?: throw IllegalStateException("expected alias field")
                 val followerField = aliasListField.getAliasField(leaderField.value)
-                val elementState = if (followerField == null) null
+                val elementState = if (followerField == null) NullFollowerState(stateStack)
                 else followerField.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null element state")
                 stateStack.addFirst(elementState)
             }
@@ -220,7 +222,7 @@ private class EnumerationListFieldFollowerState<Aux>(
                 val leaderField =
                     move.element as? EnumerationFieldModel ?: throw IllegalStateException("expected enumeration field")
                 val followerField = enumerationListField.getEnumerationField(leaderField.value)
-                val elementState = if (followerField == null) null
+                val elementState = if (followerField == null) NullFollowerState(stateStack)
                 else followerField.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null element state")
                 stateStack.addFirst(elementState)
             }
@@ -230,17 +232,17 @@ private class EnumerationListFieldFollowerState<Aux>(
 }
 
 private class CompositionListFieldFollowerState<Aux>(
-    private val composiionListField: CompositionListFieldModel<Aux>,
+    private val compositionListField: CompositionListFieldModel<Aux>,
     stack: FollowerStateStack<Aux>,
     private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(composiionListField, stack) {
+) : FollowerState<Aux>(compositionListField, stack) {
     override fun follow(move: ModelCursorMove<Aux>) {
         when (move) {
             is LeaveListFieldModel -> stateStack.pollFirst()
             is VisitEntityModel -> {
                 val leaderEntity = move.element
-                val followerField = composiionListField.getEntity(leaderEntity)
-                val elementState = if (followerField == null) null
+                val followerField = compositionListField.getEntity(leaderEntity)
+                val elementState = if (followerField == null) NullFollowerState(stateStack)
                 else followerField.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null element state")
                 stateStack.addFirst(elementState)
             }
@@ -288,6 +290,8 @@ private class FollowerStateFactoryVisitor<Aux>(
 
     override fun visit(field: EnumerationListFieldModel<Aux>) =
         EnumerationListFieldFollowerState(field, stateStack, this)
+
+    // TODO(deepak-nulu): association-list follower state
 
     override fun visit(field: CompositionListFieldModel<Aux>) =
         CompositionListFieldFollowerState(field, stateStack, this)

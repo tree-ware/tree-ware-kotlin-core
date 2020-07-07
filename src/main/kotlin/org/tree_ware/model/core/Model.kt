@@ -63,6 +63,8 @@ interface EntityModel<Aux> : BaseEntityModel<Aux> {
 
 interface FieldModel<Aux> : ElementModel<Aux> {
     override val schema: FieldSchema
+
+    fun keysMatch(that: FieldModel<Aux>): Boolean
 }
 
 // Scalar fields

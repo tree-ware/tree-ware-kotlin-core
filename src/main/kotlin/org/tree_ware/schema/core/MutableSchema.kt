@@ -535,6 +535,11 @@ class MutableEnumerationValueSchema(
         }
     private var _parent: MutableEnumerationSchema? = null
 
+    override fun equals(other: Any?): Boolean {
+        val that: EnumerationValueSchema = other as? EnumerationValueSchema ?: return false
+        return this.fullName == that.fullName
+    }
+
     override fun <T> dispatch(visitor: SchemaVisitor<T>): T {
         return visitor.visit(this)
     }

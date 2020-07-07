@@ -117,8 +117,8 @@ abstract class MutableBaseEntityModel<Aux>(
     override fun keysMatch(that: BaseEntityModel<Aux>): Boolean {
         val thisKeyFields = this.fields.filter { it.schema.isKey }
         return thisKeyFields.all { thisKeyField ->
-            val thatKeyField = that.getField(thisKeyField.schema.name)
-            thisKeyField == thatKeyField
+            val thatKeyField = that.getField(thisKeyField.schema.name) ?: return false
+            thisKeyField.keysMatch(thatKeyField)
         }
     }
 
@@ -345,6 +345,11 @@ class MutablePrimitiveFieldModel<Aux>(
     override fun setValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value = it }
 
+    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+        val thatField: PrimitiveFieldModel<Aux> = that as? PrimitiveFieldModel ?: return false
+        return this.value == thatField.value
+    }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -393,6 +398,11 @@ class MutableAliasFieldModel<Aux>(
     override fun setValue(value: Boolean): Boolean =
         setValue(schema.resolvedAlias.primitive, value) { this.value = it }
 
+    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+        val thatField: AliasFieldModel<Aux> = that as? AliasFieldModel ?: return false
+        return this.value == thatField.value
+    }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -433,6 +443,11 @@ class MutableEnumerationFieldModel<Aux>(
     }
 
     override fun setValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value = it }
+
+    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+        val thatField: EnumerationFieldModel<Aux> = that as? EnumerationFieldModel ?: return false
+        return this.value == thatField.value
+    }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
@@ -478,6 +493,10 @@ class MutableAssociationFieldModel<Aux>(
         return pathKeys
     }
 
+    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+        return false // associations cannot be keys
+    }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -519,6 +538,11 @@ class MutableCompositionFieldModel<Aux>(
         value.objectId = schema.name
     }
 
+    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+        val thatField: CompositionFieldModel<Aux> = that as? CompositionFieldModel ?: return false
+        return this.value.keysMatch(thatField.value)
+    }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -551,6 +575,10 @@ class MutableCompositionFieldModel<Aux>(
 abstract class MutableListFieldModel<Aux>(
     override val parent: MutableBaseEntityModel<Aux>
 ) : MutableFieldModel<Aux>(), ListFieldModel<Aux> {
+    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+        return false // lists cannot be keys
+    }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -793,7 +821,7 @@ class MutableCompositionListFieldModel<Aux>(
     }
 
     override fun getEntity(matching: EntityModel<Aux>): MutableEntityModel<Aux>? =
-        entities.find { matching.keysMatch(it) }
+        entities.find { it.keysMatch(matching) }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
