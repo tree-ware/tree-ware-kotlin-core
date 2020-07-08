@@ -9,14 +9,14 @@ import kotlin.test.*
 
 class ModelFollowerCursorTests {
     @Test
-    fun `Follower-cursor follows data-model leader-cursor`() {
-        testFollowerCursor<Unit>("src/test/resources/model/address_book_1.json")
+    fun `Follower-cursor on same data-model follows leader-cursor`() {
+        testFollowerSameModelInstance<Unit>("src/test/resources/model/address_book_1.json")
     }
-}
 
-private fun <Aux> testFollowerCursor(inputFilePath: String) {
-    testFollowerSameModelInstance<Aux>(inputFilePath)
-    testFollowerDifferentModelInstances<Aux>(inputFilePath)
+    @Test
+    fun `Follower-cursor on different data-model follows leader-cursor`() {
+        testFollowerDifferentModelInstances<Unit>("src/test/resources/model/address_book_1.json")
+    }
 }
 
 private fun <Aux> testFollowerSameModelInstance(inputFilePath: String) {

@@ -6,10 +6,10 @@ fun newAddressBookSchema() = MutableSchema(
         packageName = "address_book.main",
         entityName = "address_book_root"
     ),
-    listOf(newAddressBookPackage())
+    listOf(newAddressBookMainPackage(), newAddressBookCityPackage())
 )
 
-private fun newAddressBookPackage() = MutablePackageSchema(
+private fun newAddressBookMainPackage() = MutablePackageSchema(
     name = "address_book.main",
     info = "Schema for storing address book information",
     entities = listOf(
@@ -35,6 +35,12 @@ private fun newAddressBookPackage() = MutablePackageSchema(
                     name = "person",
                     packageName = "address_book.main",
                     entityName = "address_book_person",
+                    multiplicity = MutableMultiplicity(0, 0)
+                ),
+                MutableCompositionFieldSchema(
+                    name = "city_info",
+                    packageName = "address_book.city",
+                    entityName = "address_book_city_info",
                     multiplicity = MutableMultiplicity(0, 0)
                 )
             )
@@ -169,6 +175,62 @@ private fun newAddressBookPackage() = MutablePackageSchema(
                 ),
                 MutableEnumerationValueSchema(
                     name = "colleague"
+                )
+            )
+        )
+    )
+)
+
+private fun newAddressBookCityPackage() = MutablePackageSchema(
+    name = "address_book.city",
+    info = "Schema for store city information",
+    entities = listOf(
+        MutableEntitySchema(
+            name = "address_book_city",
+            fields = listOf(
+                MutablePrimitiveFieldSchema(
+                    name = "name",
+                    info = "City name",
+                    primitive = MutableStringSchema(),
+                    isKey = true
+                ),
+                MutablePrimitiveFieldSchema(
+                    name = "state",
+                    info = "Name of the state in which the city is",
+                    primitive = MutableStringSchema(),
+                    isKey = true
+                ),
+                MutablePrimitiveFieldSchema(
+                    name = "country",
+                    info = "Name of the country in which the city is",
+                    primitive = MutableStringSchema(),
+                    isKey = true
+                )
+            )
+        ),
+        MutableEntitySchema(
+            name = "address_book_city_info",
+            fields = listOf(
+                MutableCompositionFieldSchema(
+                    name = "city",
+                    packageName = "address_book.city",
+                    entityName = "address_book_city",
+                    isKey = true
+                ),
+                MutablePrimitiveFieldSchema(
+                    name = "info",
+                    info = "Information about the city",
+                    primitive = MutableStringSchema()
+                ),
+                MutableAssociationFieldSchema(
+                    name = "related_city_info",
+                    entityPathSchema = MutableEntityPathSchema(
+                        listOf(
+                            "address_book",
+                            "city_info"
+                        )
+                    ),
+                    multiplicity = MutableMultiplicity(0, 0)
                 )
             )
         )
