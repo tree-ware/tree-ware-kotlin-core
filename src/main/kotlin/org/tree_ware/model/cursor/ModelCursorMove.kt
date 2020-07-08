@@ -45,11 +45,8 @@ class VisitListFieldModel<Aux>(override val element: FieldModel<Aux>) :
 class LeaveListFieldModel<Aux>(override val element: FieldModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)
 
-class VisitEntityKeysModel<Aux>(
-    override val element: EntityKeysModel<Aux>, val pathKeysIndex: Int
-) : ModelCursorMove<Aux>(CursorMoveDirection.Visit) {
-    override fun toString(): String = "${super.toString()}; pathKeys[$pathKeysIndex]"
-}
+class VisitEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
+    ModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
 class LeaveEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
     ModelCursorMove<Aux>(CursorMoveDirection.Leave)

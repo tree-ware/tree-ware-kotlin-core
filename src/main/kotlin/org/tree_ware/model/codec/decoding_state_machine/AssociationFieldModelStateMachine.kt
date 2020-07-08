@@ -65,7 +65,7 @@ class AssociationFieldModelStateMachine<Aux>(
 
         if (keyName == "path_keys") {
             association?.also {
-                stack.addFirst(AssociationPathStateMachine(it.newPathKeys(), schema.keyEntities, stack))
+                stack.addFirst(AssociationPathStateMachine(it.newValue(), schema.keyEntities, stack))
             }
         } else {
             stack.addFirst(SkipUnknownStateMachine<Aux>(stack))

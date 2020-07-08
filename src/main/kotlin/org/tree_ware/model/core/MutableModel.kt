@@ -480,17 +480,17 @@ class MutableAssociationFieldModel<Aux>(
     override val schema: AssociationFieldSchema,
     override val parent: MutableElementModel<Aux>
 ) : MutableFieldModel<Aux>(), AssociationFieldModel<Aux> {
-    override var pathKeys: List<MutableEntityKeysModel<Aux>> = listOf()
+    override var value: List<MutableEntityKeysModel<Aux>> = listOf()
         internal set
 
     fun setNullValue(): Boolean {
-        this.pathKeys = listOf()
+        this.value = listOf()
         return true
     }
 
-    fun newPathKeys(): List<MutableEntityKeysModel<Aux>> {
-        pathKeys = schema.keyEntities.map { MutableEntityKeysModel<Aux>(it) }
-        return pathKeys
+    fun newValue(): List<MutableEntityKeysModel<Aux>> {
+        value = schema.keyEntities.map { MutableEntityKeysModel<Aux>(it) }
+        return value
     }
 
     override fun keysMatch(that: FieldModel<Aux>): Boolean {
@@ -780,6 +780,16 @@ class MutableAssociationListFieldModel<Aux>(
         return association
     }
 
+    // TODO(deepak-nulu): optimize
+    override fun getAssociationField(matching: List<EntityKeysModel<Aux>>): MutableAssociationFieldModel<Aux>? {
+        val matchingSize = matching.size
+        if (matchingSize == 0) return null
+        return associations.find { association ->
+            if (association.value.size != matchingSize) false
+            else association.value.zip(matching).all { (a, m) -> a.keysMatch(m) }
+        }
+    }
+
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
         return visitor.visit(this)
     }
@@ -820,6 +830,7 @@ class MutableCompositionListFieldModel<Aux>(
         return entity
     }
 
+    // TODO(deepak-nulu): optimize
     override fun getEntity(matching: EntityModel<Aux>): MutableEntityModel<Aux>? =
         entities.find { it.keysMatch(matching) }
 

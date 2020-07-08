@@ -90,7 +90,7 @@ interface EnumerationFieldModel<Aux> : ScalarFieldModel<Aux> {
 
 interface AssociationFieldModel<Aux> : FieldModel<Aux> {
     override val schema: AssociationFieldSchema
-    val pathKeys: List<EntityKeysModel<Aux>>
+    val value: List<EntityKeysModel<Aux>>
 }
 
 interface CompositionFieldModel<Aux> : FieldModel<Aux> {
@@ -130,6 +130,8 @@ interface EnumerationListFieldModel<Aux> : ScalarListFieldModel<Aux> {
 interface AssociationListFieldModel<Aux> : ListFieldModel<Aux> {
     override val schema: AssociationFieldSchema
     val associations: List<AssociationFieldModel<Aux>>
+
+    fun getAssociationField(matching: List<EntityKeysModel<Aux>>): AssociationFieldModel<Aux>?
 }
 
 interface CompositionListFieldModel<Aux> : ListFieldModel<Aux> {

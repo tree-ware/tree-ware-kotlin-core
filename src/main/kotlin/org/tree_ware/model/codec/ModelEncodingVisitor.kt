@@ -4,6 +4,7 @@ import org.tree_ware.common.codec.WireFormatEncoder
 import org.tree_ware.model.codec.aux_encoder.AuxEncoder
 import org.tree_ware.model.codec.aux_encoder.ErrorAuxEncoder
 import org.tree_ware.model.core.*
+import org.tree_ware.model.operator.forEach
 import org.tree_ware.model.visitor.AbstractModelVisitor
 import org.tree_ware.schema.core.*
 
@@ -115,18 +116,22 @@ class ModelEncodingVisitor<Aux>(
             auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
-        if (field.pathKeys.isEmpty()) {
+        if (field.value.isEmpty()) {
             wireFormatEncoder.encodeNullField(fieldName)
             return SchemaTraversalAction.CONTINUE
         }
         wireFormatEncoder.encodeObjectStart(fieldName)
         wireFormatEncoder.encodeListStart("path_keys")
         encodingPathKeys = true
+        field.value.forEach { entityKeys ->
+            // Traverse entityKeys with this visitor to encode it.
+            forEach(entityKeys, this)
+        }
         return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(field: AssociationFieldModel<Aux>) {
-        if (field.pathKeys.isNotEmpty()) {
+        if (field.value.isNotEmpty()) {
             encodingPathKeys = false
             wireFormatEncoder.encodeListEnd()
             wireFormatEncoder.encodeObjectEnd()

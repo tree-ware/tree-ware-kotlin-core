@@ -139,33 +139,6 @@ private class ScalarFieldLeaderState<Aux>(
     }
 }
 
-private class AssociationFieldLeaderState<Aux>(
-    field: AssociationFieldModel<Aux>,
-    stack: LeaderStateStack<Aux>,
-    stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
-) : FieldModelLeaderState<Aux>(field, stack) {
-    override val actionIterator: Iterator<LeaderStateAction<Aux>>
-    var index = 0
-
-    init {
-        actionIterator = IteratorAdapter(field.pathKeys.iterator()) { entityKeys ->
-            {
-                val visitEntityKeysMove = VisitEntityKeysModel(entityKeys, index++)
-                val leaveEntityKeysMove = LeaveEntityKeysModel(entityKeys)
-                val entityKeysState = EntityKeysLeaderState(
-                    entityKeys,
-                    visitEntityKeysMove,
-                    leaveEntityKeysMove,
-                    stateStack,
-                    stateFactoryVisitor
-                )
-                stateStack.addFirst(entityKeysState)
-                entityKeysState.visitCursorMove
-            }
-        }
-    }
-}
-
 private class CompositionFieldLeaderState<Aux>(
     field: CompositionFieldModel<Aux>,
     stack: LeaderStateStack<Aux>,
@@ -292,11 +265,12 @@ private class CompositionListFieldLeaderState<Aux>(
 
 private class EntityKeysLeaderState<Aux>(
     entityKeys: EntityKeysModel<Aux>,
-    override val visitCursorMove: VisitEntityKeysModel<Aux>,
-    override val leaveCursorMove: LeaveEntityKeysModel<Aux>,
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
-) : BaseEntityLeaderState<Aux>(entityKeys, stack, stateFactoryVisitor)
+) : BaseEntityLeaderState<Aux>(entityKeys, stack, stateFactoryVisitor) {
+    override val visitCursorMove = VisitEntityKeysModel<Aux>(entityKeys)
+    override val leaveCursorMove = LeaveEntityKeysModel<Aux>(entityKeys)
+}
 
 // State factory visitor
 
@@ -312,7 +286,7 @@ private class LeaderStateFactoryVisitor<Aux>(
     override fun visit(field: PrimitiveFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
     override fun visit(field: AliasFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
     override fun visit(field: EnumerationFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
-    override fun visit(field: AssociationFieldModel<Aux>) = AssociationFieldLeaderState(field, stateStack, this)
+    override fun visit(field: AssociationFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
     override fun visit(field: CompositionFieldModel<Aux>) = CompositionFieldLeaderState(field, stateStack, this)
 
     // List fields
@@ -322,4 +296,8 @@ private class LeaderStateFactoryVisitor<Aux>(
     override fun visit(field: EnumerationListFieldModel<Aux>) = EnumerationListFieldLeaderState(field, stateStack, this)
     override fun visit(field: AssociationListFieldModel<Aux>) = AssociationListFieldLeaderState(field, stateStack, this)
     override fun visit(field: CompositionListFieldModel<Aux>) = CompositionListFieldLeaderState(field, stateStack, this)
+
+    // Field values
+
+    override fun visit(entityKeys: EntityKeysModel<Aux>) = EntityKeysLeaderState(entityKeys, stateStack, this)
 }
