@@ -22,15 +22,15 @@ class ModelFollowerCursorTests {
 private fun <Aux> testFollowerSameModelInstance(inputFilePath: String) {
     val model = getModel(inputFilePath) as Model<Aux>
 
-    val leader = ModelLeaderCursor(model)
-    val follower = ModelFollowerCursor(model)
+    val leaderCursor = LeaderModelCursor(model)
+    val followerCursor = FollowerModelCursor(model)
 
     val action = SchemaTraversalAction.CONTINUE
     while (true) {
-        val leaderMove = leader.next(action) ?: break
-        assertNotSame(leader.element, follower.element)
-        follower.follow(leaderMove)
-        assertSame(leader.element, follower.element)
+        val leaderMove = leaderCursor.next(action) ?: break
+        assertNotSame(leaderCursor.element, followerCursor.element)
+        followerCursor.follow(leaderMove)
+        assertSame(leaderCursor.element, followerCursor.element)
     }
 }
 
@@ -41,16 +41,16 @@ private fun <Aux> testFollowerDifferentModelInstances(inputFilePath: String) {
 
     assertNotSame(leaderModel, followerModel)
 
-    val leader = ModelLeaderCursor(leaderModel)
-    val follower = ModelFollowerCursor(followerModel)
+    val leaderCursor = LeaderModelCursor(leaderModel)
+    val followerCursor = FollowerModelCursor(followerModel)
 
     val action = SchemaTraversalAction.CONTINUE
     while (true) {
-        val leaderMove = leader.next(action) ?: break
+        val leaderMove = leaderCursor.next(action) ?: break
         // TODO(deepak-nulu): once getPath() returns model-paths, verify that
         // the follower element path is not the same as the leader element path
-        follower.follow(leaderMove)
-        assertEquals(getPath(leader.element), getPath(follower.element))
+        followerCursor.follow(leaderMove)
+        assertEquals(getPath(leaderCursor.element), getPath(followerCursor.element))
     }
 }
 
