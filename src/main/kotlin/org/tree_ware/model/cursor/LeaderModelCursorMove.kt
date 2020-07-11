@@ -13,7 +13,7 @@ sealed class LeaderModelCursorMove<Aux>(val direction: CursorMoveDirection) {
     }
 }
 
-class VisitLeaderModel<Aux>(override val element: ElementModel<Aux>) :
+class VisitLeaderModel<Aux>(override val element: Model<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
 
 class LeaveLeaderModel<Aux>(override val element: Model<Aux>) :

@@ -29,7 +29,9 @@ private fun <Aux> testFollowerSameModelInstance(inputFilePath: String) {
     while (true) {
         val leaderMove = leaderCursor.next(action) ?: break
         assertNotSame(leaderCursor.element, followerCursor.element)
-        followerCursor.follow(leaderMove)
+        val followerMove = followerCursor.follow(leaderMove)
+        assertNotNull(followerMove)
+        assertSame(leaderMove.element, followerMove.element)
         assertSame(leaderCursor.element, followerCursor.element)
     }
 }
@@ -49,7 +51,9 @@ private fun <Aux> testFollowerDifferentModelInstances(inputFilePath: String) {
         val leaderMove = leaderCursor.next(action) ?: break
         // TODO(deepak-nulu): once getPath() returns model-paths, verify that
         // the follower element path is not the same as the leader element path
-        followerCursor.follow(leaderMove)
+        val followerMove = followerCursor.follow(leaderMove)
+        assertNotNull(followerMove)
+        assertEquals(getPath(leaderMove.element), getPath(followerMove.element))
         assertEquals(getPath(leaderCursor.element), getPath(followerCursor.element))
     }
 }
