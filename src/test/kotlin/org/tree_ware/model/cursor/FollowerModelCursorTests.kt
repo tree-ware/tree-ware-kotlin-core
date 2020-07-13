@@ -23,7 +23,7 @@ private fun <Aux> testFollowerSameModelInstance(inputFilePath: String) {
     val model = getModel(inputFilePath) as Model<Aux>
 
     val leaderCursor = LeaderModelCursor(model)
-    val followerCursor = FollowerModelCursor(model)
+    val followerCursor = FollowerModelCursor<Aux, Aux>(model)
 
     val action = SchemaTraversalAction.CONTINUE
     while (true) {
@@ -44,7 +44,7 @@ private fun <Aux> testFollowerDifferentModelInstances(inputFilePath: String) {
     assertNotSame(leaderModel, followerModel)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
-    val followerCursor = FollowerModelCursor(followerModel)
+    val followerCursor = FollowerModelCursor<Aux, Aux>(followerModel)
 
     val action = SchemaTraversalAction.CONTINUE
     while (true) {

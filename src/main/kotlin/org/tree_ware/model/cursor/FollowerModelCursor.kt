@@ -4,14 +4,14 @@ import org.tree_ware.model.core.*
 import org.tree_ware.model.visitor.AbstractModelVisitor
 import java.util.*
 
-class FollowerModelCursor<Aux>(private val initial: ElementModel<Aux>) {
-    private val stateStack = FollowerStateStack<Aux>()
+class FollowerModelCursor<LeaderAux, FollowerAux>(private val initial: ElementModel<FollowerAux>) {
+    private val stateStack = FollowerStateStack<LeaderAux, FollowerAux>()
     private val stateFactoryVisitor = FollowerStateFactoryVisitor(stateStack)
     private var isAtStart = true
 
-    val element: ElementModel<Aux>? get() = stateStack.peekFirst()?.element
+    val element: ElementModel<FollowerAux>? get() = stateStack.peekFirst()?.element
 
-    fun follow(move: LeaderModelCursorMove<Aux>): FollowerModelCursorMove<Aux>? = when {
+    fun follow(move: LeaderModelCursorMove<LeaderAux>): FollowerModelCursorMove<FollowerAux>? = when {
         isAtStart -> {
             isAtStart = false
             val initialState =
@@ -31,83 +31,83 @@ class FollowerModelCursor<Aux>(private val initial: ElementModel<Aux>) {
     }
 }
 
-private typealias FollowerStateStack<Aux> = ArrayDeque<FollowerState<Aux>>
+private typealias FollowerStateStack<LeaderAux, FollowerAux> = ArrayDeque<FollowerState<LeaderAux, FollowerAux>>
 
-private abstract class FollowerState<Aux>(
-    val element: ElementModel<Aux>?,
-    protected val stateStack: FollowerStateStack<Aux>
+private abstract class FollowerState<LeaderAux, FollowerAux>(
+    val element: ElementModel<FollowerAux>?,
+    protected val stateStack: FollowerStateStack<LeaderAux, FollowerAux>
 ) {
-    abstract val visitCursorMove: FollowerModelCursorMove<Aux>
+    abstract val visitCursorMove: FollowerModelCursorMove<FollowerAux>
 
-    open fun follow(move: LeaderModelCursorMove<Aux>): FollowerModelCursorMove<Aux>? {
+    open fun follow(move: LeaderModelCursorMove<LeaderAux>): FollowerModelCursorMove<FollowerAux>? {
         throw IllegalStateException("Unknown move $move in state $this")
     }
 }
 
-private class NullFollowerState<Aux>(
-    override val visitCursorMove: FollowerModelCursorMove<Aux>,
-    stateStack: FollowerStateStack<Aux>
-) : FollowerState<Aux>(null, stateStack) {
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+private class NullFollowerState<LeaderAux, FollowerAux>(
+    override val visitCursorMove: FollowerModelCursorMove<FollowerAux>,
+    stateStack: FollowerStateStack<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(null, stateStack) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is VisitLeaderModel -> {
             stateStack.addFirst(this)
-            VisitFollowerModel<Aux>(null)
+            VisitFollowerModel(null)
         }
         is LeaveLeaderModel -> {
             stateStack.pollFirst()
-            LeaveFollowerModel<Aux>(null)
+            LeaveFollowerModel(null)
         }
         is VisitLeaderRootModel -> {
             stateStack.addFirst(this)
-            VisitFollowerRootModel<Aux>(null)
+            VisitFollowerRootModel(null)
         }
         is LeaveLeaderRootModel -> {
             stateStack.pollFirst()
-            LeaveFollowerRootModel<Aux>(null)
+            LeaveFollowerRootModel(null)
         }
         is VisitLeaderEntityModel -> {
             stateStack.addFirst(this)
-            VisitFollowerEntityModel<Aux>(null)
+            VisitFollowerEntityModel(null)
         }
         is LeaveLeaderEntityModel -> {
             stateStack.pollFirst()
-            LeaveFollowerEntityModel<Aux>(null)
+            LeaveFollowerEntityModel(null)
         }
         is VisitLeaderFieldModel -> {
             stateStack.addFirst(this)
-            VisitFollowerFieldModel<Aux>(null)
+            VisitFollowerFieldModel(null)
         }
         is LeaveLeaderFieldModel -> {
             stateStack.pollFirst()
-            LeaveFollowerFieldModel<Aux>(null)
+            LeaveFollowerFieldModel(null)
         }
         is VisitLeaderListFieldModel -> {
             stateStack.addFirst(this)
-            VisitFollowerListFieldModel<Aux>(null)
+            VisitFollowerListFieldModel(null)
         }
         is LeaveLeaderListFieldModel -> {
             stateStack.pollFirst()
-            LeaveFollowerListFieldModel<Aux>(null)
+            LeaveFollowerListFieldModel(null)
         }
         is VisitLeaderEntityKeysModel -> {
             stateStack.addFirst(this)
-            VisitFollowerEntityKeysModel<Aux>(null)
+            VisitFollowerEntityKeysModel<FollowerAux>(null)
         }
         is LeaveLeaderEntityKeysModel -> {
             stateStack.pollFirst()
-            LeaveFollowerEntityKeysModel<Aux>(null)
+            LeaveFollowerEntityKeysModel<FollowerAux>(null)
         }
     }
 }
 
-private class ModelFollowerState<Aux>(
-    private val model: Model<Aux>,
-    stateStack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(model, stateStack) {
+private class ModelFollowerState<LeaderAux, FollowerAux>(
+    private val model: Model<FollowerAux>,
+    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(model, stateStack) {
     override val visitCursorMove = VisitFollowerModel(model)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderModel -> {
             stateStack.pollFirst()
             LeaveFollowerModel(model)
@@ -122,21 +122,21 @@ private class ModelFollowerState<Aux>(
     }
 }
 
-private abstract class BaseEntityFollowerState<Aux>(
-    private val baseEntity: BaseEntityModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(baseEntity, stack) {
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+private abstract class BaseEntityFollowerState<LeaderAux, FollowerAux>(
+    private val baseEntity: BaseEntityModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(baseEntity, stack) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is VisitLeaderFieldModel -> visitField(move.element, VisitFollowerFieldModel(null))
         is VisitLeaderListFieldModel -> visitField(move.element, VisitFollowerListFieldModel(null))
         else -> super.follow(move)
     }
 
     private fun visitField(
-        leaderField: FieldModel<Aux>,
-        nullVisitCursorMove: FollowerModelCursorMove<Aux>
-    ): FollowerModelCursorMove<Aux>? {
+        leaderField: FieldModel<LeaderAux>,
+        nullVisitCursorMove: FollowerModelCursorMove<FollowerAux>
+    ): FollowerModelCursorMove<FollowerAux>? {
         val followerField = baseEntity.getField(leaderField.schema.name)
         val fieldState = if (followerField == null) NullFollowerState(nullVisitCursorMove, stateStack)
         else followerField.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null field state")
@@ -145,14 +145,14 @@ private abstract class BaseEntityFollowerState<Aux>(
     }
 }
 
-private class RootFollowerState<Aux>(
-    private val root: RootModel<Aux>,
-    stateStack: FollowerStateStack<Aux>,
-    stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : BaseEntityFollowerState<Aux>(root, stateStack, stateFactoryVisitor) {
+private class RootFollowerState<LeaderAux, FollowerAux>(
+    private val root: RootModel<FollowerAux>,
+    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
+    stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : BaseEntityFollowerState<LeaderAux, FollowerAux>(root, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = VisitFollowerRootModel(root)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderRootModel -> {
             stateStack.pollFirst()
             LeaveFollowerRootModel(root)
@@ -161,14 +161,14 @@ private class RootFollowerState<Aux>(
     }
 }
 
-private class EntityFollowerState<Aux>(
-    private val entity: EntityModel<Aux>,
-    stateStack: FollowerStateStack<Aux>,
-    stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : BaseEntityFollowerState<Aux>(entity, stateStack, stateFactoryVisitor) {
+private class EntityFollowerState<LeaderAux, FollowerAux>(
+    private val entity: EntityModel<FollowerAux>,
+    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
+    stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : BaseEntityFollowerState<LeaderAux, FollowerAux>(entity, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = VisitFollowerEntityModel(entity)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderEntityModel -> {
             stateStack.pollFirst()
             LeaveFollowerEntityModel(entity)
@@ -179,13 +179,13 @@ private class EntityFollowerState<Aux>(
 
 // Scalar fields
 
-private class ScalarFieldFollowerState<Aux>(
-    private val field: FieldModel<Aux>,
-    stack: FollowerStateStack<Aux>
-) : FollowerState<Aux>(field, stack) {
+private class ScalarFieldFollowerState<LeaderAux, FollowerAux>(
+    private val field: FieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(field, stack) {
     override val visitCursorMove = VisitFollowerFieldModel(field)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerFieldModel(field)
@@ -194,14 +194,14 @@ private class ScalarFieldFollowerState<Aux>(
     }
 }
 
-private class CompositionFieldFollowerState<Aux>(
-    private val field: CompositionFieldModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(field, stack) {
+private class CompositionFieldFollowerState<LeaderAux, FollowerAux>(
+    private val field: CompositionFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(field, stack) {
     override val visitCursorMove = VisitFollowerFieldModel(field)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerFieldModel(field)
@@ -218,14 +218,14 @@ private class CompositionFieldFollowerState<Aux>(
 
 // List fields
 
-private class PrimitiveListFieldFollowerState<Aux>(
-    private val primitiveListField: PrimitiveListFieldModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(primitiveListField, stack) {
+private class PrimitiveListFieldFollowerState<LeaderAux, FollowerAux>(
+    private val primitiveListField: PrimitiveListFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(primitiveListField, stack) {
     override val visitCursorMove = VisitFollowerListFieldModel(primitiveListField)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderListFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerListFieldModel(primitiveListField)
@@ -243,14 +243,14 @@ private class PrimitiveListFieldFollowerState<Aux>(
     }
 }
 
-private class AliasListFieldFollowerState<Aux>(
-    private val aliasListField: AliasListFieldModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(aliasListField, stack) {
+private class AliasListFieldFollowerState<LeaderAux, FollowerAux>(
+    private val aliasListField: AliasListFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(aliasListField, stack) {
     override val visitCursorMove = VisitFollowerListFieldModel(aliasListField)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderListFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerListFieldModel(aliasListField)
@@ -268,14 +268,14 @@ private class AliasListFieldFollowerState<Aux>(
     }
 }
 
-private class EnumerationListFieldFollowerState<Aux>(
-    private val enumerationListField: EnumerationListFieldModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(enumerationListField, stack) {
+private class EnumerationListFieldFollowerState<LeaderAux, FollowerAux>(
+    private val enumerationListField: EnumerationListFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(enumerationListField, stack) {
     override val visitCursorMove = VisitFollowerListFieldModel(enumerationListField)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderListFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerListFieldModel(enumerationListField)
@@ -293,14 +293,14 @@ private class EnumerationListFieldFollowerState<Aux>(
     }
 }
 
-private class AssociationListFieldFollowerState<Aux>(
-    private val associationListField: AssociationListFieldModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(associationListField, stack) {
+private class AssociationListFieldFollowerState<LeaderAux, FollowerAux>(
+    private val associationListField: AssociationListFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(associationListField, stack) {
     override val visitCursorMove = VisitFollowerListFieldModel(associationListField)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderListFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerListFieldModel(associationListField)
@@ -318,14 +318,14 @@ private class AssociationListFieldFollowerState<Aux>(
     }
 }
 
-private class CompositionListFieldFollowerState<Aux>(
-    private val compositionListField: CompositionListFieldModel<Aux>,
-    stack: FollowerStateStack<Aux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : FollowerState<Aux>(compositionListField, stack) {
+private class CompositionListFieldFollowerState<LeaderAux, FollowerAux>(
+    private val compositionListField: CompositionListFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(compositionListField, stack) {
     override val visitCursorMove = VisitFollowerListFieldModel(compositionListField)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderListFieldModel -> {
             stateStack.pollFirst()
             LeaveFollowerListFieldModel(compositionListField)
@@ -344,14 +344,14 @@ private class CompositionListFieldFollowerState<Aux>(
 
 // Field values
 
-private class EntityKeysFollowerState<Aux>(
-    private val entityKeys: EntityKeysModel<Aux>,
-    stateStack: FollowerStateStack<Aux>,
-    stateFactoryVisitor: FollowerStateFactoryVisitor<Aux>
-) : BaseEntityFollowerState<Aux>(entityKeys, stateStack, stateFactoryVisitor) {
+private class EntityKeysFollowerState<LeaderAux, FollowerAux>(
+    private val entityKeys: EntityKeysModel<FollowerAux>,
+    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
+    stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : BaseEntityFollowerState<LeaderAux, FollowerAux>(entityKeys, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = VisitFollowerEntityKeysModel(entityKeys)
 
-    override fun follow(move: LeaderModelCursorMove<Aux>) = when (move) {
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is LeaveLeaderEntityKeysModel -> {
             stateStack.pollFirst()
             LeaveFollowerEntityKeysModel(entityKeys)
@@ -362,36 +362,39 @@ private class EntityKeysFollowerState<Aux>(
 
 // State factory visitor
 
-private class FollowerStateFactoryVisitor<Aux>(
-    private val stateStack: FollowerStateStack<Aux>
-) : AbstractModelVisitor<Aux, FollowerState<Aux>?>(null) {
-    override fun visit(model: Model<Aux>) = ModelFollowerState(model, stateStack, this)
-    override fun visit(root: RootModel<Aux>) = RootFollowerState(root, stateStack, this)
-    override fun visit(entity: EntityModel<Aux>) = EntityFollowerState(entity, stateStack, this)
+private class FollowerStateFactoryVisitor<LeaderAux, FollowerAux>(
+    private val stateStack: FollowerStateStack<LeaderAux, FollowerAux>
+) : AbstractModelVisitor<FollowerAux, FollowerState<LeaderAux, FollowerAux>?>(null) {
+    override fun visit(model: Model<FollowerAux>) = ModelFollowerState(model, stateStack, this)
+    override fun visit(root: RootModel<FollowerAux>) = RootFollowerState(root, stateStack, this)
+    override fun visit(entity: EntityModel<FollowerAux>) = EntityFollowerState(entity, stateStack, this)
 
     // Scalar fields
 
-    override fun visit(field: PrimitiveFieldModel<Aux>) = ScalarFieldFollowerState(field, stateStack)
-    override fun visit(field: AliasFieldModel<Aux>) = ScalarFieldFollowerState(field, stateStack)
-    override fun visit(field: EnumerationFieldModel<Aux>) = ScalarFieldFollowerState(field, stateStack)
-    override fun visit(field: AssociationFieldModel<Aux>) = ScalarFieldFollowerState(field, stateStack)
-    override fun visit(field: CompositionFieldModel<Aux>) = CompositionFieldFollowerState(field, stateStack, this)
+    override fun visit(field: PrimitiveFieldModel<FollowerAux>) = ScalarFieldFollowerState(field, stateStack)
+    override fun visit(field: AliasFieldModel<FollowerAux>) = ScalarFieldFollowerState(field, stateStack)
+    override fun visit(field: EnumerationFieldModel<FollowerAux>) = ScalarFieldFollowerState(field, stateStack)
+    override fun visit(field: AssociationFieldModel<FollowerAux>) = ScalarFieldFollowerState(field, stateStack)
+    override fun visit(field: CompositionFieldModel<FollowerAux>) =
+        CompositionFieldFollowerState(field, stateStack, this)
 
     // List fields
 
-    override fun visit(field: PrimitiveListFieldModel<Aux>) = PrimitiveListFieldFollowerState(field, stateStack, this)
-    override fun visit(field: AliasListFieldModel<Aux>) = AliasListFieldFollowerState(field, stateStack, this)
+    override fun visit(field: PrimitiveListFieldModel<FollowerAux>) =
+        PrimitiveListFieldFollowerState(field, stateStack, this)
 
-    override fun visit(field: EnumerationListFieldModel<Aux>) =
+    override fun visit(field: AliasListFieldModel<FollowerAux>) = AliasListFieldFollowerState(field, stateStack, this)
+
+    override fun visit(field: EnumerationListFieldModel<FollowerAux>) =
         EnumerationListFieldFollowerState(field, stateStack, this)
 
-    override fun visit(field: AssociationListFieldModel<Aux>) =
+    override fun visit(field: AssociationListFieldModel<FollowerAux>) =
         AssociationListFieldFollowerState(field, stateStack, this)
 
-    override fun visit(field: CompositionListFieldModel<Aux>) =
+    override fun visit(field: CompositionListFieldModel<FollowerAux>) =
         CompositionListFieldFollowerState(field, stateStack, this)
 
     // Field values
 
-    override fun visit(entityKeys: EntityKeysModel<Aux>) = EntityKeysFollowerState(entityKeys, stateStack, this)
+    override fun visit(entityKeys: EntityKeysModel<FollowerAux>) = EntityKeysFollowerState(entityKeys, stateStack, this)
 }

@@ -114,7 +114,7 @@ abstract class MutableBaseEntityModel<Aux>(
     override var fields: MutableList<MutableFieldModel<Aux>> = mutableListOf()
         internal set
 
-    override fun keysMatch(that: BaseEntityModel<Aux>): Boolean {
+    override fun <ThatAux> keysMatch(that: BaseEntityModel<ThatAux>): Boolean {
         val thisKeyFields = this.fields.filter { it.schema.isKey }
         return thisKeyFields.all { thisKeyField ->
             val thatKeyField = that.getField(thisKeyField.schema.name) ?: return false
@@ -345,8 +345,8 @@ class MutablePrimitiveFieldModel<Aux>(
     override fun setValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value = it }
 
-    override fun keysMatch(that: FieldModel<Aux>): Boolean {
-        val thatField: PrimitiveFieldModel<Aux> = that as? PrimitiveFieldModel ?: return false
+    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
+        val thatField: PrimitiveFieldModel<ThatAux> = that as? PrimitiveFieldModel ?: return false
         return this.value == thatField.value
     }
 
@@ -398,8 +398,8 @@ class MutableAliasFieldModel<Aux>(
     override fun setValue(value: Boolean): Boolean =
         setValue(schema.resolvedAlias.primitive, value) { this.value = it }
 
-    override fun keysMatch(that: FieldModel<Aux>): Boolean {
-        val thatField: AliasFieldModel<Aux> = that as? AliasFieldModel ?: return false
+    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
+        val thatField: AliasFieldModel<ThatAux> = that as? AliasFieldModel ?: return false
         return this.value == thatField.value
     }
 
@@ -444,8 +444,8 @@ class MutableEnumerationFieldModel<Aux>(
 
     override fun setValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value = it }
 
-    override fun keysMatch(that: FieldModel<Aux>): Boolean {
-        val thatField: EnumerationFieldModel<Aux> = that as? EnumerationFieldModel ?: return false
+    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
+        val thatField: EnumerationFieldModel<ThatAux> = that as? EnumerationFieldModel ?: return false
         return this.value == thatField.value
     }
 
@@ -493,7 +493,7 @@ class MutableAssociationFieldModel<Aux>(
         return value
     }
 
-    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
         return false // associations cannot be keys
     }
 
@@ -538,8 +538,8 @@ class MutableCompositionFieldModel<Aux>(
         value.objectId = schema.name
     }
 
-    override fun keysMatch(that: FieldModel<Aux>): Boolean {
-        val thatField: CompositionFieldModel<Aux> = that as? CompositionFieldModel ?: return false
+    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
+        val thatField: CompositionFieldModel<ThatAux> = that as? CompositionFieldModel ?: return false
         return this.value.keysMatch(thatField.value)
     }
 
@@ -575,7 +575,7 @@ class MutableCompositionFieldModel<Aux>(
 abstract class MutableListFieldModel<Aux>(
     override val parent: MutableBaseEntityModel<Aux>
 ) : MutableFieldModel<Aux>(), ListFieldModel<Aux> {
-    override fun keysMatch(that: FieldModel<Aux>): Boolean {
+    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
         return false // lists cannot be keys
     }
 
@@ -781,7 +781,7 @@ class MutableAssociationListFieldModel<Aux>(
     }
 
     // TODO(deepak-nulu): optimize
-    override fun getAssociationField(matching: List<EntityKeysModel<Aux>>): MutableAssociationFieldModel<Aux>? {
+    override fun <MatchingAux> getAssociationField(matching: List<EntityKeysModel<MatchingAux>>): MutableAssociationFieldModel<Aux>? {
         val matchingSize = matching.size
         if (matchingSize == 0) return null
         return associations.find { association ->
@@ -831,7 +831,7 @@ class MutableCompositionListFieldModel<Aux>(
     }
 
     // TODO(deepak-nulu): optimize
-    override fun getEntity(matching: EntityModel<Aux>): MutableEntityModel<Aux>? =
+    override fun <MatchingAux> getEntity(matching: EntityModel<MatchingAux>): MutableEntityModel<Aux>? =
         entities.find { it.keysMatch(matching) }
 
     override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
