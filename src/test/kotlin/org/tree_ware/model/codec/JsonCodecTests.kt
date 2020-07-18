@@ -1,6 +1,7 @@
 package org.tree_ware.model.codec
 
-import org.tree_ware.model.core.ModelType
+import org.tree_ware.model.codec.aux_encoder.AuxEncoder
+import org.tree_ware.model.codec.aux_encoder.ErrorAuxEncoder
 import org.tree_ware.model.getModel
 import java.io.File
 import java.io.StringWriter
@@ -16,7 +17,7 @@ class JsonCodecTests {
 
     @Test
     fun `JSON codec error-model round trip must be lossless`() {
-        testRoundTrip("src/test/resources/model/address_book_error_all_model.json")
+        testRoundTrip("src/test/resources/model/address_book_error_all_model.json", ErrorAuxEncoder())
     }
 
     @Test
@@ -36,17 +37,17 @@ class JsonCodecTests {
 
     private fun testRoundTrip(
         inputFilePath: String,
+        auxEncoder: AuxEncoder? = null,
         expectedOutputFilePath: String? = null,
-        forceDecodedModelType: ModelType? = null
+        forceDecodedModelType: String? = null
     ) {
         val model = getModel(inputFilePath)
-        assertTrue(model != null)
 
         forceDecodedModelType?.also { model.type = it }
 
         val jsonWriter = StringWriter()
         val isEncoded = try {
-            encodeJson(model, jsonWriter, true)
+            encodeJson(model, auxEncoder, jsonWriter, true)
         } catch (e: Throwable) {
             e.printStackTrace()
             println("Encoded so far:")

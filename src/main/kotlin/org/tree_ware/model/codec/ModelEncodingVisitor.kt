@@ -2,7 +2,6 @@ package org.tree_ware.model.codec
 
 import org.tree_ware.common.codec.WireFormatEncoder
 import org.tree_ware.model.codec.aux_encoder.AuxEncoder
-import org.tree_ware.model.codec.aux_encoder.ErrorAuxEncoder
 import org.tree_ware.model.core.*
 import org.tree_ware.model.operator.forEach
 import org.tree_ware.model.visitor.AbstractModelVisitor
@@ -11,23 +10,18 @@ import org.tree_ware.schema.core.*
 const val VALUE_KEY = "value"
 
 class ModelEncodingVisitor<Aux>(
-    private val wireFormatEncoder: WireFormatEncoder
+    private val wireFormatEncoder: WireFormatEncoder,
+    private val auxEncoder: AuxEncoder?
 ) : AbstractModelVisitor<Aux, SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
-    private var auxEncoder: AuxEncoder? = null
     private var encodingPathKeys = false
 
     override fun visit(model: Model<Aux>): SchemaTraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
-        wireFormatEncoder.encodeObjectStart(model.type.name)
-        auxEncoder = when (model.type) {
-            ModelType.data -> null
-            ModelType.error -> ErrorAuxEncoder()
-        }
+        wireFormatEncoder.encodeObjectStart(model.type)
         return SchemaTraversalAction.CONTINUE
     }
 
     override fun leave(model: Model<Aux>) {
-        auxEncoder = null
         wireFormatEncoder.encodeObjectEnd()
         wireFormatEncoder.encodeObjectEnd()
     }
@@ -67,7 +61,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(field: PrimitiveFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
+            auxEncoder.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
         val value = field.value
@@ -97,7 +91,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(field: EnumerationFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
+            auxEncoder.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
         val value = field.value
@@ -113,7 +107,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(field: AssociationFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
+            auxEncoder.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
         if (field.value.isEmpty()) {
@@ -144,7 +138,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(field: ListFieldModel<Aux>): SchemaTraversalAction {
         val fieldName = if (auxEncoder != null && !encodingPathKeys) {
             wireFormatEncoder.encodeObjectStart(field.schema.name)
-            auxEncoder?.also { it.encode(field.aux, wireFormatEncoder) }
+            auxEncoder.also { it.encode(field.aux, wireFormatEncoder) }
             VALUE_KEY
         } else field.schema.name
         wireFormatEncoder.encodeListStart(fieldName)

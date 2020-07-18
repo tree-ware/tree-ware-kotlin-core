@@ -29,16 +29,9 @@ interface ElementModel<Aux> : VisitableModel<Aux> {
     val aux: Aux?
 }
 
-enum class ModelType {
-    data,
-    error
-    // TODO(deepak-nulu): filter
-    // TODO(deepak-nulu): delta
-}
-
 /** The entire model (from the root entity). */
 interface Model<Aux> : ElementModel<Aux> {
-    val type: ModelType
+    val type: String
     val root: RootModel<Aux>
 
     override val schema: Schema

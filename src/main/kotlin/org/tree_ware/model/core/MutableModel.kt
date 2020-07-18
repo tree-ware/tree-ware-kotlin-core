@@ -62,16 +62,16 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux>, VisitableMutableMod
 class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(), Model<Aux> {
     override val parent: ElementModel<Aux>? = null
 
-    override var type = ModelType.data
+    override var type = "data"
         internal set(value) {
             field = value
-            _root?.also { it.objectId = value.name }
+            _root?.also { it.objectId = value }
         }
 
     override var root: MutableRootModel<Aux>
         get() = _root ?: throw IllegalStateException("Root has not been set")
         internal set(value) {
-            value.objectId = type.name
+            value.objectId = type
             _root = value
         }
     private var _root: MutableRootModel<Aux>? = null
