@@ -9,16 +9,20 @@ import java.util.*
 
 typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 
-class ModelDecodingStateMachine(schema: Schema) : DecodingStateMachine {
+class ModelDecodingStateMachine<Aux>(
+    schema: Schema,
+    expectedModelType: String,
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
+) : DecodingStateMachine {
     private val stack = DecodingStack()
-    private val modelStateMachine = ModelStateMachine(schema, stack)
+    private val modelStateMachine = ModelStateMachine(schema, expectedModelType, auxStateMachineFactory, stack)
     private val logger = LogManager.getLogger()
 
     init {
         stack.addFirst(modelStateMachine)
     }
 
-    val model: MutableModel<out Any>? get() = modelStateMachine.model
+    val model: MutableModel<Aux>? get() = modelStateMachine.model
 
     private fun getTopStateMachine(): DecodingStateMachine? {
         val top = stack.peekFirst()

@@ -1,7 +1,6 @@
 package org.tree_ware.model.cursor
 
 import org.tree_ware.model.core.ElementModel
-import org.tree_ware.model.core.Model
 import org.tree_ware.model.getModel
 import org.tree_ware.schema.core.NamedElementSchema
 import org.tree_ware.schema.core.SchemaTraversalAction
@@ -10,20 +9,20 @@ import kotlin.test.*
 class ModelFollowerCursorTests {
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor`() {
-        testFollowerSameModelInstance<Unit>("src/test/resources/model/address_book_1.json")
+        testFollowerSameModelInstance("src/test/resources/model/address_book_1.json")
     }
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor`() {
-        testFollowerDifferentModelInstances<Unit>("src/test/resources/model/address_book_1.json")
+        testFollowerDifferentModelInstances("src/test/resources/model/address_book_1.json")
     }
 }
 
-private fun <Aux> testFollowerSameModelInstance(inputFilePath: String) {
-    val model = getModel(inputFilePath) as Model<Aux>
+private fun testFollowerSameModelInstance(inputFilePath: String) {
+    val model = getModel<Unit>(inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
-    val followerCursor = FollowerModelCursor<Aux, Aux>(model)
+    val followerCursor = FollowerModelCursor<Unit, Unit>(model)
 
     val action = SchemaTraversalAction.CONTINUE
     while (true) {
@@ -36,15 +35,15 @@ private fun <Aux> testFollowerSameModelInstance(inputFilePath: String) {
     }
 }
 
-private fun <Aux> testFollowerDifferentModelInstances(inputFilePath: String) {
+private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getModel(inputFilePath) as Model<Aux>
-    val followerModel = getModel(inputFilePath) as Model<Aux>
+    val leaderModel = getModel<Unit>(inputFilePath)
+    val followerModel = getModel<Unit>(inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
-    val followerCursor = FollowerModelCursor<Aux, Aux>(followerModel)
+    val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
 
     val action = SchemaTraversalAction.CONTINUE
     while (true) {
