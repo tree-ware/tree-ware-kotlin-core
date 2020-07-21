@@ -39,7 +39,8 @@ class ModelStateMachine<Aux>(
         super.decodeKey(name)
 
         if (keyName != expectedModelType) return false
-        decodeModel(expectedModelType, MutableModel(schema)) { auxStateMachineFactory(stack) }
+        if (model == null) model = MutableModel(schema)
+        model?.also { decodeModel(expectedModelType, it) { auxStateMachineFactory(stack) } }
         return true
     }
 
@@ -51,6 +52,5 @@ class ModelStateMachine<Aux>(
         newModel.type = modelType
         val root = newModel.getOrNewRoot()
         stack.addFirst(RootModelStateMachine(root, stack, auxStateMachineFactory))
-        model = newModel
     }
 }

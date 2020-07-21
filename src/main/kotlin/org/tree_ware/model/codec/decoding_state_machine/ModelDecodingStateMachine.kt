@@ -19,6 +19,11 @@ class ModelDecodingStateMachine<Aux>(
     private val logger = LogManager.getLogger()
 
     init {
+        reinitialize()
+    }
+
+    fun reinitialize() {
+        stack.clear()
         stack.addFirst(modelStateMachine)
     }
 

@@ -24,12 +24,12 @@ class ValueAndAuxStateMachine<Aux>(
         else auxStateMachine?.also {
             stack.addFirst(it)
             it.decodeKey(name)
+            auxStateMachine?.newAux()
         }
         return true
     }
 
     override fun decodeObjectStart(): Boolean {
-        auxStateMachine?.newAux()
         return true
     }
 
