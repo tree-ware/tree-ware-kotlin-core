@@ -6,7 +6,10 @@ fun newAddressBookSchema() = MutableSchema(
         packageName = "address_book.main",
         entityName = "address_book_root"
     ),
-    listOf(newAddressBookMainPackage(), newAddressBookCityPackage())
+    listOf(
+        newAddressBookMainPackage(),
+        newAddressBookCityPackage()
+    )
 )
 
 private fun newAddressBookMainPackage() = MutablePackageSchema(

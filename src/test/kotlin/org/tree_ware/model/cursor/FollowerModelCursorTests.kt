@@ -6,32 +6,38 @@ import org.tree_ware.model.core.ElementModel
 import org.tree_ware.model.getModel
 import org.tree_ware.schema.core.NamedElementSchema
 import org.tree_ware.schema.core.SchemaTraversalAction
-import java.io.File
+import org.tree_ware.schema.core.newAddressBookSchema
+import org.tree_ware.schema.core.validate
+import java.io.InputStreamReader
 import java.io.StringWriter
 import kotlin.test.*
 
-class ModelFollowerCursorTests {
+class FollowerModelCursorTests {
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor`() {
-        testFollowerSameModelInstance("src/test/resources/model/address_book_1.json")
+        testFollowerSameModelInstance("model/address_book_1.json")
     }
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor`() {
-        testFollowerDifferentModelInstances("src/test/resources/model/address_book_1.json")
+        testFollowerDifferentModelInstances("model/address_book_1.json")
     }
 
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor`() {
         testFollowerWildcardModelInstance(
-            "src/test/resources/model/address_book_1.json",
-            "src/test/resources/model/address_book_filter_all_model.json"
+            "model/address_book_1.json",
+            "model/address_book_filter_all_model.json"
         )
     }
 }
 
 private fun testFollowerSameModelInstance(inputFilePath: String) {
-    val model = getModel<Unit>(inputFilePath)
+    val schema = newAddressBookSchema()
+    val errors = validate(schema)
+    assertTrue(errors.isEmpty())
+
+    val model = getModel<Unit>(schema, inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -48,9 +54,13 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
 }
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String) {
+    val schema = newAddressBookSchema()
+    val errors = validate(schema)
+    assertTrue(errors.isEmpty())
+
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getModel<Unit>(inputFilePath)
-    val followerModel = getModel<Unit>(inputFilePath)
+    val leaderModel = getModel<Unit>(schema, inputFilePath)
+    val followerModel = getModel<Unit>(schema, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -75,8 +85,12 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
  * the original JSON file (leaderFilePath).
  */
 private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
-    val leaderModel = getModel<Unit>(leaderFilePath)
-    val followerModel = getModel<Unit>(wildcardFilePath)
+    val schema = newAddressBookSchema()
+    val errors = validate(schema)
+    assertTrue(errors.isEmpty())
+
+    val leaderModel = getModel<Unit>(schema, leaderFilePath)
+    val followerModel = getModel<Unit>(schema, wildcardFilePath)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
@@ -97,8 +111,9 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
         }
     }
 
-    val leaderFile = File(leaderFilePath)
-    val expected = leaderFile.readText()
+    val fileReader = InputStreamReader(ClassLoader.getSystemResourceAsStream(leaderFilePath))
+    val expected = fileReader.readText()
+    fileReader.close()
     val actual = jsonWriter.toString()
     assertEquals(expected, actual)
 }
