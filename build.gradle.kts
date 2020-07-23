@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 group = "org.tree-ware"
 version = "1.0-SNAPSHOT"
 
@@ -20,7 +22,7 @@ repositories {
     mavenCentral()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     // Compile for Java 8 (default is Java 6)
     kotlinOptions.jvmTarget = "1.8"
 }
