@@ -7,7 +7,8 @@ import org.tree_ware.model.core.MutableRootModel
 class RootModelStateMachine<Aux>(
     private val root: MutableRootModel<Aux>,
     private val stack: DecodingStack,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
+    private val isWildcardModel: Boolean
 ) : AbstractDecodingStateMachine(true) {
     private val auxStateMachine = auxStateMachineFactory()
 
@@ -38,7 +39,7 @@ class RootModelStateMachine<Aux>(
 
         if (keyName == root.schema.name) {
             val entityStateMachine =
-                BaseEntityStateMachine(false, { root }, stack, auxStateMachineFactory)
+                BaseEntityStateMachine(false, { root }, stack, auxStateMachineFactory, isWildcardModel)
             if (auxStateMachine == null) stack.addFirst(entityStateMachine)
             else stack.addFirst(ValueAndAuxStateMachine(false, entityStateMachine, auxStateMachineFactory, stack))
         } else {

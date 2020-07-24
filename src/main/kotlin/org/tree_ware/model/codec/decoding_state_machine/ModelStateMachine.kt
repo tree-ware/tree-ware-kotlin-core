@@ -8,7 +8,8 @@ class ModelStateMachine<Aux>(
     private val schema: Schema,
     private val expectedModelType: String,
     private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
-    private val stack: DecodingStack
+    private val stack: DecodingStack,
+    private val isWildcardModel: Boolean
 ) : AbstractDecodingStateMachine(true) {
     var model: MutableModel<Aux>? = null
         private set
@@ -51,6 +52,6 @@ class ModelStateMachine<Aux>(
     ) {
         newModel.type = modelType
         val root = newModel.getOrNewRoot()
-        stack.addFirst(RootModelStateMachine(root, stack, auxStateMachineFactory))
+        stack.addFirst(RootModelStateMachine(root, stack, auxStateMachineFactory, isWildcardModel))
     }
 }

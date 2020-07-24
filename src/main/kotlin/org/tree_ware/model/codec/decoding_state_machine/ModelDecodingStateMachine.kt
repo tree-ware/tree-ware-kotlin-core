@@ -9,13 +9,23 @@ import java.util.*
 
 typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 
+/**
+ * Main state-machine for decoding a model.
+ *
+ * @param isWildcardModel determines if the first element in a composition-list should be reused
+ * instead of creating new elements in the composition-list. It is useful when decoding multiple
+ * sources onto the same model instance. Use only when you are sure that there needs to be no
+ * more than one element in *every* composition-list.
+ */
 class ModelDecodingStateMachine<Aux>(
     schema: Schema,
     expectedModelType: String,
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
+    isWildcardModel: Boolean = false
 ) : DecodingStateMachine {
     private val stack = DecodingStack()
-    private val modelStateMachine = ModelStateMachine(schema, expectedModelType, auxStateMachineFactory, stack)
+    private val modelStateMachine =
+        ModelStateMachine(schema, expectedModelType, auxStateMachineFactory, stack, isWildcardModel)
     private val logger = LogManager.getLogger()
 
     init {

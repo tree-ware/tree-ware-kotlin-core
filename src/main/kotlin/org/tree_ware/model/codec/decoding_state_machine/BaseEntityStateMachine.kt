@@ -13,7 +13,8 @@ class BaseEntityStateMachine<Aux>(
     private val isListElement: Boolean,
     private val baseFactory: () -> MutableBaseEntityModel<Aux>,
     private val stack: DecodingStack,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
+    private val isWildcardModel: Boolean
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private val auxStateMachine = auxStateMachineFactory()
 
@@ -133,12 +134,22 @@ class BaseEntityStateMachine<Aux>(
             val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
             val compositionListFieldModel = listFieldModel as? MutableCompositionListFieldModel ?: return false
             val listElementStateMachine =
-                BaseEntityStateMachine(true, { compositionListFieldModel.addEntity() }, stack, auxStateMachineFactory)
+                BaseEntityStateMachine(
+                    true,
+                    {
+                        val first = compositionListFieldModel.first()
+                        if (isWildcardModel && first != null) first else compositionListFieldModel.addEntity()
+                    },
+                    stack,
+                    auxStateMachineFactory,
+                    isWildcardModel
+                )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
         } else {
             val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
             val entity = fieldModel.value
-            val elementStateMachine = BaseEntityStateMachine(false, { entity }, stack, auxStateMachineFactory)
+            val elementStateMachine =
+                BaseEntityStateMachine(false, { entity }, stack, auxStateMachineFactory, isWildcardModel)
             addElementStateMachineToStack(elementStateMachine)
         }
         return true

@@ -824,6 +824,8 @@ class MutableCompositionListFieldModel<Aux>(
     override var entities: MutableList<MutableEntityModel<Aux>> = mutableListOf()
         internal set
 
+    fun first(): MutableEntityModel<Aux>? = entities.firstOrNull()
+
     fun addEntity(): MutableEntityModel<Aux> {
         val entity = MutableEntityModel(schema.resolvedEntity, this)
         entities.add(entity)
