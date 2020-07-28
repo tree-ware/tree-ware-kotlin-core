@@ -10,7 +10,7 @@ import org.tree_ware.schema.visitor.*
  * 1. full-names are set for named elements
  * 2. Non-primitive field types are resolved
  */
-fun validate(schema: MutableSchema): List<String> {
+fun validate(schema: MutableSchema, logFullNames: Boolean = false): List<String> {
     val logger = LogManager.getLogger()
 
     // Set full-names for named elements in the packages
@@ -30,7 +30,7 @@ fun validate(schema: MutableSchema): List<String> {
     schema.mutableTraverse(setFullNameVisitor)
     schema.mutableTraverse(validationVisitor)
     schema.mutableTraverse(collectNonPrimitiveFieldTypesVisitor)
-    setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
+    if (logFullNames) setFullNameVisitor.fullNames.forEach { logger.debug("element fullName: $it") }
 
     // Resolve non-primitive field types, except associations.
     // Associations can be resolved only after compositions are resolved.
