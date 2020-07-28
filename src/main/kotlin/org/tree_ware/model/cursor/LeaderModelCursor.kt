@@ -12,29 +12,27 @@ class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
 
     val element: ElementModel<Aux>? get() = if (stateStack.isEmpty()) null else stateStack.peekFirst().element
 
-    fun next(previousAction: SchemaTraversalAction): LeaderModelCursorMove<Aux>? {
-        if (previousAction == SchemaTraversalAction.ABORT_SUB_TREE) {
+    fun next(previousAction: SchemaTraversalAction): LeaderModelCursorMove<Aux>? = when {
+        previousAction == SchemaTraversalAction.ABORT_SUB_TREE -> {
             // Remove current state from the stack to abort its sub-tree.
-            stateStack.pollFirst()
-            // Proceed to the next node in the tree (next() must go to the next node).
+            val currentState = stateStack.pollFirst()
+            currentState.leaveCursorMove
         }
-        return when {
-            isAtStart -> {
-                isAtStart = false
-                val initialState =
-                    initial.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null initial state")
-                stateStack.addFirst(initialState)
-                initialState.visitCursorMove
-            }
-            stateStack.isNotEmpty() -> {
-                val state = stateStack.peekFirst()
-                state.next()
-            }
-            else -> {
-                // The stack is empty and we are not at the start. This means the model has been traversed.
-                // So there are no more moves.
-                null
-            }
+        isAtStart -> {
+            isAtStart = false
+            val initialState =
+                initial.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null initial state")
+            stateStack.addFirst(initialState)
+            initialState.visitCursorMove
+        }
+        stateStack.isNotEmpty() -> {
+            val state = stateStack.peekFirst()
+            state.next()
+        }
+        else -> {
+            // The stack is empty and we are not at the start. This means the model has been traversed.
+            // So there are no more moves.
+            null
         }
     }
 }
@@ -49,7 +47,7 @@ private class IteratorAdapter<T, R>(private val adaptee: Iterator<T>, private va
 
 private abstract class LeaderState<Aux>(val element: ElementModel<Aux>, val stateStack: LeaderStateStack<Aux>) {
     abstract val visitCursorMove: LeaderModelCursorMove<Aux>
-    protected abstract val leaveCursorMove: LeaderModelCursorMove<Aux>
+    internal abstract val leaveCursorMove: LeaderModelCursorMove<Aux>
     protected abstract val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     fun next(): LeaderModelCursorMove<Aux>? = if (actionIterator.hasNext()) {

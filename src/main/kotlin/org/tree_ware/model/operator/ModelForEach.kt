@@ -11,9 +11,12 @@ fun <Aux> forEach(leader: ElementModel<Aux>, visitor: ModelVisitor<Aux, SchemaTr
     var action = SchemaTraversalAction.CONTINUE
     while (action != SchemaTraversalAction.ABORT_TREE) {
         val move = leaderCursor.next(action) ?: break
-        when (move.direction) {
-            CursorMoveDirection.Visit -> action = move.element.visitSelf(visitor)
-            CursorMoveDirection.Leave -> move.element.leaveSelf(visitor)
+        action = when (move.direction) {
+            CursorMoveDirection.Visit -> move.element.visitSelf(visitor)
+            CursorMoveDirection.Leave -> {
+                move.element.leaveSelf(visitor)
+                SchemaTraversalAction.CONTINUE
+            }
         }
     }
     return action
