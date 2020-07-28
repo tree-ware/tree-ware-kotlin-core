@@ -929,6 +929,7 @@ class MutableCompositionFieldSchema(
 
 class MutableEntityPathSchema(override var entityPath: List<String>) : EntityPathSchema {
     override val pathEntities: MutableList<EntitySchema> = mutableListOf()
+    override val keyPath: MutableList<String> = mutableListOf()
     override val keyEntities: MutableList<EntitySchema> = mutableListOf()
 
     override var resolvedEntity: EntitySchema

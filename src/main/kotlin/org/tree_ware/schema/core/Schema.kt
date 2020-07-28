@@ -160,6 +160,7 @@ interface EntityPathSchema {
     val entityPath: List<String>
 
     val pathEntities: List<EntitySchema>
+    val keyPath: List<String>
     val keyEntities: List<EntitySchema>
     val resolvedEntity: EntitySchema
 }

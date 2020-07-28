@@ -24,7 +24,10 @@ fun validate(schema: MutableEntityPathSchema, root: RootSchema, fieldFullName: S
         // The lack of a resolved-entity is reported by a different validation visitor.
         entity = nextEntityResult.entity ?: return errors
         schema.pathEntities.add(entity)
-        if (entity.fields.any { it.isKey }) schema.keyEntities.add(entity)
+        if (entity.fields.any { it.isKey }) {
+            schema.keyPath.add(pathElement)
+            schema.keyEntities.add(entity)
+        }
     }
     schema.resolvedEntity = entity
     return errors
