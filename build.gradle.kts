@@ -36,10 +36,10 @@ dependencies {
 
     implementation("org.apache.logging.log4j:log4j-api:$log4j2Version")
     implementation("org.apache.logging.log4j:log4j-core:$log4j2Version")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
 
     testFixturesImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
 
+    testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
 }
