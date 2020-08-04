@@ -5,13 +5,14 @@ import org.tree_ware.model.codec.aux_encoder.ErrorAuxEncoder
 import org.tree_ware.model.codec.decoding_state_machine.AuxDecodingStateMachine
 import org.tree_ware.model.codec.decoding_state_machine.DecodingStack
 import org.tree_ware.model.codec.decoding_state_machine.ErrorAuxStateMachine
+import org.tree_ware.model.getFileReader
 import org.tree_ware.model.getModel
 import org.tree_ware.schema.core.newAddressBookSchema
 import org.tree_ware.schema.core.validate
-import java.io.InputStreamReader
 import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class JsonCodecTests {
@@ -69,7 +70,8 @@ class JsonCodecTests {
         }
         assertTrue(isEncoded)
 
-        val fileReader = InputStreamReader(ClassLoader.getSystemResourceAsStream(inputFilePath))
+        val fileReader = getFileReader(inputFilePath)
+        assertNotNull(fileReader)
         val expected = fileReader.readText()
         fileReader.close()
         val actual = jsonWriter.toString()

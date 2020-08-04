@@ -3,6 +3,7 @@ package org.tree_ware.model.cursor
 import org.tree_ware.common.codec.JsonWireFormatEncoder
 import org.tree_ware.model.codec.ModelEncodingVisitor
 import org.tree_ware.model.core.ElementModel
+import org.tree_ware.model.getFileReader
 import org.tree_ware.model.getModel
 import org.tree_ware.schema.core.NamedElementSchema
 import org.tree_ware.schema.core.SchemaTraversalAction
@@ -111,7 +112,8 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
         }
     }
 
-    val fileReader = InputStreamReader(ClassLoader.getSystemResourceAsStream(leaderFilePath))
+    val fileReader = getFileReader(leaderFilePath)
+    assertNotNull(fileReader)
     val expected = fileReader.readText()
     fileReader.close()
     val actual = jsonWriter.toString()
