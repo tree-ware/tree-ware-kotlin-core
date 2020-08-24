@@ -40,14 +40,19 @@ class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
 private typealias LeaderStateStack<Aux> = ArrayDeque<LeaderState<Aux>>
 private typealias LeaderStateAction<Aux> = () -> LeaderModelCursorMove<Aux>?
 
-private class IteratorAdapter<T, R>(private val adaptee: Iterator<T>, private val transform: (T) -> R) : Iterator<R> {
+private class IteratorAdapter<T, R>(
+    private val adapteeFactory: () -> Iterator<T>,
+    private val transform: (T) -> R
+) : Iterator<R> {
+    private var _adaptee: Iterator<T>? = null
+    private val adaptee: Iterator<T> get() = _adaptee ?: adapteeFactory().also { _adaptee = it }
     override fun hasNext(): Boolean = adaptee.hasNext()
     override fun next(): R = transform(adaptee.next())
 }
 
 private abstract class LeaderState<Aux>(val element: ElementModel<Aux>, val stateStack: LeaderStateStack<Aux>) {
     abstract val visitCursorMove: LeaderModelCursorMove<Aux>
-    internal abstract val leaveCursorMove: LeaderModelCursorMove<Aux>
+    abstract val leaveCursorMove: LeaderModelCursorMove<Aux>
     protected abstract val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     fun next(): LeaderModelCursorMove<Aux>? = if (actionIterator.hasNext()) {
@@ -87,7 +92,7 @@ private abstract class BaseEntityLeaderState<Aux>(
     final override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter(baseEntity.fields.iterator()) { field ->
+        actionIterator = IteratorAdapter({ baseEntity.fields.iterator() }) { field ->
             {
                 val fieldState = field.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null field state")
                 stateStack.addFirst(fieldState)
@@ -173,7 +178,7 @@ private class PrimitiveListFieldLeaderState<Aux>(
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter(field.primitives.iterator()) { primitive ->
+        actionIterator = IteratorAdapter({ field.primitives.iterator() }) { primitive ->
             {
                 val primitiveState =
                     primitive.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null primitive state")
@@ -192,7 +197,7 @@ private class AliasListFieldLeaderState<Aux>(
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter(field.aliases.iterator()) { alias ->
+        actionIterator = IteratorAdapter({ field.aliases.iterator() }) { alias ->
             {
                 val aliasState = alias.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null alias state")
                 stateStack.addFirst(aliasState)
@@ -210,7 +215,7 @@ private class EnumerationListFieldLeaderState<Aux>(
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter(field.enumerations.iterator()) { enumeration ->
+        actionIterator = IteratorAdapter({ field.enumerations.iterator() }) { enumeration ->
             {
                 val enumerationState =
                     enumeration.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null enumeration state")
@@ -229,7 +234,7 @@ private class AssociationListFieldLeaderState<Aux>(
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter(field.associations.iterator()) { association ->
+        actionIterator = IteratorAdapter({ field.associations.iterator() }) { association ->
             {
                 val associationState =
                     association.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null association state")
@@ -248,7 +253,7 @@ private class CompositionListFieldLeaderState<Aux>(
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter(field.entities.iterator()) { entity ->
+        actionIterator = IteratorAdapter({ field.entities.iterator() }) { entity ->
             {
                 val entityState =
                     entity.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null entity state")
@@ -266,8 +271,8 @@ private class EntityKeysLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : BaseEntityLeaderState<Aux>(entityKeys, stack, stateFactoryVisitor) {
-    override val visitCursorMove = VisitLeaderEntityKeysModel<Aux>(entityKeys)
-    override val leaveCursorMove = LeaveLeaderEntityKeysModel<Aux>(entityKeys)
+    override val visitCursorMove = VisitLeaderEntityKeysModel(entityKeys)
+    override val leaveCursorMove = LeaveLeaderEntityKeysModel(entityKeys)
 }
 
 // State factory visitor

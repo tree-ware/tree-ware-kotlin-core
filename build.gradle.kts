@@ -10,6 +10,8 @@ val jsonVersion = "1.1.4"
 val log4j2Version = "2.12.1"
 
 val junitVersion = "5.4.2"
+val kotlinCoroutinesVersion = "1.2.2"
+val mockkVersion = "1.10.0"
 
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.3.72")
@@ -41,7 +43,10 @@ dependencies {
 
     testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 tasks.withType<Test> {

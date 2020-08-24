@@ -1,18 +1,15 @@
 package org.tree_ware.model.codec
 
+import org.tree_ware.model.assertMatchesJson
 import org.tree_ware.model.codec.aux_encoder.AuxEncoder
 import org.tree_ware.model.codec.aux_encoder.ErrorAuxEncoder
 import org.tree_ware.model.codec.decoding_state_machine.AuxDecodingStateMachine
 import org.tree_ware.model.codec.decoding_state_machine.DecodingStack
-import org.tree_ware.model.codec.decoding_state_machine.ErrorAuxStateMachine
-import org.tree_ware.model.getFileReader
+import org.tree_ware.model.codec.decoding_state_machine.StringAuxStateMachine
 import org.tree_ware.model.getModel
 import org.tree_ware.schema.core.newAddressBookSchema
 import org.tree_ware.schema.core.validate
-import java.io.StringWriter
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class JsonCodecTests {
@@ -27,7 +24,7 @@ class JsonCodecTests {
             "model/address_book_error_all_model.json",
             ErrorAuxEncoder(),
             "error"
-        ) { ErrorAuxStateMachine(it) }
+        ) { StringAuxStateMachine(it) }
     }
 
     @Test
@@ -55,26 +52,7 @@ class JsonCodecTests {
         val errors = validate(schema)
         assertTrue(errors.isEmpty())
 
-        val model =
-            getModel(schema, inputFilePath, expectedModelType, auxStateMachineFactory)
-
-        val jsonWriter = StringWriter()
-        val isEncoded = try {
-            encodeJson(model, auxEncoder, jsonWriter, true)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            println("Encoded so far:")
-            println(jsonWriter.toString())
-            println("End of encoded")
-            false
-        }
-        assertTrue(isEncoded)
-
-        val fileReader = getFileReader(inputFilePath)
-        assertNotNull(fileReader)
-        val expected = fileReader.readText()
-        fileReader.close()
-        val actual = jsonWriter.toString()
-        assertEquals(expected, actual)
+        val model = getModel(schema, inputFilePath, expectedModelType, auxStateMachineFactory)
+        assertMatchesJson(model, auxEncoder, inputFilePath)
     }
 }

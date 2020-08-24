@@ -1,0 +1,33 @@
+{
+  "data": {
+    "address_book": {
+      "name": "Super Heroes",
+      "last_updated": "1587147731",
+      "settings": {
+        "last_name_first": true,
+        "card_colors": [
+          "orange",
+          "green",
+          "blue"
+        ]
+      },
+      "person": [
+        {
+          "first_name": "Clark",
+          "email": [
+            "clark.kent@dailyplanet.com",
+            "superman@dc.com"
+          ],
+          "relation": []
+        },
+        {
+          "first_name": "Lois",
+          "email": [
+            "lois.lane@dailyplanet.com"
+          ],
+          "relation": []
+        }
+      ]
+    }
+  }
+}

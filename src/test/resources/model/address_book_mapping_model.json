@@ -1,0 +1,34 @@
+{
+  "mapping": {
+    "address_book": {
+      "mapping": "root_mapping",
+      "value": {
+        "person": {
+          "mapping": "person_mapping",
+          "value": [
+            {
+              "value": {
+                "relation": {
+                  "mapping": "relation_mapping",
+                  "value": [
+                    {
+                      "value": {}
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "city_info": {
+          "mapping": "city_info_mapping",
+          "value": [
+            {
+              "value": {}
+            }
+          ]
+        }
+      }
+    }
+  }
+}
