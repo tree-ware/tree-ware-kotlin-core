@@ -18,6 +18,13 @@ import kotlin.test.assertTrue
 fun getFileReader(filePath: String): Reader? =
     ClassLoader.getSystemResourceAsStream(filePath)?.let { InputStreamReader(it) }
 
+fun readFile(filePath: String): String? {
+    val reader = getFileReader(filePath)
+    val text = reader?.readText()
+    reader?.close()
+    return text
+}
+
 fun <Aux> getModel(
     schema: Schema,
     inputFilePath: String,
@@ -47,10 +54,8 @@ fun <Aux> assertMatchesJson(element: ElementModel<Aux>, auxEncoder: AuxEncoder?,
     }
     assertTrue(isEncoded)
 
-    val expectedFileReader = getFileReader(jsonFilePath)
-    assertNotNull(expectedFileReader)
-    val expected = expectedFileReader.readText()
-    expectedFileReader.close()
+    val expected = readFile(jsonFilePath)
+    assertNotNull(expected)
 
     val actual = jsonWriter.toString()
     assertEquals(expected, actual)
