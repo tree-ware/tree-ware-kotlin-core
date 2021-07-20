@@ -20,10 +20,6 @@ class SchemaDocs {
         fileWriter.flush()
         assertTrue(encoded)
 
-        try {
-            Runtime.getRuntime().exec("dot -Tpng ${fileName}_schema.dot -o ${fileName}_schema.png").waitFor()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        Runtime.getRuntime().exec("dot -Tpng ${fileName}_schema.dot -o ${fileName}_schema.png").waitFor()
     }
 }
