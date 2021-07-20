@@ -1,5 +1,6 @@
 package org.tree_ware.model.core
 
+import org.tree_ware.common.traversal.TraversalAction
 import org.tree_ware.schema.core.*
 
 interface VisitableModel<Aux> {
@@ -7,13 +8,13 @@ interface VisitableModel<Aux> {
      * Visits the model element and its superclasses.
      * The superclasses are visited first and the model element itself is visited last.
      */
-    fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
+    fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction
 
     /**
      * Leaves the model element and its superclasses.
      * The model element itself is left first and the superclasses are left last.
      */
-    fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>)
+    fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>)
 
     /**
      * Visits the model element without traversing its sub-elements.

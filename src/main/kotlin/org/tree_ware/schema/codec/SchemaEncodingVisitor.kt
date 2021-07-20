@@ -1,19 +1,20 @@
 package org.tree_ware.schema.codec
 
 import org.tree_ware.common.codec.WireFormatEncoder
+import org.tree_ware.common.traversal.TraversalAction
 import org.tree_ware.schema.core.*
 import org.tree_ware.schema.visitor.AbstractSchemaVisitor
 
 /** A visitor for encoding a schema. */
 class SchemaEncodingVisitor(
     private val wireFormatEncoder: WireFormatEncoder
-) : AbstractSchemaVisitor<SchemaTraversalAction>(SchemaTraversalAction.CONTINUE) {
+) : AbstractSchemaVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     // SchemaVisitor methods
-    override fun visit(namedElement: NamedElementSchema): SchemaTraversalAction {
+    override fun visit(namedElement: NamedElementSchema): TraversalAction {
         wireFormatEncoder.encodeObjectStart(namedElement.id)
         wireFormatEncoder.encodeStringField("name", namedElement.name)
         namedElement.info?.also { wireFormatEncoder.encodeStringField("info", it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     override fun leave(namedElement: NamedElementSchema) {
@@ -22,48 +23,48 @@ class SchemaEncodingVisitor(
 
     // SchemaVisitor methods for top level
 
-    override fun visit(schema: Schema): SchemaTraversalAction {
+    override fun visit(schema: Schema): TraversalAction {
         wireFormatEncoder.encodeObjectStart(schema.id)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     override fun leave(schema: Schema) {
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(root: RootSchema): SchemaTraversalAction {
+    override fun visit(root: RootSchema): TraversalAction {
         wireFormatEncoder.encodeObjectStart("type")
         wireFormatEncoder.encodeStringField("package", root.packageName)
         wireFormatEncoder.encodeStringField("entity", root.entityName)
         wireFormatEncoder.encodeObjectEnd()
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     // SchemaVisitor methods for fields
 
-    override fun visit(field: FieldSchema): SchemaTraversalAction {
+    override fun visit(field: FieldSchema): TraversalAction {
         if (field.isKey) wireFormatEncoder.encodeBooleanField("is_key", field.isKey)
         encodeMultiplicity(field.multiplicity)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(aliasField: AliasFieldSchema): SchemaTraversalAction {
+    override fun visit(aliasField: AliasFieldSchema): TraversalAction {
         wireFormatEncoder.encodeObjectStart("type")
         wireFormatEncoder.encodeStringField("package", aliasField.packageName)
         wireFormatEncoder.encodeStringField("alias", aliasField.aliasName)
         wireFormatEncoder.encodeObjectEnd()
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(enumerationField: EnumerationFieldSchema): SchemaTraversalAction {
+    override fun visit(enumerationField: EnumerationFieldSchema): TraversalAction {
         wireFormatEncoder.encodeObjectStart("type")
         wireFormatEncoder.encodeStringField("package", enumerationField.packageName)
         wireFormatEncoder.encodeStringField("enumeration", enumerationField.enumerationName)
         wireFormatEncoder.encodeObjectEnd()
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(associationField: AssociationFieldSchema): SchemaTraversalAction {
+    override fun visit(associationField: AssociationFieldSchema): TraversalAction {
         wireFormatEncoder.encodeObjectStart("type")
         wireFormatEncoder.encodeListStart("entity_path")
         associationField.entityPath.forEach {
@@ -71,91 +72,91 @@ class SchemaEncodingVisitor(
         }
         wireFormatEncoder.encodeListEnd()
         wireFormatEncoder.encodeObjectEnd()
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(compositionField: CompositionFieldSchema): SchemaTraversalAction {
+    override fun visit(compositionField: CompositionFieldSchema): TraversalAction {
         wireFormatEncoder.encodeObjectStart("type")
         wireFormatEncoder.encodeStringField("package", compositionField.packageName)
         wireFormatEncoder.encodeStringField("entity", compositionField.entityName)
         wireFormatEncoder.encodeObjectEnd()
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     // SchemaVisitor methods for primitives
 
-    override fun visit(boolean: BooleanSchema): SchemaTraversalAction {
+    override fun visit(boolean: BooleanSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "boolean")
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(byte: ByteSchema): SchemaTraversalAction {
+    override fun visit(byte: ByteSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "byte")
         byte.constraints?.let { encodeNumericConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(short: ShortSchema): SchemaTraversalAction {
+    override fun visit(short: ShortSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "short")
         short.constraints?.let { encodeNumericConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(int: IntSchema): SchemaTraversalAction {
+    override fun visit(int: IntSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "int")
         int.constraints?.let { encodeNumericConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(long: LongSchema): SchemaTraversalAction {
+    override fun visit(long: LongSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "long")
         long.constraints?.let { encodeNumericConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(float: FloatSchema): SchemaTraversalAction {
+    override fun visit(float: FloatSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "float")
         float.constraints?.let { encodeNumericConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(double: DoubleSchema): SchemaTraversalAction {
+    override fun visit(double: DoubleSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "double")
         double.constraints?.let { encodeNumericConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(string: StringSchema): SchemaTraversalAction {
+    override fun visit(string: StringSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "string")
         string.constraints?.let { encodeStringConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(password1Way: Password1WaySchema): SchemaTraversalAction {
+    override fun visit(password1Way: Password1WaySchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "password_1_way")
         password1Way.constraints?.let { encodeStringConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(password2Way: Password2WaySchema): SchemaTraversalAction {
+    override fun visit(password2Way: Password2WaySchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "password_2_way")
         password2Way.constraints?.let { encodeStringConstraints(it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(uuid: UuidSchema): SchemaTraversalAction {
+    override fun visit(uuid: UuidSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "uuid")
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(blob: BlobSchema): SchemaTraversalAction {
+    override fun visit(blob: BlobSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "blob")
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun visit(timestamp: TimestampSchema): SchemaTraversalAction {
+    override fun visit(timestamp: TimestampSchema): TraversalAction {
         wireFormatEncoder.encodeStringField("type", "timestamp")
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     // Schema visitor methods for meta

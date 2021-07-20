@@ -1,5 +1,6 @@
 package org.tree_ware.schema.visitor
 
+import org.tree_ware.common.traversal.TraversalAction
 import org.tree_ware.schema.core.*
 
 private val PACKAGE_NAME_REGEX = Regex("^[a-z0-9_.]*$")
@@ -19,46 +20,46 @@ class SetFullNameVisitor : AbstractMutableSchemaValidatingVisitor() {
 
     // MutableSchemaVisitor methods
 
-    override fun mutableVisit(namedElement: MutableNamedElementSchema): SchemaTraversalAction {
+    override fun mutableVisit(namedElement: MutableNamedElementSchema): TraversalAction {
         nameParts.add(namedElement.name)
         val fullName = getFullName()
         namedElement.fullName = fullName
         if (_fullNames.contains(fullName)) _errors.add("Duplicate name: $fullName")
         else _fullNames.add(fullName)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     override fun mutableLeave(namedElement: MutableNamedElementSchema) {
         nameParts.removeAt(nameParts.lastIndex)
     }
 
-    override fun mutableVisit(pkg: MutablePackageSchema): SchemaTraversalAction {
+    override fun mutableVisit(pkg: MutablePackageSchema): TraversalAction {
         validateName(pkg, PACKAGE_NAME_REGEX)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(root: MutableRootSchema): SchemaTraversalAction {
+    override fun mutableVisit(root: MutableRootSchema): TraversalAction {
         validateName(root, ELEMENT_NAME_REGEX)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(alias: MutableAliasSchema): SchemaTraversalAction {
+    override fun mutableVisit(alias: MutableAliasSchema): TraversalAction {
         validateName(alias, ELEMENT_NAME_REGEX)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(enumeration: MutableEnumerationSchema): SchemaTraversalAction {
+    override fun mutableVisit(enumeration: MutableEnumerationSchema): TraversalAction {
         validateName(enumeration, ELEMENT_NAME_REGEX)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(entity: MutableEntitySchema): SchemaTraversalAction {
+    override fun mutableVisit(entity: MutableEntitySchema): TraversalAction {
         validateName(entity, ELEMENT_NAME_REGEX)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(field: MutableFieldSchema): SchemaTraversalAction {
+    override fun mutableVisit(field: MutableFieldSchema): TraversalAction {
         validateName(field, ELEMENT_NAME_REGEX)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 }

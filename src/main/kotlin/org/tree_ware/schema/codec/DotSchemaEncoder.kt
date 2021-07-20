@@ -1,7 +1,7 @@
 package org.tree_ware.schema.codec
 
 import org.tree_ware.schema.core.ElementSchema
-import org.tree_ware.schema.core.SchemaTraversalAction
+import org.tree_ware.common.traversal.TraversalAction
 import java.io.StringWriter
 import java.io.Writer
 
@@ -20,5 +20,5 @@ fun encodeDot(element: ElementSchema, writer: Writer): Boolean {
     writer.write(linksWriter.toString())
     writer.write("}")
 
-    return traversalAction != SchemaTraversalAction.ABORT_TREE
+    return traversalAction != TraversalAction.ABORT_TREE
 }

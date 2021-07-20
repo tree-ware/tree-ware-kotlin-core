@@ -6,10 +6,9 @@ import org.tree_ware.model.core.ElementModel
 import org.tree_ware.model.getFileReader
 import org.tree_ware.model.getModel
 import org.tree_ware.schema.core.NamedElementSchema
-import org.tree_ware.schema.core.SchemaTraversalAction
+import org.tree_ware.common.traversal.TraversalAction
 import org.tree_ware.schema.core.newAddressBookSchema
 import org.tree_ware.schema.core.validate
-import java.io.InputStreamReader
 import java.io.StringWriter
 import kotlin.test.*
 
@@ -43,7 +42,7 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
 
-    val action = SchemaTraversalAction.CONTINUE
+    val action = TraversalAction.CONTINUE
     while (true) {
         val leaderMove = leaderCursor.next(action) ?: break
         assertNotSame(leaderCursor.element, followerCursor.element)
@@ -68,7 +67,7 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
 
-    val action = SchemaTraversalAction.CONTINUE
+    val action = TraversalAction.CONTINUE
     while (true) {
         val leaderMove = leaderCursor.next(action) ?: break
         // TODO(deepak-nulu): once getPath() returns model-paths, verify that
@@ -100,8 +99,8 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     val wireFormatEncoder = JsonWireFormatEncoder(jsonWriter, true)
     val encodingVisitor = ModelEncodingVisitor<Unit>(wireFormatEncoder, null)
 
-    var action = SchemaTraversalAction.CONTINUE
-    while (action != SchemaTraversalAction.ABORT_TREE) {
+    var action = TraversalAction.CONTINUE
+    while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
         val followerMove = followerCursor.follow(leaderMove)
         assertNotNull(followerMove)

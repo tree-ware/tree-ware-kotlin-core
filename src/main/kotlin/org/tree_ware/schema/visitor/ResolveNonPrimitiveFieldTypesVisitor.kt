@@ -1,5 +1,6 @@
 package org.tree_ware.schema.visitor
 
+import org.tree_ware.common.traversal.TraversalAction
 import org.tree_ware.schema.core.*
 
 /**
@@ -11,7 +12,7 @@ class ResolveNonPrimitiveFieldTypesVisitor(
     private val enumerations: Map<String, MutableEnumerationSchema>,
     private val entities: Map<String, MutableEntitySchema>
 ) : AbstractMutableSchemaValidatingVisitor() {
-    override fun mutableVisit(root: MutableRootSchema): SchemaTraversalAction {
+    override fun mutableVisit(root: MutableRootSchema): TraversalAction {
         // Set resolvedEntity
         val targetFullName = "/${root.packageName}/${root.entityName}"
         val entity = entities[targetFullName]
@@ -19,26 +20,26 @@ class ResolveNonPrimitiveFieldTypesVisitor(
         else {
             root.resolvedEntity = entity
         }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(aliasField: MutableAliasFieldSchema): SchemaTraversalAction {
+    override fun mutableVisit(aliasField: MutableAliasFieldSchema): TraversalAction {
         val aliasFullName = "/${aliasField.packageName}/${aliasField.aliasName}"
         val alias = aliases[aliasFullName]
         if (alias == null) _errors.add("Unknown field type: ${aliasField.fullName}")
         else aliasField.resolvedAlias = alias
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(enumerationField: MutableEnumerationFieldSchema): SchemaTraversalAction {
+    override fun mutableVisit(enumerationField: MutableEnumerationFieldSchema): TraversalAction {
         val enumerationFullName = "/${enumerationField.packageName}/${enumerationField.enumerationName}"
         val enumeration = enumerations[enumerationFullName]
         if (enumeration == null) _errors.add("Unknown field type: ${enumerationField.fullName}")
         else enumerationField.resolvedEnumeration = enumeration
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
-    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): SchemaTraversalAction {
+    override fun mutableVisit(compositionField: MutableCompositionFieldSchema): TraversalAction {
         // Set resolvedEntity
         val targetFullName = "/${compositionField.packageName}/${compositionField.entityName}"
         val entity = entities[targetFullName]
@@ -52,7 +53,7 @@ class ResolveNonPrimitiveFieldTypesVisitor(
                 "Target of composition list does not have keys: ${compositionField.fullName}"
             )
         }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 }
 
