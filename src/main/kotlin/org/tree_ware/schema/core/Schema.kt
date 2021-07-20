@@ -1,29 +1,18 @@
 package org.tree_ware.schema.core
 
-// TODO(deepak-nulu): drop "Schema" prefix from enum class name
-// TODO(deepak-nulu): move to a common package
-enum class SchemaTraversalAction {
-    /** Continue traversal. */
-    CONTINUE,
+import org.tree_ware.common.traversal.TraversalAction
 
-    /** Abort traversal of the current sub-tree of the schema. */
-    ABORT_SUB_TREE,
-
-    /** Abort traversal of the entire schema. */
-    ABORT_TREE
-}
-
-fun or(a: SchemaTraversalAction, b: SchemaTraversalAction): SchemaTraversalAction =
-    if (a == SchemaTraversalAction.ABORT_TREE || b == SchemaTraversalAction.ABORT_TREE) SchemaTraversalAction.ABORT_TREE
-    else if (a == SchemaTraversalAction.ABORT_SUB_TREE || b == SchemaTraversalAction.ABORT_SUB_TREE) SchemaTraversalAction.ABORT_SUB_TREE
-    else SchemaTraversalAction.CONTINUE
+fun or(a: TraversalAction, b: TraversalAction): TraversalAction =
+    if (a == TraversalAction.ABORT_TREE || b == TraversalAction.ABORT_TREE) TraversalAction.ABORT_TREE
+    else if (a == TraversalAction.ABORT_SUB_TREE || b == TraversalAction.ABORT_SUB_TREE) TraversalAction.ABORT_SUB_TREE
+    else TraversalAction.CONTINUE
 
 interface VisitableSchema {
     /**
      * Traverses the schema element and visits it and its sub-elements (Visitor Pattern).
      * Traversal continues or aborts (partially or fully) based on the value returned by the visitor.
      */
-    fun traverse(visitor: SchemaVisitor<SchemaTraversalAction>): SchemaTraversalAction
+    fun traverse(visitor: SchemaVisitor<TraversalAction>): TraversalAction
 
     /**
      * Visits the schema element without traversing its sub-elements.

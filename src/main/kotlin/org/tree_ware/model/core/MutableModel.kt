@@ -1,5 +1,6 @@
 package org.tree_ware.model.core
 
+import org.tree_ware.common.traversal.TraversalAction
 import org.tree_ware.schema.core.*
 import java.math.BigDecimal
 
@@ -8,13 +9,13 @@ interface VisitableMutableModel<Aux> {
      * Visits the model element and its superclasses.
      * The superclasses are visited first and the model element itself is visited last.
      */
-    fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction
+    fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction
 
     /**
      * Leaves the model element and its superclasses.
      * The model element itself is left first and the superclasses are left last.
      */
-    fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>)
+    fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>)
 
     /**
      * Visits the model element without traversing its sub-elements.
@@ -39,22 +40,22 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux>, VisitableMutableMod
     }
 
     // NOTE: call super.visitSelf() FIRST when overriding this method
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return visitor.visit(this)
     }
 
     // NOTE: call super.leaveSelf() LAST when overriding this method
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
     }
 
     // NOTE: call super.mutableVisitSelf() FIRST when overriding this method
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return visitor.mutableVisit(this)
     }
 
     // NOTE: call super.mutableLeaveSelf() LAST when overriding this method
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
     }
 }
@@ -89,20 +90,20 @@ class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -183,20 +184,20 @@ abstract class MutableBaseEntityModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -214,20 +215,20 @@ class MutableRootModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -245,20 +246,20 @@ class MutableEntityModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -273,20 +274,20 @@ abstract class MutableFieldModel<Aux> : MutableElementModel<Aux>(), FieldModel<A
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -310,20 +311,20 @@ abstract class MutableScalarFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -358,20 +359,20 @@ class MutablePrimitiveFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -411,20 +412,20 @@ class MutableAliasFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -457,20 +458,20 @@ class MutableEnumerationFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -505,20 +506,20 @@ class MutableAssociationFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -551,20 +552,20 @@ class MutableCompositionFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -587,20 +588,20 @@ abstract class MutableListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -619,20 +620,20 @@ abstract class MutableScalarListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -662,20 +663,20 @@ class MutablePrimitiveListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -705,20 +706,20 @@ class MutableAliasListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -748,20 +749,20 @@ class MutableEnumerationListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -798,20 +799,20 @@ class MutableAssociationListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -844,20 +845,20 @@ class MutableCompositionListFieldModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }
@@ -878,20 +879,20 @@ class MutableEntityKeysModel<Aux>(
         return visitor.mutableVisit(this)
     }
 
-    override fun visitSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.visitSelf(visitor), visitor.visit(this))
     }
 
-    override fun leaveSelf(visitor: ModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
         visitor.leave(this)
         super.leaveSelf(visitor)
     }
 
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>): SchemaTraversalAction {
+    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
         return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
     }
 
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, SchemaTraversalAction>) {
+    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
         visitor.mutableLeave(this)
         super.mutableLeaveSelf(visitor)
     }

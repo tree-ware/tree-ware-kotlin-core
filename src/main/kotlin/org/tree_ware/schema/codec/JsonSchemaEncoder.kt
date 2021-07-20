@@ -2,7 +2,7 @@ package org.tree_ware.schema.codec
 
 import org.tree_ware.common.codec.JsonWireFormatEncoder
 import org.tree_ware.schema.core.ElementSchema
-import org.tree_ware.schema.core.SchemaTraversalAction
+import org.tree_ware.common.traversal.TraversalAction
 import java.io.Writer
 
 fun encodeJson(
@@ -18,5 +18,5 @@ fun encodeJson(
     val traversalAction = element.traverse(encodingVisitor)
     wireFormatEncoder.encodeObjectEnd()
 
-    return traversalAction != SchemaTraversalAction.ABORT_TREE
+    return traversalAction != TraversalAction.ABORT_TREE
 }

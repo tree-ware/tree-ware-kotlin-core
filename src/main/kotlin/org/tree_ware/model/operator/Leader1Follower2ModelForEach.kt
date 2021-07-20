@@ -4,19 +4,19 @@ import org.tree_ware.model.core.*
 import org.tree_ware.model.cursor.CursorMoveDirection
 import org.tree_ware.model.cursor.FollowerModelCursor
 import org.tree_ware.model.cursor.LeaderModelCursor
-import org.tree_ware.schema.core.SchemaTraversalAction
+import org.tree_ware.common.traversal.TraversalAction
 
 suspend fun <LeaderAux, Follower1Aux, Follower2Aux> forEach(
     leader: ElementModel<LeaderAux>,
     follower1: ElementModel<Follower1Aux>,
     follower2: ElementModel<Follower2Aux>,
-    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, SchemaTraversalAction>
-): SchemaTraversalAction {
+    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, TraversalAction>
+): TraversalAction {
     val leaderCursor = LeaderModelCursor(leader)
     val follower1Cursor = FollowerModelCursor<LeaderAux, Follower1Aux>(follower1)
     val follower2Cursor = FollowerModelCursor<LeaderAux, Follower2Aux>(follower2)
-    var action = SchemaTraversalAction.CONTINUE
-    while (action != SchemaTraversalAction.ABORT_TREE) {
+    var action = TraversalAction.CONTINUE
+    while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
         val follower1Move = follower1Cursor.follow(leaderMove)
         val follower2Move = follower2Cursor.follow(leaderMove)
@@ -33,7 +33,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> forEach(
             )
             CursorMoveDirection.Leave -> {
                 dispatchLeave(leaderMove.element, follower1Move.element, follower2Move.element, visitor)
-                SchemaTraversalAction.CONTINUE
+                TraversalAction.CONTINUE
             }
         }
     }
@@ -47,8 +47,8 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     follower1: ElementModel<Follower1Aux>?,
     follower2: ElementModel<Follower2Aux>?,
-    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, SchemaTraversalAction>
-): SchemaTraversalAction = when (leader) {
+    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, TraversalAction>
+): TraversalAction = when (leader) {
     is Model<LeaderAux> -> {
         assert(follower1 is Model<Follower1Aux>?)
         assert(follower2 is Model<Follower2Aux>?)
@@ -56,7 +56,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is RootModel<LeaderAux> -> {
         assert(follower1 is RootModel<Follower1Aux>?)
@@ -65,7 +65,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is EntityModel<LeaderAux> -> {
         assert(follower1 is EntityModel<Follower1Aux>?)
@@ -74,7 +74,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is PrimitiveFieldModel<LeaderAux> -> {
         assert(follower1 is PrimitiveFieldModel<Follower1Aux>?)
@@ -83,7 +83,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is AliasFieldModel<LeaderAux> -> {
         assert(follower1 is AliasFieldModel<Follower1Aux>?)
@@ -92,7 +92,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is EnumerationFieldModel<LeaderAux> -> {
         assert(follower1 is EnumerationFieldModel<Follower1Aux>?)
@@ -101,7 +101,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is AssociationFieldModel<LeaderAux> -> {
         assert(follower1 is AssociationFieldModel<Follower1Aux>?)
@@ -110,7 +110,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is CompositionFieldModel<LeaderAux> -> {
         assert(follower1 is CompositionFieldModel<Follower1Aux>?)
@@ -119,7 +119,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is PrimitiveListFieldModel<LeaderAux> -> {
         assert(follower1 is PrimitiveListFieldModel<Follower1Aux>?)
@@ -128,7 +128,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is AliasListFieldModel<LeaderAux> -> {
         assert(follower1 is AliasListFieldModel<Follower1Aux>?)
@@ -137,7 +137,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is EnumerationListFieldModel<LeaderAux> -> {
         assert(follower1 is EnumerationListFieldModel<Follower1Aux>?)
@@ -146,7 +146,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is AssociationListFieldModel<LeaderAux> -> {
         assert(follower1 is AssociationListFieldModel<Follower1Aux>?)
@@ -155,7 +155,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     is CompositionListFieldModel<LeaderAux> -> {
         assert(follower1 is CompositionListFieldModel<Follower1Aux>?)
@@ -164,11 +164,11 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
             leader,
             follower1,
             follower2
-        ) else SchemaTraversalAction.ABORT_TREE
+        ) else TraversalAction.ABORT_TREE
     }
     else -> {
         assert(false) { "Unknown element type: $leader" }
-        SchemaTraversalAction.ABORT_TREE
+        TraversalAction.ABORT_TREE
     }
 }
 
@@ -176,7 +176,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchLeave(
     leader: ElementModel<LeaderAux>,
     follower1: ElementModel<Follower1Aux>?,
     follower2: ElementModel<Follower2Aux>?,
-    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, SchemaTraversalAction>
+    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, TraversalAction>
 ) {
     when (leader) {
         is Model<LeaderAux> -> {
@@ -298,7 +298,7 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchLeave(
         }
         else -> {
             assert(false) { "Unknown element type: $leader" }
-            SchemaTraversalAction.ABORT_TREE
+            TraversalAction.ABORT_TREE
         }
     }
 }

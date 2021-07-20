@@ -2,7 +2,7 @@ package org.tree_ware.model.cursor
 
 import org.tree_ware.model.core.*
 import org.tree_ware.model.visitor.AbstractModelVisitor
-import org.tree_ware.schema.core.SchemaTraversalAction
+import org.tree_ware.common.traversal.TraversalAction
 import java.util.*
 
 class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
@@ -12,8 +12,8 @@ class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
 
     val element: ElementModel<Aux>? get() = if (stateStack.isEmpty()) null else stateStack.peekFirst().element
 
-    fun next(previousAction: SchemaTraversalAction): LeaderModelCursorMove<Aux>? = when {
-        previousAction == SchemaTraversalAction.ABORT_SUB_TREE -> {
+    fun next(previousAction: TraversalAction): LeaderModelCursorMove<Aux>? = when {
+        previousAction == TraversalAction.ABORT_SUB_TREE -> {
             // Remove current state from the stack to abort its sub-tree.
             val currentState = stateStack.pollFirst()
             currentState.leaveCursorMove

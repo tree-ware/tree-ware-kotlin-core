@@ -2,7 +2,7 @@ package org.tree_ware.model.action
 
 import org.apache.logging.log4j.LogManager
 import org.tree_ware.model.core.*
-import org.tree_ware.schema.core.SchemaTraversalAction
+import org.tree_ware.common.traversal.TraversalAction
 
 // IMPLEMENTATION: ./Get.md
 
@@ -32,7 +32,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseModel: Model<Unit>,
         requestModel: Model<Unit>?,
         mappingModel: Model<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseModel: Model<Unit>,
@@ -45,12 +45,12 @@ class CompositionTableGetVisitor<MappingAux>(
         responseRoot: RootModel<Unit>,
         requestRoot: RootModel<Unit>?,
         mappingRoot: RootModel<MappingAux>?
-    ): SchemaTraversalAction {
-        if (requestRoot == null) return SchemaTraversalAction.ABORT_SUB_TREE
+    ): TraversalAction {
+        if (requestRoot == null) return TraversalAction.ABORT_SUB_TREE
 
         val mappingAux = mappingRoot?.aux
         assert(mappingAux != null)
-        if (mappingAux == null) return SchemaTraversalAction.ABORT_SUB_TREE
+        if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
         delegate.pushPathEntity(responseRoot, responseRoot.schema.resolvedEntity)
         val (compositionListFields, fields) = requestRoot.fields.partition { it is CompositionListFieldModel<*> }
@@ -58,7 +58,7 @@ class CompositionTableGetVisitor<MappingAux>(
         val fieldNames = fields.flatMap { it.dispatch(fieldNameVisitor) }
         delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux)
         cloneCompositionListFields(compositionListFields, mutableResponseRoot)
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     override suspend fun leave(
@@ -73,7 +73,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseEntity: EntityModel<Unit>,
         requestEntity: EntityModel<Unit>?,
         mappingEntity: EntityModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseEntity: EntityModel<Unit>,
@@ -86,7 +86,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: PrimitiveFieldModel<Unit>,
         requestField: PrimitiveFieldModel<Unit>?,
         mappingField: PrimitiveFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: PrimitiveFieldModel<Unit>,
@@ -99,7 +99,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: AliasFieldModel<Unit>,
         requestField: AliasFieldModel<Unit>?,
         mappingField: AliasFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: AliasFieldModel<Unit>,
@@ -112,7 +112,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: EnumerationFieldModel<Unit>,
         requestField: EnumerationFieldModel<Unit>?,
         mappingField: EnumerationFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: EnumerationFieldModel<Unit>,
@@ -125,7 +125,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: AssociationFieldModel<Unit>,
         requestField: AssociationFieldModel<Unit>?,
         mappingField: AssociationFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: AssociationFieldModel<Unit>,
@@ -138,7 +138,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: CompositionFieldModel<Unit>,
         requestField: CompositionFieldModel<Unit>?,
         mappingField: CompositionFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: CompositionFieldModel<Unit>,
@@ -151,7 +151,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: PrimitiveListFieldModel<Unit>,
         requestField: PrimitiveListFieldModel<Unit>?,
         mappingField: PrimitiveListFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: PrimitiveListFieldModel<Unit>,
@@ -164,7 +164,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: AliasListFieldModel<Unit>,
         requestField: AliasListFieldModel<Unit>?,
         mappingField: AliasListFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: AliasListFieldModel<Unit>,
@@ -177,7 +177,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: EnumerationListFieldModel<Unit>,
         requestField: EnumerationListFieldModel<Unit>?,
         mappingField: EnumerationListFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: EnumerationListFieldModel<Unit>,
@@ -190,7 +190,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: AssociationListFieldModel<Unit>,
         requestField: AssociationListFieldModel<Unit>?,
         mappingField: AssociationListFieldModel<MappingAux>?
-    ) = SchemaTraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: AssociationListFieldModel<Unit>,
@@ -203,12 +203,12 @@ class CompositionTableGetVisitor<MappingAux>(
         responseListField: CompositionListFieldModel<Unit>,
         requestListField: CompositionListFieldModel<Unit>?,
         mappingListField: CompositionListFieldModel<MappingAux>?
-    ): SchemaTraversalAction {
-        if (requestListField == null) return SchemaTraversalAction.ABORT_SUB_TREE
+    ): TraversalAction {
+        if (requestListField == null) return TraversalAction.ABORT_SUB_TREE
 
         val mappingAux = mappingListField?.aux
         assert(mappingAux != null)
-        if (mappingAux == null) return SchemaTraversalAction.ABORT_SUB_TREE
+        if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
         val requestEntityFields = requestListField.entities.elementAtOrNull(0)?.fields ?: listOf()
         val (compositionListFields, fields) = requestEntityFields.partition { it is CompositionListFieldModel<*> }
@@ -216,7 +216,7 @@ class CompositionTableGetVisitor<MappingAux>(
         val fieldNames = fields.flatMap { it.dispatch(fieldNameVisitor) }
         delegate.fetchCompositionList(mutableResponseListField, fieldNames, mappingAux)
         mutableResponseListField.entities.forEach { cloneCompositionListFields(compositionListFields, it) }
-        return SchemaTraversalAction.CONTINUE
+        return TraversalAction.CONTINUE
     }
 
     override suspend fun leave(
