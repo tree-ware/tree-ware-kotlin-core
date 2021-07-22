@@ -1,12 +1,14 @@
 package org.treeWare.model.cursor
 
 import org.treeWare.common.codec.JsonWireFormatEncoder
+import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.codec.ModelEncodingVisitor
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.getFileReader
 import org.treeWare.model.getModel
+import org.treeWare.model.operator.dispatchLeave
+import org.treeWare.model.operator.dispatchVisit
 import org.treeWare.schema.core.NamedElementSchema
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.schema.core.newAddressBookSchema
 import org.treeWare.schema.core.validate
 import java.io.StringWriter
@@ -105,9 +107,12 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
         val followerMove = followerCursor.follow(leaderMove)
         assertNotNull(followerMove)
 
-        when (leaderMove.direction) {
-            CursorMoveDirection.Visit -> action = leaderMove.element.visitSelf(encodingVisitor)
-            CursorMoveDirection.Leave -> leaderMove.element.leaveSelf(encodingVisitor)
+        action = when (leaderMove.direction) {
+            CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, encodingVisitor)
+            CursorMoveDirection.Leave -> {
+                dispatchLeave(leaderMove.element, encodingVisitor)
+                TraversalAction.CONTINUE
+            }
         }
     }
 
