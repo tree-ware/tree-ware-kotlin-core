@@ -84,4 +84,16 @@ interface Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return> {
         leaderField1: CompositionListFieldModel<LeaderAux>,
         followerField1: CompositionListFieldModel<FollowerAux>?
     )
+
+    // Field values
+
+    fun visit(
+        leaderField1: EntityKeysModel<LeaderAux>,
+        followerField1: EntityKeysModel<FollowerAux>?
+    ): Return
+
+    fun leave(
+        leaderField1: EntityKeysModel<LeaderAux>,
+        followerField1: EntityKeysModel<FollowerAux>?
+    )
 }

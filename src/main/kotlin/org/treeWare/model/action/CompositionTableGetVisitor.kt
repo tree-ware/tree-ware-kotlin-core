@@ -1,8 +1,8 @@
 package org.treeWare.model.action
 
 import org.apache.logging.log4j.LogManager
-import org.treeWare.model.core.*
 import org.treeWare.common.traversal.TraversalAction
+import org.treeWare.model.core.*
 
 // IMPLEMENTATION: ./Get.md
 
@@ -82,6 +82,8 @@ class CompositionTableGetVisitor<MappingAux>(
     ) {
     }
 
+    // Scalar fields
+
     override suspend fun visit(
         responseField: PrimitiveFieldModel<Unit>,
         requestField: PrimitiveFieldModel<Unit>?,
@@ -146,6 +148,8 @@ class CompositionTableGetVisitor<MappingAux>(
         mappingField: CompositionFieldModel<MappingAux>?
     ) {
     }
+
+    // List fields
 
     override suspend fun visit(
         responseField: PrimitiveListFieldModel<Unit>,
@@ -223,6 +227,21 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: CompositionListFieldModel<Unit>,
         requestField: CompositionListFieldModel<Unit>?,
         mappingField: CompositionListFieldModel<MappingAux>?
+    ) {
+    }
+
+    // Field values
+
+    override suspend fun visit(
+        leaderField1: EntityKeysModel<Unit>,
+        followerField1: EntityKeysModel<Unit>?,
+        followerField2: EntityKeysModel<MappingAux>?
+    ): TraversalAction = TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        leaderField1: EntityKeysModel<Unit>,
+        followerField1: EntityKeysModel<Unit>?,
+        followerField2: EntityKeysModel<MappingAux>?
     ) {
     }
 }

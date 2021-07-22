@@ -40,9 +40,6 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> forEach(
     return action
 }
 
-// TODO(deepak-nulu): how do we ensure these methods are updated when new element types are added?
-// There have been community requests for sealed interfaces in Kotlin, but they may not be implemented
-// Luckily new model elements are rare.
 suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     follower1: ElementModel<Follower1Aux>?,
@@ -161,6 +158,15 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchVisit(
         assert(follower1 is CompositionListFieldModel<Follower1Aux>?)
         assert(follower2 is CompositionListFieldModel<Follower2Aux>?)
         if (follower1 is CompositionListFieldModel<Follower1Aux>? && follower2 is CompositionListFieldModel<Follower2Aux>?) visitor.visit(
+            leader,
+            follower1,
+            follower2
+        ) else TraversalAction.ABORT_TREE
+    }
+    is EntityKeysModel<LeaderAux> -> {
+        assert(follower1 is EntityKeysModel<Follower1Aux>?)
+        assert(follower2 is EntityKeysModel<Follower2Aux>?)
+        if (follower1 is EntityKeysModel<Follower1Aux>? && follower2 is EntityKeysModel<Follower2Aux>?) visitor.visit(
             leader,
             follower1,
             follower2
@@ -291,6 +297,15 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> dispatchLeave(
             assert(follower1 is CompositionListFieldModel<Follower1Aux>?)
             assert(follower2 is CompositionListFieldModel<Follower2Aux>?)
             if (follower1 is CompositionListFieldModel<Follower1Aux>? && follower2 is CompositionListFieldModel<Follower2Aux>?) visitor.leave(
+                leader,
+                follower1,
+                follower2
+            )
+        }
+        is EntityKeysModel<LeaderAux> -> {
+            assert(follower1 is EntityKeysModel<Follower1Aux>?)
+            assert(follower2 is EntityKeysModel<Follower2Aux>?)
+            if (follower1 is EntityKeysModel<Follower1Aux>? && follower2 is EntityKeysModel<Follower2Aux>?) visitor.leave(
                 leader,
                 follower1,
                 follower2

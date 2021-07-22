@@ -164,4 +164,18 @@ interface Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Re
         followerField1: CompositionListFieldModel<Follower1Aux>?,
         followerField2: CompositionListFieldModel<Follower2Aux>?
     )
+
+    // Field values
+
+    suspend fun visit(
+        leaderField1: EntityKeysModel<LeaderAux>,
+        followerField1: EntityKeysModel<Follower1Aux>?,
+        followerField2: EntityKeysModel<Follower2Aux>?
+    ): Return
+
+    suspend fun leave(
+        leaderField1: EntityKeysModel<LeaderAux>,
+        followerField1: EntityKeysModel<Follower1Aux>?,
+        followerField2: EntityKeysModel<Follower2Aux>?
+    )
 }

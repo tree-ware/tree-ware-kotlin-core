@@ -30,9 +30,6 @@ fun <LeaderAux, FollowerAux> forEach(
     return action
 }
 
-// TODO(deepak-nulu): how do we ensure these methods are updated when new element types are added?
-// There have been community requests for sealed interfaces in Kotlin, but they may not be implemented
-// Luckily new model elements are rare.
 fun <LeaderAux, FollowerAux> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     follower: ElementModel<FollowerAux>?,
@@ -103,6 +100,11 @@ fun <LeaderAux, FollowerAux> dispatchVisit(
         if (follower is CompositionListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
         else TraversalAction.ABORT_TREE
     }
+    is EntityKeysModel<LeaderAux> -> {
+        assert(follower is EntityKeysModel<FollowerAux>?)
+        if (follower is EntityKeysModel<FollowerAux>?) visitor.visit(leader, follower)
+        else TraversalAction.ABORT_TREE
+    }
     else -> {
         assert(false) { "Unknown element type: $leader" }
         TraversalAction.ABORT_TREE
@@ -166,6 +168,10 @@ fun <LeaderAux, FollowerAux> dispatchLeave(
         is CompositionListFieldModel<LeaderAux> -> {
             assert(follower is CompositionListFieldModel<FollowerAux>?)
             if (follower is CompositionListFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        }
+        is EntityKeysModel<LeaderAux> -> {
+            assert(follower is EntityKeysModel<FollowerAux>?)
+            if (follower is EntityKeysModel<FollowerAux>?) visitor.leave(leader, follower)
         }
         else -> {
             assert(false) { "Unknown element type: $leader" }
