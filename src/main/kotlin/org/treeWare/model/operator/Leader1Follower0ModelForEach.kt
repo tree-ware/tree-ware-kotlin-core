@@ -1,9 +1,9 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.cursor.CursorMoveDirection
-import org.treeWare.model.cursor.LeaderModelCursor
 import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
+import org.treeWare.model.cursor.CursorMoveDirection
+import org.treeWare.model.cursor.LeaderModelCursor
 
 fun <LeaderAux> forEach(
     leader: ElementModel<LeaderAux>,
@@ -14,7 +14,7 @@ fun <LeaderAux> forEach(
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
         action = when (leaderMove.direction) {
-            CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, visitor)
+            CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, visitor) ?: TraversalAction.ABORT_TREE
             CursorMoveDirection.Leave -> {
                 dispatchLeave(leaderMove.element, visitor)
                 TraversalAction.CONTINUE
@@ -24,10 +24,10 @@ fun <LeaderAux> forEach(
     return action
 }
 
-fun <LeaderAux> dispatchVisit(
+fun <LeaderAux, Return> dispatchVisit(
     leader: ElementModel<LeaderAux>,
-    visitor: Leader1Follower0ModelVisitor<LeaderAux, TraversalAction>
-): TraversalAction = when (leader) {
+    visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
+): Return? = when (leader) {
     is Model<LeaderAux> -> {
         visitor.visit(leader)
     }
@@ -72,7 +72,7 @@ fun <LeaderAux> dispatchVisit(
     }
     else -> {
         assert(false) { "Unknown element type: $leader" }
-        TraversalAction.ABORT_TREE
+        null
     }
 }
 
@@ -125,7 +125,6 @@ fun <LeaderAux> dispatchLeave(
         }
         else -> {
             assert(false) { "Unknown element type: $leader" }
-            TraversalAction.ABORT_TREE
         }
     }
 }

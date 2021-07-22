@@ -3,6 +3,7 @@ package org.treeWare.model.action
 import org.apache.logging.log4j.LogManager
 import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.dispatchVisit
 
 // IMPLEMENTATION: ./Get.md
 
@@ -55,7 +56,7 @@ class CompositionTableGetVisitor<MappingAux>(
         delegate.pushPathEntity(responseRoot, responseRoot.schema.resolvedEntity)
         val (compositionListFields, fields) = requestRoot.fields.partition { it is CompositionListFieldModel<*> }
         val mutableResponseRoot = responseRoot as MutableRootModel<Unit>
-        val fieldNames = fields.flatMap { it.dispatch(fieldNameVisitor) }
+        val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux)
         cloneCompositionListFields(compositionListFields, mutableResponseRoot)
         return TraversalAction.CONTINUE
@@ -217,7 +218,7 @@ class CompositionTableGetVisitor<MappingAux>(
         val requestEntityFields = requestListField.entities.elementAtOrNull(0)?.fields ?: listOf()
         val (compositionListFields, fields) = requestEntityFields.partition { it is CompositionListFieldModel<*> }
         val mutableResponseListField = responseListField as MutableCompositionListFieldModel<Unit>
-        val fieldNames = fields.flatMap { it.dispatch(fieldNameVisitor) }
+        val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchCompositionList(mutableResponseListField, fieldNames, mappingAux)
         mutableResponseListField.entities.forEach { cloneCompositionListFields(compositionListFields, it) }
         return TraversalAction.CONTINUE
