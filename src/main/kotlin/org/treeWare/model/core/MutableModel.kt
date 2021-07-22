@@ -1,63 +1,13 @@
 package org.treeWare.model.core
 
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.schema.core.*
 import java.math.BigDecimal
 
-interface VisitableMutableModel<Aux> {
-    /**
-     * Visits the model element and its superclasses.
-     * The superclasses are visited first and the model element itself is visited last.
-     */
-    fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction
-
-    /**
-     * Leaves the model element and its superclasses.
-     * The model element itself is left first and the superclasses are left last.
-     */
-    fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>)
-
-    /**
-     * Visits the model element without traversing its sub-elements.
-     * Leave methods are NOT called.
-     * Returns what the visitor returns.
-     */
-    fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return
-}
-
-abstract class MutableElementModel<Aux> : ElementModel<Aux>, VisitableMutableModel<Aux> {
+abstract class MutableElementModel<Aux> : ElementModel<Aux> {
     var objectId = ""
 
     override var aux: Aux? = null
         internal set
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    // NOTE: call super.visitSelf() FIRST when overriding this method
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return visitor.visit(this)
-    }
-
-    // NOTE: call super.leaveSelf() LAST when overriding this method
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-    }
-
-    // NOTE: call super.mutableVisitSelf() FIRST when overriding this method
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return visitor.mutableVisit(this)
-    }
-
-    // NOTE: call super.mutableLeaveSelf() LAST when overriding this method
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-    }
 }
 
 class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(), Model<Aux> {
@@ -80,32 +30,6 @@ class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(
     fun getOrNewRoot(): MutableRootModel<Aux> {
         if (_root == null) _root = newMutableModel(schema.root, this) as MutableRootModel<Aux>
         return root
-    }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -175,123 +99,19 @@ abstract class MutableBaseEntityModel<Aux>(
 
     // TODO(deepak-nulu): optimize
     override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields.find { it.schema.name == fieldName }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutableRootModel<Aux>(
     override val schema: RootSchema,
     override val parent: MutableModel<Aux>
-) : MutableBaseEntityModel<Aux>(schema.resolvedEntity), RootModel<Aux> {
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
-}
+) : MutableBaseEntityModel<Aux>(schema.resolvedEntity), RootModel<Aux>
 
 class MutableEntityModel<Aux>(
     override val schema: EntitySchema,
     override val parent: MutableFieldModel<Aux>
-) : MutableBaseEntityModel<Aux>(schema), EntityModel<Aux> {
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
+) : MutableBaseEntityModel<Aux>(schema), EntityModel<Aux>
 
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
-}
-
-abstract class MutableFieldModel<Aux> : MutableElementModel<Aux>(), FieldModel<Aux> {
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
-}
+abstract class MutableFieldModel<Aux> : MutableElementModel<Aux>(), FieldModel<Aux>
 
 // Scalar fields
 
@@ -302,32 +122,6 @@ abstract class MutableScalarFieldModel<Aux>(
     open fun setValue(value: String): Boolean = false
     open fun setValue(value: BigDecimal): Boolean = false
     open fun setValue(value: Boolean): Boolean = false
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutablePrimitiveFieldModel<Aux>(
@@ -349,32 +143,6 @@ class MutablePrimitiveFieldModel<Aux>(
     override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
         val thatField: PrimitiveFieldModel<ThatAux> = that as? PrimitiveFieldModel ?: return false
         return this.value == thatField.value
-    }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -403,32 +171,6 @@ class MutableAliasFieldModel<Aux>(
         val thatField: AliasFieldModel<ThatAux> = that as? AliasFieldModel ?: return false
         return this.value == thatField.value
     }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutableEnumerationFieldModel<Aux>(
@@ -448,32 +190,6 @@ class MutableEnumerationFieldModel<Aux>(
     override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
         val thatField: EnumerationFieldModel<ThatAux> = that as? EnumerationFieldModel ?: return false
         return this.value == thatField.value
-    }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -497,32 +213,6 @@ class MutableAssociationFieldModel<Aux>(
     override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
         return false // associations cannot be keys
     }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutableCompositionFieldModel<Aux>(
@@ -543,32 +233,6 @@ class MutableCompositionFieldModel<Aux>(
         val thatField: CompositionFieldModel<ThatAux> = that as? CompositionFieldModel ?: return false
         return this.value.keysMatch(thatField.value)
     }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 // List fields
@@ -579,64 +243,12 @@ abstract class MutableListFieldModel<Aux>(
     override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
         return false // lists cannot be keys
     }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 abstract class MutableScalarListFieldModel<Aux>(
     parent: MutableBaseEntityModel<Aux>
 ) : MutableListFieldModel<Aux>(parent), ScalarListFieldModel<Aux> {
     abstract fun addElement(): MutableScalarFieldModel<Aux>
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutablePrimitiveListFieldModel<Aux>(
@@ -653,32 +265,6 @@ class MutablePrimitiveListFieldModel<Aux>(
         val element = MutablePrimitiveFieldModel(schema, this)
         primitives.add(element)
         return element
-    }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
     }
 }
 
@@ -697,32 +283,6 @@ class MutableAliasListFieldModel<Aux>(
         aliases.add(element)
         return element
     }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutableEnumerationListFieldModel<Aux>(
@@ -740,32 +300,6 @@ class MutableEnumerationListFieldModel<Aux>(
 
     override fun getEnumerationField(matching: EnumerationValueSchema?): MutableEnumerationFieldModel<Aux>? =
         if (matching == null) null else enumerations.find { it.value == matching }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutableAssociationListFieldModel<Aux>(
@@ -790,32 +324,6 @@ class MutableAssociationListFieldModel<Aux>(
             else association.value.zip(matching).all { (a, m) -> a.keysMatch(m) }
         }
     }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 class MutableCompositionListFieldModel<Aux>(
@@ -836,32 +344,6 @@ class MutableCompositionListFieldModel<Aux>(
     // TODO(deepak-nulu): optimize
     override fun <MatchingAux> getEntity(matching: EntityModel<MatchingAux>): MutableEntityModel<Aux>? =
         entities.find { it.keysMatch(matching) }
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 // Field values
@@ -870,32 +352,6 @@ class MutableEntityKeysModel<Aux>(
     override val schema: EntitySchema
 ) : MutableBaseEntityModel<Aux>(schema), EntityKeysModel<Aux> {
     override val parent: ElementModel<Aux>? = null
-
-    override fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return {
-        return visitor.visit(this)
-    }
-
-    override fun <Return> mutableDispatch(visitor: MutableModelVisitor<Aux, Return>): Return {
-        return visitor.mutableVisit(this)
-    }
-
-    override fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.visitSelf(visitor), visitor.visit(this))
-    }
-
-    override fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>) {
-        visitor.leave(this)
-        super.leaveSelf(visitor)
-    }
-
-    override fun mutableVisitSelf(visitor: MutableModelVisitor<Aux, TraversalAction>): TraversalAction {
-        return or(super.mutableVisitSelf(visitor), visitor.mutableVisit(this))
-    }
-
-    override fun mutableLeaveSelf(visitor: MutableModelVisitor<Aux, TraversalAction>) {
-        visitor.mutableLeave(this)
-        super.mutableLeaveSelf(visitor)
-    }
 }
 
 typealias ValueSetter = (Any) -> Unit
