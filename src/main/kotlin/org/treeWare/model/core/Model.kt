@@ -1,30 +1,8 @@
 package org.treeWare.model.core
 
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.schema.core.*
 
-interface VisitableModel<Aux> {
-    /**
-     * Visits the model element and its superclasses.
-     * The superclasses are visited first and the model element itself is visited last.
-     */
-    fun visitSelf(visitor: ModelVisitor<Aux, TraversalAction>): TraversalAction
-
-    /**
-     * Leaves the model element and its superclasses.
-     * The model element itself is left first and the superclasses are left last.
-     */
-    fun leaveSelf(visitor: ModelVisitor<Aux, TraversalAction>)
-
-    /**
-     * Visits the model element without traversing its sub-elements.
-     * Leave methods are NOT called.
-     * Returns what the visitor returns.
-     */
-    fun <Return> dispatch(visitor: ModelVisitor<Aux, Return>): Return
-}
-
-interface ElementModel<Aux> : VisitableModel<Aux> {
+interface ElementModel<Aux> {
     val schema: VisitableSchema
     val parent: ElementModel<Aux>?
     val aux: Aux?
