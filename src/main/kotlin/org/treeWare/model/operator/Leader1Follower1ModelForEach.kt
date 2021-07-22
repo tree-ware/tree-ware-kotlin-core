@@ -1,10 +1,10 @@
 package org.treeWare.model.operator
 
+import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.FollowerModelCursor
 import org.treeWare.model.cursor.LeaderModelCursor
-import org.treeWare.common.traversal.TraversalAction
 
 fun <LeaderAux, FollowerAux> forEach(
     leader: ElementModel<LeaderAux>,
@@ -21,6 +21,7 @@ fun <LeaderAux, FollowerAux> forEach(
         if (followerMove == null) break
         action = when (leaderMove.direction) {
             CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, followerMove.element, visitor)
+                ?: TraversalAction.ABORT_TREE
             CursorMoveDirection.Leave -> {
                 dispatchLeave(leaderMove.element, followerMove.element, visitor)
                 TraversalAction.CONTINUE
@@ -30,84 +31,84 @@ fun <LeaderAux, FollowerAux> forEach(
     return action
 }
 
-fun <LeaderAux, FollowerAux> dispatchVisit(
+fun <LeaderAux, FollowerAux, Return> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     follower: ElementModel<FollowerAux>?,
-    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, TraversalAction>
-): TraversalAction = when (leader) {
+    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
+): Return? = when (leader) {
     is Model<LeaderAux> -> {
         assert(follower is Model<FollowerAux>?)
         if (follower is Model<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is RootModel<LeaderAux> -> {
         assert(follower is RootModel<FollowerAux>?)
         if (follower is RootModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is EntityModel<LeaderAux> -> {
         assert(follower is EntityModel<FollowerAux>?)
         if (follower is EntityModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is PrimitiveFieldModel<LeaderAux> -> {
         assert(follower is PrimitiveFieldModel<FollowerAux>?)
         if (follower is PrimitiveFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is AliasFieldModel<LeaderAux> -> {
         assert(follower is AliasFieldModel<FollowerAux>?)
         if (follower is AliasFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is EnumerationFieldModel<LeaderAux> -> {
         assert(follower is EnumerationFieldModel<FollowerAux>?)
         if (follower is EnumerationFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is AssociationFieldModel<LeaderAux> -> {
         assert(follower is AssociationFieldModel<FollowerAux>?)
         if (follower is AssociationFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is CompositionFieldModel<LeaderAux> -> {
         assert(follower is CompositionFieldModel<FollowerAux>?)
         if (follower is CompositionFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is PrimitiveListFieldModel<LeaderAux> -> {
         assert(follower is PrimitiveListFieldModel<FollowerAux>?)
         if (follower is PrimitiveListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is AliasListFieldModel<LeaderAux> -> {
         assert(follower is AliasListFieldModel<FollowerAux>?)
         if (follower is AliasListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is EnumerationListFieldModel<LeaderAux> -> {
         assert(follower is EnumerationListFieldModel<FollowerAux>?)
         if (follower is EnumerationListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is AssociationListFieldModel<LeaderAux> -> {
         assert(follower is AssociationListFieldModel<FollowerAux>?)
         if (follower is AssociationListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is CompositionListFieldModel<LeaderAux> -> {
         assert(follower is CompositionListFieldModel<FollowerAux>?)
         if (follower is CompositionListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     is EntityKeysModel<LeaderAux> -> {
         assert(follower is EntityKeysModel<FollowerAux>?)
         if (follower is EntityKeysModel<FollowerAux>?) visitor.visit(leader, follower)
-        else TraversalAction.ABORT_TREE
+        else null
     }
     else -> {
         assert(false) { "Unknown element type: $leader" }
-        TraversalAction.ABORT_TREE
+        null
     }
 }
 
@@ -175,7 +176,6 @@ fun <LeaderAux, FollowerAux> dispatchLeave(
         }
         else -> {
             assert(false) { "Unknown element type: $leader" }
-            TraversalAction.ABORT_TREE
         }
     }
 }

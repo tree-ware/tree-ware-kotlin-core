@@ -1,8 +1,9 @@
 package org.treeWare.model.cursor
 
-import org.treeWare.model.core.*
-import org.treeWare.model.visitor.AbstractModelVisitor
 import org.treeWare.common.traversal.TraversalAction
+import org.treeWare.model.core.*
+import org.treeWare.model.operator.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.operator.dispatchVisit
 import java.util.*
 
 class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
@@ -21,7 +22,7 @@ class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
         isAtStart -> {
             isAtStart = false
             val initialState =
-                initial.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null initial state")
+                dispatchVisit(initial, stateFactoryVisitor) ?: throw IllegalStateException("null initial state")
             stateStack.addFirst(initialState)
             initialState.visitCursorMove
         }
@@ -76,7 +77,8 @@ private class ModelLeaderState<Aux>(
 
     init {
         val actionList = listOf<LeaderStateAction<Aux>> {
-            val rootState = model.root.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+            val rootState =
+                dispatchVisit(model.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         }
@@ -94,7 +96,8 @@ private abstract class BaseEntityLeaderState<Aux>(
     init {
         actionIterator = IteratorAdapter({ baseEntity.fields.iterator() }) { field ->
             {
-                val fieldState = field.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null field state")
+                val fieldState =
+                    dispatchVisit(field, stateFactoryVisitor) ?: throw IllegalStateException("null field state")
                 stateStack.addFirst(fieldState)
                 fieldState.visitCursorMove
             }
@@ -152,7 +155,7 @@ private class CompositionFieldLeaderState<Aux>(
     init {
         val actionList = listOf<LeaderStateAction<Aux>> {
             val entityState =
-                field.value.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null entity state")
+                dispatchVisit(field.value, stateFactoryVisitor) ?: throw IllegalStateException("null entity state")
             stateStack.addFirst(entityState)
             entityState.visitCursorMove
         }
@@ -181,7 +184,7 @@ private class PrimitiveListFieldLeaderState<Aux>(
         actionIterator = IteratorAdapter({ field.primitives.iterator() }) { primitive ->
             {
                 val primitiveState =
-                    primitive.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null primitive state")
+                    dispatchVisit(primitive, stateFactoryVisitor) ?: throw IllegalStateException("null primitive state")
                 stateStack.addFirst(primitiveState)
                 primitiveState.visitCursorMove
             }
@@ -199,7 +202,8 @@ private class AliasListFieldLeaderState<Aux>(
     init {
         actionIterator = IteratorAdapter({ field.aliases.iterator() }) { alias ->
             {
-                val aliasState = alias.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null alias state")
+                val aliasState =
+                    dispatchVisit(alias, stateFactoryVisitor) ?: throw IllegalStateException("null alias state")
                 stateStack.addFirst(aliasState)
                 aliasState.visitCursorMove
             }
@@ -218,7 +222,8 @@ private class EnumerationListFieldLeaderState<Aux>(
         actionIterator = IteratorAdapter({ field.enumerations.iterator() }) { enumeration ->
             {
                 val enumerationState =
-                    enumeration.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null enumeration state")
+                    dispatchVisit(enumeration, stateFactoryVisitor)
+                        ?: throw IllegalStateException("null enumeration state")
                 stateStack.addFirst(enumerationState)
                 enumerationState.visitCursorMove
             }
@@ -237,7 +242,8 @@ private class AssociationListFieldLeaderState<Aux>(
         actionIterator = IteratorAdapter({ field.associations.iterator() }) { association ->
             {
                 val associationState =
-                    association.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null association state")
+                    dispatchVisit(association, stateFactoryVisitor)
+                        ?: throw IllegalStateException("null association state")
                 stateStack.addFirst(associationState)
                 associationState.visitCursorMove
             }
@@ -256,7 +262,7 @@ private class CompositionListFieldLeaderState<Aux>(
         actionIterator = IteratorAdapter({ field.entities.iterator() }) { entity ->
             {
                 val entityState =
-                    entity.dispatch(stateFactoryVisitor) ?: throw IllegalStateException("null entity state")
+                    dispatchVisit(entity, stateFactoryVisitor) ?: throw IllegalStateException("null entity state")
                 stateStack.addFirst(entityState)
                 entityState.visitCursorMove
             }
@@ -279,28 +285,39 @@ private class EntityKeysLeaderState<Aux>(
 
 private class LeaderStateFactoryVisitor<Aux>(
     private val stateStack: LeaderStateStack<Aux>
-) : AbstractModelVisitor<Aux, LeaderState<Aux>?>(null) {
-    override fun visit(model: Model<Aux>) = ModelLeaderState(model, stateStack, this)
-    override fun visit(root: RootModel<Aux>) = RootLeaderState(root, stateStack, this)
-    override fun visit(entity: EntityModel<Aux>) = EntityLeaderState(entity, stateStack, this)
+) : AbstractLeader1Follower0ModelVisitor<Aux, LeaderState<Aux>?>(null) {
+    override fun visit(leaderModel1: Model<Aux>) = ModelLeaderState(leaderModel1, stateStack, this)
+    override fun visit(leaderRoot1: RootModel<Aux>) = RootLeaderState(leaderRoot1, stateStack, this)
+    override fun visit(leaderEntity1: EntityModel<Aux>) = EntityLeaderState(leaderEntity1, stateStack, this)
 
     // Scalar fields
 
-    override fun visit(field: PrimitiveFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
-    override fun visit(field: AliasFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
-    override fun visit(field: EnumerationFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
-    override fun visit(field: AssociationFieldModel<Aux>) = ScalarFieldLeaderState(field, stateStack)
-    override fun visit(field: CompositionFieldModel<Aux>) = CompositionFieldLeaderState(field, stateStack, this)
+    override fun visit(leaderField1: PrimitiveFieldModel<Aux>) = ScalarFieldLeaderState(leaderField1, stateStack)
+    override fun visit(leaderField1: AliasFieldModel<Aux>) = ScalarFieldLeaderState(leaderField1, stateStack)
+    override fun visit(leaderField1: EnumerationFieldModel<Aux>) = ScalarFieldLeaderState(leaderField1, stateStack)
+    override fun visit(leaderField1: AssociationFieldModel<Aux>) = ScalarFieldLeaderState(leaderField1, stateStack)
+    override fun visit(leaderField1: CompositionFieldModel<Aux>) =
+        CompositionFieldLeaderState(leaderField1, stateStack, this)
 
     // List fields
 
-    override fun visit(field: PrimitiveListFieldModel<Aux>) = PrimitiveListFieldLeaderState(field, stateStack, this)
-    override fun visit(field: AliasListFieldModel<Aux>) = AliasListFieldLeaderState(field, stateStack, this)
-    override fun visit(field: EnumerationListFieldModel<Aux>) = EnumerationListFieldLeaderState(field, stateStack, this)
-    override fun visit(field: AssociationListFieldModel<Aux>) = AssociationListFieldLeaderState(field, stateStack, this)
-    override fun visit(field: CompositionListFieldModel<Aux>) = CompositionListFieldLeaderState(field, stateStack, this)
+    override fun visit(leaderField1: PrimitiveListFieldModel<Aux>) =
+        PrimitiveListFieldLeaderState(leaderField1, stateStack, this)
+
+    override fun visit(leaderField1: AliasListFieldModel<Aux>) =
+        AliasListFieldLeaderState(leaderField1, stateStack, this)
+
+    override fun visit(leaderField1: EnumerationListFieldModel<Aux>) =
+        EnumerationListFieldLeaderState(leaderField1, stateStack, this)
+
+    override fun visit(leaderField1: AssociationListFieldModel<Aux>) =
+        AssociationListFieldLeaderState(leaderField1, stateStack, this)
+
+    override fun visit(leaderField1: CompositionListFieldModel<Aux>) =
+        CompositionListFieldLeaderState(leaderField1, stateStack, this)
 
     // Field values
 
-    override fun visit(entityKeys: EntityKeysModel<Aux>) = EntityKeysLeaderState(entityKeys, stateStack, this)
+    override fun visit(leaderEntityKeys1: EntityKeysModel<Aux>) =
+        EntityKeysLeaderState(leaderEntityKeys1, stateStack, this)
 }
