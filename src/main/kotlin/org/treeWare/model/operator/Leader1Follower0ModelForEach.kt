@@ -27,104 +27,97 @@ fun <LeaderAux> forEach(
 fun <LeaderAux, Return> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
-): Return? = when (leader) {
-    is Model<LeaderAux> -> {
-        visitor.visit(leader)
+): Return? = when (leader.elementType) {
+    ModelElementType.MODEL -> {
+        visitor.visit(leader as Model<LeaderAux>)
     }
-    is RootModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ROOT -> {
+        visitor.visit(leader as RootModel<LeaderAux>)
     }
-    is EntityModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ENTITY -> {
+        visitor.visit(leader as EntityModel<LeaderAux>)
     }
-    is PrimitiveFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.PRIMITIVE_FIELD -> {
+        visitor.visit(leader as PrimitiveFieldModel<LeaderAux>)
     }
-    is AliasFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ALIAS_FIELD -> {
+        visitor.visit(leader as AliasFieldModel<LeaderAux>)
     }
-    is EnumerationFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ENUMERATION_FIELD -> {
+        visitor.visit(leader as EnumerationFieldModel<LeaderAux>)
     }
-    is AssociationFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ASSOCIATION_FIELD -> {
+        visitor.visit(leader as AssociationFieldModel<LeaderAux>)
     }
-    is CompositionFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.COMPOSITION_FIELD -> {
+        visitor.visit(leader as CompositionFieldModel<LeaderAux>)
     }
-    is PrimitiveListFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.PRIMITIVE_LIST_FIELD -> {
+        visitor.visit(leader as PrimitiveListFieldModel<LeaderAux>)
     }
-    is AliasListFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ALIAS_LIST_FIELD -> {
+        visitor.visit(leader as AliasListFieldModel<LeaderAux>)
     }
-    is EnumerationListFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ENUMERATION_LIST_FIELD -> {
+        visitor.visit(leader as EnumerationListFieldModel<LeaderAux>)
     }
-    is AssociationListFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.ASSOCIATION_LIST_FIELD -> {
+        visitor.visit(leader as AssociationListFieldModel<LeaderAux>)
     }
-    is CompositionListFieldModel<LeaderAux> -> {
-        visitor.visit(leader)
+    ModelElementType.COMPOSITION_LIST_FIELD -> {
+        visitor.visit(leader as CompositionListFieldModel<LeaderAux>)
     }
-    is EntityKeysModel<LeaderAux> -> {
-        visitor.visit(leader)
-    }
-    else -> {
-        assert(false) { "Unknown element type: $leader" }
-        null
+    ModelElementType.ENTITY_KEYS -> {
+        visitor.visit(leader as EntityKeysModel<LeaderAux>)
     }
 }
 
-fun <LeaderAux> dispatchLeave(
+fun <LeaderAux, Return> dispatchLeave(
     leader: ElementModel<LeaderAux>,
-    visitor: Leader1Follower0ModelVisitor<LeaderAux, TraversalAction>
+    visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
 ) {
-    when (leader) {
-        is Model<LeaderAux> -> {
-            visitor.leave(leader)
+    when (leader.elementType) {
+        ModelElementType.MODEL -> {
+            visitor.leave(leader as Model<LeaderAux>)
         }
-        is RootModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ROOT -> {
+            visitor.leave(leader as RootModel<LeaderAux>)
         }
-        is EntityModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ENTITY -> {
+            visitor.leave(leader as EntityModel<LeaderAux>)
         }
-        is PrimitiveFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.PRIMITIVE_FIELD -> {
+            visitor.leave(leader as PrimitiveFieldModel<LeaderAux>)
         }
-        is AliasFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ALIAS_FIELD -> {
+            visitor.leave(leader as AliasFieldModel<LeaderAux>)
         }
-        is EnumerationFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ENUMERATION_FIELD -> {
+            visitor.leave(leader as EnumerationFieldModel<LeaderAux>)
         }
-        is AssociationFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ASSOCIATION_FIELD -> {
+            visitor.leave(leader as AssociationFieldModel<LeaderAux>)
         }
-        is CompositionFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.COMPOSITION_FIELD -> {
+            visitor.leave(leader as CompositionFieldModel<LeaderAux>)
         }
-        is PrimitiveListFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.PRIMITIVE_LIST_FIELD -> {
+            visitor.leave(leader as PrimitiveListFieldModel<LeaderAux>)
         }
-        is AliasListFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ALIAS_LIST_FIELD -> {
+            visitor.leave(leader as AliasListFieldModel<LeaderAux>)
         }
-        is EnumerationListFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ENUMERATION_LIST_FIELD -> {
+            visitor.leave(leader as EnumerationListFieldModel<LeaderAux>)
         }
-        is AssociationListFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.ASSOCIATION_LIST_FIELD -> {
+            visitor.leave(leader as AssociationListFieldModel<LeaderAux>)
         }
-        is CompositionListFieldModel<LeaderAux> -> {
-            visitor.leave(leader)
+        ModelElementType.COMPOSITION_LIST_FIELD -> {
+            visitor.leave(leader as CompositionListFieldModel<LeaderAux>)
         }
-        is EntityKeysModel<LeaderAux> -> {
-            visitor.leave(leader)
-        }
-        else -> {
-            assert(false) { "Unknown element type: $leader" }
+        ModelElementType.ENTITY_KEYS -> {
+            visitor.leave(leader as EntityKeysModel<LeaderAux>)
         }
     }
 }

@@ -19,6 +19,7 @@ fun <LeaderAux, FollowerAux> forEach(
         val followerMove = followerCursor.follow(leaderMove)
         assert(followerMove != null)
         if (followerMove == null) break
+        println("#### followerMove.element: ${followerMove.element?.elementType}")
         action = when (leaderMove.direction) {
             CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, followerMove.element, visitor)
                 ?: TraversalAction.ABORT_TREE
@@ -35,147 +36,224 @@ fun <LeaderAux, FollowerAux, Return> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     follower: ElementModel<FollowerAux>?,
     visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
-): Return? = when (leader) {
-    is Model<LeaderAux> -> {
-        assert(follower is Model<FollowerAux>?)
-        if (follower is Model<FollowerAux>?) visitor.visit(leader, follower)
+): Return? = when (leader.elementType) {
+    ModelElementType.MODEL -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.MODEL)
+        if (follower == null || follower.elementType == ModelElementType.MODEL) visitor.visit(
+            leader as Model<LeaderAux>,
+            follower as Model<FollowerAux>?
+        )
         else null
     }
-    is RootModel<LeaderAux> -> {
-        assert(follower is RootModel<FollowerAux>?)
-        if (follower is RootModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ROOT -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
+        if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.visit(
+            leader as RootModel<LeaderAux>,
+            follower as RootModel<FollowerAux>?
+        )
         else null
     }
-    is EntityModel<LeaderAux> -> {
-        assert(follower is EntityModel<FollowerAux>?)
-        if (follower is EntityModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ENTITY -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
+        if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.visit(
+            leader as EntityModel<LeaderAux>,
+            follower as EntityModel<FollowerAux>?
+        )
         else null
     }
-    is PrimitiveFieldModel<LeaderAux> -> {
-        assert(follower is PrimitiveFieldModel<FollowerAux>?)
-        if (follower is PrimitiveFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.PRIMITIVE_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.PRIMITIVE_FIELD) visitor.visit(
+            leader as PrimitiveFieldModel<LeaderAux>,
+            follower as PrimitiveFieldModel<FollowerAux>?
+        )
         else null
     }
-    is AliasFieldModel<LeaderAux> -> {
-        assert(follower is AliasFieldModel<FollowerAux>?)
-        if (follower is AliasFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ALIAS_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ALIAS_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.ALIAS_FIELD) visitor.visit(
+            leader as AliasFieldModel<LeaderAux>,
+            follower as AliasFieldModel<FollowerAux>?
+        )
         else null
     }
-    is EnumerationFieldModel<LeaderAux> -> {
-        assert(follower is EnumerationFieldModel<FollowerAux>?)
-        if (follower is EnumerationFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ENUMERATION_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.ENUMERATION_FIELD) visitor.visit(
+            leader as EnumerationFieldModel<LeaderAux>,
+            follower as EnumerationFieldModel<FollowerAux>?
+        )
         else null
     }
-    is AssociationFieldModel<LeaderAux> -> {
-        assert(follower is AssociationFieldModel<FollowerAux>?)
-        if (follower is AssociationFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ASSOCIATION_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.ASSOCIATION_FIELD) visitor.visit(
+            leader as AssociationFieldModel<LeaderAux>,
+            follower as AssociationFieldModel<FollowerAux>?
+        )
         else null
     }
-    is CompositionFieldModel<LeaderAux> -> {
-        assert(follower is CompositionFieldModel<FollowerAux>?)
-        if (follower is CompositionFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.COMPOSITION_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.COMPOSITION_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.COMPOSITION_FIELD) visitor.visit(
+            leader as CompositionFieldModel<LeaderAux>,
+            follower as CompositionFieldModel<FollowerAux>?
+        )
         else null
     }
-    is PrimitiveListFieldModel<LeaderAux> -> {
-        assert(follower is PrimitiveListFieldModel<FollowerAux>?)
-        if (follower is PrimitiveListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.PRIMITIVE_LIST_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE_LIST_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.PRIMITIVE_LIST_FIELD) visitor.visit(
+            leader as PrimitiveListFieldModel<LeaderAux>,
+            follower as PrimitiveListFieldModel<FollowerAux>?
+        )
         else null
     }
-    is AliasListFieldModel<LeaderAux> -> {
-        assert(follower is AliasListFieldModel<FollowerAux>?)
-        if (follower is AliasListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ALIAS_LIST_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ALIAS_LIST_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.ALIAS_LIST_FIELD) visitor.visit(
+            leader as AliasListFieldModel<LeaderAux>,
+            follower as AliasListFieldModel<FollowerAux>?
+        )
         else null
     }
-    is EnumerationListFieldModel<LeaderAux> -> {
-        assert(follower is EnumerationListFieldModel<FollowerAux>?)
-        if (follower is EnumerationListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ENUMERATION_LIST_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION_LIST_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.ENUMERATION_LIST_FIELD) visitor.visit(
+            leader as EnumerationListFieldModel<LeaderAux>,
+            follower as EnumerationListFieldModel<FollowerAux>?
+        )
         else null
     }
-    is AssociationListFieldModel<LeaderAux> -> {
-        assert(follower is AssociationListFieldModel<FollowerAux>?)
-        if (follower is AssociationListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ASSOCIATION_LIST_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION_LIST_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.ASSOCIATION_LIST_FIELD) visitor.visit(
+            leader as AssociationListFieldModel<LeaderAux>,
+            follower as AssociationListFieldModel<FollowerAux>?
+        )
         else null
     }
-    is CompositionListFieldModel<LeaderAux> -> {
-        assert(follower is CompositionListFieldModel<FollowerAux>?)
-        if (follower is CompositionListFieldModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.COMPOSITION_LIST_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.COMPOSITION_LIST_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.COMPOSITION_LIST_FIELD) visitor.visit(
+            leader as CompositionListFieldModel<LeaderAux>,
+            follower as CompositionListFieldModel<FollowerAux>?
+        )
         else null
     }
-    is EntityKeysModel<LeaderAux> -> {
-        assert(follower is EntityKeysModel<FollowerAux>?)
-        if (follower is EntityKeysModel<FollowerAux>?) visitor.visit(leader, follower)
+    ModelElementType.ENTITY_KEYS -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.ENTITY_KEYS)
+        if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.visit(
+            leader as EntityKeysModel<LeaderAux>,
+            follower as EntityKeysModel<FollowerAux>?
+        )
         else null
-    }
-    else -> {
-        assert(false) { "Unknown element type: $leader" }
-        null
     }
 }
 
-fun <LeaderAux, FollowerAux> dispatchLeave(
+fun <LeaderAux, FollowerAux, Return> dispatchLeave(
     leader: ElementModel<LeaderAux>,
     follower: ElementModel<FollowerAux>?,
-    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, TraversalAction>
+    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
 ) {
-    when (leader) {
-        is Model<LeaderAux> -> {
-            assert(follower is Model<FollowerAux>?)
-            if (follower is Model<FollowerAux>?) visitor.leave(leader, follower)
+    when (leader.elementType) {
+        ModelElementType.MODEL -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.MODEL)
+            if (follower == null || follower.elementType == ModelElementType.MODEL) visitor.leave(
+                leader as Model<LeaderAux>,
+                follower as Model<FollowerAux>?
+            )
         }
-        is RootModel<LeaderAux> -> {
-            assert(follower is RootModel<FollowerAux>?)
-            if (follower is RootModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ROOT -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
+            if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.leave(
+                leader as RootModel<LeaderAux>,
+                follower as RootModel<FollowerAux>?
+            )
         }
-        is EntityModel<LeaderAux> -> {
-            assert(follower is EntityModel<FollowerAux>?)
-            if (follower is EntityModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ENTITY -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
+            if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.leave(
+                leader as EntityModel<LeaderAux>,
+                follower as EntityModel<FollowerAux>?
+            )
         }
-        is PrimitiveFieldModel<LeaderAux> -> {
-            assert(follower is PrimitiveFieldModel<FollowerAux>?)
-            if (follower is PrimitiveFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.PRIMITIVE_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.PRIMITIVE_FIELD) visitor.leave(
+                leader as PrimitiveFieldModel<LeaderAux>,
+                follower as PrimitiveFieldModel<FollowerAux>?
+            )
         }
-        is AliasFieldModel<LeaderAux> -> {
-            assert(follower is AliasFieldModel<FollowerAux>?)
-            if (follower is AliasFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ALIAS_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ALIAS_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.ALIAS_FIELD) visitor.leave(
+                leader as AliasFieldModel<LeaderAux>,
+                follower as AliasFieldModel<FollowerAux>?
+            )
         }
-        is EnumerationFieldModel<LeaderAux> -> {
-            assert(follower is EnumerationFieldModel<FollowerAux>?)
-            if (follower is EnumerationFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ENUMERATION_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.ENUMERATION_FIELD) visitor.leave(
+                leader as EnumerationFieldModel<LeaderAux>,
+                follower as EnumerationFieldModel<FollowerAux>?
+            )
         }
-        is AssociationFieldModel<LeaderAux> -> {
-            assert(follower is AssociationFieldModel<FollowerAux>?)
-            if (follower is AssociationFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ASSOCIATION_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.ASSOCIATION_FIELD) visitor.leave(
+                leader as AssociationFieldModel<LeaderAux>,
+                follower as AssociationFieldModel<FollowerAux>?
+            )
         }
-        is CompositionFieldModel<LeaderAux> -> {
-            assert(follower is CompositionFieldModel<FollowerAux>?)
-            if (follower is CompositionFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.COMPOSITION_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.COMPOSITION_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.COMPOSITION_FIELD) visitor.leave(
+                leader as CompositionFieldModel<LeaderAux>,
+                follower as CompositionFieldModel<FollowerAux>?
+            )
         }
-        is PrimitiveListFieldModel<LeaderAux> -> {
-            assert(follower is PrimitiveListFieldModel<FollowerAux>?)
-            if (follower is PrimitiveListFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.PRIMITIVE_LIST_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE_LIST_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.PRIMITIVE_LIST_FIELD) visitor.leave(
+                leader as PrimitiveListFieldModel<LeaderAux>,
+                follower as PrimitiveListFieldModel<FollowerAux>?
+            )
         }
-        is AliasListFieldModel<LeaderAux> -> {
-            assert(follower is AliasListFieldModel<FollowerAux>?)
-            if (follower is AliasListFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ALIAS_LIST_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ALIAS_LIST_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.ALIAS_LIST_FIELD) visitor.leave(
+                leader as AliasListFieldModel<LeaderAux>,
+                follower as AliasListFieldModel<FollowerAux>?
+            )
         }
-        is EnumerationListFieldModel<LeaderAux> -> {
-            assert(follower is EnumerationListFieldModel<FollowerAux>?)
-            if (follower is EnumerationListFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ENUMERATION_LIST_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION_LIST_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.ENUMERATION_LIST_FIELD) visitor.leave(
+                leader as EnumerationListFieldModel<LeaderAux>,
+                follower as EnumerationListFieldModel<FollowerAux>?
+            )
         }
-        is AssociationListFieldModel<LeaderAux> -> {
-            assert(follower is AssociationListFieldModel<FollowerAux>?)
-            if (follower is AssociationListFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.ASSOCIATION_LIST_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION_LIST_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.ASSOCIATION_LIST_FIELD) visitor.leave(
+                leader as AssociationListFieldModel<LeaderAux>,
+                follower as AssociationListFieldModel<FollowerAux>?
+            )
         }
-        is CompositionListFieldModel<LeaderAux> -> {
-            assert(follower is CompositionListFieldModel<FollowerAux>?)
-            if (follower is CompositionListFieldModel<FollowerAux>?) visitor.leave(leader, follower)
+        ModelElementType.COMPOSITION_LIST_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.COMPOSITION_LIST_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.COMPOSITION_LIST_FIELD) visitor.leave(
+                leader as CompositionListFieldModel<LeaderAux>,
+                follower as CompositionListFieldModel<FollowerAux>?
+            )
         }
-        is EntityKeysModel<LeaderAux> -> {
-            assert(follower is EntityKeysModel<FollowerAux>?)
-            if (follower is EntityKeysModel<FollowerAux>?) visitor.leave(leader, follower)
-        }
-        else -> {
-            assert(false) { "Unknown element type: $leader" }
+        ModelElementType.ENTITY_KEYS -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.ENTITY_KEYS)
+            if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.leave(
+                leader as EntityKeysModel<LeaderAux>,
+                follower as EntityKeysModel<FollowerAux>?
+            )
         }
     }
 }
