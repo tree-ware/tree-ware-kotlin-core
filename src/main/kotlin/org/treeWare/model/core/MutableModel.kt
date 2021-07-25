@@ -206,7 +206,7 @@ class MutableAssociationFieldModel<Aux>(
     }
 
     fun newValue(): List<MutableEntityKeysModel<Aux>> {
-        value = schema.keyEntities.map { MutableEntityKeysModel<Aux>(it) }
+        value = schema.keyEntities.map { MutableEntityKeysModel(it) }
         return value
     }
 

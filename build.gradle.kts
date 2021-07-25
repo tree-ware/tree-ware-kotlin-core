@@ -1,9 +1,11 @@
+import kotlinx.benchmark.gradle.JvmBenchmarkTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "org.tree-ware"
 version = "1.0-SNAPSHOT"
 
 val kotlinCoroutinesVersion = "1.5.0"
+val kotlinBenchmarkVersion = "0.3.1"
 
 val jsonVersion = "1.1.4"
 
@@ -13,6 +15,8 @@ val mockkVersion = "1.12.0"
 
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.5.21")
+    id("org.jetbrains.kotlin.plugin.allopen").version("1.5.21") // for benchmarks, to keep JMH happy
+    id("org.jetbrains.kotlinx.benchmark").version("0.3.1") // $kotlinBenchmarkVersion
     id("idea")
     id("java-library")
     id("java-test-fixtures")
@@ -48,4 +52,37 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+// Benchmarks
+
+// Create a separate source set for benchmarks.
+sourceSets.create("benchmarks")
+
+kotlin.sourceSets.getByName("benchmarks") {
+    dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$kotlinBenchmarkVersion")
+
+        implementation(sourceSets.main.get().output)
+        implementation(sourceSets.main.get().runtimeClasspath)
+    }
+}
+
+benchmark {
+    configurations {
+        named("main") {
+            // configure default configuration
+        }
+    }
+    targets {
+        register("benchmarks") {
+            this as JvmBenchmarkTarget
+            jmhVersion = "1.21"
+        }
+    }
+}
+
+// For benchmarks, to keep JMH happy
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
 }
