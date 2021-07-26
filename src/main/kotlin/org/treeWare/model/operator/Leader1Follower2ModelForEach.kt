@@ -25,13 +25,13 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> forEach(
         assert(follower2Move != null)
         if (follower2Move == null) break
         action = when (leaderMove.direction) {
-            CursorMoveDirection.Visit -> dispatchVisit(
+            CursorMoveDirection.VISIT -> dispatchVisit(
                 leaderMove.element,
                 follower1Move.element,
                 follower2Move.element,
                 visitor
             ) ?: TraversalAction.ABORT_TREE
-            CursorMoveDirection.Leave -> {
+            CursorMoveDirection.LEAVE -> {
                 dispatchLeave(leaderMove.element, follower1Move.element, follower2Move.element, visitor)
                 TraversalAction.CONTINUE
             }

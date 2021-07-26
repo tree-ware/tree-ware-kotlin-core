@@ -14,37 +14,37 @@ sealed class LeaderModelCursorMove<Aux>(val direction: CursorMoveDirection) {
 }
 
 class VisitLeaderModel<Aux>(override val element: Model<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveLeaderModel<Aux>(override val element: Model<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitLeaderRootModel<Aux>(override val element: RootModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveLeaderRootModel<Aux>(override val element: RootModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitLeaderEntityModel<Aux>(override val element: EntityModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveLeaderEntityModel<Aux>(override val element: EntityModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitLeaderFieldModel<Aux>(override val element: FieldModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveLeaderFieldModel<Aux>(override val element: FieldModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitLeaderListFieldModel<Aux>(override val element: FieldModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveLeaderListFieldModel<Aux>(override val element: FieldModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitLeaderEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveLeaderEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :
-    LeaderModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)

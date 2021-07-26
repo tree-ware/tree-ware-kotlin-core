@@ -14,8 +14,8 @@ fun <LeaderAux> forEach(
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
         action = when (leaderMove.direction) {
-            CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, visitor) ?: TraversalAction.ABORT_TREE
-            CursorMoveDirection.Leave -> {
+            CursorMoveDirection.VISIT -> dispatchVisit(leaderMove.element, visitor) ?: TraversalAction.ABORT_TREE
+            CursorMoveDirection.LEAVE -> {
                 dispatchLeave(leaderMove.element, visitor)
                 TraversalAction.CONTINUE
             }

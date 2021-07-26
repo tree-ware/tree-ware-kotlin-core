@@ -1,3 +1,3 @@
 package org.treeWare.model.cursor
 
-enum class CursorMoveDirection { Visit, Leave }
+enum class CursorMoveDirection { VISIT, LEAVE }
