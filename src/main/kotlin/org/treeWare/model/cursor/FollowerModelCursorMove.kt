@@ -14,37 +14,37 @@ sealed class FollowerModelCursorMove<Aux>(val direction: CursorMoveDirection) {
 }
 
 class VisitFollowerModel<Aux>(override val element: Model<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveFollowerModel<Aux>(override val element: Model<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerRootModel<Aux>(override val element: RootModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveFollowerRootModel<Aux>(override val element: RootModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerEntityModel<Aux>(override val element: EntityModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveFollowerEntityModel<Aux>(override val element: EntityModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerFieldModel<Aux>(override val element: FieldModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveFollowerFieldModel<Aux>(override val element: FieldModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerListFieldModel<Aux>(override val element: FieldModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveFollowerListFieldModel<Aux>(override val element: FieldModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Visit)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
 class LeaveFollowerEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>?) :
-    FollowerModelCursorMove<Aux>(CursorMoveDirection.Leave)
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)

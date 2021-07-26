@@ -21,9 +21,9 @@ fun <LeaderAux, FollowerAux> forEach(
         if (followerMove == null) break
         println("#### followerMove.element: ${followerMove.element?.elementType}")
         action = when (leaderMove.direction) {
-            CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, followerMove.element, visitor)
+            CursorMoveDirection.VISIT -> dispatchVisit(leaderMove.element, followerMove.element, visitor)
                 ?: TraversalAction.ABORT_TREE
-            CursorMoveDirection.Leave -> {
+            CursorMoveDirection.LEAVE -> {
                 dispatchLeave(leaderMove.element, followerMove.element, visitor)
                 TraversalAction.CONTINUE
             }

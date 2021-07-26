@@ -108,9 +108,9 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
         assertNotNull(followerMove)
 
         action = when (leaderMove.direction) {
-            CursorMoveDirection.Visit -> dispatchVisit(leaderMove.element, encodingVisitor)
+            CursorMoveDirection.VISIT -> dispatchVisit(leaderMove.element, encodingVisitor)
                 ?: TraversalAction.ABORT_TREE
-            CursorMoveDirection.Leave -> {
+            CursorMoveDirection.LEAVE -> {
                 dispatchLeave(leaderMove.element, encodingVisitor)
                 TraversalAction.CONTINUE
             }
