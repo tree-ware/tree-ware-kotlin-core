@@ -19,7 +19,6 @@ fun <LeaderAux, FollowerAux> forEach(
         val followerMove = followerCursor.follow(leaderMove)
         assert(followerMove != null)
         if (followerMove == null) break
-        println("#### followerMove.element: ${followerMove.element?.elementType}")
         action = when (leaderMove.direction) {
             CursorMoveDirection.VISIT -> dispatchVisit(leaderMove.element, followerMove.element, visitor)
                 ?: TraversalAction.ABORT_TREE

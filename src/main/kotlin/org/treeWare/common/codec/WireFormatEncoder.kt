@@ -1,6 +1,8 @@
 package org.treeWare.common.codec
 
 interface WireFormatEncoder {
+    fun getAuxFieldName(fieldName: String?, auxName: String): String
+
     fun encodeObjectStart(name: String?)
     fun encodeObjectEnd()
     fun encodeListStart(name: String?)

@@ -16,7 +16,7 @@ class BaseEntityStateMachine<Aux>(
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
     private val isWildcardModel: Boolean
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private val auxStateMachine = auxStateMachineFactory()
+    private val auxStateMachineMap = HashMap<String, AuxDecodingStateMachine<Aux>>()
 
     private var base: MutableBaseEntityModel<Aux>? = null
     private var entitySchema: EntitySchema? = null
@@ -36,7 +36,15 @@ class BaseEntityStateMachine<Aux>(
     }
 
     override fun decodeObjectEnd(): Boolean {
-        if (auxStateMachine != null || !isListElement) {
+        assert(base != null)
+        // TODO(deepak-nulu): set aux when found rather than on the way out.
+        auxStateMachineMap.forEach { (fieldName, auxStateMachine) ->
+            if (fieldName.isEmpty()) base?.aux = auxStateMachine.getAux()
+            else base?.getField(fieldName)?.aux = auxStateMachine.getAux()
+        }
+        // This state-machine instance gets reused in lists, so clear the map.
+        auxStateMachineMap.clear()
+        if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()
         }
@@ -71,8 +79,22 @@ class BaseEntityStateMachine<Aux>(
     override fun decodeKey(name: String): Boolean {
         super.decodeKey(name)
 
-        val fieldName = keyName
-        val fieldSchema = fieldName?.let { entitySchema?.getField(it) }
+        val key = keyName ?: ""
+        val fieldAndAuxNames = getFieldAndAuxNames(key)
+        if (fieldAndAuxNames == null) {
+            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            return true
+        }
+        val (fieldName, auxName) = fieldAndAuxNames
+        if (auxName != null) {
+            val auxStateMachine = auxStateMachineFactory()
+            if (auxStateMachine != null) {
+                auxStateMachineMap[fieldName] = auxStateMachine
+                stack.addFirst(auxStateMachine)
+            } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            return true
+        }
+        val fieldSchema = fieldName.let { entitySchema?.getField(it) }
         if (fieldSchema == null) {
             stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
             return true
@@ -94,7 +116,7 @@ class BaseEntityStateMachine<Aux>(
                 stack,
                 auxStateMachineFactory
             )
-            addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = true)
         } else {
             val fieldModel = base?.getOrNewScalarField(fieldSchema.name) ?: return false
             val elementStateMachine = ScalarFieldModelStateMachine(false, { fieldModel }, stack, auxStateMachineFactory)
@@ -111,18 +133,16 @@ class BaseEntityStateMachine<Aux>(
                 true,
                 { associationListFieldModel.addAssociation() },
                 fieldSchema,
-                stack,
-                auxStateMachine
+                stack
             )
-            addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
             val fieldModel = base?.getOrNewAssociationField(fieldSchema.name) ?: return false
             val elementStateMachine = AssociationFieldModelStateMachine(
                 false,
                 { fieldModel },
                 fieldSchema,
-                stack,
-                auxStateMachine
+                stack
             )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -144,7 +164,7 @@ class BaseEntityStateMachine<Aux>(
                     auxStateMachineFactory,
                     isWildcardModel
                 )
-            addListElementStateMachineToStack(listFieldModel, listElementStateMachine)
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
             val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
             val entity = fieldModel.value
@@ -157,29 +177,17 @@ class BaseEntityStateMachine<Aux>(
 
     private fun addListElementStateMachineToStack(
         listFieldModel: MutableListFieldModel<Aux>,
-        listElementStateMachine: ValueDecodingStateMachine<Aux>
+        listElementStateMachine: ValueDecodingStateMachine<Aux>,
+        isWrappedElements: Boolean
     ) {
-        if (auxStateMachine == null) {
-            val listStateMachine = ListFieldModelStateMachine(listFieldModel, listElementStateMachine, stack)
-            stack.addFirst(listStateMachine)
-        } else {
-            // Wrap the list state machine as well as the list element state machine
-            val wrappedElementStateMachine =
-                ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachineFactory, stack)
-            val listStateMachine = ListFieldModelStateMachine(listFieldModel, wrappedElementStateMachine, stack)
-            val wrappedListStateMachine =
-                ValueAndAuxStateMachine(false, listStateMachine, auxStateMachineFactory, stack)
-            stack.addFirst(wrappedListStateMachine)
-        }
+        val elementStateMachine =
+            if (!isWrappedElements) listElementStateMachine
+            else ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachineFactory, stack)
+        val listStateMachine = ListFieldModelStateMachine(listFieldModel, elementStateMachine, stack)
+        stack.addFirst(listStateMachine)
     }
 
     private fun addElementStateMachineToStack(elementStateMachine: ValueDecodingStateMachine<Aux>) {
-        if (auxStateMachine == null) {
-            stack.addFirst(elementStateMachine)
-        } else {
-            val wrappedElementStateMachine =
-                ValueAndAuxStateMachine(false, elementStateMachine, auxStateMachineFactory, stack)
-            stack.addFirst(wrappedElementStateMachine)
-        }
+        stack.addFirst(elementStateMachine)
     }
 }

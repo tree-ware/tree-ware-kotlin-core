@@ -1,34 +1,20 @@
 {
   "mapping": {
+    "address_book__mapping_": "root_mapping",
     "address_book": {
-      "mapping": "root_mapping",
-      "value": {
-        "person": {
-          "mapping": "person_mapping",
-          "value": [
-            {
-              "value": {
-                "relation": {
-                  "mapping": "relation_mapping",
-                  "value": [
-                    {
-                      "value": {}
-                    }
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "city_info": {
-          "mapping": "city_info_mapping",
-          "value": [
-            {
-              "value": {}
-            }
+      "person__mapping_": "person_mapping",
+      "person": [
+        {
+          "relation__mapping_": "relation_mapping",
+          "relation": [
+            {}
           ]
         }
-      }
+      ],
+      "city_info__mapping_": "city_info_mapping",
+      "city_info": [
+        {}
+      ]
     }
   }
 }

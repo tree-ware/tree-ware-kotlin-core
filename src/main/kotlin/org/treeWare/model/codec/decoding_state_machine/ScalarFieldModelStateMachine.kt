@@ -63,10 +63,8 @@ class ScalarFieldModelStateMachine<Aux>(
             field = localField
             return localField.setNullValue()
         } finally {
-            if (auxStateMachine != null || !isListElement) {
-                // Remove self from stack
-                stack.pollFirst()
-            }
+            // Remove self from stack
+            stack.pollFirst()
         }
     }
 
@@ -76,10 +74,8 @@ class ScalarFieldModelStateMachine<Aux>(
             field = localField
             return localField.setValue(value)
         } finally {
-            if (auxStateMachine != null || !isListElement) {
-                // Remove self from stack
-                stack.pollFirst()
-            }
+            // Remove self from stack
+            stack.pollFirst()
         }
     }
 
@@ -89,10 +85,8 @@ class ScalarFieldModelStateMachine<Aux>(
             field = localField
             return localField.setValue(value)
         } finally {
-            if (auxStateMachine != null || !isListElement) {
-                // Remove self from stack
-                stack.pollFirst()
-            }
+            // Remove self from stack
+            stack.pollFirst()
         }
     }
 
@@ -102,10 +96,8 @@ class ScalarFieldModelStateMachine<Aux>(
             field = localField
             return localField.setValue(value)
         } finally {
-            if (auxStateMachine != null || !isListElement) {
-                // Remove self from stack
-                stack.pollFirst()
-            }
+            // Remove self from stack
+            stack.pollFirst()
         }
     }
 }

@@ -17,6 +17,8 @@ class RootModelStateMachine<Aux>(
     }
 
     override fun decodeObjectEnd(): Boolean {
+        // TODO(deepak-nulu): set aux when found rather than on the way out.
+        auxStateMachine?.getAux()?.also { root.aux = it }
         // Remove self from stack
         stack.pollFirst()
         return true
@@ -37,14 +39,21 @@ class RootModelStateMachine<Aux>(
     override fun decodeKey(name: String): Boolean {
         super.decodeKey(name)
 
-        if (keyName == root.schema.name) {
+        val key = keyName ?: ""
+        if (key == root.schema.name) {
             val entityStateMachine =
                 BaseEntityStateMachine(false, { root }, stack, auxStateMachineFactory, isWildcardModel)
-            if (auxStateMachine == null) stack.addFirst(entityStateMachine)
-            else stack.addFirst(ValueAndAuxStateMachine(false, entityStateMachine, auxStateMachineFactory, stack))
-        } else {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            stack.addFirst(entityStateMachine)
+            return true
+        } else if (auxStateMachine != null) {
+            val fieldAndAuxNames = getFieldAndAuxNames(key)
+            if (fieldAndAuxNames?.fieldName == root.schema.name) {
+                // TODO(deepak-nulu): also validate auxName.
+                stack.addFirst(auxStateMachine)
+                return true
+            }
         }
+        stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
         return true
     }
 }
