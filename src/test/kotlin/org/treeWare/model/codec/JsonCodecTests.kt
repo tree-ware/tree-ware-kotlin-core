@@ -1,11 +1,11 @@
 package org.treeWare.model.codec
 
 import org.treeWare.model.assertMatchesJson
-import org.treeWare.model.codec.aux_encoder.AuxEncoder
-import org.treeWare.model.codec.aux_encoder.ErrorAuxEncoder
-import org.treeWare.model.codec.decoding_state_machine.AuxDecodingStateMachine
-import org.treeWare.model.codec.decoding_state_machine.DecodingStack
-import org.treeWare.model.codec.decoding_state_machine.StringAuxStateMachine
+import org.treeWare.model.codec.decoder.stateMachine.AuxDecodingStateMachine
+import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
+import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
+import org.treeWare.model.codec.encoder.AuxEncoder
+import org.treeWare.model.codec.encoder.ErrorAuxEncoder
 import org.treeWare.model.getModel
 import org.treeWare.schema.core.newAddressBookSchema
 import org.treeWare.schema.core.validate

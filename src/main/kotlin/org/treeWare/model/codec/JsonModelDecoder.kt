@@ -1,9 +1,9 @@
 package org.treeWare.model.codec
 
 import org.treeWare.common.codec.JsonWireFormatDecoder
-import org.treeWare.model.codec.decoding_state_machine.AuxDecodingStateMachine
-import org.treeWare.model.codec.decoding_state_machine.DecodingStack
-import org.treeWare.model.codec.decoding_state_machine.ModelDecodingStateMachine
+import org.treeWare.model.codec.decoder.stateMachine.AuxDecodingStateMachine
+import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
+import org.treeWare.model.codec.decoder.stateMachine.ModelDecodingStateMachine
 import org.treeWare.model.core.MutableModel
 import org.treeWare.schema.core.Schema
 import java.io.Reader

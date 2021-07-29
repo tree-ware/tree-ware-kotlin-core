@@ -1,8 +1,7 @@
-package org.treeWare.model.codec
+package org.treeWare.model.codec.encoder
 
 import org.treeWare.common.codec.WireFormatEncoder
 import org.treeWare.common.traversal.TraversalAction
-import org.treeWare.model.codec.aux_encoder.AuxEncoder
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
 import org.treeWare.model.operator.forEach

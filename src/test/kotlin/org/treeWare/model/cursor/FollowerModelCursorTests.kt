@@ -2,7 +2,7 @@ package org.treeWare.model.cursor
 
 import org.treeWare.common.codec.JsonWireFormatEncoder
 import org.treeWare.common.traversal.TraversalAction
-import org.treeWare.model.codec.ModelEncodingVisitor
+import org.treeWare.model.codec.encoder.ModelEncodingVisitor
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.getFileReader
 import org.treeWare.model.getModel

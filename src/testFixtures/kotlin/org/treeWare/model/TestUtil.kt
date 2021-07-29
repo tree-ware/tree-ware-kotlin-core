@@ -1,10 +1,10 @@
 package org.treeWare.model
 
-import org.treeWare.model.codec.aux_encoder.AuxEncoder
 import org.treeWare.model.codec.decodeJson
-import org.treeWare.model.codec.decoding_state_machine.AuxDecodingStateMachine
-import org.treeWare.model.codec.decoding_state_machine.DecodingStack
+import org.treeWare.model.codec.decoder.stateMachine.AuxDecodingStateMachine
+import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
 import org.treeWare.model.codec.encodeJson
+import org.treeWare.model.codec.encoder.AuxEncoder
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.MutableModel
 import org.treeWare.schema.core.Schema
