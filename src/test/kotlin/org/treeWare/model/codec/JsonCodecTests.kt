@@ -22,6 +22,7 @@ class JsonCodecTests {
     fun `JSON codec error-model round trip must be lossless`() {
         testRoundTrip(
             "model/address_book_error_all_model.json",
+            null,
             ErrorAuxEncoder(),
             "error"
         ) { StringAuxStateMachine(it) }
@@ -44,6 +45,7 @@ class JsonCodecTests {
 
     private fun <Aux> testRoundTrip(
         inputFilePath: String,
+        outputFilePath: String? = null,
         auxEncoder: AuxEncoder? = null,
         expectedModelType: String = "data",
         auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
@@ -53,6 +55,6 @@ class JsonCodecTests {
         assertTrue(errors.isEmpty())
 
         val model = getModel(schema, inputFilePath, expectedModelType, auxStateMachineFactory)
-        assertMatchesJson(model, auxEncoder, inputFilePath)
+        assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath)
     }
 }

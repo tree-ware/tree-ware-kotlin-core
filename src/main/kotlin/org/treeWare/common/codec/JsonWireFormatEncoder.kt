@@ -62,6 +62,9 @@ class JsonWireFormatEncoder(private val writer: Writer,
 
     // WireFormatEncoder methods
 
+    override fun getAuxFieldName(fieldName: String?, auxName: String): String =
+        if (fieldName != null) "${fieldName}__${auxName}_" else "${auxName}_"
+
     override fun encodeObjectStart(name: String?) {
         encodeNameValue(name, "{")
         nesting.addFirst(NestingState.OBJECT_START)

@@ -10,8 +10,7 @@ class AssociationFieldModelStateMachine<Aux>(
     private val isListElement: Boolean,
     private val associationFactory: () -> MutableAssociationFieldModel<Aux>,
     private val schema: AssociationFieldSchema,
-    private val stack: DecodingStack,
-    private val auxStateMachine: AuxDecodingStateMachine<Aux>?
+    private val stack: DecodingStack
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private var association: MutableAssociationFieldModel<Aux>? = null
     private val logger = LogManager.getLogger()
@@ -28,7 +27,7 @@ class AssociationFieldModelStateMachine<Aux>(
     }
 
     override fun decodeObjectEnd(): Boolean {
-        if (auxStateMachine != null || !isListElement) {
+        if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()
         }

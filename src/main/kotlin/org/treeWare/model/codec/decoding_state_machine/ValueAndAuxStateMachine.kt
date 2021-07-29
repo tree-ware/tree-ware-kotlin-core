@@ -14,10 +14,6 @@ class ValueAndAuxStateMachine<Aux>(
     private val auxStateMachine: AuxDecodingStateMachine<Aux>? = auxStateMachineFactory()
     private val logger = LogManager.getLogger()
 
-    init {
-        assert(auxStateMachine != null)
-    }
-
     override fun decodeKey(name: String): Boolean {
         setKeyState(name)
         if (keyName == VALUE_KEY) stack.addFirst(valueStateMachine)

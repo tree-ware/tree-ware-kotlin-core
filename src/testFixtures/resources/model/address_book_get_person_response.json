@@ -6,24 +6,36 @@
       "settings": {
         "last_name_first": true,
         "card_colors": [
-          "orange",
-          "green",
-          "blue"
+          {
+            "value": "orange"
+          },
+          {
+            "value": "green"
+          },
+          {
+            "value": "blue"
+          }
         ]
       },
       "person": [
         {
           "first_name": "Clark",
           "email": [
-            "clark.kent@dailyplanet.com",
-            "superman@dc.com"
+            {
+              "value": "clark.kent@dailyplanet.com"
+            },
+            {
+              "value": "superman@dc.com"
+            }
           ],
           "relation": []
         },
         {
           "first_name": "Lois",
           "email": [
-            "lois.lane@dailyplanet.com"
+            {
+              "value": "lois.lane@dailyplanet.com"
+            }
           ],
           "relation": []
         }
