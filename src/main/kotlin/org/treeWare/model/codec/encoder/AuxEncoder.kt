@@ -1,4 +1,4 @@
-package org.treeWare.model.codec.aux_encoder
+package org.treeWare.model.codec.encoder
 
 import org.treeWare.common.codec.WireFormatEncoder
 

@@ -1,4 +1,4 @@
-package org.treeWare.model.codec.decoding_state_machine
+package org.treeWare.model.codec.decoder.stateMachine
 
 import org.treeWare.common.codec.DecodingStateMachine
 

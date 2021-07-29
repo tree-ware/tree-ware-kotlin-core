@@ -5,7 +5,7 @@ import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.treeWare.model.assertMatchesJson
-import org.treeWare.model.codec.decoding_state_machine.StringAuxStateMachine
+import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.core.MutableCompositionListFieldModel
 import org.treeWare.model.core.MutableRootModel
 import org.treeWare.model.core.MutableScalarListFieldModel

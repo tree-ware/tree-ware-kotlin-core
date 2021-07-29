@@ -1,32 +1,36 @@
-package org.treeWare.model.codec.decoding_state_machine
+package org.treeWare.model.codec.decoder.stateMachine
 
 import org.apache.logging.log4j.LogManager
 import org.treeWare.common.codec.AbstractDecodingStateMachine
-import org.treeWare.common.codec.SkipUnknownStateMachine
-import org.treeWare.model.core.MutableAssociationFieldModel
-import org.treeWare.schema.core.AssociationFieldSchema
 
-class AssociationFieldModelStateMachine<Aux>(
+const val VALUE_KEY = "value"
+
+class ValueAndAuxStateMachine<Aux>(
     private val isListElement: Boolean,
-    private val associationFactory: () -> MutableAssociationFieldModel<Aux>,
-    private val schema: AssociationFieldSchema,
+    private val valueStateMachine: ValueDecodingStateMachine<Aux>,
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
     private val stack: DecodingStack
-) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private var association: MutableAssociationFieldModel<Aux>? = null
+) : AbstractDecodingStateMachine(true) {
+    private val auxStateMachine: AuxDecodingStateMachine<Aux>? = auxStateMachineFactory()
     private val logger = LogManager.getLogger()
 
-    override fun setAux(aux: Aux) {
-        assert(association != null)
-        association?.aux = aux
+    override fun decodeKey(name: String): Boolean {
+        setKeyState(name)
+        if (keyName == VALUE_KEY) stack.addFirst(valueStateMachine)
+        else auxStateMachine?.also {
+            stack.addFirst(it)
+            it.decodeKey(name)
+            auxStateMachine?.newAux()
+        }
+        return true
     }
 
     override fun decodeObjectStart(): Boolean {
-        association = associationFactory()
-        assert(association != null)
         return true
     }
 
     override fun decodeObjectEnd(): Boolean {
+        auxStateMachine?.getAux()?.also { valueStateMachine.setAux(it) }
         if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()
@@ -57,24 +61,5 @@ class AssociationFieldModelStateMachine<Aux>(
             assert(false)
             return false
         }
-    }
-
-    override fun decodeKey(name: String): Boolean {
-        super.decodeKey(name)
-
-        if (keyName == "path_keys") {
-            association?.also {
-                stack.addFirst(AssociationPathStateMachine(it.newValue(), schema.keyEntities, stack))
-            }
-        } else {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
-        }
-        return true
-    }
-
-    override fun decodeNullValue(): Boolean {
-        association = associationFactory()
-        assert(association != null)
-        return association?.setNullValue() ?: false
     }
 }

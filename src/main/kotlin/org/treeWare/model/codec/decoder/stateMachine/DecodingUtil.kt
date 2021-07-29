@@ -1,4 +1,4 @@
-package org.treeWare.model.codec.decoding_state_machine
+package org.treeWare.model.codec.decoder.stateMachine
 
 data class FieldAndAuxNames(val fieldName: String, val auxName: String?)
 
