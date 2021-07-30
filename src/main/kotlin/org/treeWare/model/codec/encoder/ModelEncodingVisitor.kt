@@ -104,12 +104,13 @@ class ModelEncodingVisitor<Aux>(
         val isListElement = leaderField1.schema.multiplicity.isList()
         val fieldName = leaderField1.schema.name
         val auxFieldName = if (isListElement) null else leaderField1.schema.name
-        auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
+        if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
         if (leaderField1.value.isEmpty()) {
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
         wireFormatEncoder.encodeObjectStart(fieldName)
+        if (isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
         wireFormatEncoder.encodeListStart("path_keys")
         encodingPathKeys = true
         leaderField1.value.forEach { entityKeys ->

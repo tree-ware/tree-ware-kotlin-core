@@ -94,6 +94,95 @@
             }
           ]
         }
+      ],
+      "city_info__error_": "Error with city info list",
+      "city_info": [
+        {
+          "city__error_": "Error with 1:1 composition key inside a list",
+          "city": {
+            "name": "New York City",
+            "state": "New York",
+            "country": "United States of America"
+          },
+          "info__error_": "Error in info",
+          "info": "One of the most populous and most densely populated major city in USA",
+          "related_city_info__error_": "Error in related city list",
+          "related_city_info": [
+            {
+              "error_": "Error with association element in list",
+              "path_keys": [
+                {
+                  "city": {
+                    "name": "Albany",
+                    "state": "New York",
+                    "country": "United States of America"
+                  }
+                }
+              ]
+            },
+            {
+              "path_keys": [
+                {
+                  "city": {
+                    "name": "Princeton",
+                    "state": "New Jersey",
+                    "country": "United States of America"
+                  }
+                }
+              ]
+            },
+            {
+              "error_": "Error with association element in list after an element without an error",
+              "path_keys": [
+                {
+                  "city": {
+                    "name": "San Francisco",
+                    "state": "California",
+                    "country": "United States of America"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "info": "Capital of New York state",
+          "city": {
+            "name": "Albany",
+            "state": "New York",
+            "country": "United States of America"
+          },
+          "related_city_info": [
+            {
+              "path_keys": [
+                {
+                  "city": {
+                    "name": "New York City",
+                    "state": "New York",
+                    "country": "United States of America"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "info": "Home of Princeton University",
+          "related_city_info": [],
+          "city": {
+            "name": "Princeton",
+            "state": "New Jersey",
+            "country": "United States of America"
+          }
+        },
+        {
+          "info": "The cultural and financial center of Northern California",
+          "city": {
+            "name": "San Francisco",
+            "state": "California",
+            "country": "United States of America"
+          }
+        }
       ]
     }
   }

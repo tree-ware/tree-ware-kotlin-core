@@ -134,7 +134,8 @@ class BaseEntityStateMachine<Aux>(
                 true,
                 { associationListFieldModel.addAssociation() },
                 fieldSchema,
-                stack
+                stack,
+                auxStateMachineFactory
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
@@ -143,7 +144,8 @@ class BaseEntityStateMachine<Aux>(
                 false,
                 { fieldModel },
                 fieldSchema,
-                stack
+                stack,
+                auxStateMachineFactory
             )
             addElementStateMachineToStack(elementStateMachine)
         }
