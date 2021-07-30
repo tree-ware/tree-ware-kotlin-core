@@ -10,8 +10,10 @@ class AssociationFieldModelStateMachine<Aux>(
     private val isListElement: Boolean,
     private val associationFactory: () -> MutableAssociationFieldModel<Aux>,
     private val schema: AssociationFieldSchema,
-    private val stack: DecodingStack
+    private val stack: DecodingStack,
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
+    private var auxStateMachine: AuxDecodingStateMachine<Aux>? = null
     private var association: MutableAssociationFieldModel<Aux>? = null
     private val logger = LogManager.getLogger()
 
@@ -30,6 +32,10 @@ class AssociationFieldModelStateMachine<Aux>(
         if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()
+        } else {
+            auxStateMachine?.getAux()?.also { association?.aux = it }
+            // This state-machine instance gets reused in lists, so clear it.
+            auxStateMachine = null
         }
         return true
     }
@@ -62,13 +68,29 @@ class AssociationFieldModelStateMachine<Aux>(
     override fun decodeKey(name: String): Boolean {
         super.decodeKey(name)
 
-        if (keyName == "path_keys") {
+        val key = keyName ?: ""
+        val fieldAndAuxNames = getFieldAndAuxNames(key)
+        if (fieldAndAuxNames == null) {
+            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            return true
+        }
+        val (fieldName, auxName) = fieldAndAuxNames
+        if (auxName != null) {
+            val auxStateMachine = auxStateMachineFactory()
+            if (auxStateMachine != null) {
+                stack.addFirst(auxStateMachine)
+                auxStateMachine.newAux()
+                this.auxStateMachine = auxStateMachine
+            } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            return true
+        }
+        if (fieldName == "path_keys") {
             association?.also {
                 stack.addFirst(AssociationPathStateMachine(it.newValue(), schema.keyEntities, stack))
             }
-        } else {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            return true
         }
+        stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
         return true
     }
 
