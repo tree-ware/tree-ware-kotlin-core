@@ -11,7 +11,6 @@ class ScalarFieldModelStateMachine<Aux>(
     private val stack: DecodingStack,
     auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private val auxStateMachine = auxStateMachineFactory()
     private var field: MutableScalarFieldModel<Aux>? = null
     private val logger = LogManager.getLogger()
 

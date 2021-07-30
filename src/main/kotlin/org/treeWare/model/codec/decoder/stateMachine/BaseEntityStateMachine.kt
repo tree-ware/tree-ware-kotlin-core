@@ -91,6 +91,7 @@ class BaseEntityStateMachine<Aux>(
             if (auxStateMachine != null) {
                 auxStateMachineMap[fieldName] = auxStateMachine
                 stack.addFirst(auxStateMachine)
+                auxStateMachine.newAux()
             } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
             return true
         }
