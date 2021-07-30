@@ -50,6 +50,7 @@ class RootModelStateMachine<Aux>(
             if (fieldAndAuxNames?.fieldName == root.schema.name) {
                 // TODO(deepak-nulu): also validate auxName.
                 stack.addFirst(auxStateMachine)
+                auxStateMachine.newAux()
                 return true
             }
         }
