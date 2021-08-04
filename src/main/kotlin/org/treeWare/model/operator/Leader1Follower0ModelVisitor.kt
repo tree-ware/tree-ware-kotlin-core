@@ -14,41 +14,29 @@ interface Leader1Follower0ModelVisitor<LeaderAux, Return> {
     fun visit(leaderEntity1: EntityModel<LeaderAux>): Return
     fun leave(leaderEntity1: EntityModel<LeaderAux>)
 
-    // Scalar fields
+    // Fields
 
-    fun visit(leaderField1: PrimitiveFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: PrimitiveFieldModel<LeaderAux>)
+    fun visit(leaderField1: SingleFieldModel<LeaderAux>): Return
+    fun leave(leaderField1: SingleFieldModel<LeaderAux>)
 
-    fun visit(leaderField1: AliasFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: AliasFieldModel<LeaderAux>)
+    fun visit(leaderField1: ListFieldModel<LeaderAux>): Return
+    fun leave(leaderField1: ListFieldModel<LeaderAux>)
 
-    fun visit(leaderField1: EnumerationFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: EnumerationFieldModel<LeaderAux>)
+    // Values
 
-    fun visit(leaderField1: AssociationFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: AssociationFieldModel<LeaderAux>)
+    fun visit(leaderValue1: PrimitiveModel<LeaderAux>): Return
+    fun leave(leaderValue1: PrimitiveModel<LeaderAux>)
 
-    fun visit(leaderField1: CompositionFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: CompositionFieldModel<LeaderAux>)
+    fun visit(leaderValue1: AliasModel<LeaderAux>): Return
+    fun leave(leaderValue1: AliasModel<LeaderAux>)
 
-    // List fields
+    fun visit(leaderValue1: EnumerationModel<LeaderAux>): Return
+    fun leave(leaderValue1: EnumerationModel<LeaderAux>)
 
-    fun visit(leaderField1: PrimitiveListFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: PrimitiveListFieldModel<LeaderAux>)
+    fun visit(leaderValue1: AssociationModel<LeaderAux>): Return
+    fun leave(leaderValue1: AssociationModel<LeaderAux>)
 
-    fun visit(leaderField1: AliasListFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: AliasListFieldModel<LeaderAux>)
-
-    fun visit(leaderField1: EnumerationListFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: EnumerationListFieldModel<LeaderAux>)
-
-    fun visit(leaderField1: AssociationListFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: AssociationListFieldModel<LeaderAux>)
-
-    fun visit(leaderField1: CompositionListFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: CompositionListFieldModel<LeaderAux>)
-
-    // Field values
+    // Sub-values
 
     fun visit(leaderEntityKeys1: EntityKeysModel<LeaderAux>): Return
     fun leave(leaderEntityKeys1: EntityKeysModel<LeaderAux>)

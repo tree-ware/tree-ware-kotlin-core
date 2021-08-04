@@ -41,141 +41,93 @@ interface Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Re
         followerEntity2: EntityModel<Follower2Aux>?
     )
 
-    // Scalar fields
+    // Fields
 
     suspend fun visit(
-        leaderField1: PrimitiveFieldModel<LeaderAux>,
-        followerField1: PrimitiveFieldModel<Follower1Aux>?,
-        followerField2: PrimitiveFieldModel<Follower2Aux>?
+        leaderField1: SingleFieldModel<LeaderAux>,
+        followerField1: SingleFieldModel<Follower1Aux>?,
+        followerField2: SingleFieldModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderField1: PrimitiveFieldModel<LeaderAux>,
-        followerField1: PrimitiveFieldModel<Follower1Aux>?,
-        followerField2: PrimitiveFieldModel<Follower2Aux>?
+        leaderField1: SingleFieldModel<LeaderAux>,
+        followerField1: SingleFieldModel<Follower1Aux>?,
+        followerField2: SingleFieldModel<Follower2Aux>?
     )
 
     suspend fun visit(
-        leaderField1: AliasFieldModel<LeaderAux>,
-        followerField1: AliasFieldModel<Follower1Aux>?,
-        followerField2: AliasFieldModel<Follower2Aux>?
+        leaderField1: ListFieldModel<LeaderAux>,
+        followerField1: ListFieldModel<Follower1Aux>?,
+        followerField2: ListFieldModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderField1: AliasFieldModel<LeaderAux>,
-        followerField1: AliasFieldModel<Follower1Aux>?,
-        followerField2: AliasFieldModel<Follower2Aux>?
+        leaderField1: ListFieldModel<LeaderAux>,
+        followerField1: ListFieldModel<Follower1Aux>?,
+        followerField2: ListFieldModel<Follower2Aux>?
+    )
+
+    // Values
+
+    suspend fun visit(
+        leaderValue1: PrimitiveModel<LeaderAux>,
+        followerValue1: PrimitiveModel<Follower1Aux>?,
+        followerValue2: PrimitiveModel<Follower2Aux>?
+    ): Return
+
+    suspend fun leave(
+        leaderValue1: PrimitiveModel<LeaderAux>,
+        followerValue1: PrimitiveModel<Follower1Aux>?,
+        followerValue2: PrimitiveModel<Follower2Aux>?
     )
 
     suspend fun visit(
-        leaderField1: EnumerationFieldModel<LeaderAux>,
-        followerField1: EnumerationFieldModel<Follower1Aux>?,
-        followerField2: EnumerationFieldModel<Follower2Aux>?
+        leaderValue1: AliasModel<LeaderAux>,
+        followerValue1: AliasModel<Follower1Aux>?,
+        followerValue2: AliasModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderField1: EnumerationFieldModel<LeaderAux>,
-        followerField1: EnumerationFieldModel<Follower1Aux>?,
-        followerField2: EnumerationFieldModel<Follower2Aux>?
+        leaderValue1: AliasModel<LeaderAux>,
+        followerValue1: AliasModel<Follower1Aux>?,
+        followerValue2: AliasModel<Follower2Aux>?
     )
 
     suspend fun visit(
-        leaderField1: AssociationFieldModel<LeaderAux>,
-        followerField1: AssociationFieldModel<Follower1Aux>?,
-        followerField2: AssociationFieldModel<Follower2Aux>?
+        leaderValue1: EnumerationModel<LeaderAux>,
+        followerValue1: EnumerationModel<Follower1Aux>?,
+        followerValue2: EnumerationModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderField1: AssociationFieldModel<LeaderAux>,
-        followerField1: AssociationFieldModel<Follower1Aux>?,
-        followerField2: AssociationFieldModel<Follower2Aux>?
+        leaderValue1: EnumerationModel<LeaderAux>,
+        followerValue1: EnumerationModel<Follower1Aux>?,
+        followerValue2: EnumerationModel<Follower2Aux>?
     )
 
     suspend fun visit(
-        leaderField1: CompositionFieldModel<LeaderAux>,
-        followerField1: CompositionFieldModel<Follower1Aux>?,
-        followerField2: CompositionFieldModel<Follower2Aux>?
+        leaderValue1: AssociationModel<LeaderAux>,
+        followerValue1: AssociationModel<Follower1Aux>?,
+        followerValue2: AssociationModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderField1: CompositionFieldModel<LeaderAux>,
-        followerField1: CompositionFieldModel<Follower1Aux>?,
-        followerField2: CompositionFieldModel<Follower2Aux>?
+        leaderValue1: AssociationModel<LeaderAux>,
+        followerValue1: AssociationModel<Follower1Aux>?,
+        followerValue2: AssociationModel<Follower2Aux>?
     )
 
-    // List fields
+    // Sub-values
 
     suspend fun visit(
-        leaderField1: PrimitiveListFieldModel<LeaderAux>,
-        followerField1: PrimitiveListFieldModel<Follower1Aux>?,
-        followerField2: PrimitiveListFieldModel<Follower2Aux>?
+        leaderEntityKeys1: EntityKeysModel<LeaderAux>,
+        followerEntityKeys1: EntityKeysModel<Follower1Aux>?,
+        followerEntityKeys2: EntityKeysModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderField1: PrimitiveListFieldModel<LeaderAux>,
-        followerField1: PrimitiveListFieldModel<Follower1Aux>?,
-        followerField2: PrimitiveListFieldModel<Follower2Aux>?
-    )
-
-    suspend fun visit(
-        leaderField1: AliasListFieldModel<LeaderAux>,
-        followerField1: AliasListFieldModel<Follower1Aux>?,
-        followerField2: AliasListFieldModel<Follower2Aux>?
-    ): Return
-
-    suspend fun leave(
-        leaderField1: AliasListFieldModel<LeaderAux>,
-        followerField1: AliasListFieldModel<Follower1Aux>?,
-        followerField2: AliasListFieldModel<Follower2Aux>?
-    )
-
-    suspend fun visit(
-        leaderField1: EnumerationListFieldModel<LeaderAux>,
-        followerField1: EnumerationListFieldModel<Follower1Aux>?,
-        followerField2: EnumerationListFieldModel<Follower2Aux>?
-    ): Return
-
-    suspend fun leave(
-        leaderField1: EnumerationListFieldModel<LeaderAux>,
-        followerField1: EnumerationListFieldModel<Follower1Aux>?,
-        followerField2: EnumerationListFieldModel<Follower2Aux>?
-    )
-
-    suspend fun visit(
-        leaderField1: AssociationListFieldModel<LeaderAux>,
-        followerField1: AssociationListFieldModel<Follower1Aux>?,
-        followerField2: AssociationListFieldModel<Follower2Aux>?
-    ): Return
-
-    suspend fun leave(
-        leaderField1: AssociationListFieldModel<LeaderAux>,
-        followerField1: AssociationListFieldModel<Follower1Aux>?,
-        followerField2: AssociationListFieldModel<Follower2Aux>?
-    )
-
-    suspend fun visit(
-        leaderField1: CompositionListFieldModel<LeaderAux>,
-        followerField1: CompositionListFieldModel<Follower1Aux>?,
-        followerField2: CompositionListFieldModel<Follower2Aux>?
-    ): Return
-
-    suspend fun leave(
-        leaderField1: CompositionListFieldModel<LeaderAux>,
-        followerField1: CompositionListFieldModel<Follower1Aux>?,
-        followerField2: CompositionListFieldModel<Follower2Aux>?
-    )
-
-    // Field values
-
-    suspend fun visit(
-        leaderField1: EntityKeysModel<LeaderAux>,
-        followerField1: EntityKeysModel<Follower1Aux>?,
-        followerField2: EntityKeysModel<Follower2Aux>?
-    ): Return
-
-    suspend fun leave(
-        leaderField1: EntityKeysModel<LeaderAux>,
-        followerField1: EntityKeysModel<Follower1Aux>?,
-        followerField2: EntityKeysModel<Follower2Aux>?
+        leaderEntityKeys1: EntityKeysModel<LeaderAux>,
+        followerEntityKeys1: EntityKeysModel<Follower1Aux>?,
+        followerEntityKeys2: EntityKeysModel<Follower2Aux>?
     )
 }

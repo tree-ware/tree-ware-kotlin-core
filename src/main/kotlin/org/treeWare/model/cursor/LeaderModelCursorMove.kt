@@ -31,16 +31,22 @@ class VisitLeaderEntityModel<Aux>(override val element: EntityModel<Aux>) :
 class LeaveLeaderEntityModel<Aux>(override val element: EntityModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
-class VisitLeaderFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class VisitLeaderSingleFieldModel<Aux>(override val element: SingleFieldModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
-class LeaveLeaderFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class LeaveLeaderSingleFieldModel<Aux>(override val element: SingleFieldModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
-class VisitLeaderListFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class VisitLeaderListFieldModel<Aux>(override val element: ListFieldModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
-class LeaveLeaderListFieldModel<Aux>(override val element: FieldModel<Aux>) :
+class LeaveLeaderListFieldModel<Aux>(override val element: ListFieldModel<Aux>) :
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
+
+class VisitLeaderValueModel<Aux>(override val element: ElementModel<Aux>) :
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
+
+class LeaveLeaderValueModel<Aux>(override val element: ElementModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitLeaderEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>) :

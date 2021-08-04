@@ -3,18 +3,18 @@ package org.treeWare.model.codec.decoder.stateMachine
 import org.apache.logging.log4j.LogManager
 import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.common.codec.SkipUnknownStateMachine
-import org.treeWare.model.core.MutableAssociationFieldModel
+import org.treeWare.model.core.MutableAssociationModel
 import org.treeWare.schema.core.AssociationFieldSchema
 
-class AssociationFieldModelStateMachine<Aux>(
+class AssociationModelStateMachine<Aux>(
     private val isListElement: Boolean,
-    private val associationFactory: () -> MutableAssociationFieldModel<Aux>,
+    private val associationFactory: () -> MutableAssociationModel<Aux>,
     private val schema: AssociationFieldSchema,
     private val stack: DecodingStack,
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private var auxStateMachine: AuxDecodingStateMachine<Aux>? = null
-    private var association: MutableAssociationFieldModel<Aux>? = null
+    private var association: MutableAssociationModel<Aux>? = null
     private val logger = LogManager.getLogger()
 
     override fun setAux(aux: Aux) {

@@ -47,20 +47,41 @@ class ModelEncodingVisitor<Aux>(
         wireFormatEncoder.encodeObjectEnd()
     }
 
+    // Fields
+
+    override fun visit(leaderField1: SingleFieldModel<Aux>): TraversalAction {
+        val fieldName = leaderField1.schema.name
+        auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
+        return TraversalAction.CONTINUE
+    }
+
+    override fun leave(leaderField1: SingleFieldModel<Aux>) {}
+
+    override fun visit(leaderField1: ListFieldModel<Aux>): TraversalAction {
+        val fieldName = leaderField1.schema.name
+        auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
+        wireFormatEncoder.encodeListStart(fieldName)
+        return TraversalAction.CONTINUE
+    }
+
+    override fun leave(leaderField1: ListFieldModel<Aux>) {
+        wireFormatEncoder.encodeListEnd()
+    }
+
     // Scalar fields
 
-    override fun visit(leaderField1: PrimitiveFieldModel<Aux>): TraversalAction {
-        val isListElement = leaderField1.schema.multiplicity.isList()
-        val fieldName = if (isListElement) VALUE_KEY else leaderField1.schema.name
-        val auxFieldName = if (isListElement) null else leaderField1.schema.name
+    override fun visit(leaderValue1: PrimitiveModel<Aux>): TraversalAction {
+        val isListElement = leaderValue1.schema.multiplicity.isList()
+        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.schema.name
+        val auxFieldName = if (isListElement) null else leaderValue1.schema.name
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
-        auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
-        val value = leaderField1.value
+        auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        val value = leaderValue1.value
         if (value == null) {
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
-        when (leaderField1.schema.primitive) {
+        when (leaderValue1.schema.primitive) {
             is BooleanSchema -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
             is ByteSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
             is ShortSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
@@ -75,95 +96,60 @@ class ModelEncodingVisitor<Aux>(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderField1: PrimitiveFieldModel<Aux>) {
-        val isListElement = leaderField1.schema.multiplicity.isList()
+    override fun leave(leaderValue1: PrimitiveModel<Aux>) {
+        val isListElement = leaderValue1.schema.multiplicity.isList()
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(leaderField1: AliasFieldModel<Aux>): TraversalAction = TraversalAction.CONTINUE
-    override fun leave(leaderField1: AliasFieldModel<Aux>) {}
+    override fun visit(leaderValue1: AliasModel<Aux>): TraversalAction = TraversalAction.CONTINUE
+    override fun leave(leaderValue1: AliasModel<Aux>) {}
 
-    override fun visit(leaderField1: EnumerationFieldModel<Aux>): TraversalAction {
-        val isListElement = leaderField1.schema.multiplicity.isList()
-        val fieldName = if (isListElement) VALUE_KEY else leaderField1.schema.name
-        val auxFieldName = if (isListElement) null else leaderField1.schema.name
+    override fun visit(leaderValue1: EnumerationModel<Aux>): TraversalAction {
+        val isListElement = leaderValue1.schema.multiplicity.isList()
+        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.schema.name
+        val auxFieldName = if (isListElement) null else leaderValue1.schema.name
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
-        auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
-        val value = leaderField1.value
+        auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        val value = leaderValue1.value
         if (value == null) wireFormatEncoder.encodeNullField(fieldName)
         else wireFormatEncoder.encodeStringField(fieldName, value.name)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderField1: EnumerationFieldModel<Aux>) {
-        val isListElement = leaderField1.schema.multiplicity.isList()
+    override fun leave(leaderValue1: EnumerationModel<Aux>) {
+        val isListElement = leaderValue1.schema.multiplicity.isList()
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(leaderField1: AssociationFieldModel<Aux>): TraversalAction {
-        val isListElement = leaderField1.schema.multiplicity.isList()
-        val fieldName = leaderField1.schema.name
-        val auxFieldName = if (isListElement) null else leaderField1.schema.name
-        if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
-        if (leaderField1.value.isEmpty()) {
+    override fun visit(leaderValue1: AssociationModel<Aux>): TraversalAction {
+        val isListElement = leaderValue1.schema.multiplicity.isList()
+        val fieldName = leaderValue1.schema.name
+        val auxFieldName = if (isListElement) null else leaderValue1.schema.name
+        if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        if (leaderValue1.value.isEmpty()) {
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderField1.aux, wireFormatEncoder) }
+        if (isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
         wireFormatEncoder.encodeListStart("path_keys")
         encodingPathKeys = true
-        leaderField1.value.forEach { entityKeys ->
+        leaderValue1.value.forEach { entityKeys ->
             // Traverse entityKeys with this visitor to encode it.
             forEach(entityKeys, this)
         }
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderField1: AssociationFieldModel<Aux>) {
-        if (leaderField1.value.isNotEmpty()) {
+    override fun leave(leaderValue1: AssociationModel<Aux>) {
+        if (leaderValue1.value.isNotEmpty()) {
             encodingPathKeys = false
             wireFormatEncoder.encodeListEnd()
             wireFormatEncoder.encodeObjectEnd()
         }
     }
 
-    override fun visit(leaderField1: CompositionFieldModel<Aux>): TraversalAction {
-        auxEncoder?.also { it.encode(leaderField1.schema.name, leaderField1.aux, wireFormatEncoder) }
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leave(leaderField1: CompositionFieldModel<Aux>) {}
-
-    // List fields
-
-    override fun visit(leaderField1: PrimitiveListFieldModel<Aux>): TraversalAction = visitListField(leaderField1)
-    override fun leave(leaderField1: PrimitiveListFieldModel<Aux>) = leaveListField()
-
-    override fun visit(leaderField1: AliasListFieldModel<Aux>): TraversalAction = visitListField(leaderField1)
-    override fun leave(leaderField1: AliasListFieldModel<Aux>) = leaveListField()
-
-    override fun visit(leaderField1: EnumerationListFieldModel<Aux>): TraversalAction = visitListField(leaderField1)
-    override fun leave(leaderField1: EnumerationListFieldModel<Aux>) = leaveListField()
-
-    override fun visit(leaderField1: AssociationListFieldModel<Aux>): TraversalAction = visitListField(leaderField1)
-    override fun leave(leaderField1: AssociationListFieldModel<Aux>) = leaveListField()
-
-    override fun visit(leaderField1: CompositionListFieldModel<Aux>): TraversalAction = visitListField(leaderField1)
-    override fun leave(leaderField1: CompositionListFieldModel<Aux>) = leaveListField()
-
-    private fun visitListField(field: ListFieldModel<Aux>): TraversalAction {
-        val fieldName = field.schema.name
-        auxEncoder?.also { it.encode(fieldName, field.aux, wireFormatEncoder) }
-        wireFormatEncoder.encodeListStart(fieldName)
-        return TraversalAction.CONTINUE
-    }
-
-    private fun leaveListField() {
-        wireFormatEncoder.encodeListEnd()
-    }
-
-    // Field values
+    // Sub-values
 
     override fun visit(leaderEntityKeys1: EntityKeysModel<Aux>): TraversalAction {
         wireFormatEncoder.encodeObjectStart(leaderEntityKeys1.schema.name)
