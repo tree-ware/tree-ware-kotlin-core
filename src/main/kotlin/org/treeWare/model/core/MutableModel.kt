@@ -27,6 +27,8 @@ class MutableModel<Aux>(override val schema: Schema) : MutableElementModel<Aux>(
         }
     private var _root: MutableRootModel<Aux>? = null
 
+    override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
+
     fun getOrNewRoot(): MutableRootModel<Aux> {
         if (_root == null) _root = newMutableModel(schema.root, this) as MutableRootModel<Aux>
         return root
@@ -39,66 +41,26 @@ abstract class MutableBaseEntityModel<Aux>(
     override var fields: MutableList<MutableFieldModel<Aux>> = mutableListOf()
         internal set
 
-    override fun <ThatAux> keysMatch(that: BaseEntityModel<ThatAux>): Boolean {
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is BaseEntityModel<*>) return false
         val thisKeyFields = this.fields.filter { it.schema.isKey }
         return thisKeyFields.all { thisKeyField ->
             val thatKeyField = that.getField(thisKeyField.schema.name) ?: return false
-            thisKeyField.keysMatch(thatKeyField)
+            thisKeyField.matches(thatKeyField)
         }
-    }
-
-    fun getOrNewScalarField(fieldName: String): MutableScalarFieldModel<Aux>? {
-        val fieldSchema = entitySchema.getField(fieldName) ?: return null
-        if (fieldSchema.multiplicity.isList()) return null
-
-        var field = getField(fieldName) as MutableScalarFieldModel<Aux>?
-        if (field == null) {
-            field = newMutableModel(fieldSchema, this) as MutableScalarFieldModel<Aux>?
-            if (field != null) fields.add(field)
-        }
-        return field
-    }
-
-    fun getOrNewCompositionField(fieldName: String): MutableCompositionFieldModel<Aux>? {
-        val fieldSchema = entitySchema.getField(fieldName) ?: return null
-        if (fieldSchema !is CompositionFieldSchema) return null
-        if (fieldSchema.multiplicity.isList()) return null
-
-        var field = getField(fieldName) as MutableCompositionFieldModel<Aux>?
-        if (field == null) {
-            field = newMutableModel(fieldSchema, this) as MutableCompositionFieldModel<Aux>?
-            if (field != null) fields.add(field)
-        }
-        return field
-    }
-
-    fun getOrNewAssociationField(fieldName: String): MutableAssociationFieldModel<Aux>? {
-        val fieldSchema = entitySchema.getField(fieldName) ?: return null
-        if (fieldSchema !is AssociationFieldSchema) return null
-        if (fieldSchema.multiplicity.isList()) return null
-
-        var field = getField(fieldName) as MutableAssociationFieldModel<Aux>?
-        if (field == null) {
-            field = newMutableModel(fieldSchema, this) as MutableAssociationFieldModel<Aux>?
-            if (field != null) fields.add(field)
-        }
-        return field
-    }
-
-    fun getOrNewListField(fieldName: String): MutableListFieldModel<Aux>? {
-        val fieldSchema = entitySchema.getField(fieldName) ?: return null
-        if (!fieldSchema.multiplicity.isList()) return null
-
-        var field = getField(fieldName) as MutableListFieldModel<Aux>?
-        if (field == null) {
-            field = newMutableModel(fieldSchema, this) as MutableListFieldModel<Aux>?
-            if (field != null) fields.add(field)
-        }
-        return field
     }
 
     // TODO(deepak-nulu): optimize
     override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields.find { it.schema.name == fieldName }
+
+    fun getOrNewField(fieldName: String): MutableFieldModel<Aux>? {
+        val existing = getField(fieldName)
+        if (existing != null) return existing
+        val fieldSchema = entitySchema.getField(fieldName) ?: return null
+        val newField = newMutableModel(fieldSchema, this) as? MutableFieldModel<Aux> ?: return null
+        fields.add(newField)
+        return newField
+    }
 }
 
 class MutableRootModel<Aux>(
@@ -111,25 +73,87 @@ class MutableEntityModel<Aux>(
     override val parent: MutableFieldModel<Aux>
 ) : MutableBaseEntityModel<Aux>(schema), EntityModel<Aux>
 
-abstract class MutableFieldModel<Aux> : MutableElementModel<Aux>(), FieldModel<Aux>
+// Fields
 
-// Scalar fields
+abstract class MutableFieldModel<Aux>(
+    override val schema: FieldSchema,
+    override val parent: MutableBaseEntityModel<Aux>
+) : MutableElementModel<Aux>(), FieldModel<Aux>
 
-abstract class MutableScalarFieldModel<Aux>(
-    override val parent: MutableElementModel<Aux>
-) : MutableFieldModel<Aux>(), ScalarFieldModel<Aux> {
+class MutableSingleFieldModel<Aux>(
+    schema: FieldSchema,
+    parent: MutableBaseEntityModel<Aux>
+) : MutableFieldModel<Aux>(schema, parent), SingleFieldModel<Aux> {
+    override var value: MutableElementModel<Aux>? = null
+        internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is SingleFieldModel<*>) return false
+        val thisValue = this.value
+        val thatValue = that.value
+        if (thisValue == null) return thatValue == null
+        if (thatValue == null) return false
+        return thisValue.matches(thatValue)
+    }
+
+    fun getOrNewValue(): MutableElementModel<Aux> {
+        val existing = value
+        if (existing != null) return existing
+        val newValue = newMutableValueModel(schema, this)
+        value = newValue
+        return newValue
+    }
+
+    fun setValue(value: MutableElementModel<Aux>?) {
+        this.value = value
+    }
+}
+
+class MutableListFieldModel<Aux>(
+    schema: FieldSchema,
+    parent: MutableBaseEntityModel<Aux>
+) : MutableFieldModel<Aux>(schema, parent), ListFieldModel<Aux> {
+    override val values = mutableListOf<MutableElementModel<Aux>>()
+
+    override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
+    override fun firstValue(): ElementModel<Aux>? = values.firstOrNull()
+    override fun getValue(index: Int): ElementModel<Aux>? = values.getOrNull(index)
+    override fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>? = values.find { it.matches(that) }
+
+    /** Adds a new value to the list and returns the new value. */
+    fun getNewValue(): MutableElementModel<Aux> {
+        val newValue = newMutableValueModel(schema, this)
+        addValue(newValue)
+        return newValue
+    }
+
+    fun addValue(value: MutableElementModel<Aux>) {
+        values.add(value)
+    }
+}
+
+// Values
+
+abstract class MutableScalarValueModel<Aux>(
+    override val parent: MutableFieldModel<Aux>
+) : MutableElementModel<Aux>() {
     open fun setNullValue(): Boolean = false
     open fun setValue(value: String): Boolean = false
     open fun setValue(value: BigDecimal): Boolean = false
     open fun setValue(value: Boolean): Boolean = false
 }
 
-class MutablePrimitiveFieldModel<Aux>(
+class MutablePrimitiveModel<Aux>(
     override val schema: PrimitiveFieldSchema,
-    parent: MutableElementModel<Aux>
-) : MutableScalarFieldModel<Aux>(parent), PrimitiveFieldModel<Aux> {
+    parent: MutableFieldModel<Aux>
+) : MutableScalarValueModel<Aux>(parent), PrimitiveModel<Aux> {
     override var value: Any? = null
         internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is PrimitiveModel<*>) return false
+        return this.value == that.value
+    }
 
     override fun setNullValue(): Boolean {
         this.value = null
@@ -139,19 +163,19 @@ class MutablePrimitiveFieldModel<Aux>(
     override fun setValue(value: String): Boolean = setValue(schema.primitive, value) { this.value = it }
     override fun setValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value = it }
-
-    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
-        val thatField: PrimitiveFieldModel<ThatAux> = that as? PrimitiveFieldModel ?: return false
-        return this.value == thatField.value
-    }
 }
 
-class MutableAliasFieldModel<Aux>(
+class MutableAliasModel<Aux>(
     override val schema: AliasFieldSchema,
-    parent: MutableElementModel<Aux>
-) : MutableScalarFieldModel<Aux>(parent), AliasFieldModel<Aux> {
+    parent: MutableFieldModel<Aux>
+) : MutableScalarValueModel<Aux>(parent), AliasModel<Aux> {
     override var value: Any? = null
         internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is AliasModel<*>) return false
+        return this.value == that.value
+    }
 
     override fun setNullValue(): Boolean {
         this.value = null
@@ -166,19 +190,19 @@ class MutableAliasFieldModel<Aux>(
 
     override fun setValue(value: Boolean): Boolean =
         setValue(schema.resolvedAlias.primitive, value) { this.value = it }
-
-    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
-        val thatField: AliasFieldModel<ThatAux> = that as? AliasFieldModel ?: return false
-        return this.value == thatField.value
-    }
 }
 
-class MutableEnumerationFieldModel<Aux>(
+class MutableEnumerationModel<Aux>(
     override val schema: EnumerationFieldSchema,
-    parent: MutableElementModel<Aux>
-) : MutableScalarFieldModel<Aux>(parent), EnumerationFieldModel<Aux> {
+    parent: MutableFieldModel<Aux>
+) : MutableScalarValueModel<Aux>(parent), EnumerationModel<Aux> {
     override var value: EnumerationValueSchema? = null
         internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is EnumerationModel<*>) return false
+        return this.value == that.value
+    }
 
     override fun setNullValue(): Boolean {
         this.value = null
@@ -186,19 +210,20 @@ class MutableEnumerationFieldModel<Aux>(
     }
 
     override fun setValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value = it }
-
-    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
-        val thatField: EnumerationFieldModel<ThatAux> = that as? EnumerationFieldModel ?: return false
-        return this.value == thatField.value
-    }
 }
 
-class MutableAssociationFieldModel<Aux>(
+class MutableAssociationModel<Aux>(
     override val schema: AssociationFieldSchema,
-    override val parent: MutableElementModel<Aux>
-) : MutableFieldModel<Aux>(), AssociationFieldModel<Aux> {
+    override val parent: MutableFieldModel<Aux>
+) : MutableElementModel<Aux>(), AssociationModel<Aux> {
     override var value: List<MutableEntityKeysModel<Aux>> = listOf()
         internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is AssociationModel<*>) return false
+        if (this.value.size != that.value.size) return false
+        return this.value.zip(that.value).all { (a, b) -> a.matches(b) }
+    }
 
     fun setNullValue(): Boolean {
         this.value = listOf()
@@ -206,153 +231,19 @@ class MutableAssociationFieldModel<Aux>(
     }
 
     fun newValue(): List<MutableEntityKeysModel<Aux>> {
-        value = schema.keyEntities.map { MutableEntityKeysModel(it) }
+        value = schema.keyEntities.map { MutableEntityKeysModel(it, this) }
         return value
     }
-
-    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
-        return false // associations cannot be keys
-    }
 }
 
-class MutableCompositionFieldModel<Aux>(
-    override val schema: CompositionFieldSchema,
-    override val parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(), CompositionFieldModel<Aux> {
-    override var value: MutableEntityModel<Aux> = MutableEntityModel(schema.resolvedEntity, this)
-        internal set(value) {
-            field = value
-            field.objectId = schema.name
-        }
-
-    init {
-        value.objectId = schema.name
-    }
-
-    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
-        val thatField: CompositionFieldModel<ThatAux> = that as? CompositionFieldModel ?: return false
-        return this.value.keysMatch(thatField.value)
-    }
-}
-
-// List fields
-
-abstract class MutableListFieldModel<Aux>(
-    override val parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(), ListFieldModel<Aux> {
-    override fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean {
-        return false // lists cannot be keys
-    }
-}
-
-abstract class MutableScalarListFieldModel<Aux>(
-    parent: MutableBaseEntityModel<Aux>
-) : MutableListFieldModel<Aux>(parent), ScalarListFieldModel<Aux> {
-    abstract fun addElement(): MutableScalarFieldModel<Aux>
-}
-
-class MutablePrimitiveListFieldModel<Aux>(
-    override val schema: PrimitiveFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableScalarListFieldModel<Aux>(parent), PrimitiveListFieldModel<Aux> {
-    override var primitives: MutableList<MutablePrimitiveFieldModel<Aux>> = mutableListOf()
-        internal set
-
-    override fun getPrimitiveField(matching: Any?): MutablePrimitiveFieldModel<Aux>? =
-        if (matching == null) null else primitives.find { it.value == matching }
-
-    override fun addElement(): MutableScalarFieldModel<Aux> {
-        val element = MutablePrimitiveFieldModel(schema, this)
-        primitives.add(element)
-        return element
-    }
-}
-
-class MutableAliasListFieldModel<Aux>(
-    override val schema: AliasFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableScalarListFieldModel<Aux>(parent), AliasListFieldModel<Aux> {
-    override var aliases: MutableList<MutableAliasFieldModel<Aux>> = mutableListOf()
-        internal set
-
-    override fun getAliasField(matching: Any?): MutableAliasFieldModel<Aux>? =
-        if (matching == null) null else aliases.find { it.value == matching }
-
-    override fun addElement(): MutableScalarFieldModel<Aux> {
-        val element = MutableAliasFieldModel(schema, this)
-        aliases.add(element)
-        return element
-    }
-}
-
-class MutableEnumerationListFieldModel<Aux>(
-    override val schema: EnumerationFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableScalarListFieldModel<Aux>(parent), EnumerationListFieldModel<Aux> {
-    override var enumerations: MutableList<MutableEnumerationFieldModel<Aux>> = mutableListOf()
-        internal set
-
-    override fun addElement(): MutableScalarFieldModel<Aux> {
-        val element = MutableEnumerationFieldModel(schema, this)
-        enumerations.add(element)
-        return element
-    }
-
-    override fun getEnumerationField(matching: EnumerationValueSchema?): MutableEnumerationFieldModel<Aux>? =
-        if (matching == null) null else enumerations.find { it.value == matching }
-}
-
-class MutableAssociationListFieldModel<Aux>(
-    override val schema: AssociationFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableListFieldModel<Aux>(parent), AssociationListFieldModel<Aux> {
-    override var associations: MutableList<MutableAssociationFieldModel<Aux>> = mutableListOf()
-        internal set
-
-    fun addAssociation(): MutableAssociationFieldModel<Aux> {
-        val association = MutableAssociationFieldModel(schema, this)
-        associations.add(association)
-        return association
-    }
-
-    // TODO(deepak-nulu): optimize
-    override fun <MatchingAux> getAssociationField(matching: List<EntityKeysModel<MatchingAux>>): MutableAssociationFieldModel<Aux>? {
-        val matchingSize = matching.size
-        if (matchingSize == 0) return null
-        return associations.find { association ->
-            if (association.value.size != matchingSize) false
-            else association.value.zip(matching).all { (a, m) -> a.keysMatch(m) }
-        }
-    }
-}
-
-class MutableCompositionListFieldModel<Aux>(
-    override val schema: CompositionFieldSchema,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableListFieldModel<Aux>(parent), CompositionListFieldModel<Aux> {
-    override var entities: MutableList<MutableEntityModel<Aux>> = mutableListOf()
-        internal set
-
-    fun first(): MutableEntityModel<Aux>? = entities.firstOrNull()
-
-    fun addEntity(): MutableEntityModel<Aux> {
-        val entity = MutableEntityModel(schema.resolvedEntity, this)
-        entities.add(entity)
-        return entity
-    }
-
-    // TODO(deepak-nulu): optimize
-    override fun <MatchingAux> getEntity(matching: EntityModel<MatchingAux>): MutableEntityModel<Aux>? =
-        entities.find { it.keysMatch(matching) }
-}
-
-// Field values
+// Sub-values
 
 class MutableEntityKeysModel<Aux>(
-    override val schema: EntitySchema
-) : MutableBaseEntityModel<Aux>(schema), EntityKeysModel<Aux> {
-    override val parent: ElementModel<Aux>? = null
-}
+    override val schema: EntitySchema,
+    override val parent: AssociationModel<Aux>
+) : MutableBaseEntityModel<Aux>(schema), EntityKeysModel<Aux>
+
+// Helpers
 
 typealias ValueSetter = (Any) -> Unit
 

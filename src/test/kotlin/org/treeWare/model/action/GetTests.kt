@@ -6,9 +6,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
-import org.treeWare.model.core.MutableCompositionListFieldModel
-import org.treeWare.model.core.MutableRootModel
-import org.treeWare.model.core.MutableScalarListFieldModel
+import org.treeWare.model.core.*
 import org.treeWare.model.getModel
 import org.treeWare.schema.core.newAddressBookSchema
 import org.treeWare.schema.core.validate
@@ -38,31 +36,37 @@ class GetTests {
             )
         } answers {
             val root = arg<MutableRootModel<Unit>>(0)
-            root.getOrNewScalarField("name")?.setValue("Super Heroes")
-            root.getOrNewScalarField("last_updated")?.setValue("1587147731")
-            val settings = root.getOrNewCompositionField("settings")?.value
-            settings?.getOrNewScalarField("last_name_first")?.setValue(true)
-            val colors = settings?.getOrNewListField("card_colors") as MutableScalarListFieldModel<Unit>
-            colors.addElement().setValue("orange")
-            colors.addElement().setValue("green")
-            colors.addElement().setValue("blue")
+            val nameField = root.getOrNewField("name") as MutableSingleFieldModel
+            (nameField.getOrNewValue() as MutablePrimitiveModel).setValue("Super Heroes")
+            val lastUpdatedField = root.getOrNewField("last_updated") as MutableSingleFieldModel
+            (lastUpdatedField.getOrNewValue() as MutablePrimitiveModel).setValue("1587147731")
+            val settingsField = root.getOrNewField("settings") as MutableSingleFieldModel
+            val settings = settingsField.getOrNewValue() as MutableEntityModel
+            val lastNameFirstField = settings.getOrNewField("last_name_first") as MutableSingleFieldModel
+            (lastNameFirstField.getOrNewValue() as MutablePrimitiveModel).setValue(true)
+            val colorsField = settings.getOrNewField("card_colors") as MutableListFieldModel
+            (colorsField.getNewValue() as MutableEnumerationModel).setValue("orange")
+            (colorsField.getNewValue() as MutableEnumerationModel).setValue("green")
+            (colorsField.getNewValue() as MutableEnumerationModel).setValue("blue")
         }
         // Fetch person list.
         coEvery {
             delegate.fetchCompositionList(ofType(), listOf("first_name", "email"), "person_mapping")
         } answers {
-            val listField = arg<MutableCompositionListFieldModel<Unit>>(0)
+            val listField = arg<MutableListFieldModel<Unit>>(0)
 
-            val entity1 = listField.addEntity()
-            entity1.getOrNewScalarField("first_name")?.setValue("Clark")
-            val emailList1 = entity1.getOrNewListField("email") as MutableScalarListFieldModel<Unit>
-            emailList1.addElement().setValue("clark.kent@dailyplanet.com")
-            emailList1.addElement().setValue("superman@dc.com")
+            val entity1 = listField.getNewValue() as MutableEntityModel
+            val firstNameField1 = entity1.getOrNewField("first_name") as MutableSingleFieldModel
+            (firstNameField1.getOrNewValue() as MutablePrimitiveModel).setValue("Clark")
+            val emailListField1 = entity1.getOrNewField("email") as MutableListFieldModel
+            (emailListField1.getNewValue() as MutablePrimitiveModel).setValue("clark.kent@dailyplanet.com")
+            (emailListField1.getNewValue() as MutablePrimitiveModel).setValue("superman@dc.com")
 
-            val entity2 = listField.addEntity()
-            entity2.getOrNewScalarField("first_name")?.setValue("Lois")
-            val emailList2 = entity2.getOrNewListField("email") as MutableScalarListFieldModel<Unit>
-            emailList2.addElement().setValue("lois.lane@dailyplanet.com")
+            val entity2 = listField.getNewValue() as MutableEntityModel
+            val firstNameField2 = entity2.getOrNewField("first_name") as MutableSingleFieldModel
+            (firstNameField2.getOrNewValue() as MutablePrimitiveModel).setValue("Lois")
+            val emailListField2 = entity2.getOrNewField("email") as MutableListFieldModel
+            (emailListField2.getNewValue() as MutablePrimitiveModel).setValue("lois.lane@dailyplanet.com")
         }
 
         // Test the get() method.

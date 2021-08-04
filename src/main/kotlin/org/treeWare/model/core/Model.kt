@@ -7,6 +7,8 @@ interface ElementModel<Aux> {
     val schema: VisitableSchema
     val parent: ElementModel<Aux>?
     val aux: Aux?
+
+    fun matches(that: ElementModel<*>): Boolean
 }
 
 /** The entire model (from the root entity). */
@@ -24,7 +26,6 @@ interface BaseEntityModel<Aux> : ElementModel<Aux> {
     val fields: List<FieldModel<Aux>>
 
     fun getField(fieldName: String): FieldModel<Aux>?
-    fun <ThatAux> keysMatch(that: BaseEntityModel<ThatAux>): Boolean
 }
 
 interface RootModel<Aux> : BaseEntityModel<Aux> {
@@ -43,121 +44,75 @@ interface EntityModel<Aux> : BaseEntityModel<Aux> {
     override val parent: FieldModel<Aux>
 }
 
+// Fields
+
 interface FieldModel<Aux> : ElementModel<Aux> {
     override val schema: FieldSchema
-
-    fun <ThatAux> keysMatch(that: FieldModel<ThatAux>): Boolean
-}
-
-// Scalar fields
-
-interface ScalarFieldModel<Aux> : FieldModel<Aux> {
-    override val parent: ElementModel<Aux>
-}
-
-interface PrimitiveFieldModel<Aux> : ScalarFieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.PRIMITIVE_FIELD
-
-    override val schema: PrimitiveFieldSchema
-    val value: Any?
-}
-
-interface AliasFieldModel<Aux> : ScalarFieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.ALIAS_FIELD
-
-    override val schema: AliasFieldSchema
-    val value: Any?
-}
-
-interface EnumerationFieldModel<Aux> : ScalarFieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.ENUMERATION_FIELD
-
-    override val schema: EnumerationFieldSchema
-    val value: EnumerationValueSchema?
-}
-
-interface AssociationFieldModel<Aux> : FieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.ASSOCIATION_FIELD
-
-    override val schema: AssociationFieldSchema
-    val value: List<EntityKeysModel<Aux>>
-}
-
-interface CompositionFieldModel<Aux> : FieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.COMPOSITION_FIELD
-
-    override val schema: CompositionFieldSchema
-    val value: EntityModel<Aux>
-}
-
-// List fields
-
-interface ListFieldModel<Aux> : FieldModel<Aux> {
     override val parent: BaseEntityModel<Aux>
 }
 
-interface ScalarListFieldModel<Aux> : ListFieldModel<Aux>
-
-interface PrimitiveListFieldModel<Aux> : ScalarListFieldModel<Aux> {
+interface SingleFieldModel<Aux> : FieldModel<Aux> {
     override val elementType: ModelElementType
-        get() = ModelElementType.PRIMITIVE_LIST_FIELD
+        get() = ModelElementType.SINGLE_FIELD
+
+    val value: ElementModel<Aux>?
+}
+
+interface ListFieldModel<Aux> : FieldModel<Aux> {
+    override val elementType: ModelElementType
+        get() = ModelElementType.LIST_FIELD
+
+    val values: List<ElementModel<Aux>>
+
+    fun firstValue(): ElementModel<Aux>?
+    fun getValue(index: Int): ElementModel<Aux>?
+    fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>?
+}
+
+// Values
+
+interface PrimitiveModel<Aux> : ElementModel<Aux> {
+    override val elementType: ModelElementType
+        get() = ModelElementType.PRIMITIVE
 
     override val schema: PrimitiveFieldSchema
-    val primitives: List<PrimitiveFieldModel<Aux>>
-
-    fun getPrimitiveField(matching: Any?): PrimitiveFieldModel<Aux>?
+    override val parent: FieldModel<Aux>
+    val value: Any?
 }
 
-interface AliasListFieldModel<Aux> : ScalarListFieldModel<Aux> {
+interface AliasModel<Aux> : ElementModel<Aux> {
     override val elementType: ModelElementType
-        get() = ModelElementType.ALIAS_LIST_FIELD
+        get() = ModelElementType.ALIAS
 
     override val schema: AliasFieldSchema
-    val aliases: List<AliasFieldModel<Aux>>
-
-    fun getAliasField(matching: Any?): AliasFieldModel<Aux>?
+    override val parent: FieldModel<Aux>
+    val value: Any?
 }
 
-interface EnumerationListFieldModel<Aux> : ScalarListFieldModel<Aux> {
+interface EnumerationModel<Aux> : ElementModel<Aux> {
     override val elementType: ModelElementType
-        get() = ModelElementType.ENUMERATION_LIST_FIELD
+        get() = ModelElementType.ENUMERATION
 
     override val schema: EnumerationFieldSchema
-    val enumerations: List<EnumerationFieldModel<Aux>>
-
-    fun getEnumerationField(matching: EnumerationValueSchema?): EnumerationFieldModel<Aux>?
+    override val parent: FieldModel<Aux>
+    val value: EnumerationValueSchema?
 }
 
-interface AssociationListFieldModel<Aux> : ListFieldModel<Aux> {
+interface AssociationModel<Aux> : ElementModel<Aux> {
     override val elementType: ModelElementType
-        get() = ModelElementType.ASSOCIATION_LIST_FIELD
+        get() = ModelElementType.ASSOCIATION
 
     override val schema: AssociationFieldSchema
-    val associations: List<AssociationFieldModel<Aux>>
-
-    fun <MatchingAux> getAssociationField(matching: List<EntityKeysModel<MatchingAux>>): AssociationFieldModel<Aux>?
+    override val parent: FieldModel<Aux>
+    val value: List<EntityKeysModel<Aux>>
 }
 
-interface CompositionListFieldModel<Aux> : ListFieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.COMPOSITION_LIST_FIELD
-
-    override val schema: CompositionFieldSchema
-    val entities: List<EntityModel<Aux>>
-
-    fun <MatchingAux> getEntity(matching: EntityModel<MatchingAux>): EntityModel<Aux>?
-}
-
-// Field values
+// Sub-values
 
 interface EntityKeysModel<Aux> : BaseEntityModel<Aux> {
     override val elementType: ModelElementType
         get() = ModelElementType.ENTITY_KEYS
 
     override val schema: EntitySchema
+    override val parent: AssociationModel<Aux>
 }

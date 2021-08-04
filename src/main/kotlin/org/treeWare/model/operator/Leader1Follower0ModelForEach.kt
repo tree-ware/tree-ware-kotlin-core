@@ -37,35 +37,23 @@ fun <LeaderAux, Return> dispatchVisit(
     ModelElementType.ENTITY -> {
         visitor.visit(leader as EntityModel<LeaderAux>)
     }
-    ModelElementType.PRIMITIVE_FIELD -> {
-        visitor.visit(leader as PrimitiveFieldModel<LeaderAux>)
+    ModelElementType.SINGLE_FIELD -> {
+        visitor.visit(leader as SingleFieldModel<LeaderAux>)
     }
-    ModelElementType.ALIAS_FIELD -> {
-        visitor.visit(leader as AliasFieldModel<LeaderAux>)
+    ModelElementType.LIST_FIELD -> {
+        visitor.visit(leader as ListFieldModel<LeaderAux>)
     }
-    ModelElementType.ENUMERATION_FIELD -> {
-        visitor.visit(leader as EnumerationFieldModel<LeaderAux>)
+    ModelElementType.PRIMITIVE -> {
+        visitor.visit(leader as PrimitiveModel<LeaderAux>)
     }
-    ModelElementType.ASSOCIATION_FIELD -> {
-        visitor.visit(leader as AssociationFieldModel<LeaderAux>)
+    ModelElementType.ALIAS -> {
+        visitor.visit(leader as AliasModel<LeaderAux>)
     }
-    ModelElementType.COMPOSITION_FIELD -> {
-        visitor.visit(leader as CompositionFieldModel<LeaderAux>)
+    ModelElementType.ENUMERATION -> {
+        visitor.visit(leader as EnumerationModel<LeaderAux>)
     }
-    ModelElementType.PRIMITIVE_LIST_FIELD -> {
-        visitor.visit(leader as PrimitiveListFieldModel<LeaderAux>)
-    }
-    ModelElementType.ALIAS_LIST_FIELD -> {
-        visitor.visit(leader as AliasListFieldModel<LeaderAux>)
-    }
-    ModelElementType.ENUMERATION_LIST_FIELD -> {
-        visitor.visit(leader as EnumerationListFieldModel<LeaderAux>)
-    }
-    ModelElementType.ASSOCIATION_LIST_FIELD -> {
-        visitor.visit(leader as AssociationListFieldModel<LeaderAux>)
-    }
-    ModelElementType.COMPOSITION_LIST_FIELD -> {
-        visitor.visit(leader as CompositionListFieldModel<LeaderAux>)
+    ModelElementType.ASSOCIATION -> {
+        visitor.visit(leader as AssociationModel<LeaderAux>)
     }
     ModelElementType.ENTITY_KEYS -> {
         visitor.visit(leader as EntityKeysModel<LeaderAux>)
@@ -86,35 +74,23 @@ fun <LeaderAux, Return> dispatchLeave(
         ModelElementType.ENTITY -> {
             visitor.leave(leader as EntityModel<LeaderAux>)
         }
-        ModelElementType.PRIMITIVE_FIELD -> {
-            visitor.leave(leader as PrimitiveFieldModel<LeaderAux>)
+        ModelElementType.SINGLE_FIELD -> {
+            visitor.leave(leader as SingleFieldModel<LeaderAux>)
         }
-        ModelElementType.ALIAS_FIELD -> {
-            visitor.leave(leader as AliasFieldModel<LeaderAux>)
+        ModelElementType.LIST_FIELD -> {
+            visitor.leave(leader as ListFieldModel<LeaderAux>)
         }
-        ModelElementType.ENUMERATION_FIELD -> {
-            visitor.leave(leader as EnumerationFieldModel<LeaderAux>)
+        ModelElementType.PRIMITIVE -> {
+            visitor.leave(leader as PrimitiveModel<LeaderAux>)
         }
-        ModelElementType.ASSOCIATION_FIELD -> {
-            visitor.leave(leader as AssociationFieldModel<LeaderAux>)
+        ModelElementType.ALIAS -> {
+            visitor.leave(leader as AliasModel<LeaderAux>)
         }
-        ModelElementType.COMPOSITION_FIELD -> {
-            visitor.leave(leader as CompositionFieldModel<LeaderAux>)
+        ModelElementType.ENUMERATION -> {
+            visitor.leave(leader as EnumerationModel<LeaderAux>)
         }
-        ModelElementType.PRIMITIVE_LIST_FIELD -> {
-            visitor.leave(leader as PrimitiveListFieldModel<LeaderAux>)
-        }
-        ModelElementType.ALIAS_LIST_FIELD -> {
-            visitor.leave(leader as AliasListFieldModel<LeaderAux>)
-        }
-        ModelElementType.ENUMERATION_LIST_FIELD -> {
-            visitor.leave(leader as EnumerationListFieldModel<LeaderAux>)
-        }
-        ModelElementType.ASSOCIATION_LIST_FIELD -> {
-            visitor.leave(leader as AssociationListFieldModel<LeaderAux>)
-        }
-        ModelElementType.COMPOSITION_LIST_FIELD -> {
-            visitor.leave(leader as CompositionListFieldModel<LeaderAux>)
+        ModelElementType.ASSOCIATION -> {
+            visitor.leave(leader as AssociationModel<LeaderAux>)
         }
         ModelElementType.ENTITY_KEYS -> {
             visitor.leave(leader as EntityKeysModel<LeaderAux>)

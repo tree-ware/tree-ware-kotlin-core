@@ -25,71 +25,47 @@ abstract class AbstractLeader1Follower0ModelVisitor<LeaderAux, Return>(
 
     override fun leave(leaderEntity1: EntityModel<LeaderAux>) {}
 
-    // Scalar fields
+    // Fields
 
-    override fun visit(leaderField1: PrimitiveFieldModel<LeaderAux>): Return {
+    override fun visit(leaderField1: SingleFieldModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: PrimitiveFieldModel<LeaderAux>) {}
+    override fun leave(leaderField1: SingleFieldModel<LeaderAux>) {}
 
-    override fun visit(leaderField1: AliasFieldModel<LeaderAux>): Return {
+    override fun visit(leaderField1: ListFieldModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: AliasFieldModel<LeaderAux>) {}
+    override fun leave(leaderField1: ListFieldModel<LeaderAux>) {}
 
-    override fun visit(leaderField1: EnumerationFieldModel<LeaderAux>): Return {
+    // Values
+
+    override fun visit(leaderValue1: PrimitiveModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: EnumerationFieldModel<LeaderAux>) {}
+    override fun leave(leaderValue1: PrimitiveModel<LeaderAux>) {}
 
-    override fun visit(leaderField1: AssociationFieldModel<LeaderAux>): Return {
+    override fun visit(leaderValue1: AliasModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: AssociationFieldModel<LeaderAux>) {}
+    override fun leave(leaderValue1: AliasModel<LeaderAux>) {}
 
-    override fun visit(leaderField1: CompositionFieldModel<LeaderAux>): Return {
+    override fun visit(leaderValue1: EnumerationModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: CompositionFieldModel<LeaderAux>) {}
+    override fun leave(leaderValue1: EnumerationModel<LeaderAux>) {}
 
-    // List fields
-
-    override fun visit(leaderField1: PrimitiveListFieldModel<LeaderAux>): Return {
+    override fun visit(leaderValue1: AssociationModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: PrimitiveListFieldModel<LeaderAux>) {}
+    override fun leave(leaderValue1: AssociationModel<LeaderAux>) {}
 
-    override fun visit(leaderField1: AliasListFieldModel<LeaderAux>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(leaderField1: AliasListFieldModel<LeaderAux>) {}
-
-    override fun visit(leaderField1: EnumerationListFieldModel<LeaderAux>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(leaderField1: EnumerationListFieldModel<LeaderAux>) {}
-
-    override fun visit(leaderField1: AssociationListFieldModel<LeaderAux>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(leaderField1: AssociationListFieldModel<LeaderAux>) {}
-
-    override fun visit(leaderField1: CompositionListFieldModel<LeaderAux>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leave(leaderField1: CompositionListFieldModel<LeaderAux>) {}
-
-    // Field values
+    // Sub-values
 
     override fun visit(leaderEntityKeys1: EntityKeysModel<LeaderAux>): Return {
         return defaultVisitReturn

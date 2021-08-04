@@ -14,86 +14,45 @@ interface Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return> {
     fun visit(leaderEntity1: EntityModel<LeaderAux>, followerEntity1: EntityModel<FollowerAux>?): Return
     fun leave(leaderEntity1: EntityModel<LeaderAux>, followerEntity1: EntityModel<FollowerAux>?)
 
-    // Scalar fields
+    // Fields
 
-    fun visit(leaderField1: PrimitiveFieldModel<LeaderAux>, followerField1: PrimitiveFieldModel<FollowerAux>?): Return
-    fun leave(leaderField1: PrimitiveFieldModel<LeaderAux>, followerField1: PrimitiveFieldModel<FollowerAux>?)
+    fun visit(leaderField1: SingleFieldModel<LeaderAux>, followerField1: SingleFieldModel<FollowerAux>?): Return
+    fun leave(leaderField1: SingleFieldModel<LeaderAux>, followerField1: SingleFieldModel<FollowerAux>?)
 
-    fun visit(leaderField1: AliasFieldModel<LeaderAux>, followerField1: AliasFieldModel<FollowerAux>?): Return
-    fun leave(leaderField1: AliasFieldModel<LeaderAux>, followerField1: AliasFieldModel<FollowerAux>?)
+    fun visit(leaderField1: ListFieldModel<LeaderAux>, followerField1: ListFieldModel<FollowerAux>?): Return
+    fun leave(leaderField1: ListFieldModel<LeaderAux>, followerField1: ListFieldModel<FollowerAux>?)
+
+    // Values
+
+    fun visit(leaderValue1: PrimitiveModel<LeaderAux>, followerValue1: PrimitiveModel<FollowerAux>?): Return
+    fun leave(leaderValue1: PrimitiveModel<LeaderAux>, followerValue1: PrimitiveModel<FollowerAux>?)
+
+    fun visit(leaderValue1: AliasModel<LeaderAux>, followerValue1: AliasModel<FollowerAux>?): Return
+    fun leave(leaderValue1: AliasModel<LeaderAux>, followerValue1: AliasModel<FollowerAux>?)
 
     fun visit(
-        leaderField1: EnumerationFieldModel<LeaderAux>,
-        followerField1: EnumerationFieldModel<FollowerAux>?
+        leaderValue1: EnumerationModel<LeaderAux>,
+        followerValue1: EnumerationModel<FollowerAux>?
     ): Return
 
-    fun leave(leaderField1: EnumerationFieldModel<LeaderAux>, followerField1: EnumerationFieldModel<FollowerAux>?)
+    fun leave(leaderValue1: EnumerationModel<LeaderAux>, followerValue1: EnumerationModel<FollowerAux>?)
 
     fun visit(
-        leaderField1: AssociationFieldModel<LeaderAux>,
-        followerField1: AssociationFieldModel<FollowerAux>?
+        leaderValue1: AssociationModel<LeaderAux>,
+        followerValue1: AssociationModel<FollowerAux>?
     ): Return
 
-    fun leave(leaderField1: AssociationFieldModel<LeaderAux>, followerField1: AssociationFieldModel<FollowerAux>?)
+    fun leave(leaderValue1: AssociationModel<LeaderAux>, followerValue1: AssociationModel<FollowerAux>?)
+
+    // Sub-values
 
     fun visit(
-        leaderField1: CompositionFieldModel<LeaderAux>,
-        followerField1: CompositionFieldModel<FollowerAux>?
-    ): Return
-
-    fun leave(leaderField1: CompositionFieldModel<LeaderAux>, followerField1: CompositionFieldModel<FollowerAux>?)
-
-    // List fields
-
-    fun visit(
-        leaderField1: PrimitiveListFieldModel<LeaderAux>,
-        followerField1: PrimitiveListFieldModel<FollowerAux>?
-    ): Return
-
-    fun leave(leaderField1: PrimitiveListFieldModel<LeaderAux>, followerField1: PrimitiveListFieldModel<FollowerAux>?)
-
-    fun visit(leaderField1: AliasListFieldModel<LeaderAux>, followerField1: AliasListFieldModel<FollowerAux>?): Return
-    fun leave(leaderField1: AliasListFieldModel<LeaderAux>, followerField1: AliasListFieldModel<FollowerAux>?)
-
-    fun visit(
-        leaderField1: EnumerationListFieldModel<LeaderAux>,
-        followerField1: EnumerationListFieldModel<FollowerAux>?
+        leaderEntityKeys1: EntityKeysModel<LeaderAux>,
+        followerEntityKeys1: EntityKeysModel<FollowerAux>?
     ): Return
 
     fun leave(
-        leaderField1: EnumerationListFieldModel<LeaderAux>,
-        followerField1: EnumerationListFieldModel<FollowerAux>?
-    )
-
-    fun visit(
-        leaderField1: AssociationListFieldModel<LeaderAux>,
-        followerField1: AssociationListFieldModel<FollowerAux>?
-    ): Return
-
-    fun leave(
-        leaderField1: AssociationListFieldModel<LeaderAux>,
-        followerField1: AssociationListFieldModel<FollowerAux>?
-    )
-
-    fun visit(
-        leaderField1: CompositionListFieldModel<LeaderAux>,
-        followerField1: CompositionListFieldModel<FollowerAux>?
-    ): Return
-
-    fun leave(
-        leaderField1: CompositionListFieldModel<LeaderAux>,
-        followerField1: CompositionListFieldModel<FollowerAux>?
-    )
-
-    // Field values
-
-    fun visit(
-        leaderField1: EntityKeysModel<LeaderAux>,
-        followerField1: EntityKeysModel<FollowerAux>?
-    ): Return
-
-    fun leave(
-        leaderField1: EntityKeysModel<LeaderAux>,
-        followerField1: EntityKeysModel<FollowerAux>?
+        leaderEntityKeys1: EntityKeysModel<LeaderAux>,
+        followerEntityKeys1: EntityKeysModel<FollowerAux>?
     )
 }

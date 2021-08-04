@@ -1,58 +1,30 @@
 package org.treeWare.model.action
 
-import org.treeWare.model.core.*
+import org.treeWare.model.core.EntityModel
+import org.treeWare.model.core.ListFieldModel
+import org.treeWare.model.core.SingleFieldModel
 import org.treeWare.model.operator.AbstractLeader1Follower0ModelVisitor
 import org.treeWare.model.operator.dispatchVisit
+import org.treeWare.schema.core.CompositionFieldSchema
 
 // IMPLEMENTATION: ./Get.md
 
 class CompositionTableFieldNameVisitor : AbstractLeader1Follower0ModelVisitor<Unit, List<String>>(listOf()) {
-    // Scalar fields
+    // Fields
 
-    override fun visit(leaderField1: PrimitiveFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
+    override fun visit(leaderField1: SingleFieldModel<Unit>): List<String> =
+        if (leaderField1.schema is CompositionFieldSchema) {
+            // Recurse into the composition (but only fields that are not composition-lists).
+            val entity1 = leaderField1.value as EntityModel<Unit>
+            val nested = entity1.fields.filter { !isCompositionListField(it) }
+                .flatMap { dispatchVisit(it, this) ?: listOf() }
+            nested.map { "${leaderField1.schema.name}/${it}" }
+        } else listOf(leaderField1.schema.name)
 
-    override fun visit(leaderField1: AliasFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: EnumerationFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: AssociationFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: CompositionFieldModel<Unit>): List<String> {
-        // Recurse into the composition (but only fields that are not composition-lists).
-        val nested = leaderField1.value.fields.filter { it !is CompositionListFieldModel<*> }
-            .flatMap { dispatchVisit(it, this) ?: listOf() }
-        return nested.map { "${leaderField1.schema.name}/${it}" }
-    }
-
-    // List fields
-
-    override fun visit(leaderField1: PrimitiveListFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: AliasListFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: EnumerationListFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: AssociationListFieldModel<Unit>): List<String> {
-        return listOf(leaderField1.schema.name)
-    }
-
-    override fun visit(leaderField1: CompositionListFieldModel<Unit>): List<String> {
-        // Composition list fields are not flattened, and so their field names
-        // are not returned.
-        return listOf()
-    }
+    override fun visit(leaderField1: ListFieldModel<Unit>): List<String> =
+        if (leaderField1.schema is CompositionFieldSchema) {
+            // Composition list fields are not flattened, and so their field names
+            // are not returned.
+            listOf()
+        } else listOf(leaderField1.schema.name)
 }

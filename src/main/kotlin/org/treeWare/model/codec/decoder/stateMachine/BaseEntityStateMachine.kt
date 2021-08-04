@@ -108,41 +108,60 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun handleScalar(fieldSchema: FieldSchema): Boolean {
+        val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
         if (fieldSchema.multiplicity.isList()) {
-            val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            val scalarListFieldModel = listFieldModel as? MutableScalarListFieldModel ?: return false
-            val listElementStateMachine = ScalarFieldModelStateMachine(
+            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listElementStateMachine = ScalarValueModelStateMachine(
                 true,
-                { scalarListFieldModel.addElement() },
-                stack,
-                auxStateMachineFactory
+                {
+                    val value = newMutableValueModel(fieldSchema, listFieldModel) as MutableScalarValueModel<Aux>
+                    listFieldModel.addValue(value)
+                    value
+                },
+                stack
             )
-            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = true)
+            addListElementStateMachineToStack(fieldModel, listElementStateMachine, isWrappedElements = true)
         } else {
-            val fieldModel = base?.getOrNewScalarField(fieldSchema.name) ?: return false
-            val elementStateMachine = ScalarFieldModelStateMachine(false, { fieldModel }, stack, auxStateMachineFactory)
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val elementStateMachine = ScalarValueModelStateMachine(
+                false,
+                {
+                    val value = newMutableValueModel(fieldSchema, singleFieldModel) as MutableScalarValueModel<Aux>
+                    singleFieldModel.setValue(value)
+                    value
+                },
+                stack
+            )
             addElementStateMachineToStack(elementStateMachine)
         }
         return true
     }
 
     private fun handleAssociation(fieldSchema: AssociationFieldSchema): Boolean {
+        val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
         if (fieldSchema.multiplicity.isList()) {
-            val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            val associationListFieldModel = listFieldModel as? MutableAssociationListFieldModel ?: return false
-            val listElementStateMachine = AssociationFieldModelStateMachine(
+            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listElementStateMachine = AssociationModelStateMachine(
                 true,
-                { associationListFieldModel.addAssociation() },
+                {
+                    val value = newMutableValueModel(fieldSchema, listFieldModel) as MutableAssociationModel<Aux>
+                    listFieldModel.addValue(value)
+                    value
+                },
                 fieldSchema,
                 stack,
                 auxStateMachineFactory
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
-            val fieldModel = base?.getOrNewAssociationField(fieldSchema.name) ?: return false
-            val elementStateMachine = AssociationFieldModelStateMachine(
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val elementStateMachine = AssociationModelStateMachine(
                 false,
-                { fieldModel },
+                {
+                    val value = newMutableValueModel(fieldSchema, singleFieldModel) as MutableAssociationModel<Aux>
+                    singleFieldModel.setValue(value)
+                    value
+                },
                 fieldSchema,
                 stack,
                 auxStateMachineFactory
@@ -153,15 +172,23 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun handleComposition(fieldSchema: CompositionFieldSchema): Boolean {
+        val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
         if (fieldSchema.multiplicity.isList()) {
-            val listFieldModel = base?.getOrNewListField(fieldSchema.name) ?: return false
-            val compositionListFieldModel = listFieldModel as? MutableCompositionListFieldModel ?: return false
+            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
             val listElementStateMachine =
                 BaseEntityStateMachine(
                     true,
                     {
-                        val first = compositionListFieldModel.first()
-                        if (isWildcardModel && first != null) first else compositionListFieldModel.addEntity()
+                        val first = listFieldModel.firstValue()
+                        if (isWildcardModel && first != null) first as MutableEntityModel<Aux>
+                        else {
+                            val value = newMutableValueModel(
+                                fieldSchema.resolvedEntity,
+                                listFieldModel
+                            ) as MutableEntityModel<Aux>
+                            listFieldModel.addValue(value)
+                            value
+                        }
                     },
                     stack,
                     auxStateMachineFactory,
@@ -169,10 +196,22 @@ class BaseEntityStateMachine<Aux>(
                 )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
-            val fieldModel = base?.getOrNewCompositionField(fieldSchema.name) ?: return false
-            val entity = fieldModel.value
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
             val elementStateMachine =
-                BaseEntityStateMachine(false, { entity }, stack, auxStateMachineFactory, isWildcardModel)
+                BaseEntityStateMachine(
+                    false,
+                    {
+                        val value = newMutableValueModel(
+                            fieldSchema.resolvedEntity,
+                            singleFieldModel
+                        ) as MutableEntityModel<Aux>
+                        singleFieldModel.setValue(value)
+                        value
+                    },
+                    stack,
+                    auxStateMachineFactory,
+                    isWildcardModel
+                )
             addElementStateMachineToStack(elementStateMachine)
         }
         return true

@@ -31,16 +31,22 @@ class VisitFollowerEntityModel<Aux>(override val element: EntityModel<Aux>?) :
 class LeaveFollowerEntityModel<Aux>(override val element: EntityModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
-class VisitFollowerFieldModel<Aux>(override val element: FieldModel<Aux>?) :
+class VisitFollowerSingleFieldModel<Aux>(override val element: SingleFieldModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
-class LeaveFollowerFieldModel<Aux>(override val element: FieldModel<Aux>?) :
+class LeaveFollowerSingleFieldModel<Aux>(override val element: SingleFieldModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
-class VisitFollowerListFieldModel<Aux>(override val element: FieldModel<Aux>?) :
+class VisitFollowerListFieldModel<Aux>(override val element: ListFieldModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
-class LeaveFollowerListFieldModel<Aux>(override val element: FieldModel<Aux>?) :
+class LeaveFollowerListFieldModel<Aux>(override val element: ListFieldModel<Aux>?) :
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
+
+class VisitFollowerValueModel<Aux>(override val element: ElementModel<Aux>?) :
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
+
+class LeaveFollowerValueModel<Aux>(override val element: ElementModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerEntityKeysModel<Aux>(override val element: EntityKeysModel<Aux>?) :

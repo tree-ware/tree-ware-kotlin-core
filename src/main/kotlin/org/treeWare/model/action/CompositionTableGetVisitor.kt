@@ -1,6 +1,5 @@
 package org.treeWare.model.action
 
-import org.apache.logging.log4j.LogManager
 import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.dispatchVisit
@@ -16,8 +15,6 @@ import org.treeWare.model.operator.dispatchVisit
 class CompositionTableGetVisitor<MappingAux>(
     private val delegate: CompositionTableGetVisitorDelegate<MappingAux>
 ) : GetVisitor<MappingAux> {
-    private val logger = LogManager.getLogger()
-
     private val fieldNameVisitor = CompositionTableFieldNameVisitor()
 
     private fun cloneCompositionListFields(
@@ -25,7 +22,7 @@ class CompositionTableGetVisitor<MappingAux>(
         parentEntity: MutableBaseEntityModel<Unit>
     ) {
         compositionListFields.forEach {
-            parentEntity.getOrNewListField(it.schema.name)
+            parentEntity.getOrNewField(it.schema.name)
         }
     }
 
@@ -54,7 +51,7 @@ class CompositionTableGetVisitor<MappingAux>(
         if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
         delegate.pushPathEntity(responseRoot, responseRoot.schema.resolvedEntity)
-        val (compositionListFields, fields) = requestRoot.fields.partition { it is CompositionListFieldModel<*> }
+        val (compositionListFields, fields) = requestRoot.fields.partition { isCompositionListField(it) }
         val mutableResponseRoot = responseRoot as MutableRootModel<Unit>
         val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux)
@@ -83,131 +80,42 @@ class CompositionTableGetVisitor<MappingAux>(
     ) {
     }
 
-    // Scalar fields
+    // Fields
 
     override suspend fun visit(
-        responseField: PrimitiveFieldModel<Unit>,
-        requestField: PrimitiveFieldModel<Unit>?,
-        mappingField: PrimitiveFieldModel<MappingAux>?
+        responseField: SingleFieldModel<Unit>,
+        requestField: SingleFieldModel<Unit>?,
+        mappingField: SingleFieldModel<MappingAux>?
     ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
-        responseField: PrimitiveFieldModel<Unit>,
-        requestField: PrimitiveFieldModel<Unit>?,
-        mappingField: PrimitiveFieldModel<MappingAux>?
+        responseField: SingleFieldModel<Unit>,
+        requestField: SingleFieldModel<Unit>?,
+        mappingField: SingleFieldModel<MappingAux>?
     ) {
     }
 
     override suspend fun visit(
-        responseField: AliasFieldModel<Unit>,
-        requestField: AliasFieldModel<Unit>?,
-        mappingField: AliasFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
+        responseField: ListFieldModel<Unit>,
+        requestField: ListFieldModel<Unit>?,
+        mappingField: ListFieldModel<MappingAux>?
+    ) = if (isCompositionListField(responseField)) visitCompositionList(
+        responseField,
+        requestField,
+        mappingField
+    ) else TraversalAction.CONTINUE
 
     override suspend fun leave(
-        responseField: AliasFieldModel<Unit>,
-        requestField: AliasFieldModel<Unit>?,
-        mappingField: AliasFieldModel<MappingAux>?
+        responseField: ListFieldModel<Unit>,
+        requestField: ListFieldModel<Unit>?,
+        mappingField: ListFieldModel<MappingAux>?
     ) {
     }
 
-    override suspend fun visit(
-        responseField: EnumerationFieldModel<Unit>,
-        requestField: EnumerationFieldModel<Unit>?,
-        mappingField: EnumerationFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: EnumerationFieldModel<Unit>,
-        requestField: EnumerationFieldModel<Unit>?,
-        mappingField: EnumerationFieldModel<MappingAux>?
-    ) {
-    }
-
-    override suspend fun visit(
-        responseField: AssociationFieldModel<Unit>,
-        requestField: AssociationFieldModel<Unit>?,
-        mappingField: AssociationFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: AssociationFieldModel<Unit>,
-        requestField: AssociationFieldModel<Unit>?,
-        mappingField: AssociationFieldModel<MappingAux>?
-    ) {
-    }
-
-    override suspend fun visit(
-        responseField: CompositionFieldModel<Unit>,
-        requestField: CompositionFieldModel<Unit>?,
-        mappingField: CompositionFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: CompositionFieldModel<Unit>,
-        requestField: CompositionFieldModel<Unit>?,
-        mappingField: CompositionFieldModel<MappingAux>?
-    ) {
-    }
-
-    // List fields
-
-    override suspend fun visit(
-        responseField: PrimitiveListFieldModel<Unit>,
-        requestField: PrimitiveListFieldModel<Unit>?,
-        mappingField: PrimitiveListFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: PrimitiveListFieldModel<Unit>,
-        requestField: PrimitiveListFieldModel<Unit>?,
-        mappingField: PrimitiveListFieldModel<MappingAux>?
-    ) {
-    }
-
-    override suspend fun visit(
-        responseField: AliasListFieldModel<Unit>,
-        requestField: AliasListFieldModel<Unit>?,
-        mappingField: AliasListFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: AliasListFieldModel<Unit>,
-        requestField: AliasListFieldModel<Unit>?,
-        mappingField: AliasListFieldModel<MappingAux>?
-    ) {
-    }
-
-    override suspend fun visit(
-        responseField: EnumerationListFieldModel<Unit>,
-        requestField: EnumerationListFieldModel<Unit>?,
-        mappingField: EnumerationListFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: EnumerationListFieldModel<Unit>,
-        requestField: EnumerationListFieldModel<Unit>?,
-        mappingField: EnumerationListFieldModel<MappingAux>?
-    ) {
-    }
-
-    override suspend fun visit(
-        responseField: AssociationListFieldModel<Unit>,
-        requestField: AssociationListFieldModel<Unit>?,
-        mappingField: AssociationListFieldModel<MappingAux>?
-    ) = TraversalAction.CONTINUE
-
-    override suspend fun leave(
-        responseField: AssociationListFieldModel<Unit>,
-        requestField: AssociationListFieldModel<Unit>?,
-        mappingField: AssociationListFieldModel<MappingAux>?
-    ) {
-    }
-
-    override suspend fun visit(
-        responseListField: CompositionListFieldModel<Unit>,
-        requestListField: CompositionListFieldModel<Unit>?,
-        mappingListField: CompositionListFieldModel<MappingAux>?
+    private suspend fun visitCompositionList(
+        responseListField: ListFieldModel<Unit>,
+        requestListField: ListFieldModel<Unit>?,
+        mappingListField: ListFieldModel<MappingAux>?
     ): TraversalAction {
         if (requestListField == null) return TraversalAction.ABORT_SUB_TREE
 
@@ -215,23 +123,75 @@ class CompositionTableGetVisitor<MappingAux>(
         assert(mappingAux != null)
         if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
-        val requestEntityFields = requestListField.entities.elementAtOrNull(0)?.fields ?: listOf()
-        val (compositionListFields, fields) = requestEntityFields.partition { it is CompositionListFieldModel<*> }
-        val mutableResponseListField = responseListField as MutableCompositionListFieldModel<Unit>
+        val requestEntityFields = (requestListField.firstValue() as? EntityModel<Unit>)?.fields ?: listOf()
+        val (compositionListFields, fields) = requestEntityFields.partition { isCompositionListField(it) }
+        val mutableResponseListField = responseListField as MutableListFieldModel<Unit>
         val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchCompositionList(mutableResponseListField, fieldNames, mappingAux)
-        mutableResponseListField.entities.forEach { cloneCompositionListFields(compositionListFields, it) }
+        mutableResponseListField.values.forEach {
+            cloneCompositionListFields(
+                compositionListFields,
+                it as MutableEntityModel<Unit>
+            )
+        }
         return TraversalAction.CONTINUE
     }
 
+    // Values
+
+    override suspend fun visit(
+        responseField: PrimitiveModel<Unit>,
+        requestField: PrimitiveModel<Unit>?,
+        mappingField: PrimitiveModel<MappingAux>?
+    ) = TraversalAction.CONTINUE
+
     override suspend fun leave(
-        responseField: CompositionListFieldModel<Unit>,
-        requestField: CompositionListFieldModel<Unit>?,
-        mappingField: CompositionListFieldModel<MappingAux>?
+        responseField: PrimitiveModel<Unit>,
+        requestField: PrimitiveModel<Unit>?,
+        mappingField: PrimitiveModel<MappingAux>?
     ) {
     }
 
-    // Field values
+    override suspend fun visit(
+        responseField: AliasModel<Unit>,
+        requestField: AliasModel<Unit>?,
+        mappingField: AliasModel<MappingAux>?
+    ) = TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        responseField: AliasModel<Unit>,
+        requestField: AliasModel<Unit>?,
+        mappingField: AliasModel<MappingAux>?
+    ) {
+    }
+
+    override suspend fun visit(
+        responseField: EnumerationModel<Unit>,
+        requestField: EnumerationModel<Unit>?,
+        mappingField: EnumerationModel<MappingAux>?
+    ) = TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        responseField: EnumerationModel<Unit>,
+        requestField: EnumerationModel<Unit>?,
+        mappingField: EnumerationModel<MappingAux>?
+    ) {
+    }
+
+    override suspend fun visit(
+        responseField: AssociationModel<Unit>,
+        requestField: AssociationModel<Unit>?,
+        mappingField: AssociationModel<MappingAux>?
+    ) = TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        responseField: AssociationModel<Unit>,
+        requestField: AssociationModel<Unit>?,
+        mappingField: AssociationModel<MappingAux>?
+    ) {
+    }
+
+    // Sub-values
 
     override suspend fun visit(
         leaderField1: EntityKeysModel<Unit>,
