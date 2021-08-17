@@ -7,6 +7,7 @@ import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.codec.encoder.AuxEncoder
 import org.treeWare.model.codec.encoder.ErrorAuxEncoder
 import org.treeWare.model.getModel
+import org.treeWare.schema.core.newAddressBookMetaModel
 import org.treeWare.schema.core.newAddressBookSchema
 import org.treeWare.schema.core.validate
 import kotlin.test.Test
@@ -54,7 +55,10 @@ class JsonCodecTests {
         val errors = validate(schema)
         assertTrue(errors.isEmpty())
 
-        val model = getModel(schema, inputFilePath, expectedModelType, auxStateMachineFactory)
+        val metaModel = newAddressBookMetaModel()
+        // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+
+        val model = getModel(schema, metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
         assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath)
     }
 }

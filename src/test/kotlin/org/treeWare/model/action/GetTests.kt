@@ -8,6 +8,7 @@ import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.core.*
 import org.treeWare.model.getModel
+import org.treeWare.schema.core.newAddressBookMetaModel
 import org.treeWare.schema.core.newAddressBookSchema
 import org.treeWare.schema.core.validate
 import kotlin.test.Test
@@ -20,8 +21,16 @@ class GetTests {
         val errors = validate(schema)
         assertTrue(errors.isEmpty())
 
-        val request = getModel<Unit>(schema, "model/address_book_get_person_request.json")
-        val mapping = getModel(schema, "model/address_book_mapping_model.json", "mapping") { StringAuxStateMachine(it) }
+        val metaModel = newAddressBookMetaModel()
+        // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+
+        val request = getModel<Unit>(schema, metaModel, "model/address_book_get_person_request.json")
+        val mapping = getModel(
+            schema,
+            metaModel,
+            "model/address_book_mapping_model.json",
+            "mapping"
+        ) { StringAuxStateMachine(it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
 

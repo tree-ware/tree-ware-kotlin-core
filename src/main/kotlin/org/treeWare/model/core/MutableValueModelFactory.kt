@@ -3,17 +3,23 @@ package org.treeWare.model.core
 import org.treeWare.schema.core.*
 import org.treeWare.schema.visitor.AbstractSchemaVisitor
 
-fun <Aux> newMutableValueModel(schema: ElementSchema, parent: MutableFieldModel<Aux>): MutableElementModel<Aux> {
-    val newMutableValueModelVisitor = MutableValueModelFactoryVisitor(parent)
+fun <Aux> newMutableValueModel(
+    schema: ElementSchema,
+    meta: ElementModel<Unit>?,
+    parent: MutableFieldModel<Aux>
+): MutableElementModel<Aux> {
+    val newMutableValueModelVisitor = MutableValueModelFactoryVisitor(meta, parent)
     return schema.dispatch(newMutableValueModelVisitor)
         ?: throw IllegalStateException("Unable to create mutable value model for schema $schema")
 }
 
 private class MutableValueModelFactoryVisitor<Aux>(
+    private val meta: ElementModel<Unit>?,
     private val parent: MutableFieldModel<Aux>
 ) : AbstractSchemaVisitor<MutableElementModel<Aux>?>(null) {
     override fun visit(entity: EntitySchema): MutableElementModel<Aux> {
-        return MutableEntityModel(entity, parent)
+        val entityMeta = meta as EntityModel<Unit>?
+        return MutableEntityModel(entity, entityMeta, parent)
     }
 
     // Values
@@ -30,6 +36,9 @@ private class MutableValueModelFactoryVisitor<Aux>(
     override fun visit(associationField: AssociationFieldSchema): MutableElementModel<Aux> =
         MutableAssociationModel(associationField, parent)
 
-    override fun visit(compositionField: CompositionFieldSchema): MutableElementModel<Aux> =
-        MutableEntityModel(compositionField.resolvedEntity, parent)
+    override fun visit(compositionField: CompositionFieldSchema): MutableElementModel<Aux> {
+        val fieldMeta = meta as EntityModel<Unit>?
+        val resolvedEntityMeta = fieldMeta?.let { getResolvedEntityMeta(fieldMeta) }
+        return MutableEntityModel(compositionField.resolvedEntity, resolvedEntityMeta, parent)
+    }
 }
