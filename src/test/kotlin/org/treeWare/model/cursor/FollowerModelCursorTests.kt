@@ -9,6 +9,7 @@ import org.treeWare.model.getModel
 import org.treeWare.model.operator.dispatchLeave
 import org.treeWare.model.operator.dispatchVisit
 import org.treeWare.schema.core.NamedElementSchema
+import org.treeWare.schema.core.newAddressBookMetaModel
 import org.treeWare.schema.core.newAddressBookSchema
 import org.treeWare.schema.core.validate
 import java.io.StringWriter
@@ -39,7 +40,10 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
     val errors = validate(schema)
     assertTrue(errors.isEmpty())
 
-    val model = getModel<Unit>(schema, inputFilePath)
+    val metaModel = newAddressBookMetaModel()
+    // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+
+    val model = getModel<Unit>(schema, metaModel, inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -60,9 +64,12 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     val errors = validate(schema)
     assertTrue(errors.isEmpty())
 
+    val metaModel = newAddressBookMetaModel()
+    // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getModel<Unit>(schema, inputFilePath)
-    val followerModel = getModel<Unit>(schema, inputFilePath)
+    val leaderModel = getModel<Unit>(schema, metaModel, inputFilePath)
+    val followerModel = getModel<Unit>(schema, metaModel, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -91,8 +98,11 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     val errors = validate(schema)
     assertTrue(errors.isEmpty())
 
-    val leaderModel = getModel<Unit>(schema, leaderFilePath)
-    val followerModel = getModel<Unit>(schema, wildcardFilePath)
+    val metaModel = newAddressBookMetaModel()
+    // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+
+    val leaderModel = getModel<Unit>(schema, metaModel, leaderFilePath)
+    val followerModel = getModel<Unit>(schema, metaModel, wildcardFilePath)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)

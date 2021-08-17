@@ -259,4 +259,7 @@ val metaModelMainPackage = MutablePackageSchema(
     enumerations = listOf(multiplicityTypeEnumeration, fieldTypeEnumeration)
 )
 
-val metaModelSchema = MutableSchema(metaModelRoot, listOf(metaModelMainPackage))
+val metaModelSchema = MutableSchema(metaModelRoot, listOf(metaModelMainPackage)).also {
+    val errors = validate(it)
+    if (errors.isNotEmpty()) throw IllegalStateException()
+}
