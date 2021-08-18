@@ -5,7 +5,6 @@ import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
 import org.treeWare.model.operator.forEach
-import org.treeWare.schema.core.*
 
 const val VALUE_KEY = "value"
 
@@ -27,8 +26,9 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun visit(leaderRoot1: RootModel<Aux>): TraversalAction {
-        auxEncoder?.also { it.encode(leaderRoot1.schema.name, leaderRoot1.aux, wireFormatEncoder) }
-        wireFormatEncoder.encodeObjectStart(leaderRoot1.schema.name)
+        val name = leaderRoot1.meta?.let { getMetaName(it) }
+        auxEncoder?.also { it.encode(name, leaderRoot1.aux, wireFormatEncoder) }
+        wireFormatEncoder.encodeObjectStart(name)
         return TraversalAction.CONTINUE
     }
 
@@ -37,8 +37,9 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun visit(leaderEntity1: EntityModel<Aux>): TraversalAction {
-        wireFormatEncoder.encodeObjectStart(leaderEntity1.parent.schema.name)
-        val isListElement = leaderEntity1.parent.schema.multiplicity.isList()
+        val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
+        wireFormatEncoder.encodeObjectStart(name)
+        val isListElement = leaderEntity1.parent.meta?.let { isFieldMetaList(it) } ?: false
         if (isListElement && auxEncoder != null) auxEncoder.encode(null, leaderEntity1.aux, wireFormatEncoder)
         return TraversalAction.CONTINUE
     }
@@ -50,7 +51,7 @@ class ModelEncodingVisitor<Aux>(
     // Fields
 
     override fun visit(leaderField1: SingleFieldModel<Aux>): TraversalAction {
-        val fieldName = leaderField1.schema.name
+        val fieldName = leaderField1.meta?.let { getMetaName(it) }
         auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
         return TraversalAction.CONTINUE
     }
@@ -58,7 +59,7 @@ class ModelEncodingVisitor<Aux>(
     override fun leave(leaderField1: SingleFieldModel<Aux>) {}
 
     override fun visit(leaderField1: ListFieldModel<Aux>): TraversalAction {
-        val fieldName = leaderField1.schema.name
+        val fieldName = leaderField1.meta?.let { getMetaName(it) }
         auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
@@ -71,9 +72,9 @@ class ModelEncodingVisitor<Aux>(
     // Scalar fields
 
     override fun visit(leaderValue1: PrimitiveModel<Aux>): TraversalAction {
-        val isListElement = leaderValue1.schema.multiplicity.isList()
-        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.schema.name
-        val auxFieldName = if (isListElement) null else leaderValue1.schema.name
+        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
         auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
         val value = leaderValue1.value
@@ -81,23 +82,24 @@ class ModelEncodingVisitor<Aux>(
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
-        when (leaderValue1.schema.primitive) {
-            is BooleanSchema -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
-            is ByteSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
-            is ShortSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
-            is IntSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Int)
-            is FloatSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Float)
-            is DoubleSchema -> wireFormatEncoder.encodeNumericField(fieldName, value as Double)
-            // Integers in JavaScript are limited to 53 bits. So 64-bit values (LongSchema, TimestampSchema)
+        // TODO(self-hosting): replace string literals with an enum defined in the meta-meta-model.
+        when (leaderValue1.parent.meta?.let { getFieldMetaType(it) }) {
+            "boolean" -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
+            "byte" -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
+            "short" -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
+            "int" -> wireFormatEncoder.encodeNumericField(fieldName, value as Int)
+            "float" -> wireFormatEncoder.encodeNumericField(fieldName, value as Float)
+            "double" -> wireFormatEncoder.encodeNumericField(fieldName, value as Double)
+            // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
             // are encoded as strings.
             else -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
-            // TODO(deepak-nulu): special handling for Password1WaySchema, Password2WaySchema, BlobSchema
+            // TODO(deepak-nulu): special handling for "password1way", "password2way", "blob"
         }
         return TraversalAction.CONTINUE
     }
 
     override fun leave(leaderValue1: PrimitiveModel<Aux>) {
-        val isListElement = leaderValue1.schema.multiplicity.isList()
+        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
@@ -105,9 +107,9 @@ class ModelEncodingVisitor<Aux>(
     override fun leave(leaderValue1: AliasModel<Aux>) {}
 
     override fun visit(leaderValue1: EnumerationModel<Aux>): TraversalAction {
-        val isListElement = leaderValue1.schema.multiplicity.isList()
-        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.schema.name
-        val auxFieldName = if (isListElement) null else leaderValue1.schema.name
+        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
         auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
         val value = leaderValue1.value
@@ -117,14 +119,14 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun leave(leaderValue1: EnumerationModel<Aux>) {
-        val isListElement = leaderValue1.schema.multiplicity.isList()
+        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
     override fun visit(leaderValue1: AssociationModel<Aux>): TraversalAction {
-        val isListElement = leaderValue1.schema.multiplicity.isList()
-        val fieldName = leaderValue1.schema.name
-        val auxFieldName = if (isListElement) null else leaderValue1.schema.name
+        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
         if (leaderValue1.value.isEmpty()) {
             wireFormatEncoder.encodeNullField(fieldName)
@@ -152,7 +154,7 @@ class ModelEncodingVisitor<Aux>(
     // Sub-values
 
     override fun visit(leaderEntityKeys1: EntityKeysModel<Aux>): TraversalAction {
-        wireFormatEncoder.encodeObjectStart(leaderEntityKeys1.schema.name)
+        wireFormatEncoder.encodeObjectStart(leaderEntityKeys1.meta?.let { getMetaName(it) })
         return TraversalAction.CONTINUE
     }
 
