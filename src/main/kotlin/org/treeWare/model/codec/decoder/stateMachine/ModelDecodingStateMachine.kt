@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.common.codec.DecodingStateMachine
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.Resolved
 import org.treeWare.schema.core.Schema
 import java.math.BigDecimal
 import java.util.*
@@ -20,7 +21,7 @@ typealias DecodingStack = ArrayDeque<DecodingStateMachine>
  */
 class ModelDecodingStateMachine<Aux>(
     schema: Schema,
-    meta: Model<Unit>?,
+    meta: Model<Resolved>?,
     expectedModelType: String,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     isWildcardModel: Boolean = false

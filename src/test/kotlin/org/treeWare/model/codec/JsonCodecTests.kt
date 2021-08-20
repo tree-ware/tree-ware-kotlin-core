@@ -52,7 +52,7 @@ class JsonCodecTests {
         auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
     ) {
         val schema = newAddressBookSchema()
-        val errors = validate(schema)
+        val errors = validate(schema, true)
         assertTrue(errors.isEmpty())
 
         val metaModel = newAddressBookMetaModel()

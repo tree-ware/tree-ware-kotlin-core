@@ -5,7 +5,7 @@ import org.treeWare.schema.core.*
 interface ElementModel<Aux> {
     val elementType: ModelElementType
     val schema: VisitableSchema
-    val meta: ElementModel<Unit>?
+    val meta: ElementModel<Resolved>?
     val parent: ElementModel<Aux>?
     val aux: Aux?
 
@@ -18,14 +18,14 @@ interface Model<Aux> : ElementModel<Aux> {
         get() = ModelElementType.MODEL
 
     override val schema: Schema
-    override val meta: Model<Unit>?
+    override val meta: Model<Resolved>?
 
     val type: String
     val root: RootModel<Aux>
 }
 
 interface BaseEntityModel<Aux> : ElementModel<Aux> {
-    override val meta: EntityModel<Unit>?
+    override val meta: EntityModel<Resolved>?
 
     val fields: List<FieldModel<Aux>>
 
@@ -52,7 +52,7 @@ interface EntityModel<Aux> : BaseEntityModel<Aux> {
 
 interface FieldModel<Aux> : ElementModel<Aux> {
     override val schema: FieldSchema
-    override val meta: EntityModel<Unit>?
+    override val meta: EntityModel<Resolved>?
     override val parent: BaseEntityModel<Aux>
 }
 

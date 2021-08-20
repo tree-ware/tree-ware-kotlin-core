@@ -6,13 +6,14 @@ import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
 import org.treeWare.model.codec.decoder.stateMachine.ModelDecodingStateMachine
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.Resolved
 import org.treeWare.schema.core.Schema
 import java.io.Reader
 
 fun <Aux> decodeJson(
     reader: Reader,
     schema: Schema,
-    meta: Model<Unit>?,
+    meta: Model<Resolved>?,
     expectedModelType: String,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
 ): MutableModel<Aux>? {

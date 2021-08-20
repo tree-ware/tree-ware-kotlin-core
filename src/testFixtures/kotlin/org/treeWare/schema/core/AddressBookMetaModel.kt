@@ -2,34 +2,34 @@ package org.treeWare.schema.core
 
 import org.treeWare.model.core.*
 
-fun newAddressBookMetaModel(): Model<Unit> {
-    val model = MutableModel<Unit>(metaModelSchema, null)
+fun newAddressBookMetaModel(): Model<Resolved> {
+    val model = MutableModel<Resolved>(metaModelSchema, null)
     val metaModel = model.getOrNewRoot()
     populateMetaModel(metaModel)
     return model
 }
 
-private fun populateMetaModel(metaModel: MutableRootModel<Unit>) {
+private fun populateMetaModel(metaModel: MutableRootModel<Resolved>) {
     val root = getSingleEntity(metaModel, "root")
     populateRoot(root)
     val packagesField = getListField(metaModel, "packages")
     populatePackages(packagesField)
 }
 
-private fun populateRoot(rootEntity: MutableEntityModel<Unit>) {
+private fun populateRoot(rootEntity: MutableEntityModel<Resolved>) {
     setStringField(rootEntity, "name", "address_book")
     setStringField(rootEntity, "entity", "address_book_root")
     setStringField(rootEntity, "package", "address_book.main")
 }
 
-private fun populatePackages(packages: MutableListFieldModel<Unit>) {
+private fun populatePackages(packages: MutableListFieldModel<Resolved>) {
     val mainPackage = getNewListEntity(packages)
     populateMainPackage(mainPackage)
     val cityPackage = getNewListEntity(packages)
     populateCityPackage(cityPackage)
 }
 
-private fun populateMainPackage(mainPackage: MutableEntityModel<Unit>) {
+private fun populateMainPackage(mainPackage: MutableEntityModel<Resolved>) {
     setStringField(mainPackage, "name", "address_book.main")
     setStringField(mainPackage, "info", "Schema for storing address book information")
     val entities = getListField(mainPackage, "entities")
@@ -38,7 +38,7 @@ private fun populateMainPackage(mainPackage: MutableEntityModel<Unit>) {
     populateMainEnumerations(enumerations)
 }
 
-fun populateMainEntities(entities: MutableListFieldModel<Unit>) {
+fun populateMainEntities(entities: MutableListFieldModel<Resolved>) {
     val addressBookRoot = getNewListEntity(entities)
     populateAddressBookRoot(addressBookRoot)
     val addressBookSettings = getNewListEntity(entities)
@@ -49,7 +49,7 @@ fun populateMainEntities(entities: MutableListFieldModel<Unit>) {
     populateAddressBookRelation(addressBookRelation)
 }
 
-fun populateAddressBookRoot(root: MutableEntityModel<Unit>) {
+fun populateAddressBookRoot(root: MutableEntityModel<Resolved>) {
     setStringField(root, "name", "address_book_root")
     val fields = getListField(root, "fields")
 
@@ -75,7 +75,7 @@ fun populateAddressBookRoot(root: MutableEntityModel<Unit>) {
     setStringField(cityInfoField, "multiplicity", "list")
 }
 
-fun populateAddressBookSettings(settings: MutableEntityModel<Unit>) {
+fun populateAddressBookSettings(settings: MutableEntityModel<Resolved>) {
     setStringField(settings, "name", "address_book_settings")
     val fields = getListField(settings, "fields")
 
@@ -98,7 +98,7 @@ fun populateAddressBookSettings(settings: MutableEntityModel<Unit>) {
     setStringField(cardColorsField, "multiplicity", "list")
 }
 
-fun populateAddressBookPerson(person: MutableEntityModel<Unit>) {
+fun populateAddressBookPerson(person: MutableEntityModel<Resolved>) {
     setStringField(person, "name", "address_book_person")
     val fields = getListField(person, "fields")
 
@@ -130,7 +130,7 @@ fun populateAddressBookPerson(person: MutableEntityModel<Unit>) {
     setStringField(relationField, "multiplicity", "list")
 }
 
-fun populateAddressBookRelation(relation: MutableEntityModel<Unit>) {
+fun populateAddressBookRelation(relation: MutableEntityModel<Resolved>) {
     setStringField(relation, "name", "address_book_relation")
     val fields = getListField(relation, "fields")
 
@@ -150,7 +150,7 @@ fun populateAddressBookRelation(relation: MutableEntityModel<Unit>) {
     populateAsAssociationField(personField, "person", listOf("address_book", "person"))
 }
 
-fun populateMainEnumerations(enumerations: MutableListFieldModel<Unit>) {
+fun populateMainEnumerations(enumerations: MutableListFieldModel<Resolved>) {
     val colorEnumeration = getNewListEntity(enumerations)
     populateEnumeration(
         colorEnumeration, "address_book_color", listOf(
@@ -178,21 +178,21 @@ fun populateMainEnumerations(enumerations: MutableListFieldModel<Unit>) {
     )
 }
 
-private fun populateCityPackage(cityPackage: MutableEntityModel<Unit>) {
+private fun populateCityPackage(cityPackage: MutableEntityModel<Resolved>) {
     setStringField(cityPackage, "name", "address_book.city")
     setStringField(cityPackage, "info", "Schema for storing city information")
     val entities = getListField(cityPackage, "entities")
     populateCityEntities(entities)
 }
 
-fun populateCityEntities(entities: MutableListFieldModel<Unit>) {
+fun populateCityEntities(entities: MutableListFieldModel<Resolved>) {
     val addressBookCity = getNewListEntity(entities)
     populateAddressBookCity(addressBookCity)
     val addressBookCityInfo = getNewListEntity(entities)
     populateAddressBookCityInfo(addressBookCityInfo)
 }
 
-fun populateAddressBookCity(city: MutableEntityModel<Unit>) {
+fun populateAddressBookCity(city: MutableEntityModel<Resolved>) {
     setStringField(city, "name", "address_book_city")
     val fields = getListField(city, "fields")
 
@@ -215,7 +215,7 @@ fun populateAddressBookCity(city: MutableEntityModel<Unit>) {
     setBooleanField(countryField, "is_key", true)
 }
 
-fun populateAddressBookCityInfo(cityInfo: MutableEntityModel<Unit>) {
+fun populateAddressBookCityInfo(cityInfo: MutableEntityModel<Resolved>) {
     setStringField(cityInfo, "name", "address_book_city_info")
     val fields = getListField(cityInfo, "fields")
 
@@ -235,37 +235,44 @@ fun populateAddressBookCityInfo(cityInfo: MutableEntityModel<Unit>) {
 
 // Helpers
 
-private fun setStringField(entity: MutableBaseEntityModel<Unit>, name: String, value: String) {
+private fun setStringField(entity: MutableBaseEntityModel<Resolved>, name: String, value: String) {
     val fieldModel = entity.getOrNewField(name) as? MutableSingleFieldModel ?: throw IllegalStateException()
     val valueModel = fieldModel.getOrNewValue() as? MutableScalarValueModel ?: throw IllegalStateException()
     valueModel.setValue(value)
 }
 
-private fun setBooleanField(entity: MutableBaseEntityModel<Unit>, name: String, value: Boolean) {
+private fun setBooleanField(entity: MutableBaseEntityModel<Resolved>, name: String, value: Boolean) {
     val fieldModel = entity.getOrNewField(name) as? MutableSingleFieldModel ?: throw IllegalStateException()
     val valueModel = fieldModel.getOrNewValue() as? MutableScalarValueModel ?: throw IllegalStateException()
     valueModel.setValue(value)
 }
 
-private fun getSingleEntity(entity: MutableBaseEntityModel<Unit>, name: String): MutableEntityModel<Unit> {
-    val singleField = entity.getOrNewField(name) as? MutableSingleFieldModel<Unit> ?: throw IllegalStateException()
-    return singleField.getOrNewValue() as? MutableEntityModel<Unit> ?: throw IllegalStateException()
+private fun getSingleEntity(
+    entity: MutableBaseEntityModel<Resolved>,
+    name: String
+): MutableEntityModel<Resolved> {
+    val singleField =
+        entity.getOrNewField(name) as? MutableSingleFieldModel<Resolved> ?: throw IllegalStateException()
+    return singleField.getOrNewValue() as? MutableEntityModel<Resolved> ?: throw IllegalStateException()
 }
 
-private fun getListField(entity: MutableBaseEntityModel<Unit>, name: String): MutableListFieldModel<Unit> =
-    entity.getOrNewField(name) as? MutableListFieldModel<Unit> ?: throw IllegalStateException()
+private fun getListField(
+    entity: MutableBaseEntityModel<Resolved>,
+    name: String
+): MutableListFieldModel<Resolved> =
+    entity.getOrNewField(name) as? MutableListFieldModel<Resolved> ?: throw IllegalStateException()
 
-private fun getNewListEntity(listField: MutableListFieldModel<Unit>): MutableEntityModel<Unit> =
-    listField.getNewValue() as? MutableEntityModel<Unit> ?: throw IllegalStateException()
+private fun getNewListEntity(listField: MutableListFieldModel<Resolved>): MutableEntityModel<Resolved> =
+    listField.getNewValue() as? MutableEntityModel<Resolved> ?: throw IllegalStateException()
 
-private fun addListString(listField: MutableListFieldModel<Unit>, value: String) {
-    val valueModel = listField.getNewValue() as? MutableScalarValueModel<Unit> ?: throw IllegalStateException()
+private fun addListString(listField: MutableListFieldModel<Resolved>, value: String) {
+    val valueModel = listField.getNewValue() as? MutableScalarValueModel<Resolved> ?: throw IllegalStateException()
     valueModel.setValue(value)
 }
 
 // Meta-model specific helpers
 
-private fun populateEnumeration(enumeration: MutableEntityModel<Unit>, name: String, values: List<String>) {
+private fun populateEnumeration(enumeration: MutableEntityModel<Resolved>, name: String, values: List<String>) {
     setStringField(enumeration, "name", name)
     val valuesField = getListField(enumeration, "values")
     values.forEach { value ->
@@ -275,7 +282,7 @@ private fun populateEnumeration(enumeration: MutableEntityModel<Unit>, name: Str
 }
 
 private fun populateAsAssociationField(
-    field: MutableEntityModel<Unit>,
+    field: MutableEntityModel<Resolved>,
     fieldName: String,
     path: List<String>
 ) {
@@ -286,7 +293,7 @@ private fun populateAsAssociationField(
 }
 
 private fun populateAsEntityField(
-    field: MutableEntityModel<Unit>,
+    field: MutableEntityModel<Resolved>,
     fieldName: String,
     entityName: String,
     entityPackageName: String

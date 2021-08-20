@@ -3,7 +3,7 @@ package org.treeWare.model.core
 import org.treeWare.schema.core.EnumerationValueSchema
 
 // TODO(performance): cache the results, in the meta-model (similar to schema.resolvedEntity), or in a map here.
-fun getResolvedRootMeta(mainMeta: Model<Unit>): EntityModel<Unit> {
+fun getResolvedRootMeta(mainMeta: Model<Resolved>): EntityModel<Resolved> {
     val rootMeta = getSingleEntity(mainMeta.root, "root")
     val entityName = getSingleString(rootMeta, "entity")
     val packageName = getSingleString(rootMeta, "package")
@@ -12,20 +12,20 @@ fun getResolvedRootMeta(mainMeta: Model<Unit>): EntityModel<Unit> {
     return resolveEntityMeta(packages, packageName, entityName)
 }
 
-fun getFieldMeta(entityMeta: EntityModel<Unit>, fieldName: String): EntityModel<Unit> {
+fun getFieldMeta(entityMeta: EntityModel<Resolved>, fieldName: String): EntityModel<Resolved> {
     val fields = getListField(entityMeta, "fields")
     return findListElement(fields, fieldName)
 }
 
-fun getMetaName(meta: BaseEntityModel<Unit>): String = getSingleString(meta, "name")
+fun getMetaName(meta: BaseEntityModel<Resolved>): String = getSingleString(meta, "name")
 
-fun getFieldMetaType(fieldMeta: EntityModel<Unit>): String = getSingleEnumeration(fieldMeta, "type").name
+fun getFieldMetaType(fieldMeta: EntityModel<Resolved>): String = getSingleEnumeration(fieldMeta, "type").name
 
-fun isFieldMetaList(fieldMeta: EntityModel<Unit>): Boolean =
+fun isFieldMetaList(fieldMeta: EntityModel<Resolved>): Boolean =
     getOptionalSingleEnumeration(fieldMeta, "multiplicity")?.name == "list"
 
 // TODO(performance): cache the results, in the meta-model (similar to schema.resolvedEntity), or in a map here.
-fun getResolvedEntityMeta(fieldMeta: EntityModel<Unit>): EntityModel<Unit> {
+fun getResolvedEntityMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> {
     val entityInfo = getSingleEntity(fieldMeta, "entity")
     val entityName = getSingleString(entityInfo, "name")
     val packageName = getSingleString(entityInfo, "package")
@@ -34,64 +34,70 @@ fun getResolvedEntityMeta(fieldMeta: EntityModel<Unit>): EntityModel<Unit> {
     return resolveEntityMeta(packages, packageName, entityName)
 }
 
-private fun getPackagesFromField(fieldMeta: EntityModel<Unit>): ListFieldModel<Unit> {
+private fun getPackagesFromField(fieldMeta: EntityModel<Resolved>): ListFieldModel<Resolved> {
     // Walk up the parents to the "packages" entity.
     val fields = fieldMeta.parent
     val entity = fields.parent
     val entities = entity.parent ?: throw IllegalStateException()
     val `package` = entities.parent ?: throw IllegalStateException()
-    return `package`.parent as? ListFieldModel<Unit> ?: throw IllegalStateException()
+    return `package`.parent as? ListFieldModel<Resolved> ?: throw IllegalStateException()
 }
 
 // Helpers
 
-private fun getSingleEntity(meta: BaseEntityModel<Unit>, fieldName: String): EntityModel<Unit> {
+private fun getSingleEntity(meta: BaseEntityModel<Resolved>, fieldName: String): EntityModel<Resolved> {
     val singleField = getSingleField(meta, fieldName)
-    return singleField.value as? EntityModel<Unit> ?: throw IllegalStateException()
+    return singleField.value as? EntityModel<Resolved> ?: throw IllegalStateException()
 }
 
-private fun getSingleString(meta: BaseEntityModel<Unit>, fieldName: String): String {
+private fun getSingleString(meta: BaseEntityModel<Resolved>, fieldName: String): String {
     val singleField = getSingleField(meta, fieldName)
-    val primitive = singleField.value as? PrimitiveModel<Unit> ?: throw IllegalStateException()
+    val primitive = singleField.value as? PrimitiveModel<Resolved> ?: throw IllegalStateException()
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
-private fun getSingleEnumeration(meta: BaseEntityModel<Unit>, fieldName: String): EnumerationValueSchema {
+private fun getSingleEnumeration(meta: BaseEntityModel<Resolved>, fieldName: String): EnumerationValueSchema {
     val singleField = getSingleField(meta, fieldName)
-    val enumeration = singleField.value as? EnumerationModel<Unit> ?: throw IllegalStateException()
+    val enumeration = singleField.value as? EnumerationModel<Resolved> ?: throw IllegalStateException()
     return enumeration.value ?: throw IllegalStateException()
 }
 
-private fun getOptionalSingleEnumeration(meta: BaseEntityModel<Unit>, fieldName: String): EnumerationValueSchema? {
+private fun getOptionalSingleEnumeration(
+    meta: BaseEntityModel<Resolved>,
+    fieldName: String
+): EnumerationValueSchema? {
     val singleField = getOptionalSingleField(meta, fieldName) ?: return null
-    val enumeration = singleField.value as? EnumerationModel<Unit> ?: throw IllegalStateException()
+    val enumeration = singleField.value as? EnumerationModel<Resolved> ?: throw IllegalStateException()
     return enumeration.value ?: throw IllegalStateException()
 }
 
-private fun getSingleField(meta: BaseEntityModel<Unit>, fieldName: String): SingleFieldModel<Unit> {
-    return meta.getField(fieldName) as? SingleFieldModel<Unit> ?: throw IllegalStateException()
+private fun getSingleField(meta: BaseEntityModel<Resolved>, fieldName: String): SingleFieldModel<Resolved> {
+    return meta.getField(fieldName) as? SingleFieldModel<Resolved> ?: throw IllegalStateException()
 }
 
-private fun getOptionalSingleField(meta: BaseEntityModel<Unit>, fieldName: String): SingleFieldModel<Unit>? {
-    return meta.getField(fieldName) as? SingleFieldModel<Unit>?
+private fun getOptionalSingleField(
+    meta: BaseEntityModel<Resolved>,
+    fieldName: String
+): SingleFieldModel<Resolved>? {
+    return meta.getField(fieldName) as? SingleFieldModel<Resolved>?
 }
 
-private fun getListField(meta: BaseEntityModel<Unit>, fieldName: String): ListFieldModel<Unit> {
-    return meta.getField(fieldName) as? ListFieldModel<Unit> ?: throw IllegalStateException()
+private fun getListField(meta: BaseEntityModel<Resolved>, fieldName: String): ListFieldModel<Resolved> {
+    return meta.getField(fieldName) as? ListFieldModel<Resolved> ?: throw IllegalStateException()
 }
 
 private fun resolveEntityMeta(
-    packages: ListFieldModel<Unit>,
+    packages: ListFieldModel<Resolved>,
     packageName: String,
     entityName: String
-): EntityModel<Unit> {
+): EntityModel<Resolved> {
     val packageMeta = findListElement(packages, packageName)
     val entitiesMeta = getListField(packageMeta, "entities")
     return findListElement(entitiesMeta, entityName)
 }
 
-private fun findListElement(list: ListFieldModel<Unit>, name: String) =
+private fun findListElement(list: ListFieldModel<Resolved>, name: String) =
     list.values.find { entity ->
-        if (entity !is EntityModel<Unit>) false
+        if (entity !is EntityModel<Resolved>) false
         else getSingleString(entity, "name") == name
-    } as? EntityModel<Unit> ?: throw IllegalStateException()
+    } as? EntityModel<Resolved> ?: throw IllegalStateException()

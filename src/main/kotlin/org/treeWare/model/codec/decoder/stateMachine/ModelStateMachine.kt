@@ -3,11 +3,12 @@ package org.treeWare.model.codec.decoder.stateMachine
 import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.Resolved
 import org.treeWare.schema.core.Schema
 
 class ModelStateMachine<Aux>(
     private val schema: Schema,
-    private val meta: Model<Unit>?,
+    private val meta: Model<Resolved>?,
     private val expectedModelType: String,
     private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     private val stack: DecodingStack,

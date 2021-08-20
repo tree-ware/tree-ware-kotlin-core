@@ -4,12 +4,12 @@ import org.treeWare.schema.core.*
 import java.math.BigDecimal
 
 abstract class MutableElementModel<Aux> : ElementModel<Aux> {
-    override val meta: ElementModel<Unit>? = null
+    override val meta: ElementModel<Resolved>? = null
     override var aux: Aux? = null
         internal set
 }
 
-class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Unit>?) :
+class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Resolved>?) :
     MutableElementModel<Aux>(), Model<Aux> {
     override val parent: ElementModel<Aux>? = null
 
@@ -34,7 +34,7 @@ class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Un
 
 abstract class MutableBaseEntityModel<Aux>(
     internal val entitySchema: EntitySchema,
-    override val meta: EntityModel<Unit>?
+    override val meta: EntityModel<Resolved>?
 ) : MutableElementModel<Aux>(), BaseEntityModel<Aux> {
     override var fields: MutableList<MutableFieldModel<Aux>> = mutableListOf()
         internal set
@@ -65,13 +65,13 @@ abstract class MutableBaseEntityModel<Aux>(
 
 class MutableRootModel<Aux>(
     override val schema: RootSchema,
-    meta: EntityModel<Unit>?,
+    meta: EntityModel<Resolved>?,
     override val parent: MutableModel<Aux>
 ) : MutableBaseEntityModel<Aux>(schema.resolvedEntity, meta), RootModel<Aux>
 
 class MutableEntityModel<Aux>(
     override val schema: EntitySchema,
-    meta: EntityModel<Unit>?,
+    meta: EntityModel<Resolved>?,
     override val parent: MutableFieldModel<Aux>
 ) : MutableBaseEntityModel<Aux>(schema, meta), EntityModel<Aux>
 
@@ -79,13 +79,13 @@ class MutableEntityModel<Aux>(
 
 abstract class MutableFieldModel<Aux>(
     override val schema: FieldSchema,
-    override val meta: EntityModel<Unit>?,
+    override val meta: EntityModel<Resolved>?,
     override val parent: MutableBaseEntityModel<Aux>
 ) : MutableElementModel<Aux>(), FieldModel<Aux>
 
 class MutableSingleFieldModel<Aux>(
     schema: FieldSchema,
-    meta: EntityModel<Unit>?,
+    meta: EntityModel<Resolved>?,
     parent: MutableBaseEntityModel<Aux>
 ) : MutableFieldModel<Aux>(schema, meta, parent), SingleFieldModel<Aux> {
     override var value: MutableElementModel<Aux>? = null
@@ -115,7 +115,7 @@ class MutableSingleFieldModel<Aux>(
 
 class MutableListFieldModel<Aux>(
     schema: FieldSchema,
-    meta: EntityModel<Unit>?,
+    meta: EntityModel<Resolved>?,
     parent: MutableBaseEntityModel<Aux>
 ) : MutableFieldModel<Aux>(schema, meta, parent), ListFieldModel<Aux> {
     override val values = mutableListOf<MutableElementModel<Aux>>()
@@ -245,7 +245,7 @@ class MutableAssociationModel<Aux>(
 
 class MutableEntityKeysModel<Aux>(
     override val schema: EntitySchema,
-    meta: EntityModel<Unit>?,
+    meta: EntityModel<Resolved>?,
     override val parent: AssociationModel<Aux>
 ) : MutableBaseEntityModel<Aux>(schema, meta), EntityKeysModel<Aux>
 
