@@ -20,7 +20,7 @@ class BaseEntityStateMachine<Aux>(
 
     private var base: MutableBaseEntityModel<Aux>? = null
     private var entitySchema: EntitySchema? = null
-    private var entityMeta: EntityModel<Unit>? = null
+    private var entityMeta: EntityModel<Resolved>? = null
     private val logger = LogManager.getLogger()
 
     override fun setAux(aux: Aux) {
@@ -110,7 +110,7 @@ class BaseEntityStateMachine<Aux>(
         }
     }
 
-    private fun handleScalar(fieldSchema: FieldSchema, fieldMeta: EntityModel<Unit>?): Boolean {
+    private fun handleScalar(fieldSchema: FieldSchema, fieldMeta: EntityModel<Resolved>?): Boolean {
         val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
         if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
@@ -142,7 +142,7 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handleAssociation(fieldSchema: AssociationFieldSchema, fieldMeta: EntityModel<Unit>?): Boolean {
+    private fun handleAssociation(fieldSchema: AssociationFieldSchema, fieldMeta: EntityModel<Resolved>?): Boolean {
         val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
         if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
@@ -178,7 +178,7 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handleComposition(fieldSchema: CompositionFieldSchema, fieldMeta: EntityModel<Unit>?): Boolean {
+    private fun handleComposition(fieldSchema: CompositionFieldSchema, fieldMeta: EntityModel<Resolved>?): Boolean {
         val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
         if (fieldSchema.multiplicity.isList()) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false

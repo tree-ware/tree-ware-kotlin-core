@@ -5,7 +5,7 @@ import org.treeWare.schema.visitor.AbstractSchemaVisitor
 
 fun <Aux> newMutableModel(
     schema: ElementSchema,
-    meta: ElementModel<Unit>?,
+    meta: ElementModel<Resolved>?,
     parent: MutableElementModel<Aux>?
 ): MutableElementModel<Aux> {
     val newMutableModelVisitor = MutableModelFactoryVisitor(meta, parent)
@@ -13,22 +13,22 @@ fun <Aux> newMutableModel(
 }
 
 private class MutableModelFactoryVisitor<Aux>(
-    private val meta: ElementModel<Unit>?,
+    private val meta: ElementModel<Resolved>?,
     private val parent: MutableElementModel<Aux>?
 ) : AbstractSchemaVisitor<MutableElementModel<Aux>?>(null) {
     override fun visit(schema: Schema): MutableElementModel<Aux> {
-        val mainMeta = meta as Model<Unit>?
+        val mainMeta = meta as Model<Resolved>?
         return MutableModel(schema, mainMeta)
     }
 
     override fun visit(root: RootSchema): MutableElementModel<Aux> {
-        val rootMeta = meta as EntityModel<Unit>?
+        val rootMeta = meta as EntityModel<Resolved>?
         val rootParent = parent as MutableModel
         return MutableRootModel(root, rootMeta, rootParent)
     }
 
     override fun visit(entity: EntitySchema): MutableElementModel<Aux> {
-        val entityMeta = meta as EntityModel<Unit>?
+        val entityMeta = meta as EntityModel<Resolved>?
         val entityParent = parent as MutableFieldModel
         return MutableEntityModel(entity, entityMeta, entityParent)
     }
@@ -36,7 +36,7 @@ private class MutableModelFactoryVisitor<Aux>(
     // Fields
 
     override fun visit(primitiveField: PrimitiveFieldSchema): MutableElementModel<Aux> {
-        val fieldMeta = meta as EntityModel<Unit>?
+        val fieldMeta = meta as EntityModel<Resolved>?
         val fieldParent = parent as MutableBaseEntityModel
         val isList = primitiveField.multiplicity.isList()
         return if (isList) MutableListFieldModel(primitiveField, fieldMeta, fieldParent)
@@ -44,7 +44,7 @@ private class MutableModelFactoryVisitor<Aux>(
     }
 
     override fun visit(aliasField: AliasFieldSchema): MutableElementModel<Aux> {
-        val fieldMeta = meta as EntityModel<Unit>?
+        val fieldMeta = meta as EntityModel<Resolved>?
         val fieldParent = parent as MutableBaseEntityModel
         val isList = aliasField.multiplicity.isList()
         return if (isList) MutableListFieldModel(aliasField, fieldMeta, fieldParent)
@@ -52,7 +52,7 @@ private class MutableModelFactoryVisitor<Aux>(
     }
 
     override fun visit(enumerationField: EnumerationFieldSchema): MutableElementModel<Aux> {
-        val fieldMeta = meta as EntityModel<Unit>?
+        val fieldMeta = meta as EntityModel<Resolved>?
         val fieldParent = parent as MutableBaseEntityModel
         val isList = enumerationField.multiplicity.isList()
         return if (isList) MutableListFieldModel(enumerationField, fieldMeta, fieldParent)
@@ -60,7 +60,7 @@ private class MutableModelFactoryVisitor<Aux>(
     }
 
     override fun visit(associationField: AssociationFieldSchema): MutableElementModel<Aux> {
-        val fieldMeta = meta as EntityModel<Unit>?
+        val fieldMeta = meta as EntityModel<Resolved>?
         val fieldParent = parent as MutableBaseEntityModel
         val isList = associationField.multiplicity.isList()
         return if (isList) MutableListFieldModel(associationField, fieldMeta, fieldParent)
@@ -68,7 +68,7 @@ private class MutableModelFactoryVisitor<Aux>(
     }
 
     override fun visit(compositionField: CompositionFieldSchema): MutableElementModel<Aux> {
-        val fieldMeta = meta as EntityModel<Unit>?
+        val fieldMeta = meta as EntityModel<Resolved>?
         val fieldParent = parent as MutableBaseEntityModel
         val isList = compositionField.multiplicity.isList()
         return if (isList) MutableListFieldModel(compositionField, fieldMeta, fieldParent)

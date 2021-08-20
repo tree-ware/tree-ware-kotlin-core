@@ -8,6 +8,7 @@ import org.treeWare.model.codec.encoder.AuxEncoder
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.Resolved
 import org.treeWare.schema.core.Schema
 import java.io.InputStreamReader
 import java.io.Reader
@@ -28,7 +29,7 @@ fun readFile(filePath: String): String? {
 
 fun <Aux> getModel(
     schema: Schema,
-    meta: Model<Unit>?,
+    meta: Model<Resolved>?,
     inputFilePath: String,
     expectedModelType: String = "data",
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }

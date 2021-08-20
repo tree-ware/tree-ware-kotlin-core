@@ -5,7 +5,7 @@ import org.treeWare.schema.visitor.AbstractSchemaVisitor
 
 fun <Aux> newMutableValueModel(
     schema: ElementSchema,
-    meta: ElementModel<Unit>?,
+    meta: ElementModel<Resolved>?,
     parent: MutableFieldModel<Aux>
 ): MutableElementModel<Aux> {
     val newMutableValueModelVisitor = MutableValueModelFactoryVisitor(meta, parent)
@@ -14,11 +14,11 @@ fun <Aux> newMutableValueModel(
 }
 
 private class MutableValueModelFactoryVisitor<Aux>(
-    private val meta: ElementModel<Unit>?,
+    private val meta: ElementModel<Resolved>?,
     private val parent: MutableFieldModel<Aux>
 ) : AbstractSchemaVisitor<MutableElementModel<Aux>?>(null) {
     override fun visit(entity: EntitySchema): MutableElementModel<Aux> {
-        val entityMeta = meta as EntityModel<Unit>?
+        val entityMeta = meta as EntityModel<Resolved>?
         return MutableEntityModel(entity, entityMeta, parent)
     }
 
@@ -37,7 +37,7 @@ private class MutableValueModelFactoryVisitor<Aux>(
         MutableAssociationModel(associationField, parent)
 
     override fun visit(compositionField: CompositionFieldSchema): MutableElementModel<Aux> {
-        val fieldMeta = meta as EntityModel<Unit>?
+        val fieldMeta = meta as EntityModel<Resolved>?
         val resolvedEntityMeta = fieldMeta?.let { getResolvedEntityMeta(fieldMeta) }
         return MutableEntityModel(compositionField.resolvedEntity, resolvedEntityMeta, parent)
     }
