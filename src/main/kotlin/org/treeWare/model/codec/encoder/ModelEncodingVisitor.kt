@@ -2,6 +2,9 @@ package org.treeWare.model.codec.encoder
 
 import org.treeWare.common.codec.WireFormatEncoder
 import org.treeWare.common.traversal.TraversalAction
+import org.treeWare.metaModel.getFieldTypeMeta
+import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.isFieldMetaList
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
 import org.treeWare.model.operator.forEach
@@ -83,7 +86,7 @@ class ModelEncodingVisitor<Aux>(
             return TraversalAction.CONTINUE
         }
         // TODO(self-hosting): replace string literals with an enum defined in the meta-meta-model.
-        when (leaderValue1.parent.meta?.let { getFieldMetaType(it) }) {
+        when (leaderValue1.parent.meta?.let { getFieldTypeMeta(it) }) {
             "boolean" -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
             "byte" -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
             "short" -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
