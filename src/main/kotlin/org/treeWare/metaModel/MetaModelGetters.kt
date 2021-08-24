@@ -54,10 +54,12 @@ fun getAssociationInfoMeta(fieldMeta: EntityModel<Resolved>): ListFieldModel<Res
 
 fun getEntityInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> = getSingleEntity(fieldMeta, "entity")
 
-fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String? =
-    getOptionalSingleEnumeration(fieldMeta, "multiplicity")?.name
+fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String =
+    getOptionalSingleEnumeration(fieldMeta, "multiplicity")?.name ?: "required"
 
-fun isFieldMetaList(fieldMeta: EntityModel<Resolved>): Boolean = getMultiplicityMeta(fieldMeta) == "list"
+fun isListFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getMultiplicityMeta(fieldMeta) == "list"
+
+fun isKeyFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getOptionalSingleBoolean(fieldMeta, "is_key") ?: false
 
 // TODO(performance): cache the results, in the meta-model (similar to schema.resolvedEntity), or in a map here.
 fun getResolvedEntityMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> {

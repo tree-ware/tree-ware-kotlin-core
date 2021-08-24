@@ -4,7 +4,7 @@ import org.treeWare.common.codec.WireFormatEncoder
 import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.metaModel.getFieldTypeMeta
 import org.treeWare.metaModel.getMetaName
-import org.treeWare.metaModel.isFieldMetaList
+import org.treeWare.metaModel.isListFieldMeta
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
 import org.treeWare.model.operator.forEach
@@ -42,7 +42,7 @@ class ModelEncodingVisitor<Aux>(
     override fun visit(leaderEntity1: EntityModel<Aux>): TraversalAction {
         val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)
-        val isListElement = leaderEntity1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val isListElement = leaderEntity1.parent.meta?.let { isListFieldMeta(it) } ?: false
         if (isListElement && auxEncoder != null) auxEncoder.encode(null, leaderEntity1.aux, wireFormatEncoder)
         return TraversalAction.CONTINUE
     }
@@ -75,7 +75,7 @@ class ModelEncodingVisitor<Aux>(
     // Scalar fields
 
     override fun visit(leaderValue1: PrimitiveModel<Aux>): TraversalAction {
-        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
@@ -102,7 +102,7 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun leave(leaderValue1: PrimitiveModel<Aux>) {
-        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
@@ -110,7 +110,7 @@ class ModelEncodingVisitor<Aux>(
     override fun leave(leaderValue1: AliasModel<Aux>) {}
 
     override fun visit(leaderValue1: EnumerationModel<Aux>): TraversalAction {
-        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
@@ -122,12 +122,12 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun leave(leaderValue1: EnumerationModel<Aux>) {
-        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
     override fun visit(leaderValue1: AssociationModel<Aux>): TraversalAction {
-        val isListElement = leaderValue1.parent.meta?.let { isFieldMetaList(it) } ?: false
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
