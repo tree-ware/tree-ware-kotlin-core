@@ -2,7 +2,7 @@ package org.treeWare.schema.core
 
 import org.treeWare.model.core.*
 
-fun newAddressBookMetaModel(): Model<Resolved> {
+fun newAddressBookMetaModel(): MutableModel<Resolved> {
     val model = MutableModel<Resolved>(metaModelSchema, null)
     val metaModel = model.getOrNewRoot()
     populateMetaModel(metaModel)
