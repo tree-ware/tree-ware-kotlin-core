@@ -2,10 +2,7 @@ package org.treeWare.metaModel.validation
 
 import org.apache.logging.log4j.LogManager
 import org.treeWare.metaModel.*
-import org.treeWare.model.core.ElementModel
-import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.Model
-import org.treeWare.model.core.Resolved
+import org.treeWare.model.core.*
 
 private val PACKAGE_NAME_REGEX = Regex("^[a-z0-9_.]*$")
 private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
@@ -16,7 +13,7 @@ private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
  * Side effects:
  * 1. full-names are set for named elements
  */
-fun validateNames(mainMeta: Model<Resolved>, logFullNames: Boolean): List<String> {
+fun validateNames(mainMeta: MutableModel<Resolved>, logFullNames: Boolean): List<String> {
     val state = State()
 
     validateRootName(mainMeta, state)
@@ -29,7 +26,7 @@ fun validateNames(mainMeta: Model<Resolved>, logFullNames: Boolean): List<String
     return state.errors
 }
 
-private class State() {
+private class State {
     val fullNames = mutableListOf<String>()
     val errors = mutableListOf<String>()
 
@@ -37,17 +34,14 @@ private class State() {
 
     fun getFullName(): String = nameParts.joinToString("/")
 
-    fun validateName(elementName: String, regex: Regex) {
-        if (!regex.matches(elementName)) errors.add("Invalid name: ${getFullName()}")
-    }
-
-    fun pushName(name: String, regex: Regex) {
+    fun pushName(meta: MutableBaseEntityModel<Resolved>, regex: Regex) {
+        val name = getMetaName(meta)
         nameParts.add(name)
         val fullName = getFullName()
         if (!regex.matches(name)) errors.add("Invalid name: $fullName")
         if (fullNames.contains(fullName)) errors.add("Duplicate name: $fullName")
         else fullNames.add(fullName)
-        // TODO(deepak-nulu): set full-names in the Resolved aux.
+        meta.aux = Resolved(fullName)
     }
 
     fun popName() {
@@ -55,73 +49,67 @@ private class State() {
     }
 }
 
-private fun validateRootName(mainMeta: Model<Resolved>, state: State) {
-    val rootMeta = getRootMeta(mainMeta)
-    val name = getMetaName(rootMeta)
-    state.pushName(name, ELEMENT_NAME_REGEX)
+private fun validateRootName(mainMeta: MutableModel<Resolved>, state: State) {
+    val rootMeta = getMutableRootMeta(mainMeta)
+    state.pushName(rootMeta, ELEMENT_NAME_REGEX)
     state.popName()
 }
 
-private fun validatePackagesNames(mainMeta: Model<Resolved>, state: State) {
-    val packagesMeta = getPackagesMeta(mainMeta)
+private fun validatePackagesNames(mainMeta: MutableModel<Resolved>, state: State) {
+    val packagesMeta = getMutablePackagesMeta(mainMeta)
     packagesMeta.values.forEach { validatePackageName(it, state) }
 }
 
-private fun validatePackageName(packageElementMeta: ElementModel<Resolved>, state: State) {
-    val packageMeta = packageElementMeta as EntityModel<Resolved>
-    val name = getMetaName(packageMeta)
-    state.pushName(name, PACKAGE_NAME_REGEX)
+private fun validatePackageName(packageElementMeta: MutableElementModel<Resolved>, state: State) {
+    val packageMeta = packageElementMeta as MutableEntityModel<Resolved>
+    state.pushName(packageMeta, PACKAGE_NAME_REGEX)
     validateEnumerations(packageMeta, state)
     validateEntities(packageMeta, state)
     state.popName()
 }
 
-private fun validateEnumerations(packageMeta: EntityModel<Resolved>, state: State) {
-    val enumerationsMeta = getEnumerationsMeta(packageMeta)
+private fun validateEnumerations(packageMeta: MutableEntityModel<Resolved>, state: State) {
+    val enumerationsMeta = getMutableEnumerationsMeta(packageMeta)
     enumerationsMeta?.values?.forEach { validateEnumeration(it, state) }
 }
 
-private fun validateEnumeration(enumerationElementMeta: ElementModel<Resolved>, state: State) {
-    val enumerationMeta = enumerationElementMeta as EntityModel<Resolved>
-    val name = getMetaName(enumerationMeta)
-    state.pushName(name, ELEMENT_NAME_REGEX)
+private fun validateEnumeration(enumerationElementMeta: MutableElementModel<Resolved>, state: State) {
+    val enumerationMeta = enumerationElementMeta as MutableEntityModel<Resolved>
+    state.pushName(enumerationMeta, ELEMENT_NAME_REGEX)
     validateEnumerationValues(enumerationMeta, state)
     state.popName()
 }
 
-private fun validateEnumerationValues(enumerationMeta: EntityModel<Resolved>, state: State) {
-    val enumerationValuesMeta = getEnumerationValuesMeta(enumerationMeta)
+private fun validateEnumerationValues(enumerationMeta: MutableEntityModel<Resolved>, state: State) {
+    val enumerationValuesMeta = getMutableEnumerationValuesMeta(enumerationMeta)
     enumerationValuesMeta.values.forEach { validateEnumerationValue(it, state) }
 }
 
-private fun validateEnumerationValue(enumerationValueElementMeta: ElementModel<Resolved>, state: State) {
-    val enumerationValueMeta = enumerationValueElementMeta as EntityModel<Resolved>
-    val name = getMetaName(enumerationValueMeta)
-    state.pushName(name, ELEMENT_NAME_REGEX)
+private fun validateEnumerationValue(enumerationValueElementMeta: MutableElementModel<Resolved>, state: State) {
+    val enumerationValueMeta = enumerationValueElementMeta as MutableEntityModel<Resolved>
+    state.pushName(enumerationValueMeta, ELEMENT_NAME_REGEX)
     state.popName()
 }
 
-private fun validateEntities(packageMeta: EntityModel<Resolved>, state: State) {
-    val entitiesMeta = getEntitiesMeta(packageMeta)
+private fun validateEntities(packageMeta: MutableEntityModel<Resolved>, state: State) {
+    val entitiesMeta = getMutableEntitiesMeta(packageMeta)
     entitiesMeta?.values?.forEach { validateEntity(it, state) }
 }
 
-private fun validateEntity(entityElementMeta: ElementModel<Resolved>, state: State) {
-    val entityMeta = entityElementMeta as EntityModel<Resolved>
-    val name = getMetaName(entityMeta)
-    state.pushName(name, ELEMENT_NAME_REGEX)
+private fun validateEntity(entityElementMeta: MutableElementModel<Resolved>, state: State) {
+    val entityMeta = entityElementMeta as MutableEntityModel<Resolved>
+    state.pushName(entityMeta, ELEMENT_NAME_REGEX)
     validateFields(entityMeta, state)
     state.popName()
 }
 
-private fun validateFields(entityMeta: EntityModel<Resolved>, state: State) {
-    val fieldsMeta = getFieldsMeta(entityMeta)
+private fun validateFields(entityMeta: MutableEntityModel<Resolved>, state: State) {
+    val fieldsMeta = getMutableFieldsMeta(entityMeta)
     fieldsMeta.values.forEach { validateField(it, state) }
 }
 
-private fun validateField(fieldElementMeta: ElementModel<Resolved>, state: State) {
-    val fieldMeta = fieldElementMeta as EntityModel<Resolved>
-    val name = getMetaName(fieldMeta)
-    state.pushName(name, ELEMENT_NAME_REGEX)
+private fun validateField(fieldElementMeta: MutableElementModel<Resolved>, state: State) {
+    val fieldMeta = fieldElementMeta as MutableEntityModel<Resolved>
+    state.pushName(fieldMeta, ELEMENT_NAME_REGEX)
     state.popName()
 }

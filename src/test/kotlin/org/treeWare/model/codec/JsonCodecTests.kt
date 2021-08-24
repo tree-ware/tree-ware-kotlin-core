@@ -57,7 +57,7 @@ class JsonCodecTests {
         assertTrue(errors.isEmpty())
 
         val metaModel = newAddressBookMetaModel()
-        val metaModelErrors = validate(metaModel)
+        val metaModelErrors = validate(metaModel, true)
         assertTrue(metaModelErrors.isEmpty())
 
         val model = getModel(schema, metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
