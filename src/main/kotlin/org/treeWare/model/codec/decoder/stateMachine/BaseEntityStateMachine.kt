@@ -3,6 +3,8 @@ package org.treeWare.model.codec.decoder.stateMachine
 import org.apache.logging.log4j.LogManager
 import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.common.codec.SkipUnknownStateMachine
+import org.treeWare.metaModel.getFieldMeta
+import org.treeWare.metaModel.getResolvedEntityMeta
 import org.treeWare.model.core.*
 import org.treeWare.schema.core.AssociationFieldSchema
 import org.treeWare.schema.core.CompositionFieldSchema

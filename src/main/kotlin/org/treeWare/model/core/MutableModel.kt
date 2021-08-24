@@ -1,5 +1,7 @@
 package org.treeWare.model.core
 
+import org.treeWare.metaModel.getFieldMeta
+import org.treeWare.metaModel.getResolvedRootMeta
 import org.treeWare.schema.core.*
 import java.math.BigDecimal
 

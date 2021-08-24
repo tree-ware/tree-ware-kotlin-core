@@ -1,34 +1,38 @@
 package org.treeWare.schema.core
 
-val multiplicityTypeEnumeration = MutableEnumerationSchema(
+val multiplicityValues = listOf(
+    "required",
+    "optional",
+    "list",
+)
+
+val fieldTypeValues = listOf(
+    "boolean",
+    "byte",
+    "short",
+    "int",
+    "long",
+    "float",
+    "double",
+    "string",
+    "password1way",
+    "password2way",
+    "uuid",
+    "blob",
+    "timestamp",
+    "enumeration",
+    "association",
+    "entity",
+)
+
+val multiplicityEnumeration = MutableEnumerationSchema(
     name = "multiplicity_type",
-    values = listOf(
-        MutableEnumerationValueSchema("required"),
-        MutableEnumerationValueSchema("optional"),
-        MutableEnumerationValueSchema("list"),
-    )
+    values = multiplicityValues.map { MutableEnumerationValueSchema(it) }
 )
 
 val fieldTypeEnumeration = MutableEnumerationSchema(
     name = "field_type",
-    values = listOf(
-        MutableEnumerationValueSchema("boolean"),
-        MutableEnumerationValueSchema("byte"),
-        MutableEnumerationValueSchema("short"),
-        MutableEnumerationValueSchema("int"),
-        MutableEnumerationValueSchema("long"),
-        MutableEnumerationValueSchema("float"),
-        MutableEnumerationValueSchema("double"),
-        MutableEnumerationValueSchema("string"),
-        MutableEnumerationValueSchema("password1way"),
-        MutableEnumerationValueSchema("password2way"),
-        MutableEnumerationValueSchema("uuid"),
-        MutableEnumerationValueSchema("blob"),
-        MutableEnumerationValueSchema("timestamp"),
-        MutableEnumerationValueSchema("enumeration"),
-        MutableEnumerationValueSchema("association"),
-        MutableEnumerationValueSchema("entity"),
-    )
+    values = fieldTypeValues.map { MutableEnumerationValueSchema(it) }
 )
 
 val metaModelRoot = MutableRootSchema(
@@ -256,7 +260,7 @@ val metaModelMainPackage = MutablePackageSchema(
         enumerationInfoEntity,
         entityInfoEntity
     ),
-    enumerations = listOf(multiplicityTypeEnumeration, fieldTypeEnumeration)
+    enumerations = listOf(multiplicityEnumeration, fieldTypeEnumeration)
 )
 
 val metaModelSchema = MutableSchema(metaModelRoot, listOf(metaModelMainPackage)).also {

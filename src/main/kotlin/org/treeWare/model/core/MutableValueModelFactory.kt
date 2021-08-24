@@ -1,5 +1,6 @@
 package org.treeWare.model.core
 
+import org.treeWare.metaModel.getResolvedEntityMeta
 import org.treeWare.schema.core.*
 import org.treeWare.schema.visitor.AbstractSchemaVisitor
 
