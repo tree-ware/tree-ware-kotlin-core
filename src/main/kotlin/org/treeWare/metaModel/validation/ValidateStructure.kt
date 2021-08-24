@@ -18,7 +18,7 @@ fun validateStructure(mainMeta: Model<Resolved>) = listOf(
 ).flatten()
 
 private fun validateRoot(mainMeta: Model<Resolved>): List<String> {
-    val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root definition is missing")
+    val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root is missing")
     return listOf(
         validateSingleStringField(rootMeta, "name", "Root"),
         validateSingleStringField(rootMeta, "entity", "Root"),
@@ -181,9 +181,10 @@ private fun validateEntityInfo(fieldMeta: EntityModel<Resolved>, fieldId: String
 }
 
 private fun validateFieldMultiplicity(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
-    val multiplicityMeta = getMultiplicityMeta(fieldMeta) ?: return listOf()
-    return if (multiplicityValues.contains(multiplicityMeta)) listOf()
-    else listOf("$fieldId has an invalid multiplicity value: $multiplicityMeta")
+    val multiplicityMeta = getMultiplicityMeta(fieldMeta)
+    if (!multiplicityValues.contains(multiplicityMeta)) return listOf("$fieldId has an invalid multiplicity: $multiplicityMeta")
+    if (isKeyFieldMeta(fieldMeta) && multiplicityMeta != "required") return listOf("$fieldId is a key but not defined as required")
+    return listOf()
 }
 
 // Helpers

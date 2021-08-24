@@ -13,6 +13,12 @@ fun <Aux> getSingleString(meta: BaseEntityModel<Aux>, fieldName: String): String
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
+fun <Aux> getOptionalSingleBoolean(meta: BaseEntityModel<Aux>, fieldName: String): Boolean? {
+    val singleField = getOptionalSingleField(meta, fieldName) ?: return null
+    val primitive = singleField.value as? PrimitiveModel<Aux> ?: throw IllegalStateException()
+    return primitive.value as? Boolean ?: throw IllegalStateException()
+}
+
 fun <Aux> getSingleEnumeration(meta: BaseEntityModel<Aux>, fieldName: String): EnumerationValueSchema {
     val singleField = getSingleField(meta, fieldName)
     val enumeration = singleField.value as? EnumerationModel<Aux> ?: throw IllegalStateException()
