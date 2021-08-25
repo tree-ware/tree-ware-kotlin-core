@@ -23,12 +23,17 @@ fun validate(mainMeta: MutableModel<Resolved>, logFullNames: Boolean = false): L
 
     // Set full-names for named elements in the packages.
     val nameErrors = validateNames(mainMeta, logFullNames)
-    logErrors(nameErrors)
 
     // Get non-primitive field values to help resolve non-primitive fields.
     // NOTE: because of "forward-references", this has to be collected from all
     // packages before non-primitive fields can be resolved.
     val nonPrimitiveTypes = getNonPrimitiveTypes(mainMeta)
 
-    return nameErrors
+    // Resolve non-primitive field types.
+    // Associations can be resolved only after compositions are resolved.
+    val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, nonPrimitiveTypes)
+
+    val allErrors = listOf(nameErrors, nonPrimitiveErrors).flatten()
+    logErrors(allErrors)
+    return allErrors
 }
