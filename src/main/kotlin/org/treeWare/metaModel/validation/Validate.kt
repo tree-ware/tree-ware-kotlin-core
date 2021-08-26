@@ -32,8 +32,9 @@ fun validate(mainMeta: MutableModel<Resolved>, logFullNames: Boolean = false): L
     // Resolve non-primitive field types.
     // Associations can be resolved only after compositions are resolved.
     val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, nonPrimitiveTypes)
+    val associationErrors = resolveAssociations(mainMeta)
 
-    val allErrors = listOf(nameErrors, nonPrimitiveErrors).flatten()
+    val allErrors = listOf(nameErrors, nonPrimitiveErrors, associationErrors).flatten()
     logErrors(allErrors)
     return allErrors
 }
