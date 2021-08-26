@@ -1,6 +1,5 @@
 package org.treeWare.model.core
 
-import org.treeWare.metaModel.getResolvedEntityMeta
 import org.treeWare.schema.core.*
 import org.treeWare.schema.visitor.AbstractSchemaVisitor
 
@@ -39,7 +38,7 @@ private class MutableValueModelFactoryVisitor<Aux>(
 
     override fun visit(compositionField: CompositionFieldSchema): MutableElementModel<Aux> {
         val fieldMeta = meta as EntityModel<Resolved>?
-        val resolvedEntityMeta = fieldMeta?.let { getResolvedEntityMeta(fieldMeta) }
+        val resolvedEntityMeta = fieldMeta?.let { fieldMeta.aux?.entityMeta }
         return MutableEntityModel(compositionField.resolvedEntity, resolvedEntityMeta, parent)
     }
 }

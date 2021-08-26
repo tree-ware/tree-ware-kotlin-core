@@ -1,7 +1,7 @@
 package org.treeWare.model.core
 
 import org.treeWare.metaModel.getFieldMeta
-import org.treeWare.metaModel.getResolvedRootMeta
+import org.treeWare.metaModel.getRootMeta
 import org.treeWare.schema.core.*
 import java.math.BigDecimal
 
@@ -28,8 +28,11 @@ class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Re
     override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
 
     fun getOrNewRoot(): MutableRootModel<Aux> {
-        if (_root == null) _root =
-            newMutableModel(schema.root, meta?.let { getResolvedRootMeta(meta) }, this) as MutableRootModel<Aux>
+        if (_root == null) {
+            val rootMeta = meta?.let { getRootMeta(it) }
+            val resolvedRootMeta = rootMeta?.aux?.entityMeta
+            _root = newMutableModel(schema.root, resolvedRootMeta, this) as MutableRootModel<Aux>
+        }
         return root
     }
 }
@@ -238,7 +241,10 @@ class MutableAssociationModel<Aux>(
     }
 
     fun newValue(): List<MutableEntityKeysModel<Aux>> {
-        value = schema.keyEntities.map { MutableEntityKeysModel(it, null, this) }
+        val keyEntityMetaList = parent.meta?.aux?.associationMeta?.keyEntityMetaList ?: listOf()
+        value = keyEntityMetaList.zip(schema.keyEntities) { entityMeta, entitySchema ->
+            MutableEntityKeysModel(entitySchema, entityMeta, this)
+        }
         return value
     }
 }
