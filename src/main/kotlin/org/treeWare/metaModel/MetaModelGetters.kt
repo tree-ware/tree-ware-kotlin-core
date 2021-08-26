@@ -42,6 +42,11 @@ fun getFieldMeta(entityMeta: EntityModel<Resolved>, fieldName: String): EntityMo
     return findListElement(fields, fieldName)
 }
 
+fun hasKeyFields(entityMeta: EntityModel<Resolved>): Boolean = getFieldsMeta(entityMeta).values.any { fieldElement ->
+    val fieldMeta = fieldElement as? EntityModel<Resolved>
+    fieldMeta?.let { isKeyFieldMeta(it) } ?: false
+}
+
 fun getMetaName(meta: BaseEntityModel<Resolved>): String = getSingleString(meta, "name")
 
 fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>): String = getSingleEnumeration(fieldMeta, "type").name

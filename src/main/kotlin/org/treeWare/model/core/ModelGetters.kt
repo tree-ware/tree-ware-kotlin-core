@@ -48,3 +48,10 @@ fun <Aux> getOptionalSingleField(
 fun <Aux> getListField(meta: BaseEntityModel<Aux>, fieldName: String): ListFieldModel<Aux> {
     return meta.getField(fieldName) as? ListFieldModel<Aux> ?: throw IllegalStateException()
 }
+
+fun <Aux> getListStrings(listFieldMeta: ListFieldModel<Aux>): List<String> {
+    val firstElement = listFieldMeta.values.firstOrNull() ?: return listOf()
+    val firstPrimitive = firstElement as? PrimitiveModel<Aux> ?: throw IllegalStateException()
+    firstPrimitive.value as? String ?: throw IllegalStateException()
+    return listFieldMeta.values.map { (it as PrimitiveModel<Aux>).value as String }
+}
