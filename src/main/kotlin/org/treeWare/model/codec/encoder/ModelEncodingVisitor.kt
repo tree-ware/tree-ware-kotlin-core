@@ -4,6 +4,7 @@ import org.treeWare.common.codec.WireFormatEncoder
 import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.metaModel.getFieldTypeMeta
 import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.getRootMeta
 import org.treeWare.metaModel.isListFieldMeta
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
@@ -29,7 +30,12 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun visit(leaderRoot1: RootModel<Aux>): TraversalAction {
-        val name = leaderRoot1.meta?.let { getMetaName(it) }
+        // The root model has a resolved meta-model which does not have the
+        // name of the root. The name is in the unresolved meta-model which
+        // can be accessed from the main meta-model.
+        val mainMeta = leaderRoot1.parent.meta
+        val unresolvedRootMeta = mainMeta?.let { getRootMeta(mainMeta) }
+        val name = unresolvedRootMeta?.let { getMetaName(unresolvedRootMeta) }
         auxEncoder?.also { it.encode(name, leaderRoot1.aux, wireFormatEncoder) }
         wireFormatEncoder.encodeObjectStart(name)
         return TraversalAction.CONTINUE

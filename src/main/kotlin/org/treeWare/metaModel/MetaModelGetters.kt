@@ -25,16 +25,6 @@ fun getEntityMeta(
     return findListElement(entitiesMeta, entityName)
 }
 
-// TODO(performance): cache the results, in the meta-model (similar to schema.resolvedEntity), or in a map here.
-fun getResolvedRootMeta(mainMeta: Model<Resolved>): EntityModel<Resolved> {
-    val rootMeta = getSingleEntity(mainMeta.root, "root")
-    val entityName = getSingleString(rootMeta, "entity")
-    val packageName = getSingleString(rootMeta, "package")
-
-    val packages = getListField(mainMeta.root, "packages")
-    return getEntityMeta(packages, packageName, entityName)
-}
-
 fun getFieldsMeta(entityMeta: EntityModel<Resolved>): ListFieldModel<Resolved> = getListField(entityMeta, "fields")
 
 fun getFieldMeta(entityMeta: EntityModel<Resolved>, fieldName: String): EntityModel<Resolved> {
@@ -65,16 +55,6 @@ fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String =
 fun isListFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getMultiplicityMeta(fieldMeta) == "list"
 
 fun isKeyFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getOptionalSingleBoolean(fieldMeta, "is_key") ?: false
-
-// TODO(performance): cache the results, in the meta-model (similar to schema.resolvedEntity), or in a map here.
-fun getResolvedEntityMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> {
-    val entityInfo = getSingleEntity(fieldMeta, "entity")
-    val entityName = getSingleString(entityInfo, "name")
-    val packageName = getSingleString(entityInfo, "package")
-
-    val packages = getPackagesFromField(fieldMeta)
-    return getEntityMeta(packages, packageName, entityName)
-}
 
 private fun getPackagesFromField(fieldMeta: EntityModel<Resolved>): ListFieldModel<Resolved> {
     // Walk up the parents to the "packages" entity.

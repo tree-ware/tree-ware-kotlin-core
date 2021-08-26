@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.common.codec.SkipUnknownStateMachine
 import org.treeWare.metaModel.getFieldMeta
-import org.treeWare.metaModel.getResolvedEntityMeta
 import org.treeWare.model.core.*
 import org.treeWare.schema.core.AssociationFieldSchema
 import org.treeWare.schema.core.CompositionFieldSchema
@@ -156,7 +155,6 @@ class BaseEntityStateMachine<Aux>(
                     listFieldModel.addValue(value)
                     value
                 },
-                fieldSchema,
                 stack,
                 auxStateMachineFactory
             )
@@ -171,7 +169,6 @@ class BaseEntityStateMachine<Aux>(
                     singleFieldModel.setValue(value)
                     value
                 },
-                fieldSchema,
                 stack,
                 auxStateMachineFactory
             )
@@ -193,7 +190,7 @@ class BaseEntityStateMachine<Aux>(
                         else {
                             val value = newMutableValueModel(
                                 fieldSchema.resolvedEntity,
-                                fieldMeta?.let { getResolvedEntityMeta(fieldMeta) },
+                                fieldMeta?.let { fieldMeta.aux?.entityMeta },
                                 listFieldModel
                             ) as MutableEntityModel<Aux>
                             listFieldModel.addValue(value)
@@ -213,7 +210,7 @@ class BaseEntityStateMachine<Aux>(
                     {
                         val value = newMutableValueModel(
                             fieldSchema.resolvedEntity,
-                            fieldMeta?.let { getResolvedEntityMeta(fieldMeta) },
+                            fieldMeta?.let { fieldMeta.aux?.entityMeta },
                             singleFieldModel
                         ) as MutableEntityModel<Aux>
                         singleFieldModel.setValue(value)
