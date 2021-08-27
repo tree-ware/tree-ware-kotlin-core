@@ -22,7 +22,8 @@ class GetTests {
         assertTrue(errors.isEmpty())
 
         val metaModel = newAddressBookMetaModel()
-        // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+        val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
+        assertTrue(metaModelErrors.isEmpty())
 
         val request = getModel<Unit>(schema, metaModel, "model/address_book_get_person_request.json")
         val mapping = getModel(

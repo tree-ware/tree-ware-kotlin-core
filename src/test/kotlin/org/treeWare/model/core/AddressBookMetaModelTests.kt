@@ -1,8 +1,10 @@
 package org.treeWare.model.core
 
+import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.schema.core.newAddressBookMetaModel
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 val addressBookMetaModelFilePath = "model/address_book_meta_model.json"
 
@@ -21,6 +23,8 @@ class AddressBookMetaModelTests {
     @Test
     fun `Address-book Kotlin meta-model must match JSON meta-model`() {
         val metaModel = newAddressBookMetaModel()
+        val metaModelErrors = validate(metaModel)
+        assertTrue(metaModelErrors.isEmpty())
         assertMatchesJson(metaModel, null, addressBookMetaModelFilePath)
     }
 }
