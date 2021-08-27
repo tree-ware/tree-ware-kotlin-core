@@ -41,7 +41,8 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
     assertTrue(errors.isEmpty())
 
     val metaModel = newAddressBookMetaModel()
-    // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+    val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
+    assertTrue(metaModelErrors.isEmpty())
 
     val model = getModel<Unit>(schema, metaModel, inputFilePath)
 
@@ -65,7 +66,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     assertTrue(errors.isEmpty())
 
     val metaModel = newAddressBookMetaModel()
-    // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+    val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
+    assertTrue(metaModelErrors.isEmpty())
 
     // Create different instances of the model from the same JSON input file.
     val leaderModel = getModel<Unit>(schema, metaModel, inputFilePath)
@@ -99,7 +101,8 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     assertTrue(errors.isEmpty())
 
     val metaModel = newAddressBookMetaModel()
-    // TODO(self-hosting): validate metaModel after validation of meta-models is implemented.
+    val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
+    assertTrue(metaModelErrors.isEmpty())
 
     val leaderModel = getModel<Unit>(schema, metaModel, leaderFilePath)
     val followerModel = getModel<Unit>(schema, metaModel, wildcardFilePath)
