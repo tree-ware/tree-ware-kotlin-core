@@ -8,9 +8,10 @@ private enum class NestingState {
     LIST_START, LIST_ELEMENT,
 }
 
-class JsonWireFormatEncoder(private val writer: Writer,
-                            prettyPrint: Boolean = false,
-                            indentSizeInSpaces: Int = 2
+class JsonWireFormatEncoder(
+    private val writer: Writer,
+    prettyPrint: Boolean = false,
+    indentSizeInSpaces: Int = 2
 ) : WireFormatEncoder {
     private val nesting = ArrayDeque<NestingState>()
     private val prettyPrinter =

@@ -1,11 +1,13 @@
 package org.treeWare.schema.core
 
+// TODO(self-hosting): make this an enum
 val multiplicityValues = listOf(
     "required",
     "optional",
     "list",
 )
 
+// TODO(self-hosting): make this an enum
 val fieldTypeValues = listOf(
     "boolean",
     "byte",
