@@ -1,14 +1,13 @@
 package org.treeWare.model.cursor
 
+import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.*
-import org.treeWare.schema.core.NamedElementSchema
 
 sealed class FollowerModelCursorMove<Aux>(val direction: CursorMoveDirection) {
     abstract val element: ElementModel<Aux>?
 
     override fun toString(): String {
-        val schema = element?.schema
-        val name = if (schema is NamedElementSchema) schema.name else ""
+        val name = (element?.meta as? BaseEntityModel<Resolved>)?.let { getMetaName(it) } ?: ""
         return "${this::class.simpleName}: $name"
     }
 }

@@ -1,5 +1,6 @@
 package org.treeWare.model.cursor
 
+import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.AbstractLeader1Follower0ModelVisitor
 import org.treeWare.model.operator.dispatchVisit
@@ -148,7 +149,8 @@ private abstract class BaseEntityFollowerState<LeaderAux, FollowerAux>(
         leaderField: FieldModel<LeaderAux>,
         nullVisitCursorMove: FollowerModelCursorMove<FollowerAux>
     ): FollowerModelCursorMove<FollowerAux> {
-        val followerField = baseEntity.getField(leaderField.schema.name)
+        val leaderMeta = leaderField.meta ?: throw IllegalStateException("Meta is missing for leader field")
+        val followerField = baseEntity.getField(getMetaName(leaderMeta))
         val fieldState = if (followerField == null) NullFollowerState(nullVisitCursorMove, stateStack)
         else dispatchVisit(followerField, stateFactoryVisitor) ?: throw IllegalStateException("null field state")
         stateStack.addFirst(fieldState)
