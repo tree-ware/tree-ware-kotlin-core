@@ -2,6 +2,8 @@ package org.treeWare.metaModel
 
 import org.treeWare.model.core.*
 
+// TODO(self-hosting): make input meta non-optional
+
 fun getRootMeta(mainMeta: Model<Resolved>): EntityModel<Resolved> = getSingleEntity(mainMeta.root, "root")
 
 fun getPackagesMeta(mainMeta: Model<Resolved>): ListFieldModel<Resolved> = getListField(mainMeta.root, "packages")
@@ -27,9 +29,11 @@ fun hasKeyFields(entityMeta: EntityModel<Resolved>): Boolean = getFieldsMeta(ent
     fieldMeta?.let { isKeyFieldMeta(it) } ?: false
 }
 
-fun getMetaName(meta: BaseEntityModel<Resolved>): String = getSingleString(meta, "name")
+fun getMetaName(meta: BaseEntityModel<Resolved>?): String = meta?.let { getSingleString(meta, "name") } ?: ""
 
-fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>): String = getSingleEnumeration(fieldMeta, "type").name
+fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>?): String = fieldMeta?.let {
+    getSingleEnumeration(fieldMeta, "type").name
+} ?: ""
 
 fun getEnumerationInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> =
     getSingleEntity(fieldMeta, "enumeration")
@@ -42,9 +46,14 @@ fun getEntityInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> =
 fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String =
     getOptionalSingleEnumeration(fieldMeta, "multiplicity")?.name ?: "required"
 
-fun isListFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getMultiplicityMeta(fieldMeta) == "list"
+fun isListFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean =
+    fieldMeta?.let { getMultiplicityMeta(fieldMeta) == "list" } ?: false
 
-fun isKeyFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getOptionalSingleBoolean(fieldMeta, "is_key") ?: false
+fun isKeyFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean = fieldMeta?.let {
+    getOptionalSingleBoolean(fieldMeta, "is_key") ?: false
+} ?: false
+
+fun isCompositionFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean = getFieldTypeMeta(fieldMeta) == "entity"
 
 private fun findListElement(list: ListFieldModel<Resolved>, name: String) =
     list.values.find { entity ->
