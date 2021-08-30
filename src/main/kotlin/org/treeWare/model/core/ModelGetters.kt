@@ -1,7 +1,5 @@
 package org.treeWare.model.core
 
-import org.treeWare.schema.core.EnumerationValueSchema
-
 fun <Aux> getSingleEntity(meta: BaseEntityModel<Aux>, fieldName: String): EntityModel<Aux> {
     val singleField = getSingleField(meta, fieldName)
     return singleField.value as? EntityModel<Aux> ?: throw IllegalStateException()
@@ -19,7 +17,7 @@ fun <Aux> getOptionalSingleBoolean(meta: BaseEntityModel<Aux>, fieldName: String
     return primitive.value as? Boolean ?: throw IllegalStateException()
 }
 
-fun <Aux> getSingleEnumeration(meta: BaseEntityModel<Aux>, fieldName: String): EnumerationValueSchema {
+fun <Aux> getSingleEnumeration(meta: BaseEntityModel<Aux>, fieldName: String): String {
     val singleField = getSingleField(meta, fieldName)
     val enumeration = singleField.value as? EnumerationModel<Aux> ?: throw IllegalStateException()
     return enumeration.value ?: throw IllegalStateException()
@@ -28,7 +26,7 @@ fun <Aux> getSingleEnumeration(meta: BaseEntityModel<Aux>, fieldName: String): E
 fun <Aux> getOptionalSingleEnumeration(
     meta: BaseEntityModel<Aux>,
     fieldName: String
-): EnumerationValueSchema? {
+): String? {
     val singleField = getOptionalSingleField(meta, fieldName) ?: return null
     val enumeration = singleField.value as? EnumerationModel<Aux> ?: throw IllegalStateException()
     return enumeration.value ?: throw IllegalStateException()

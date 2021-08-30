@@ -1,5 +1,6 @@
 package org.treeWare.model.core
 
+import org.treeWare.metaModel.getEnumerationValues
 import org.treeWare.metaModel.getFieldMeta
 import org.treeWare.metaModel.getRootMeta
 import org.treeWare.metaModel.isListFieldMeta
@@ -208,7 +209,7 @@ class MutableEnumerationModel<Aux>(
     override val schema: EnumerationFieldSchema,
     parent: MutableFieldModel<Aux>
 ) : MutableScalarValueModel<Aux>(parent), EnumerationModel<Aux> {
-    override var value: EnumerationValueSchema? = null
+    override var value: String? = null
         internal set
 
     override fun matches(that: ElementModel<*>): Boolean {
@@ -221,7 +222,7 @@ class MutableEnumerationModel<Aux>(
         return true
     }
 
-    override fun setValue(value: String): Boolean = setValue(schema.resolvedEnumeration, value) { this.value = it }
+    override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
 }
 
 class MutableAssociationModel<Aux>(
@@ -341,10 +342,19 @@ fun setValue(primitive: PrimitiveSchema, value: Boolean, setter: ValueSetter): B
     }
 }
 
-typealias EnumerationSetter = (EnumerationValueSchema) -> Unit
+typealias StringSetter = (String) -> Unit
 
-fun setValue(enumeration: EnumerationSchema, value: String, setter: EnumerationSetter): Boolean {
-    val enumerationValue = enumeration.valueFromString(value) ?: return false
+fun setValue(
+    meta: ElementModel<Resolved>?,
+    value: String,
+    setter: StringSetter
+): Boolean {
+    val enumerationValue = if (meta == null) value else {
+        val resolvedEnumeration = meta.aux?.enumerationMeta
+            ?: throw IllegalStateException("Enumeration has not been resolved")
+        val enumerationValues = getEnumerationValues(resolvedEnumeration)
+        if (enumerationValues.contains(value)) value else return false
+    }
     setter(enumerationValue)
     return true
 }
