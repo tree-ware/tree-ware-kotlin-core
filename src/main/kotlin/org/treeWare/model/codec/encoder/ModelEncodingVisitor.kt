@@ -123,7 +123,7 @@ class ModelEncodingVisitor<Aux>(
         auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
         val value = leaderValue1.value
         if (value == null) wireFormatEncoder.encodeNullField(fieldName)
-        else wireFormatEncoder.encodeStringField(fieldName, value.name)
+        else wireFormatEncoder.encodeStringField(fieldName, value)
         return TraversalAction.CONTINUE
     }
 

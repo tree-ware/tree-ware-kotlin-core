@@ -14,6 +14,12 @@ fun getEnumerationsMeta(packageMeta: EntityModel<Resolved>): ListFieldModel<Reso
 fun getEnumerationValuesMeta(enumerationMeta: EntityModel<Resolved>): ListFieldModel<Resolved> =
     getListField(enumerationMeta, "values")
 
+fun getEnumerationValues(enumerationMeta: EntityModel<Resolved>): List<String> =
+    getEnumerationValuesMeta(enumerationMeta).values.map {
+        val valueMeta = it as? EntityModel<Resolved> ?: throw IllegalStateException()
+        getMetaName(valueMeta)
+    }
+
 fun getEntitiesMeta(packageMeta: EntityModel<Resolved>): ListFieldModel<Resolved>? =
     runCatching { getListField(packageMeta, "entities") }.getOrNull()
 
@@ -32,7 +38,7 @@ fun hasKeyFields(entityMeta: EntityModel<Resolved>): Boolean = getFieldsMeta(ent
 fun getMetaName(meta: BaseEntityModel<Resolved>?): String = meta?.let { getSingleString(meta, "name") } ?: ""
 
 fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>?): String = fieldMeta?.let {
-    getSingleEnumeration(fieldMeta, "type").name
+    getSingleEnumeration(fieldMeta, "type")
 } ?: ""
 
 fun getEnumerationInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> =
@@ -44,7 +50,7 @@ fun getAssociationInfoMeta(fieldMeta: EntityModel<Resolved>): ListFieldModel<Res
 fun getEntityInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> = getSingleEntity(fieldMeta, "entity")
 
 fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String =
-    getOptionalSingleEnumeration(fieldMeta, "multiplicity")?.name ?: "required"
+    getOptionalSingleEnumeration(fieldMeta, "multiplicity") ?: "required"
 
 fun isListFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean =
     fieldMeta?.let { getMultiplicityMeta(fieldMeta) == "list" } ?: false

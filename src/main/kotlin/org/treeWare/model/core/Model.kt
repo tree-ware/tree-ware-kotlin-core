@@ -100,7 +100,7 @@ interface EnumerationModel<Aux> : ElementModel<Aux> {
 
     override val schema: EnumerationFieldSchema
     override val parent: FieldModel<Aux>
-    val value: EnumerationValueSchema?
+    val value: String?
 }
 
 interface AssociationModel<Aux> : ElementModel<Aux> {
