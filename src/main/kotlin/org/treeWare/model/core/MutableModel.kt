@@ -2,6 +2,7 @@ package org.treeWare.model.core
 
 import org.treeWare.metaModel.getFieldMeta
 import org.treeWare.metaModel.getRootMeta
+import org.treeWare.metaModel.isListFieldMeta
 import org.treeWare.schema.core.*
 import java.math.BigDecimal
 
@@ -31,7 +32,7 @@ class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Re
         if (_root == null) {
             val rootMeta = meta?.let { getRootMeta(it) }
             val resolvedRootMeta = rootMeta?.aux?.entityMeta
-            _root = newMutableModel(schema.root, resolvedRootMeta, this) as MutableRootModel<Aux>
+            _root = MutableRootModel(schema.root, resolvedRootMeta, this)
         }
         return root
     }
@@ -60,9 +61,10 @@ abstract class MutableBaseEntityModel<Aux>(
         val existing = getField(fieldName)
         if (existing != null) return existing
         val fieldSchema = entitySchema.getField(fieldName) ?: return null
-        val newField =
-            newMutableModel(fieldSchema, meta?.let { getFieldMeta(it, fieldName) }, this) as? MutableFieldModel<Aux>
-                ?: return null
+        val fieldMeta = meta?.let { getFieldMeta(it, fieldName) }
+            ?: throw IllegalStateException("fieldMeta is null when creating mutable field model")
+        val newField = if (isListFieldMeta(fieldMeta)) MutableListFieldModel(fieldSchema, fieldMeta, this)
+        else MutableSingleFieldModel(fieldSchema, fieldMeta, this)
         fields.add(newField)
         return newField
     }

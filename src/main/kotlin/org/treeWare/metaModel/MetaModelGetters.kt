@@ -15,16 +15,6 @@ fun getEnumerationValuesMeta(enumerationMeta: EntityModel<Resolved>): ListFieldM
 fun getEntitiesMeta(packageMeta: EntityModel<Resolved>): ListFieldModel<Resolved>? =
     runCatching { getListField(packageMeta, "entities") }.getOrNull()
 
-fun getEntityMeta(
-    packages: ListFieldModel<Resolved>,
-    packageName: String,
-    entityName: String
-): EntityModel<Resolved> {
-    val packageMeta = findListElement(packages, packageName)
-    val entitiesMeta = getListField(packageMeta, "entities")
-    return findListElement(entitiesMeta, entityName)
-}
-
 fun getFieldsMeta(entityMeta: EntityModel<Resolved>): ListFieldModel<Resolved> = getListField(entityMeta, "fields")
 
 fun getFieldMeta(entityMeta: EntityModel<Resolved>, fieldName: String): EntityModel<Resolved> {
@@ -55,15 +45,6 @@ fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String =
 fun isListFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getMultiplicityMeta(fieldMeta) == "list"
 
 fun isKeyFieldMeta(fieldMeta: EntityModel<Resolved>): Boolean = getOptionalSingleBoolean(fieldMeta, "is_key") ?: false
-
-private fun getPackagesFromField(fieldMeta: EntityModel<Resolved>): ListFieldModel<Resolved> {
-    // Walk up the parents to the "packages" entity.
-    val fields = fieldMeta.parent
-    val entity = fields.parent
-    val entities = entity.parent ?: throw IllegalStateException()
-    val `package` = entities.parent ?: throw IllegalStateException()
-    return `package`.parent as? ListFieldModel<Resolved> ?: throw IllegalStateException()
-}
 
 private fun findListElement(list: ListFieldModel<Resolved>, name: String) =
     list.values.find { entity ->
