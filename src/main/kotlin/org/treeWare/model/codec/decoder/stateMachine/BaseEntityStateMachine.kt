@@ -4,6 +4,9 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.common.codec.SkipUnknownStateMachine
 import org.treeWare.metaModel.getFieldMeta
+import org.treeWare.metaModel.getFieldTypeMeta
+import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.isListFieldMeta
 import org.treeWare.model.core.*
 import org.treeWare.schema.core.AssociationFieldSchema
 import org.treeWare.schema.core.CompositionFieldSchema
@@ -98,22 +101,23 @@ class BaseEntityStateMachine<Aux>(
             } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
             return true
         }
-        val fieldSchema = fieldName.let { entitySchema?.getField(it) }
-        if (fieldSchema == null) {
+        val fieldMeta = entityMeta?.let { getFieldMeta(it, fieldName) }
+        if (fieldMeta == null) {
             stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
             return true
         }
-        val fieldMeta = entityMeta?.let { getFieldMeta(it, fieldName) }
-        return when (fieldSchema) {
-            is CompositionFieldSchema -> handleComposition(fieldSchema, fieldMeta)
-            is AssociationFieldSchema -> handleAssociation(fieldSchema, fieldMeta)
+        val fieldSchema = fieldName.let { entitySchema?.getField(it) } ?: return true
+        return when (getFieldTypeMeta(fieldMeta)) {
+            "entity" -> handleComposition(fieldSchema as CompositionFieldSchema, fieldMeta)
+            "association" -> handleAssociation(fieldSchema as AssociationFieldSchema, fieldMeta)
             else -> handleScalar(fieldSchema, fieldMeta)
         }
     }
 
     private fun handleScalar(fieldSchema: FieldSchema, fieldMeta: EntityModel<Resolved>?): Boolean {
-        val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
-        if (fieldSchema.multiplicity.isList()) {
+        if (fieldMeta == null) return false
+        val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
+        if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
             val listElementStateMachine = ScalarValueModelStateMachine(
                 true,
@@ -144,8 +148,9 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun handleAssociation(fieldSchema: AssociationFieldSchema, fieldMeta: EntityModel<Resolved>?): Boolean {
-        val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
-        if (fieldSchema.multiplicity.isList()) {
+        if (fieldMeta == null) return false
+        val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
+        if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
             val listElementStateMachine = AssociationModelStateMachine(
                 true,
@@ -178,8 +183,9 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun handleComposition(fieldSchema: CompositionFieldSchema, fieldMeta: EntityModel<Resolved>?): Boolean {
-        val fieldModel = base?.getOrNewField(fieldSchema.name) ?: return false
-        if (fieldSchema.multiplicity.isList()) {
+        if (fieldMeta == null) return false
+        val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
+        if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
             val listElementStateMachine =
                 BaseEntityStateMachine(
@@ -190,7 +196,7 @@ class BaseEntityStateMachine<Aux>(
                         else {
                             val value = newMutableValueModel(
                                 fieldSchema.resolvedEntity,
-                                fieldMeta?.let { fieldMeta.aux?.entityMeta },
+                                fieldMeta,
                                 listFieldModel
                             ) as MutableEntityModel<Aux>
                             listFieldModel.addValue(value)
@@ -210,7 +216,7 @@ class BaseEntityStateMachine<Aux>(
                     {
                         val value = newMutableValueModel(
                             fieldSchema.resolvedEntity,
-                            fieldMeta?.let { fieldMeta.aux?.entityMeta },
+                            fieldMeta,
                             singleFieldModel
                         ) as MutableEntityModel<Aux>
                         singleFieldModel.setValue(value)
