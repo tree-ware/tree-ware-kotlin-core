@@ -4,10 +4,8 @@ import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableModel
 import org.treeWare.model.core.Resolved
-import org.treeWare.schema.core.Schema
 
 class ModelStateMachine<Aux>(
-    private val schema: Schema,
     private val meta: Model<Resolved>?,
     private val expectedModelType: String,
     private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
@@ -43,7 +41,7 @@ class ModelStateMachine<Aux>(
         super.decodeKey(name)
 
         if (keyName != expectedModelType) return false
-        if (model == null) model = MutableModel(schema, meta)
+        if (model == null) model = MutableModel(meta)
         model?.also { decodeModel(expectedModelType, it) { auxStateMachineFactory(stack) } }
         return true
     }

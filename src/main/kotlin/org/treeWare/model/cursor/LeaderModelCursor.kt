@@ -94,7 +94,7 @@ private abstract class BaseEntityLeaderState<Aux>(
     final override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
-        actionIterator = IteratorAdapter({ baseEntity.fields.iterator() }) { field ->
+        actionIterator = IteratorAdapter({ baseEntity.fields.values.iterator() }) { field ->
             {
                 val fieldState =
                     dispatchVisit(field, stateFactoryVisitor) ?: throw IllegalStateException("null field state")

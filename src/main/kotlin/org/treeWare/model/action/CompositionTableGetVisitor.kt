@@ -51,8 +51,8 @@ class CompositionTableGetVisitor<MappingAux>(
         assert(mappingAux != null)
         if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
-        delegate.pushPathEntity(responseRoot, responseRoot.schema.resolvedEntity)
-        val (compositionListFields, fields) = requestRoot.fields.partition { isCompositionListField(it) }
+        delegate.pushPathEntity(responseRoot)
+        val (compositionListFields, fields) = requestRoot.fields.values.partition { isCompositionListField(it) }
         val mutableResponseRoot = responseRoot as MutableRootModel<Unit>
         val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux)
@@ -124,8 +124,8 @@ class CompositionTableGetVisitor<MappingAux>(
         assert(mappingAux != null)
         if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
-        val requestEntityFields = (requestListField.firstValue() as? EntityModel<Unit>)?.fields ?: listOf()
-        val (compositionListFields, fields) = requestEntityFields.partition { isCompositionListField(it) }
+        val requestEntityFields = (requestListField.firstValue() as? EntityModel<Unit>)?.fields ?: LinkedHashMap()
+        val (compositionListFields, fields) = requestEntityFields.values.partition { isCompositionListField(it) }
         val mutableResponseListField = responseListField as MutableListFieldModel<Unit>
         val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchCompositionList(mutableResponseListField, fieldNames, mappingAux)

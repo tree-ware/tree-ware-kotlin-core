@@ -1,10 +1,6 @@
 package org.treeWare.model.core
 
-import org.treeWare.metaModel.getEnumerationValues
-import org.treeWare.metaModel.getFieldMeta
-import org.treeWare.metaModel.getRootMeta
-import org.treeWare.metaModel.isListFieldMeta
-import org.treeWare.schema.core.*
+import org.treeWare.metaModel.*
 import java.math.BigDecimal
 
 abstract class MutableElementModel<Aux> : ElementModel<Aux> {
@@ -13,7 +9,7 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux> {
         internal set
 }
 
-class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Resolved>?) :
+class MutableModel<Aux>(override val meta: Model<Resolved>?) :
     MutableElementModel<Aux>(), Model<Aux> {
     override val parent: ElementModel<Aux>? = null
 
@@ -33,69 +29,62 @@ class MutableModel<Aux>(override val schema: Schema, override val meta: Model<Re
         if (_root == null) {
             val rootMeta = meta?.let { getRootMeta(it) }
             val resolvedRootMeta = rootMeta?.aux?.entityMeta
-            _root = MutableRootModel(schema.root, resolvedRootMeta, this)
+            _root = MutableRootModel(resolvedRootMeta, this)
         }
         return root
     }
 }
 
 abstract class MutableBaseEntityModel<Aux>(
-    internal val entitySchema: EntitySchema,
     override val meta: EntityModel<Resolved>?
 ) : MutableElementModel<Aux>(), BaseEntityModel<Aux> {
-    override var fields: MutableList<MutableFieldModel<Aux>> = mutableListOf()
+    override var fields = LinkedHashMap<String, MutableFieldModel<Aux>>()
         internal set
 
     override fun matches(that: ElementModel<*>): Boolean {
         if (that !is BaseEntityModel<*>) return false
-        val thisKeyFields = this.fields.filter { it.schema.isKey }
+        val thisKeyFields = this.fields.values.filter { isKeyFieldMeta(it.meta) }
         return thisKeyFields.all { thisKeyField ->
-            val thatKeyField = that.getField(thisKeyField.schema.name) ?: return false
+            val thatKeyField = that.getField(getMetaName(thisKeyField.meta)) ?: return false
             thisKeyField.matches(thatKeyField)
         }
     }
 
-    // TODO(deepak-nulu): optimize
-    override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields.find { it.schema.name == fieldName }
+    override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields[fieldName]
 
-    fun getOrNewField(fieldName: String): MutableFieldModel<Aux>? {
+    fun getOrNewField(fieldName: String): MutableFieldModel<Aux> {
         val existing = getField(fieldName)
         if (existing != null) return existing
-        val fieldSchema = entitySchema.getField(fieldName) ?: return null
         val fieldMeta = meta?.let { getFieldMeta(it, fieldName) }
             ?: throw IllegalStateException("fieldMeta is null when creating mutable field model")
-        val newField = if (isListFieldMeta(fieldMeta)) MutableListFieldModel(fieldSchema, fieldMeta, this)
-        else MutableSingleFieldModel(fieldSchema, fieldMeta, this)
-        fields.add(newField)
+        val newField = if (isListFieldMeta(fieldMeta)) MutableListFieldModel(fieldMeta, this)
+        else MutableSingleFieldModel(fieldMeta, this)
+        fields[fieldName] = newField
         return newField
     }
 }
 
 class MutableRootModel<Aux>(
-    override val schema: RootSchema,
     meta: EntityModel<Resolved>?,
     override val parent: MutableModel<Aux>
-) : MutableBaseEntityModel<Aux>(schema.resolvedEntity, meta), RootModel<Aux>
+) : MutableBaseEntityModel<Aux>(meta), RootModel<Aux>
 
 class MutableEntityModel<Aux>(
-    override val schema: EntitySchema,
     meta: EntityModel<Resolved>?,
     override val parent: MutableFieldModel<Aux>
-) : MutableBaseEntityModel<Aux>(schema, meta), EntityModel<Aux>
+) : MutableBaseEntityModel<Aux>(meta), EntityModel<Aux>
 
 // Fields
 
 abstract class MutableFieldModel<Aux>(
-    override val schema: FieldSchema,
     override val meta: EntityModel<Resolved>?,
     override val parent: MutableBaseEntityModel<Aux>
 ) : MutableElementModel<Aux>(), FieldModel<Aux>
 
 class MutableSingleFieldModel<Aux>(
-    schema: FieldSchema,
     meta: EntityModel<Resolved>?,
     parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(schema, meta, parent), SingleFieldModel<Aux> {
+) : MutableFieldModel<Aux>(meta, parent), SingleFieldModel<Aux> {
     override var value: MutableElementModel<Aux>? = null
         internal set
 
@@ -111,7 +100,7 @@ class MutableSingleFieldModel<Aux>(
     fun getOrNewValue(): MutableElementModel<Aux> {
         val existing = value
         if (existing != null) return existing
-        val newValue = newMutableValueModel(schema, meta, this)
+        val newValue = newMutableValueModel(meta, this)
         value = newValue
         return newValue
     }
@@ -122,10 +111,9 @@ class MutableSingleFieldModel<Aux>(
 }
 
 class MutableListFieldModel<Aux>(
-    schema: FieldSchema,
     meta: EntityModel<Resolved>?,
     parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(schema, meta, parent), ListFieldModel<Aux> {
+) : MutableFieldModel<Aux>(meta, parent), ListFieldModel<Aux> {
     override val values = mutableListOf<MutableElementModel<Aux>>()
 
     override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
@@ -135,7 +123,7 @@ class MutableListFieldModel<Aux>(
 
     /** Adds a new value to the list and returns the new value. */
     fun getNewValue(): MutableElementModel<Aux> {
-        val newValue = newMutableValueModel(schema, meta, this)
+        val newValue = newMutableValueModel(meta, this)
         addValue(newValue)
         return newValue
     }
@@ -157,7 +145,6 @@ abstract class MutableScalarValueModel<Aux>(
 }
 
 class MutablePrimitiveModel<Aux>(
-    override val schema: PrimitiveFieldSchema,
     parent: MutableFieldModel<Aux>
 ) : MutableScalarValueModel<Aux>(parent), PrimitiveModel<Aux> {
     override var value: Any? = null
@@ -173,13 +160,12 @@ class MutablePrimitiveModel<Aux>(
         return true
     }
 
-    override fun setValue(value: String): Boolean = setValue(schema.primitive, value) { this.value = it }
-    override fun setValue(value: BigDecimal): Boolean = setValue(schema.primitive, value) { this.value = it }
-    override fun setValue(value: Boolean): Boolean = setValue(schema.primitive, value) { this.value = it }
+    override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
+    override fun setValue(value: BigDecimal): Boolean = setValue(parent.meta, value) { this.value = it }
+    override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
 }
 
 class MutableAliasModel<Aux>(
-    override val schema: AliasFieldSchema,
     parent: MutableFieldModel<Aux>
 ) : MutableScalarValueModel<Aux>(parent), AliasModel<Aux> {
     override var value: Any? = null
@@ -195,18 +181,12 @@ class MutableAliasModel<Aux>(
         return true
     }
 
-    override fun setValue(value: String): Boolean =
-        setValue(schema.resolvedAlias.primitive, value) { this.value = it }
-
-    override fun setValue(value: BigDecimal): Boolean =
-        setValue(schema.resolvedAlias.primitive, value) { this.value = it }
-
-    override fun setValue(value: Boolean): Boolean =
-        setValue(schema.resolvedAlias.primitive, value) { this.value = it }
+    override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
+    override fun setValue(value: BigDecimal): Boolean = setValue(parent.meta, value) { this.value = it }
+    override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
 }
 
 class MutableEnumerationModel<Aux>(
-    override val schema: EnumerationFieldSchema,
     parent: MutableFieldModel<Aux>
 ) : MutableScalarValueModel<Aux>(parent), EnumerationModel<Aux> {
     override var value: String? = null
@@ -222,11 +202,10 @@ class MutableEnumerationModel<Aux>(
         return true
     }
 
-    override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
+    override fun setValue(value: String): Boolean = setEnumerationValue(parent.meta, value) { this.value = it }
 }
 
 class MutableAssociationModel<Aux>(
-    override val schema: AssociationFieldSchema,
     override val parent: MutableFieldModel<Aux>
 ) : MutableElementModel<Aux>(), AssociationModel<Aux> {
     override var value: List<MutableEntityKeysModel<Aux>> = listOf()
@@ -245,9 +224,7 @@ class MutableAssociationModel<Aux>(
 
     fun newValue(): List<MutableEntityKeysModel<Aux>> {
         val keyEntityMetaList = parent.meta?.aux?.associationMeta?.keyEntityMetaList ?: listOf()
-        value = keyEntityMetaList.zip(schema.keyEntities) { entityMeta, entitySchema ->
-            MutableEntityKeysModel(entitySchema, entityMeta, this)
-        }
+        value = keyEntityMetaList.map { MutableEntityKeysModel(it, this) }
         return value
     }
 }
@@ -255,32 +232,31 @@ class MutableAssociationModel<Aux>(
 // Sub-values
 
 class MutableEntityKeysModel<Aux>(
-    override val schema: EntitySchema,
     meta: EntityModel<Resolved>?,
     override val parent: AssociationModel<Aux>
-) : MutableBaseEntityModel<Aux>(schema, meta), EntityKeysModel<Aux>
+) : MutableBaseEntityModel<Aux>(meta), EntityKeysModel<Aux>
 
 // Helpers
 
 typealias ValueSetter = (Any) -> Unit
 
-fun setValue(primitive: PrimitiveSchema, value: String, setter: ValueSetter): Boolean {
-    return when (primitive) {
-        is StringSchema,
-        is UuidSchema -> {
+fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSetter): Boolean {
+    return when (getFieldTypeMeta(fieldMeta)) {
+        "string",
+        "uuid" -> {
             setter(value)
             true
         }
-        is Password1WaySchema,
-        is Password2WaySchema,
-        is BlobSchema -> {
+        "password1way",
+        "password2way",
+        "blob" -> {
             // TODO(deepak-nulu): special handling for Password1WaySchema, Password2WaySchema, BlobSchema
             setter(value)
             true
         }
         // 64-bit integers are encoded as strings because JavaScript integers are only 53-bits
-        is LongSchema,
-        is TimestampSchema ->
+        "long",
+        "timestamp" ->
             try {
                 setter(value.toLong())
                 true
@@ -291,37 +267,37 @@ fun setValue(primitive: PrimitiveSchema, value: String, setter: ValueSetter): Bo
     }
 }
 
-fun setValue(primitive: PrimitiveSchema, value: BigDecimal, setter: ValueSetter): Boolean {
-    return when (primitive) {
-        is ByteSchema ->
+fun setValue(fieldMeta: EntityModel<Resolved>?, value: BigDecimal, setter: ValueSetter): Boolean {
+    return when (getFieldTypeMeta(fieldMeta)) {
+        "byte" ->
             try {
                 setter(value.toByte())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        is ShortSchema ->
+        "short" ->
             try {
                 setter(value.toShort())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        is IntSchema ->
+        "int" ->
             try {
                 setter(value.toInt())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        is FloatSchema ->
+        "float" ->
             try {
                 setter(value.toFloat())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        is DoubleSchema ->
+        "double" ->
             try {
                 setter(value.toDouble())
                 true
@@ -332,9 +308,9 @@ fun setValue(primitive: PrimitiveSchema, value: BigDecimal, setter: ValueSetter)
     }
 }
 
-fun setValue(primitive: PrimitiveSchema, value: Boolean, setter: ValueSetter): Boolean {
-    return when (primitive) {
-        is BooleanSchema -> {
+fun setValue(fieldMeta: EntityModel<Resolved>?, value: Boolean, setter: ValueSetter): Boolean {
+    return when (getFieldTypeMeta(fieldMeta)) {
+        "boolean" -> {
             setter(value)
             true
         }
@@ -344,13 +320,13 @@ fun setValue(primitive: PrimitiveSchema, value: Boolean, setter: ValueSetter): B
 
 typealias StringSetter = (String) -> Unit
 
-fun setValue(
-    meta: ElementModel<Resolved>?,
+fun setEnumerationValue(
+    fieldMeta: EntityModel<Resolved>?,
     value: String,
     setter: StringSetter
 ): Boolean {
-    val enumerationValue = if (meta == null) value else {
-        val resolvedEnumeration = meta.aux?.enumerationMeta
+    val enumerationValue = if (fieldMeta == null) value else {
+        val resolvedEnumeration = fieldMeta.aux?.enumerationMeta
             ?: throw IllegalStateException("Enumeration has not been resolved")
         val enumerationValues = getEnumerationValues(resolvedEnumeration)
         if (enumerationValues.contains(value)) value else return false
