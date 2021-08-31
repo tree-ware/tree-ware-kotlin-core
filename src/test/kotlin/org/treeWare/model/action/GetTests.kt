@@ -9,29 +9,19 @@ import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.core.*
 import org.treeWare.model.getModel
 import org.treeWare.schema.core.newAddressBookMetaModel
-import org.treeWare.schema.core.newAddressBookSchema
-import org.treeWare.schema.core.validate
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class GetTests {
     @Test
     fun `get() returns the requested data`() = runBlocking {
-        val schema = newAddressBookSchema()
-        val errors = validate(schema)
-        assertTrue(errors.isEmpty())
-
         val metaModel = newAddressBookMetaModel()
         val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
         assertTrue(metaModelErrors.isEmpty())
 
-        val request = getModel<Unit>(schema, metaModel, "model/address_book_get_person_request.json")
-        val mapping = getModel(
-            schema,
-            metaModel,
-            "model/address_book_mapping_model.json",
-            "mapping"
-        ) { StringAuxStateMachine(it) }
+        val request = getModel<Unit>(metaModel, "model/address_book_get_person_request.json")
+        val mapping =
+            getModel(metaModel, "model/address_book_mapping_model.json", "mapping") { StringAuxStateMachine(it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
 
@@ -84,7 +74,7 @@ class GetTests {
         val response = get(request, mapping, visitor)
 
         coVerifySequence {
-            delegate.pushPathEntity(ofType(), ofType())
+            delegate.pushPathEntity(ofType())
             delegate.fetchRoot(
                 ofType(),
                 listOf("name", "last_updated", "settings/last_name_first", "settings/card_colors"),

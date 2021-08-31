@@ -11,7 +11,7 @@ suspend fun <MappingAux> get(
     mapping: Model<MappingAux>,
     visitor: GetVisitor<MappingAux>
 ): Model<Unit> {
-    val response = MutableModel<Unit>(request.schema, request.meta)
+    val response = MutableModel<Unit>(request.meta)
     response.getOrNewRoot() // create an empty root
     forEach(leader = response, follower1 = request, follower2 = mapping, visitor = visitor)
     return response

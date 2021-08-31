@@ -17,7 +17,7 @@ class CompositionTableFieldNameVisitor : AbstractLeader1Follower0ModelVisitor<Un
         if (isCompositionFieldMeta(leaderField1.meta)) {
             // Recurse into the composition (but only fields that are not composition-lists).
             val entity1 = leaderField1.value as EntityModel<Unit>
-            val nested = entity1.fields.filter { !isCompositionListField(it) }
+            val nested = entity1.fields.values.filter { !isCompositionListField(it) }
                 .flatMap { dispatchVisit(it, this) ?: listOf() }
             nested.map { "${getMetaName(leaderField1.meta)}/${it}" }
         } else listOf(getMetaName(leaderField1.meta))
@@ -27,5 +27,5 @@ class CompositionTableFieldNameVisitor : AbstractLeader1Follower0ModelVisitor<Un
             // Composition list fields are not flattened, and so their field names
             // are not returned.
             listOf()
-        } else listOf(leaderField1.schema.name)
+        } else listOf(getMetaName(leaderField1.meta))
 }

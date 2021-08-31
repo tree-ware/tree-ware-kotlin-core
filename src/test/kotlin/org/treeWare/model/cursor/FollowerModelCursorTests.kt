@@ -8,10 +8,7 @@ import org.treeWare.model.getFileReader
 import org.treeWare.model.getModel
 import org.treeWare.model.operator.dispatchLeave
 import org.treeWare.model.operator.dispatchVisit
-import org.treeWare.schema.core.NamedElementSchema
 import org.treeWare.schema.core.newAddressBookMetaModel
-import org.treeWare.schema.core.newAddressBookSchema
-import org.treeWare.schema.core.validate
 import java.io.StringWriter
 import kotlin.test.*
 
@@ -36,15 +33,11 @@ class FollowerModelCursorTests {
 }
 
 private fun testFollowerSameModelInstance(inputFilePath: String) {
-    val schema = newAddressBookSchema()
-    val errors = validate(schema)
-    assertTrue(errors.isEmpty())
-
     val metaModel = newAddressBookMetaModel()
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val model = getModel<Unit>(schema, metaModel, inputFilePath)
+    val model = getModel<Unit>(metaModel, inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -61,17 +54,13 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
 }
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String) {
-    val schema = newAddressBookSchema()
-    val errors = validate(schema)
-    assertTrue(errors.isEmpty())
-
     val metaModel = newAddressBookMetaModel()
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getModel<Unit>(schema, metaModel, inputFilePath)
-    val followerModel = getModel<Unit>(schema, metaModel, inputFilePath)
+    val leaderModel = getModel<Unit>(metaModel, inputFilePath)
+    val followerModel = getModel<Unit>(metaModel, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -96,16 +85,12 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
  * the original JSON file (leaderFilePath).
  */
 private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
-    val schema = newAddressBookSchema()
-    val errors = validate(schema)
-    assertTrue(errors.isEmpty())
-
     val metaModel = newAddressBookMetaModel()
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val leaderModel = getModel<Unit>(schema, metaModel, leaderFilePath)
-    val followerModel = getModel<Unit>(schema, metaModel, wildcardFilePath)
+    val leaderModel = getModel<Unit>(metaModel, leaderFilePath)
+    val followerModel = getModel<Unit>(metaModel, wildcardFilePath)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
@@ -138,9 +123,5 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     assertEquals(expected, actual)
 }
 
-// TODO(deepak-nulu): return model path instead of schema path
-private fun <Aux> getPath(element: ElementModel<Aux>?): String? {
-    if (element == null) return null
-    val schema = element.schema
-    return if (schema is NamedElementSchema) schema.fullName else "/"
-}
+// TODO(deepak-nulu): return model path instead of meta-model path
+private fun <Aux> getPath(element: ElementModel<Aux>?): String? = element?.meta?.aux?.fullName

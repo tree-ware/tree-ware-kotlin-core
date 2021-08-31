@@ -19,7 +19,7 @@ internal fun <FieldValue> getKeyFields(
     if (keyField is SingleFieldModel<Unit>) {
         val value = keyField.value
         if (value is EntityModel<Unit>) {
-            return value.fields.filter { isKeyFieldMeta(it.meta) }.map { nestedKey ->
+            return value.fields.values.filter { isKeyFieldMeta(it.meta) }.map { nestedKey ->
                 val keyName = "\"/$entityName/${getMetaName(keyField.meta)}/${getMetaName(nestedKey.meta)}\""
                 val keyValue = valueGetter(nestedKey)
                 GenericField(keyName, keyValue)
