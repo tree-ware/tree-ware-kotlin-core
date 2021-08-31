@@ -19,7 +19,7 @@ typealias DecodingStack = ArrayDeque<DecodingStateMachine>
  * more than one element in *every* composition-list.
  */
 class ModelDecodingStateMachine<Aux>(
-    meta: Model<Resolved>?,
+    meta: Model<Resolved>,
     expectedModelType: String,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     isWildcardModel: Boolean = false

@@ -8,7 +8,7 @@ const val VALUE_KEY = "value"
 class ValueAndAuxStateMachine<Aux>(
     private val isListElement: Boolean,
     private val valueStateMachine: ValueDecodingStateMachine<Aux>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
+    auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
     private val auxStateMachine: AuxDecodingStateMachine<Aux>? = auxStateMachineFactory()
@@ -20,7 +20,7 @@ class ValueAndAuxStateMachine<Aux>(
         else auxStateMachine?.also {
             stack.addFirst(it)
             it.decodeKey(name)
-            auxStateMachine?.newAux()
+            auxStateMachine.newAux()
         }
         return true
     }

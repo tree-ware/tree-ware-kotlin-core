@@ -27,7 +27,7 @@ fun readFile(filePath: String): String? {
 }
 
 fun <Aux> getModel(
-    meta: Model<Resolved>?,
+    meta: Model<Resolved>,
     inputFilePath: String,
     expectedModelType: String = "data",
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }

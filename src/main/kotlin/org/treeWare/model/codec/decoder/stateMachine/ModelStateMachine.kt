@@ -6,7 +6,7 @@ import org.treeWare.model.core.MutableModel
 import org.treeWare.model.core.Resolved
 
 class ModelStateMachine<Aux>(
-    private val meta: Model<Resolved>?,
+    private val meta: Model<Resolved>,
     private val expectedModelType: String,
     private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     private val stack: DecodingStack,

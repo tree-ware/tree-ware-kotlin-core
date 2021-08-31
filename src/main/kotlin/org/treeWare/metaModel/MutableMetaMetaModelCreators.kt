@@ -153,7 +153,7 @@ private fun newFieldMetaMeta(
 // created and used.
 
 private val dummyMain = MutableModel<Resolved>(null)
-private val dummyRoot = MutableRootModel<Resolved>(null, dummyMain)
+private val dummyRoot = MutableRootModel(null, dummyMain)
 private val dummyField = MutableSingleFieldModel(null, dummyRoot)
 
 private val stringFieldMeta = getFieldTypeMeta("string")

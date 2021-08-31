@@ -31,6 +31,7 @@ class BaseEntityStateMachine<Aux>(
         base = baseFactory()
         assert(base != null)
         entityMeta = base?.meta
+        assert(entityMeta != null)
         return true
     }
 
@@ -106,8 +107,7 @@ class BaseEntityStateMachine<Aux>(
         }
     }
 
-    private fun handleScalar(fieldMeta: EntityModel<Resolved>?): Boolean {
-        if (fieldMeta == null) return false
+    private fun handleScalar(fieldMeta: EntityModel<Resolved>): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
@@ -137,8 +137,7 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handleAssociation(fieldMeta: EntityModel<Resolved>?): Boolean {
-        if (fieldMeta == null) return false
+    private fun handleAssociation(fieldMeta: EntityModel<Resolved>): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
@@ -170,8 +169,7 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handleComposition(fieldMeta: EntityModel<Resolved>?): Boolean {
-        if (fieldMeta == null) return false
+    private fun handleComposition(fieldMeta: EntityModel<Resolved>): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
