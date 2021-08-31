@@ -1,31 +1,7 @@
 package org.treeWare.schema.core
 
-// TODO(self-hosting): make this an enum
-val multiplicityValues = listOf(
-    "required",
-    "optional",
-    "list",
-)
-
-// TODO(self-hosting): make this an enum
-val fieldTypeValues = listOf(
-    "boolean",
-    "byte",
-    "short",
-    "int",
-    "long",
-    "float",
-    "double",
-    "string",
-    "password1way",
-    "password2way",
-    "uuid",
-    "blob",
-    "timestamp",
-    "enumeration",
-    "association",
-    "entity",
-)
+import org.treeWare.metaModel.fieldTypeValues
+import org.treeWare.metaModel.multiplicityValues
 
 val multiplicityEnumeration = MutableEnumerationSchema(
     name = "multiplicity_type",
@@ -188,7 +164,6 @@ val fieldEntity = MutableEntitySchema(
             name = "type",
             packageName = "meta_model.main",
             enumerationName = "field_type",
-            multiplicity = MutableMultiplicity(0, 1)
         ),
         MutableCompositionFieldSchema(
             name = "enumeration",

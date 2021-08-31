@@ -2,8 +2,6 @@ package org.treeWare.metaModel.validation
 
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
-import org.treeWare.schema.core.fieldTypeValues
-import org.treeWare.schema.core.multiplicityValues
 
 // TODO(deepak-nulu): replace with a generic validate function which validates a model against its meta-model.
 

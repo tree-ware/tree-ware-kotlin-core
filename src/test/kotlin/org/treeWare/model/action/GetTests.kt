@@ -4,11 +4,11 @@ import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.core.*
 import org.treeWare.model.getModel
-import org.treeWare.schema.core.newAddressBookMetaModel
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
