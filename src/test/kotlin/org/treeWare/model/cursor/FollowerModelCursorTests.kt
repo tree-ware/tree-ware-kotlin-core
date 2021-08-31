@@ -2,13 +2,13 @@ package org.treeWare.model.cursor
 
 import org.treeWare.common.codec.JsonWireFormatEncoder
 import org.treeWare.common.traversal.TraversalAction
+import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.codec.encoder.ModelEncodingVisitor
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.getFileReader
 import org.treeWare.model.getModel
 import org.treeWare.model.operator.dispatchLeave
 import org.treeWare.model.operator.dispatchVisit
-import org.treeWare.schema.core.newAddressBookMetaModel
 import java.io.StringWriter
 import kotlin.test.*
 
