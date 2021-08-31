@@ -2,8 +2,6 @@ package org.treeWare.metaModel
 
 import org.treeWare.model.core.*
 
-// TODO(self-hosting): make input meta non-optional
-
 fun getRootMeta(mainMeta: Model<Resolved>): EntityModel<Resolved> = getSingleEntity(mainMeta.root, "root")
 
 fun getPackagesMeta(mainMeta: Model<Resolved>): ListFieldModel<Resolved> = getListField(mainMeta.root, "packages")

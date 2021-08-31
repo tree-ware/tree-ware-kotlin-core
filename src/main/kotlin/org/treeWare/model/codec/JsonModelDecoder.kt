@@ -11,7 +11,7 @@ import java.io.Reader
 
 fun <Aux> decodeJson(
     reader: Reader,
-    meta: Model<Resolved>?,
+    meta: Model<Resolved>,
     expectedModelType: String,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
 ): MutableModel<Aux>? {
