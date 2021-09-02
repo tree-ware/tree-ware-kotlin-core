@@ -7,16 +7,6 @@ import kotlin.test.assertEquals
 
 class ValidationTest {
     @Test
-    fun `validate() returns error if root entity is missing`() {
-        val schema = MutableSchema()
-        val errors = validate(schema)
-
-        val expectedErrors = listOf("No root entity")
-
-        assertEquals(expectedErrors.toString(), errors.toString())
-    }
-
-    @Test
     fun `validate() validates and returns errors`() {
         val schema = getInvalidKotlinSchema()
         val errors = validate(schema)
