@@ -119,7 +119,8 @@ private fun validateEntity(
 }
 
 private fun validateFields(entityMeta: EntityModel<Resolved>, entityId: String): List<String> {
-    val fieldsMeta = getFieldsMeta(entityMeta)
+    val fieldsMeta = runCatching { getFieldsMeta(entityMeta) }.getOrNull()
+        ?: return listOf("$entityId fields are missing")
     return fieldsMeta.values.flatMapIndexed { fieldIndex, fieldMeta -> validateField(fieldMeta, entityId, fieldIndex) }
 }
 
