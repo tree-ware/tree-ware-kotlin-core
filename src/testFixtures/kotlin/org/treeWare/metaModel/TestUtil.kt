@@ -1,8 +1,8 @@
 package org.treeWare.metaModel
 
 import org.treeWare.metaModel.validation.validate
-import org.treeWare.model.codec.decodeJson
 import org.treeWare.model.core.Resolved
+import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.getFileReader
 import java.io.Reader
 import java.io.StringReader

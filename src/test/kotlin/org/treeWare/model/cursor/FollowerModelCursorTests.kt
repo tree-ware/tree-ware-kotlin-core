@@ -1,8 +1,8 @@
 package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.newAddressBookMetaModel
-import org.treeWare.model.codec.encoder.JsonWireFormatEncoder
-import org.treeWare.model.codec.encoder.ModelEncodingVisitor
+import org.treeWare.model.encoder.JsonWireFormatEncoder
+import org.treeWare.model.encoder.ModelEncodingVisitor
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.getFileReader
 import org.treeWare.model.getModel

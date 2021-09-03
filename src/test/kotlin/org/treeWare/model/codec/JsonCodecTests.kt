@@ -3,11 +3,11 @@ package org.treeWare.model.codec
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.assertMatchesJson
-import org.treeWare.model.codec.decoder.stateMachine.AuxDecodingStateMachine
-import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
-import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
-import org.treeWare.model.codec.encoder.AuxEncoder
-import org.treeWare.model.codec.encoder.ErrorAuxEncoder
+import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
+import org.treeWare.model.decoder.stateMachine.DecodingStack
+import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
+import org.treeWare.model.encoder.AuxEncoder
+import org.treeWare.model.encoder.ErrorAuxEncoder
 import org.treeWare.model.getModel
 import kotlin.test.Test
 import kotlin.test.assertTrue
