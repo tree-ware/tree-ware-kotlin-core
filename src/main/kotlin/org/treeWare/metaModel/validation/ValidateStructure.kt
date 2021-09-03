@@ -144,11 +144,12 @@ private fun validateField(
 private fun validateFieldType(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
     val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()
         ?: return listOf("$fieldId type is missing")
-    return if (!fieldTypeValues.contains(fieldTypeMeta)) listOf("$fieldId has an invalid field type: $fieldTypeMeta")
-    else when (fieldTypeMeta) {
-        "enumeration" -> validateEnumerationInfo(fieldMeta, fieldId)
-        "association" -> validateAssociationInfo(fieldMeta, fieldId)
-        "entity" -> validateEntityInfo(fieldMeta, fieldId)
+    return if (!FieldType.values().contains(fieldTypeMeta)) {
+        listOf("$fieldId has an invalid field type: ${fieldTypeMeta.name.lowercase()}")
+    } else when (fieldTypeMeta) {
+        FieldType.ENUMERATION -> validateEnumerationInfo(fieldMeta, fieldId)
+        FieldType.ASSOCIATION -> validateAssociationInfo(fieldMeta, fieldId)
+        FieldType.ENTITY -> validateEntityInfo(fieldMeta, fieldId)
         else -> listOf()
     }
 }
@@ -183,16 +184,18 @@ private fun validateEntityInfo(fieldMeta: EntityModel<Resolved>, fieldId: String
 
 private fun validateFieldMultiplicity(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
     val multiplicityMeta = getMultiplicityMeta(fieldMeta)
-    if (!multiplicityValues.contains(multiplicityMeta)) return listOf("$fieldId has an invalid multiplicity: $multiplicityMeta")
+    if (!Multiplicity.values().contains(multiplicityMeta)) {
+        return listOf("$fieldId has an invalid multiplicity: ${multiplicityMeta.name.lowercase()}")
+    }
     return listOf()
 }
 
 private fun validateFieldIsKey(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
     if (!isKeyFieldMeta(fieldMeta)) return listOf()
     val errors = mutableListOf<String>()
-    if (getMultiplicityMeta(fieldMeta) != "required") errors.add("$fieldId is a key but not defined as required")
+    if (getMultiplicityMeta(fieldMeta) != Multiplicity.REQUIRED) errors.add("$fieldId is a key but not defined as required")
     val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()
-    if (fieldTypeMeta == "association") errors.add("$fieldId is an association field and they cannot be keys")
+    if (fieldTypeMeta == FieldType.ASSOCIATION) errors.add("$fieldId is an association field and they cannot be keys")
     return errors
 }
 

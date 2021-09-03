@@ -54,9 +54,9 @@ private fun filterCompositionKeyFields(fields: List<ElementModel<Resolved>>): Li
 
 fun getMetaName(meta: BaseEntityModel<Resolved>?): String = meta?.let { getSingleString(meta, "name") } ?: ""
 
-fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>?): String = fieldMeta?.let {
-    getSingleEnumeration(fieldMeta, "type")
-} ?: ""
+fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>?): FieldType? = fieldMeta?.let {
+    FieldType.valueOf(getSingleEnumeration(fieldMeta, "type").uppercase())
+}
 
 fun getEnumerationInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> =
     getSingleEntity(fieldMeta, "enumeration")
@@ -66,17 +66,17 @@ fun getAssociationInfoMeta(fieldMeta: EntityModel<Resolved>): ListFieldModel<Res
 
 fun getEntityInfoMeta(fieldMeta: EntityModel<Resolved>): EntityModel<Resolved> = getSingleEntity(fieldMeta, "entity")
 
-fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): String =
-    getOptionalSingleEnumeration(fieldMeta, "multiplicity") ?: "required"
+fun getMultiplicityMeta(fieldMeta: EntityModel<Resolved>): Multiplicity =
+    Multiplicity.valueOf((getOptionalSingleEnumeration(fieldMeta, "multiplicity") ?: "required").uppercase())
 
 fun isListFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean =
-    fieldMeta?.let { getMultiplicityMeta(fieldMeta) == "list" } ?: false
+    fieldMeta?.let { getMultiplicityMeta(fieldMeta) == Multiplicity.LIST } ?: false
 
 fun isKeyFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean = fieldMeta?.let {
     getOptionalSingleBoolean(fieldMeta, "is_key") ?: false
 } ?: false
 
-fun isCompositionFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean = getFieldTypeMeta(fieldMeta) == "entity"
+fun isCompositionFieldMeta(fieldMeta: EntityModel<Resolved>?): Boolean = getFieldTypeMeta(fieldMeta) == FieldType.ENTITY
 
 private fun findListElement(list: ListFieldModel<Resolved>, name: String) =
     list.values.find { entity ->

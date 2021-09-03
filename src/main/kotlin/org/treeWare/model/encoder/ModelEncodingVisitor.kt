@@ -1,9 +1,6 @@
 package org.treeWare.model.encoder
 
-import org.treeWare.metaModel.getFieldTypeMeta
-import org.treeWare.metaModel.getMetaName
-import org.treeWare.metaModel.getRootMeta
-import org.treeWare.metaModel.isListFieldMeta
+import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
 import org.treeWare.model.operator.TraversalAction
@@ -90,14 +87,13 @@ class ModelEncodingVisitor<Aux>(
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
-        // TODO(self-hosting): replace string literals with an enum defined in the meta-meta-model.
         when (leaderValue1.parent.meta?.let { getFieldTypeMeta(it) }) {
-            "boolean" -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
-            "byte" -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
-            "short" -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
-            "int" -> wireFormatEncoder.encodeNumericField(fieldName, value as Int)
-            "float" -> wireFormatEncoder.encodeNumericField(fieldName, value as Float)
-            "double" -> wireFormatEncoder.encodeNumericField(fieldName, value as Double)
+            FieldType.BOOLEAN -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
+            FieldType.BYTE -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
+            FieldType.SHORT -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
+            FieldType.INT -> wireFormatEncoder.encodeNumericField(fieldName, value as Int)
+            FieldType.FLOAT -> wireFormatEncoder.encodeNumericField(fieldName, value as Float)
+            FieldType.DOUBLE -> wireFormatEncoder.encodeNumericField(fieldName, value as Double)
             // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
             // are encoded as strings.
             else -> wireFormatEncoder.encodeStringField(fieldName, value.toString())

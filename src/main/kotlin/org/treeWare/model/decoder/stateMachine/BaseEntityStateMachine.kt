@@ -1,10 +1,7 @@
 package org.treeWare.model.decoder.stateMachine
 
 import org.apache.logging.log4j.LogManager
-import org.treeWare.metaModel.getFieldMeta
-import org.treeWare.metaModel.getFieldTypeMeta
-import org.treeWare.metaModel.getMetaName
-import org.treeWare.metaModel.isListFieldMeta
+import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 
 class BaseEntityStateMachine<Aux>(
@@ -99,8 +96,8 @@ class BaseEntityStateMachine<Aux>(
             return true
         }
         return when (getFieldTypeMeta(fieldMeta)) {
-            "entity" -> handleComposition(fieldMeta)
-            "association" -> handleAssociation(fieldMeta)
+            FieldType.ENTITY -> handleComposition(fieldMeta)
+            FieldType.ASSOCIATION -> handleAssociation(fieldMeta)
             else -> handleScalar(fieldMeta)
         }
     }
