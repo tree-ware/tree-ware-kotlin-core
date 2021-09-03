@@ -94,5 +94,12 @@ private fun resolveEntityField(fieldMeta: EntityModel<Resolved>, nonPrimitiveTyp
     val resolved = fieldMeta.aux
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
     resolved.entityMeta = targetEntity
-    return listOf()
+    val errors = mutableListOf<String>()
+    if (isKeyFieldMeta(fieldMeta) && !hasOnlyPrimitiveKeyFields(targetEntity)) errors.add(
+        "Composition key field ${resolved.fullName} target entity does not have only primitive keys"
+    )
+    if (isListFieldMeta(fieldMeta) && !hasKeyFields(targetEntity)) errors.add(
+        "Composition list field ${resolved.fullName} target entity does not have keys"
+    )
+    return errors
 }

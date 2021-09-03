@@ -134,7 +134,7 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field"
+            "Composition key field /test.main/test_entity/test_field target entity does not have only primitive keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -173,8 +173,8 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field_1",
-            "Target of composition key does not have only primitive keys: /test.package/test_entity/test_field_2"
+            "Composition key field /test.main/test_entity/test_field_1 target entity does not have only primitive keys",
+            "Composition key field /test.main/test_entity/test_field_2 target entity does not have only primitive keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -232,7 +232,7 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Target of composition list does not have keys: /test.package/test_entity/test_field"
+            "Composition list field /test.main/test_entity/test_field target entity does not have keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
