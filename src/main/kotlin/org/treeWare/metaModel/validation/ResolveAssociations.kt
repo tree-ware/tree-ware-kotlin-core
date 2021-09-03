@@ -73,6 +73,7 @@ private fun resolveAssociationField(fieldMeta: EntityModel<Resolved>, rootMeta: 
         }
         nextEntityMetaResult.errors
     }
+    if (isListFieldMeta(fieldMeta) && keyEntityMetaList.isEmpty()) return listOf("Association list $fieldFullName path does not have keys")
     val resolved = fieldMeta.aux
         ?: throw IllegalStateException("Resolved aux is missing in association field $fieldFullName")
     resolved.associationMeta =
