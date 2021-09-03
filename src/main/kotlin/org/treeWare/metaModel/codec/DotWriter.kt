@@ -1,6 +1,6 @@
 package org.treeWare.metaModel.codec
 
-import org.treeWare.common.codec.PrettyPrintHelper
+import org.treeWare.model.codec.encoder.PrettyPrintHelper
 import java.io.StringWriter
 import java.io.Writer
 

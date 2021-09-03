@@ -1,4 +1,4 @@
-package org.treeWare.common.codec
+package org.treeWare.model.codec.encoder
 
 import java.io.Writer
 import java.util.*

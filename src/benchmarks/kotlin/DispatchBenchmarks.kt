@@ -1,7 +1,6 @@
 package org.treeWare.model.operator
 
 import org.openjdk.jmh.annotations.*
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.EntityKeysModel
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableEntityKeysModel
@@ -21,7 +20,8 @@ class DispatchBenchmarks {
     private val visitor = Visitor()
 
     @Setup
-    fun setUp() {}
+    fun setUp() {
+    }
 
     @Benchmark
     fun dispatchFirstMatch() {

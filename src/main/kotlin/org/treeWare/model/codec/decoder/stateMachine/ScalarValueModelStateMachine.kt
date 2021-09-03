@@ -1,7 +1,6 @@
 package org.treeWare.model.codec.decoder.stateMachine
 
 import org.apache.logging.log4j.LogManager
-import org.treeWare.common.codec.AbstractDecodingStateMachine
 import org.treeWare.model.core.MutableScalarValueModel
 import java.math.BigDecimal
 

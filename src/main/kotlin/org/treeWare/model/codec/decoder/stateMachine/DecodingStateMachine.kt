@@ -1,4 +1,4 @@
-package org.treeWare.common.codec
+package org.treeWare.model.codec.decoder.stateMachine
 
 import java.math.BigDecimal
 

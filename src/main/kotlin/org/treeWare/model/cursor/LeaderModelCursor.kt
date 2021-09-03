@@ -1,8 +1,8 @@
 package org.treeWare.model.cursor
 
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.operator.TraversalAction
 import org.treeWare.model.operator.dispatchVisit
 import java.util.*
 

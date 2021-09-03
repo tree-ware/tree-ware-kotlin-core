@@ -1,7 +1,5 @@
-package org.treeWare.common.codec
+package org.treeWare.model.codec.decoder.stateMachine
 
-import org.treeWare.model.codec.decoder.stateMachine.AuxDecodingStateMachine
-import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
 import java.math.BigDecimal
 
 class SkipUnknownStateMachine<Aux>(

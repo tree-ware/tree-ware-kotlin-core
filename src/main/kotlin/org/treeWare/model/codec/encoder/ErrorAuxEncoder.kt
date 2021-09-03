@@ -1,7 +1,5 @@
 package org.treeWare.model.codec.encoder
 
-import org.treeWare.common.codec.WireFormatEncoder
-
 private const val AUX_KEY = "error"
 
 class ErrorAuxEncoder : AuxEncoder {

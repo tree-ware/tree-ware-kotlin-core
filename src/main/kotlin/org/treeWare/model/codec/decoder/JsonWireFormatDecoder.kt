@@ -1,6 +1,7 @@
-package org.treeWare.common.codec
+package org.treeWare.model.codec.decoder
 
 import org.apache.logging.log4j.LogManager
+import org.treeWare.model.codec.decoder.stateMachine.DecodingStateMachine
 import java.io.Reader
 import javax.json.Json
 import javax.json.stream.JsonParser

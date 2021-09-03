@@ -1,4 +1,4 @@
-package org.treeWare.common.codec
+package org.treeWare.model.codec.encoder
 
 class PrettyPrintHelper(private val prettyPrint: Boolean, private val indentSizeInSpaces: Int = 2) {
     var currentIndent: String = ""

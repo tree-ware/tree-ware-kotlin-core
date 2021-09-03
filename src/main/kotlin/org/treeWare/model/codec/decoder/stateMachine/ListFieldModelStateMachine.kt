@@ -1,7 +1,5 @@
 package org.treeWare.model.codec.decoder.stateMachine
 
-import org.treeWare.common.codec.AbstractDecodingStateMachine
-import org.treeWare.common.codec.DecodingStateMachine
 import org.treeWare.model.core.MutableListFieldModel
 
 class ListFieldModelStateMachine<Aux>(
