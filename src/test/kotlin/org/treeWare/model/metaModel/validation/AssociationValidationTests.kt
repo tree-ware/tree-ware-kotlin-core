@@ -76,7 +76,7 @@ class AssociationValidationTests {
             | }
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
-        val expectedErrors = listOf("Association /test.main/test_entity/test_field has an insufficient path")
+        val expectedErrors = listOf("Association field /test.main/test_entity/test_field has an insufficient path")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -213,6 +213,38 @@ class AssociationValidationTests {
     }
 
     @Test
+    fun `Association must not be a key`() {
+        val testPackageJson = """
+            | {
+            |   "name": "test.main",
+            |   "entities": [
+            |     {
+            |       "name": "test_entity",
+            |       "fields": [
+            |         {
+            |           "name": "test_field",
+            |           "type": "association",
+            |           "association": [
+            |             {
+            |               "value": "root"
+            |             },
+            |             {
+            |               "value": "entity1_composition_field1"
+            |             }
+            |           ],
+            |           "is_key": true
+            |         }
+            |       ]
+            |     }
+            |   ]
+            | }
+        """.trimMargin()
+        val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
+        val expectedErrors = listOf("Package 1 entity 0 field 0 is an association field and they cannot be keys")
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
     fun `Association list path must have keys`() {
         val testPackageJson = """
             | {
@@ -241,7 +273,7 @@ class AssociationValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Association list /test.main/test_entity/test_field path does not have keys"
+            "Association list field /test.main/test_entity/test_field path does not have keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }

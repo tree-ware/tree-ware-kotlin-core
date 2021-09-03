@@ -136,7 +136,8 @@ private fun validateField(
     return listOf(
         validateSingleStringField(fieldMeta, "name", fieldId),
         validateFieldType(fieldMeta, fieldId),
-        validateFieldMultiplicity(fieldMeta, fieldId)
+        validateFieldMultiplicity(fieldMeta, fieldId),
+        validateFieldIsKey(fieldMeta, fieldId)
     ).flatten()
 }
 
@@ -183,8 +184,16 @@ private fun validateEntityInfo(fieldMeta: EntityModel<Resolved>, fieldId: String
 private fun validateFieldMultiplicity(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
     val multiplicityMeta = getMultiplicityMeta(fieldMeta)
     if (!multiplicityValues.contains(multiplicityMeta)) return listOf("$fieldId has an invalid multiplicity: $multiplicityMeta")
-    if (isKeyFieldMeta(fieldMeta) && multiplicityMeta != "required") return listOf("$fieldId is a key but not defined as required")
     return listOf()
+}
+
+private fun validateFieldIsKey(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+    if (!isKeyFieldMeta(fieldMeta)) return listOf()
+    val errors = mutableListOf<String>()
+    if (getMultiplicityMeta(fieldMeta) != "required") errors.add("$fieldId is a key but not defined as required")
+    val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()
+    if (fieldTypeMeta == "association") errors.add("$fieldId is an association field and they cannot be keys")
+    return errors
 }
 
 // Helpers

@@ -3,45 +3,44 @@ package org.treeWare.model.metaModel.validation
 import org.treeWare.metaModel.*
 import kotlin.test.Test
 
-class MultiplicityValidationTests {
+private const val FIELD_COUNT = 3
+
+class KeyValidationTests {
     @Test
-    fun `Multiplicity must be valid if not specified`() {
+    fun `Multiplicity must not be 'optional' for key fields`() {
+        val metaModelJson = getMetaModelJson("optional")
+        val expectedErrors =
+            0.until(FIELD_COUNT).map { "Package 1 entity 0 field $it is a key but not defined as required" }
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
+    fun `Multiplicity must not be 'list' for key fields`() {
+        val metaModelJson = getMetaModelJson("list")
+        val expectedErrors =
+            0.until(FIELD_COUNT).map { "Package 1 entity 0 field $it is a key but not defined as required" }
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
+    fun `Multiplicity may be unspecified for key fields`() {
         val metaModelJson = getMetaModelJson(null)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
     @Test
-    fun `Multiplicity must be valid if specified as 'required'`() {
+    fun `Multiplicity may be 'required' for key fields`() {
         val metaModelJson = getMetaModelJson("required")
         val expectedErrors = listOf<String>()
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
-    fun `Multiplicity must be valid if specified as 'optional'`() {
-        val metaModelJson = getMetaModelJson("optional")
-        val expectedErrors = listOf<String>()
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
-    fun `Multiplicity must be valid if specified as 'list'`() {
-        val metaModelJson = getMetaModelJson("list")
-        val expectedErrors = listOf<String>()
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
-    fun `Multiplicity must be specified with a valid value`() {
-        val metaModelJson = getMetaModelJson("invalid")
-        val expectedErrors = listOf("Meta-model decoding failed")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 }
 
 private fun getMetaModelJson(multiplicity: String?): String {
     val multiplicityJson = getMultiplicityJson(multiplicity)
+    // NOTE: association fields cannot be keys, so they are not included below.
+    // AssociationValidationTests ensures that associations cannot be keys.
     val mainPackageJson = """
         | {
         |   "name": "test.main",
@@ -51,7 +50,8 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |       "fields": [
         |         {
         |           "name": "primitive_field",
-        |           "type": "string"
+        |           "type": "string",
+        |           "is_key": true
         |           $multiplicityJson
         |         },
         |         {
@@ -60,20 +60,8 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "enumeration": {
         |             "name": "enumeration1",
         |             "package": "test.common"
-        |           }
-        |           $multiplicityJson
-        |         },
-        |         {
-        |           "name": "association_field",
-        |           "type": "association",
-        |           "association": [
-        |             {
-        |               "value": "root"
-        |             },
-        |             {
-        |               "value": "entity1_composition_field"
-        |             }
-        |           ]
+        |           },
+        |           "is_key": true
         |           $multiplicityJson
         |         },
         |         {
@@ -82,7 +70,8 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "entity": {
         |             "name": "entity3",
         |             "package": "test.common"
-        |           }
+        |           },
+        |           "is_key": true
         |           $multiplicityJson
         |         }
         |       ]

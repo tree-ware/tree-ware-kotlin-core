@@ -51,7 +51,7 @@ private fun resolveField(fieldElementMeta: ElementModel<Resolved>, rootMeta: Ent
 private fun resolveAssociationField(fieldMeta: EntityModel<Resolved>, rootMeta: EntityModel<Resolved>): List<String> {
     val fieldFullName = fieldMeta.aux?.fullName ?: ""
     val associationInfoMeta = getAssociationInfoMeta(fieldMeta)
-    if (associationInfoMeta.values.size < 2) return listOf("Association $fieldFullName has an insufficient path")
+    if (associationInfoMeta.values.size < 2) return listOf("Association field $fieldFullName has an insufficient path")
 
     var entityMeta: EntityModel<Resolved>? = null
     val pathEntityMetaList = mutableListOf<EntityModel<Resolved>>()
@@ -73,7 +73,7 @@ private fun resolveAssociationField(fieldMeta: EntityModel<Resolved>, rootMeta: 
         }
         nextEntityMetaResult.errors
     }
-    if (isListFieldMeta(fieldMeta) && keyEntityMetaList.isEmpty()) return listOf("Association list $fieldFullName path does not have keys")
+    if (isListFieldMeta(fieldMeta) && keyEntityMetaList.isEmpty()) return listOf("Association list field $fieldFullName path does not have keys")
     val resolved = fieldMeta.aux
         ?: throw IllegalStateException("Resolved aux is missing in association field $fieldFullName")
     resolved.associationMeta =
