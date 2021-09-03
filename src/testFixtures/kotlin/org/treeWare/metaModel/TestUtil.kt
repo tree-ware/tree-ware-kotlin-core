@@ -26,5 +26,5 @@ private fun assertJsonValidationErrors(jsonReader: Reader, expectedValidationErr
     val metaModel = decodeJson<Resolved>(jsonReader, metaMetaModel, "data") { null }
     val errors = if (metaModel != null) validate(metaModel)
     else listOf("Meta-model decoding failed")
-    assertEquals(expectedValidationErrors, errors)
+    assertEquals(expectedValidationErrors.joinToString("\n"), errors.joinToString("\n"))
 }

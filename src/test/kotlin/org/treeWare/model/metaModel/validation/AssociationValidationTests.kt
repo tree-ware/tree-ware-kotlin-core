@@ -6,7 +6,7 @@ import kotlin.test.Test
 
 class AssociationValidationTests {
     @Test
-    fun `Association must have path info`() {
+    fun `Association must have info`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",
@@ -29,7 +29,7 @@ class AssociationValidationTests {
     }
 
     @Test
-    fun `Association must have non-empty path info`() {
+    fun `Association must have non-empty info`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",
@@ -144,7 +144,42 @@ class AssociationValidationTests {
     }
 
     @Test
-    fun `Association must be valid if path can be resolved`() {
+    fun `Association must refer to an entity`() {
+        val testPackageJson = """
+            | {
+            |   "name": "test.main",
+            |   "entities": [
+            |     {
+            |       "name": "test_entity",
+            |       "fields": [
+            |         {
+            |           "name": "test_field",
+            |           "type": "association",
+            |           "association": [
+            |             {
+            |               "value": "root"
+            |             },
+            |             {
+            |               "value": "entity1_composition_field2"
+            |             },
+            |             {
+            |               "value": "int_field"
+            |             }
+            |           ]
+            |         }
+            |       ]
+            |     }
+            |   ]
+            | }
+        """.trimMargin()
+        val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
+        val expectedErrors =
+            listOf("Association field /test.main/test_entity/test_field path element int_field is not an entity")
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
+    fun `Association must be valid if info can be resolved`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",

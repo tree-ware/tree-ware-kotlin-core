@@ -10,28 +10,28 @@ private const val FIELD_COUNT = 4
 
 class MultiplicityValidationTests {
     @Test
-    fun `Multiplicity is valid if not specified`() {
+    fun `Multiplicity must be valid if not specified`() {
         val metaModelJson = getMetaModelJson(null, null)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
     @Test
-    fun `Multiplicity is valid if specified as 'required'`() {
+    fun `Multiplicity must be valid if specified as 'required'`() {
         val metaModelJson = getMetaModelJson("required", null)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
     @Test
-    fun `Multiplicity is valid if specified as 'optional'`() {
+    fun `Multiplicity must be valid if specified as 'optional'`() {
         val metaModelJson = getMetaModelJson("optional", null)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
     @Test
-    fun `Multiplicity is valid if specified as 'list'`() {
+    fun `Multiplicity must be valid if specified as 'list'`() {
         val metaModelJson = getMetaModelJson("list", null)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
@@ -61,14 +61,14 @@ class MultiplicityValidationTests {
     }
 
     @Test
-    fun `Multiplicity can be unspecified for key fields`() {
+    fun `Multiplicity may be unspecified for key fields`() {
         val metaModelJson = getMetaModelJson(null, true)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
     @Test
-    fun `Multiplicity can be 'required' for key fields`() {
+    fun `Multiplicity may be 'required' for key fields`() {
         val metaModelJson = getMetaModelJson("required", true)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)

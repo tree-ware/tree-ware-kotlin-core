@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 class RootValidationTests {
     @Test
-    fun `Meta-model root must be specified`() {
+    fun `Root must be specified`() {
         val rootJson = null
         val metaModelJson = newTestMetaModelJson(rootJson)
         val expectedErrors = listOf("Root is missing")
@@ -16,7 +16,7 @@ class RootValidationTests {
     }
 
     @Test
-    fun `Meta-model root must have a valid name`() {
+    fun `Root must have a valid name`() {
         val rootJson = """
             | "root": {
             |   "name": "invalid.root-name",
@@ -30,7 +30,7 @@ class RootValidationTests {
     }
 
     @Test
-    fun `Meta-model root must refer to a valid entity`() {
+    fun `Root must refer to a valid entity`() {
         val rootJson = """
             | "root": {
             |   "name": "root",
@@ -44,7 +44,7 @@ class RootValidationTests {
     }
 
     @Test
-    fun `A valid meta-model root must not result in errors`() {
+    fun `Root must be valid if info can be resolved`() {
         val metaModelJson = newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson)
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
