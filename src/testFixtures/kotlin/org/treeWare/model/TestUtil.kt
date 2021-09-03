@@ -1,14 +1,14 @@
 package org.treeWare.model
 
-import org.treeWare.model.codec.decodeJson
-import org.treeWare.model.codec.decoder.stateMachine.AuxDecodingStateMachine
-import org.treeWare.model.codec.decoder.stateMachine.DecodingStack
-import org.treeWare.model.codec.encodeJson
-import org.treeWare.model.codec.encoder.AuxEncoder
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.Model
 import org.treeWare.model.core.MutableModel
 import org.treeWare.model.core.Resolved
+import org.treeWare.model.decoder.decodeJson
+import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
+import org.treeWare.model.decoder.stateMachine.DecodingStack
+import org.treeWare.model.encoder.AuxEncoder
+import org.treeWare.model.encoder.encodeJson
 import java.io.InputStreamReader
 import java.io.Reader
 import java.io.StringWriter

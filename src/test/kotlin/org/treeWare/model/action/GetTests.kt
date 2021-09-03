@@ -6,7 +6,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
-import org.treeWare.model.codec.decoder.stateMachine.StringAuxStateMachine
+import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.core.*
 import org.treeWare.model.getModel
 import kotlin.test.Test

@@ -1,6 +1,6 @@
 package org.treeWare.model.metaModel
 
-import org.treeWare.metaModel.codec.encodeDot
+import org.treeWare.metaModel.encoder.encodeDot
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.getRootMeta
 import org.treeWare.metaModel.newAddressBookMetaModel
