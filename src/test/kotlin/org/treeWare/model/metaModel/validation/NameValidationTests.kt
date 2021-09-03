@@ -105,16 +105,16 @@ private fun testHelperPackageJson() = """
     |         },
     |         {
     |           "name": "duplicate_field_name_2",
-    |           "type": "entity",
-    |           "entity": {
+    |           "type": "composition",
+    |           "composition": {
     |             "name": "dots.not_allowed_for.entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }
     |         },
     |         {
     |           "name": "duplicate_field_name_2",
-    |           "type": "entity",
-    |           "entity": {
+    |           "type": "composition",
+    |           "composition": {
     |             "name": "hyphens-not-allowed-for-entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }

@@ -78,8 +78,8 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |         },
         |         {
         |           "name": "composition_field",
-        |           "type": "entity",
-        |           "entity": {
+        |           "type": "composition",
+        |           "composition": {
         |             "name": "entity3",
         |             "package": "test.common"
         |           }

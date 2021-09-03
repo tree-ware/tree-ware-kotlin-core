@@ -108,7 +108,7 @@ private fun encodeField(fieldElementMeta: ElementModel<Resolved>, dotWriter: Dot
     when (val type = getFieldTypeMeta(fieldMeta)) {
         FieldType.ENUMERATION -> encodeEnumerationField(fieldMeta, dotWriter)
         FieldType.ASSOCIATION -> encodeAssociationField(fieldMeta, dotWriter)
-        FieldType.ENTITY -> encodeCompositionField(fieldMeta, dotWriter)
+        FieldType.COMPOSITION -> encodeCompositionField(fieldMeta, dotWriter)
         else -> encodeFieldRow(fieldMeta, type?.name?.lowercase() ?: "", dotWriter)
     }
 }
@@ -131,7 +131,7 @@ private fun encodeAssociationField(fieldMeta: EntityModel<Resolved>, dotWriter: 
 }
 
 private fun encodeCompositionField(fieldMeta: EntityModel<Resolved>, dotWriter: DotWriter) {
-    val resolvedEntity = fieldMeta.aux?.entityMeta
+    val resolvedEntity = fieldMeta.aux?.compositionMeta
     val type = getMetaName(resolvedEntity)
     encodeFieldRow(fieldMeta, type, dotWriter)
 

@@ -25,8 +25,8 @@
                 },
                 {
                   "name": "settings",
-                  "type": "entity",
-                  "entity": {
+                  "type": "composition",
+                  "composition": {
                     "name": "address_book_settings",
                     "package": "address_book.main"
                   },
@@ -34,8 +34,8 @@
                 },
                 {
                   "name": "person",
-                  "type": "entity",
-                  "entity": {
+                  "type": "composition",
+                  "composition": {
                     "name": "address_book_person",
                     "package": "address_book.main"
                   },
@@ -43,8 +43,8 @@
                 },
                 {
                   "name": "city_info",
-                  "type": "entity",
-                  "entity": {
+                  "type": "composition",
+                  "composition": {
                     "name": "address_book_city_info",
                     "package": "address_book.city"
                   },
@@ -104,8 +104,8 @@
                 },
                 {
                   "name": "relation",
-                  "type": "entity",
-                  "entity": {
+                  "type": "composition",
+                  "composition": {
                     "name": "address_book_relation",
                     "package": "address_book.main"
                   },
@@ -231,8 +231,8 @@
               "fields": [
                 {
                   "name": "city",
-                  "type": "entity",
-                  "entity": {
+                  "type": "composition",
+                  "composition": {
                     "name": "address_book_city",
                     "package": "address_book.city"
                   },

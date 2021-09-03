@@ -11,7 +11,7 @@ fun <Aux> newMutableValueModel(
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.ENUMERATION -> MutableEnumerationModel(parent)
         FieldType.ASSOCIATION -> MutableAssociationModel(parent)
-        FieldType.ENTITY -> MutableEntityModel(fieldMeta.aux?.entityMeta, parent)
+        FieldType.COMPOSITION -> MutableEntityModel(fieldMeta.aux?.compositionMeta, parent)
         else -> MutablePrimitiveModel(parent)
     }
 }

@@ -7,7 +7,7 @@ class Resolved(val fullName: String) {
     var associationMeta: ResolvedAssociationMeta? = null
         internal set
 
-    var entityMeta: EntityModel<Resolved>? = null
+    var compositionMeta: EntityModel<Resolved>? = null
         internal set
 }
 
