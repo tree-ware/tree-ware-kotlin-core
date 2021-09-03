@@ -33,6 +33,25 @@ fun hasKeyFields(entityMeta: EntityModel<Resolved>): Boolean = getFieldsMeta(ent
     fieldMeta?.let { isKeyFieldMeta(it) } ?: false
 }
 
+fun hasOnlyPrimitiveKeyFields(entityMeta: EntityModel<Resolved>): Boolean {
+    val fields = getFieldsMeta(entityMeta).values
+    val keyFields = filterKeyFields(fields)
+    val compositionKeyFields = filterCompositionKeyFields(keyFields)
+    return keyFields.isNotEmpty() && compositionKeyFields.isEmpty()
+}
+
+private fun filterKeyFields(fields: List<ElementModel<Resolved>>): List<ElementModel<Resolved>> =
+    fields.filter { fieldElement ->
+        val fieldMeta = fieldElement as? EntityModel<Resolved>
+        fieldMeta?.let { isKeyFieldMeta(it) } ?: false
+    }
+
+private fun filterCompositionKeyFields(fields: List<ElementModel<Resolved>>): List<ElementModel<Resolved>> =
+    fields.filter { fieldElement ->
+        val fieldMeta = fieldElement as? EntityModel<Resolved>
+        fieldMeta?.let { isKeyFieldMeta(it) && isCompositionFieldMeta(it) } ?: false
+    }
+
 fun getMetaName(meta: BaseEntityModel<Resolved>?): String = meta?.let { getSingleString(meta, "name") } ?: ""
 
 fun getFieldTypeMeta(fieldMeta: EntityModel<Resolved>?): String = fieldMeta?.let {
