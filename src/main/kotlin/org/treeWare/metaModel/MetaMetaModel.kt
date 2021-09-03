@@ -6,32 +6,26 @@ import org.treeWare.model.core.MutableListFieldModel
 import org.treeWare.model.core.MutableModel
 import org.treeWare.model.core.Resolved
 
-// TODO(self-hosting): make this an enum
-val multiplicityValues = listOf(
-    "required",
-    "optional",
-    "list",
-)
+enum class Multiplicity { REQUIRED, OPTIONAL, LIST }
 
-// TODO(self-hosting): make this an enum
-val fieldTypeValues = listOf(
-    "boolean",
-    "byte",
-    "short",
-    "int",
-    "long",
-    "float",
-    "double",
-    "string",
-    "password1way",
-    "password2way",
-    "uuid",
-    "blob",
-    "timestamp",
-    "enumeration",
-    "association",
-    "entity",
-)
+enum class FieldType {
+    BOOLEAN,
+    BYTE,
+    SHORT,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    STRING,
+    PASSWORD1WAY,
+    PASSWORD2WAY,
+    UUID,
+    BLOB,
+    TIMESTAMP,
+    ENUMERATION,
+    ASSOCIATION,
+    ENTITY
+}
 
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
@@ -159,7 +153,7 @@ fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel<Resolve
         enumerationsMeta,
         "field_type",
         null,
-        fieldTypeValues.map { EnumerationValueMetaMeta(it) })
+        FieldType.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
 
 private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldModel<Resolved>) {
@@ -167,5 +161,5 @@ private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldMo
         enumerationsMeta,
         "multiplicity",
         null,
-        multiplicityValues.map { EnumerationValueMetaMeta(it) })
+        Multiplicity.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }

@@ -43,7 +43,7 @@ private fun resolveFields(entityMeta: EntityModel<Resolved>, rootMeta: EntityMod
 private fun resolveField(fieldElementMeta: ElementModel<Resolved>, rootMeta: EntityModel<Resolved>): List<String> {
     val fieldMeta = fieldElementMeta as EntityModel<Resolved>
     return when (getFieldTypeMeta(fieldMeta)) {
-        "association" -> resolveAssociationField(fieldMeta, rootMeta)
+        FieldType.ASSOCIATION -> resolveAssociationField(fieldMeta, rootMeta)
         else -> listOf()
     }
 }
@@ -110,7 +110,7 @@ private fun getNextEntityMeta(
             listOf("Association field $fieldFullName has an invalid path element $pathElement")
         )
     val fieldTypeMeta = getFieldTypeMeta(fieldMeta)
-    if (fieldTypeMeta != "entity") return NextEntityMetaResult(
+    if (fieldTypeMeta != FieldType.ENTITY) return NextEntityMetaResult(
         null,
         listOf("Association field $fieldFullName path element $pathElement is not an entity")
     )

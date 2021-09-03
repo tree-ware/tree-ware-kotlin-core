@@ -242,21 +242,21 @@ typealias ValueSetter = (Any) -> Unit
 
 fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
-        "string",
-        "uuid" -> {
+        FieldType.STRING,
+        FieldType.UUID -> {
             setter(value)
             true
         }
-        "password1way",
-        "password2way",
-        "blob" -> {
+        FieldType.PASSWORD1WAY,
+        FieldType.PASSWORD2WAY,
+        FieldType.BLOB -> {
             // TODO(deepak-nulu): special handling for Password1WaySchema, Password2WaySchema, BlobSchema
             setter(value)
             true
         }
         // 64-bit integers are encoded as strings because JavaScript integers are only 53-bits
-        "long",
-        "timestamp" ->
+        FieldType.LONG,
+        FieldType.TIMESTAMP ->
             try {
                 setter(value.toLong())
                 true
@@ -269,35 +269,35 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSett
 
 fun setValue(fieldMeta: EntityModel<Resolved>?, value: BigDecimal, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
-        "byte" ->
+        FieldType.BYTE ->
             try {
                 setter(value.toByte())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        "short" ->
+        FieldType.SHORT ->
             try {
                 setter(value.toShort())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        "int" ->
+        FieldType.INT ->
             try {
                 setter(value.toInt())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        "float" ->
+        FieldType.FLOAT ->
             try {
                 setter(value.toFloat())
                 true
             } catch (e: java.lang.NumberFormatException) {
                 false
             }
-        "double" ->
+        FieldType.DOUBLE ->
             try {
                 setter(value.toDouble())
                 true
@@ -310,7 +310,7 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: BigDecimal, setter: Value
 
 fun setValue(fieldMeta: EntityModel<Resolved>?, value: Boolean, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
-        "boolean" -> {
+        FieldType.BOOLEAN -> {
             setter(value)
             true
         }

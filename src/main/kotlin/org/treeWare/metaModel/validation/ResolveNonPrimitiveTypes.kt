@@ -62,8 +62,8 @@ private fun resolveFields(entityMeta: EntityModel<Resolved>, nonPrimitiveTypes: 
 private fun resolveField(fieldElementMeta: ElementModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
     val fieldMeta = fieldElementMeta as EntityModel<Resolved>
     return when (getFieldTypeMeta(fieldMeta)) {
-        "enumeration" -> resolveEnumerationField(fieldMeta, nonPrimitiveTypes)
-        "entity" -> resolveEntityField(fieldMeta, nonPrimitiveTypes)
+        FieldType.ENUMERATION -> resolveEnumerationField(fieldMeta, nonPrimitiveTypes)
+        FieldType.ENTITY -> resolveEntityField(fieldMeta, nonPrimitiveTypes)
         else -> listOf()
     }
 }
