@@ -14,6 +14,10 @@ fun newTestMetaModelJson(rootJson: String?, vararg packageJsonList: String): Str
     | }
 """.trimMargin()
 
+fun getMultiplicityJson(multiplicity: String?): String =
+    if (multiplicity == null) ""
+    else """, "multiplicity": "$multiplicity""""
+
 val testMetaModelCommonRootJson = """
     | "root": {
     |   "name": "root",
