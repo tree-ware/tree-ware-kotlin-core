@@ -6,7 +6,7 @@ import kotlin.test.Test
 
 class CompositionValidationTests {
     @Test
-    fun `Composition must have entity info`() {
+    fun `Composition must have info`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",
@@ -29,7 +29,7 @@ class CompositionValidationTests {
     }
 
     @Test
-    fun `Composition must have non-empty entity info`() {
+    fun `Composition must have non-empty info`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",
@@ -52,6 +52,60 @@ class CompositionValidationTests {
             "Package 1 entity 0 field 0 entity info name is missing",
             "Package 1 entity 0 field 0 entity info package is missing"
         )
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
+    fun `Composition must refer to a defined entity`() {
+        val testPackageJson = """
+            | {
+            |   "name": "test.main",
+            |   "entities": [
+            |     {
+            |       "name": "test_entity",
+            |       "fields": [
+            |         {
+            |           "name": "test_field",
+            |           "type": "entity",
+            |           "entity": {
+            |             "name": "undefined_entity",
+            |             "package": "test.helper"
+            |           }
+            |         }
+            |       ]
+            |     }
+            |   ]
+            | }
+        """.trimMargin()
+        val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
+        val expectedErrors = listOf("Entity /test.helper/undefined_entity cannot be resolved")
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
+    fun `Composition must be valid if info can be resolved`() {
+        val testPackageJson = """
+            | {
+            |   "name": "test.main",
+            |   "entities": [
+            |     {
+            |       "name": "test_entity",
+            |       "fields": [
+            |         {
+            |           "name": "test_field",
+            |           "type": "entity",
+            |           "entity": {
+            |             "name": "entity_with_no_keys",
+            |             "package": "test.helper"
+            |           }
+            |         }
+            |       ]
+            |     }
+            |   ]
+            | }
+        """.trimMargin()
+        val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
+        val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
