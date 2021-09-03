@@ -24,7 +24,7 @@ private fun resolveRoot(mainMeta: Model<Resolved>, nonPrimitiveTypes: NonPrimiti
     val targetFullName = "/$packageName/$entityName"
     val targetEntity = nonPrimitiveTypes.entities[targetFullName] ?: return listOf("Root entity cannot be resolved")
     val resolved = rootMeta.aux ?: throw IllegalStateException("Resolved aux is missing in root")
-    resolved.entityMeta = targetEntity
+    resolved.compositionMeta = targetEntity
     return listOf()
 }
 
@@ -63,7 +63,7 @@ private fun resolveField(fieldElementMeta: ElementModel<Resolved>, nonPrimitiveT
     val fieldMeta = fieldElementMeta as EntityModel<Resolved>
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.ENUMERATION -> resolveEnumerationField(fieldMeta, nonPrimitiveTypes)
-        FieldType.ENTITY -> resolveEntityField(fieldMeta, nonPrimitiveTypes)
+        FieldType.COMPOSITION -> resolveCompositionField(fieldMeta, nonPrimitiveTypes)
         else -> listOf()
     }
 }
@@ -84,7 +84,10 @@ private fun resolveEnumerationField(
     return listOf()
 }
 
-private fun resolveEntityField(fieldMeta: EntityModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveCompositionField(
+    fieldMeta: EntityModel<Resolved>,
+    nonPrimitiveTypes: NonPrimitiveTypes
+): List<String> {
     val entityInfoMeta = getEntityInfoMeta(fieldMeta)
     val packageName = getSingleString(entityInfoMeta, "package")
     val entityName = getSingleString(entityInfoMeta, "name")
@@ -93,7 +96,7 @@ private fun resolveEntityField(fieldMeta: EntityModel<Resolved>, nonPrimitiveTyp
         ?: return listOf("Entity $targetFullName cannot be resolved")
     val resolved = fieldMeta.aux
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
-    resolved.entityMeta = targetEntity
+    resolved.compositionMeta = targetEntity
     val errors = mutableListOf<String>()
     if (isKeyFieldMeta(fieldMeta) && !hasOnlyPrimitiveKeyFields(targetEntity)) errors.add(
         "Composition key field ${resolved.fullName} target entity does not have only primitive keys"

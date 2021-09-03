@@ -95,7 +95,7 @@ private fun getFirstEntityMeta(
         listOf("Association field $fieldFullName has an invalid path root")
     )
     val firstEntityMeta =
-        rootMeta.aux?.entityMeta ?: return NextEntityMetaResult(null, listOf("Root has not been resolved"))
+        rootMeta.aux?.compositionMeta ?: return NextEntityMetaResult(null, listOf("Root has not been resolved"))
     return NextEntityMetaResult(firstEntityMeta, listOf())
 }
 
@@ -110,11 +110,11 @@ private fun getNextEntityMeta(
             listOf("Association field $fieldFullName has an invalid path element $pathElement")
         )
     val fieldTypeMeta = getFieldTypeMeta(fieldMeta)
-    if (fieldTypeMeta != FieldType.ENTITY) return NextEntityMetaResult(
+    if (fieldTypeMeta != FieldType.COMPOSITION) return NextEntityMetaResult(
         null,
         listOf("Association field $fieldFullName path element $pathElement is not an entity")
     )
-    val nextEntityMeta = fieldMeta.aux?.entityMeta ?: return NextEntityMetaResult(
+    val nextEntityMeta = fieldMeta.aux?.compositionMeta ?: return NextEntityMetaResult(
         null,
         listOf("Association field $fieldFullName path element $pathElement has not been resolved")
     )

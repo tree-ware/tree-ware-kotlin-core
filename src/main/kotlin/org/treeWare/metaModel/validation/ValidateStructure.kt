@@ -149,7 +149,7 @@ private fun validateFieldType(fieldMeta: EntityModel<Resolved>, fieldId: String)
     } else when (fieldTypeMeta) {
         FieldType.ENUMERATION -> validateEnumerationInfo(fieldMeta, fieldId)
         FieldType.ASSOCIATION -> validateAssociationInfo(fieldMeta, fieldId)
-        FieldType.ENTITY -> validateEntityInfo(fieldMeta, fieldId)
+        FieldType.COMPOSITION -> validateEntityInfo(fieldMeta, fieldId)
         else -> listOf()
     }
 }

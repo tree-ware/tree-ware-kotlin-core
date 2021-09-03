@@ -28,7 +28,7 @@ class MutableModel<Aux>(override val meta: Model<Resolved>?) :
     fun getOrNewRoot(): MutableRootModel<Aux> {
         if (_root == null) {
             val rootMeta = meta?.let { getRootMeta(it) }
-            val resolvedRootMeta = rootMeta?.aux?.entityMeta
+            val resolvedRootMeta = rootMeta?.aux?.compositionMeta
             _root = MutableRootModel(resolvedRootMeta, this)
         }
         return root

@@ -24,7 +24,7 @@ enum class FieldType {
     TIMESTAMP,
     ENUMERATION,
     ASSOCIATION,
-    ENTITY
+    COMPOSITION
 }
 
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
@@ -72,14 +72,14 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel<Resolved>) 
     populateFieldEntity(fieldEntityMeta)
     val enumerationInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "enumeration_info")
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
-    val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")
+    val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "composition_info")
     populateEntityInfoEntity(entityInfoEntityMeta)
 }
 
 private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel<Resolved>) {
     val fields = newFieldsMetaMeta(metaModelEntityMeta)
-    newEntityFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE)
-    newEntityFieldMetaMeta(fields, "packages", null, "package", META_MODEL_MAIN_PACKAGE, "list")
+    newCompositionFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE)
+    newCompositionFieldMetaMeta(fields, "packages", null, "package", META_MODEL_MAIN_PACKAGE, "list")
 }
 
 private fun populateRootEntity(rootEntityMeta: MutableEntityModel<Resolved>) {
@@ -94,15 +94,15 @@ private fun populatePackageEntity(packageEntityMeta: MutableEntityModel<Resolved
     val fields = newFieldsMetaMeta(packageEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
-    newEntityFieldMetaMeta(fields, "enumerations", null, "enumeration", META_MODEL_MAIN_PACKAGE, "list")
-    newEntityFieldMetaMeta(fields, "entities", null, "entity", META_MODEL_MAIN_PACKAGE, "list")
+    newCompositionFieldMetaMeta(fields, "enumerations", null, "enumeration", META_MODEL_MAIN_PACKAGE, "list")
+    newCompositionFieldMetaMeta(fields, "entities", null, "entity", META_MODEL_MAIN_PACKAGE, "list")
 }
 
 private fun populateEnumerationEntity(enumerationEntityMeta: MutableEntityModel<Resolved>) {
     val fields = newFieldsMetaMeta(enumerationEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
-    newEntityFieldMetaMeta(fields, "values", null, "enumeration_value", META_MODEL_MAIN_PACKAGE, "list")
+    newCompositionFieldMetaMeta(fields, "values", null, "enumeration_value", META_MODEL_MAIN_PACKAGE, "list")
 }
 
 private fun populateEnumerationValueEntity(enumerationValueEntityMeta: MutableEntityModel<Resolved>) {
@@ -115,7 +115,7 @@ private fun populateEntityEntity(entityEntityMeta: MutableEntityModel<Resolved>)
     val fields = newFieldsMetaMeta(entityEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
-    newEntityFieldMetaMeta(fields, "fields", null, "field", META_MODEL_MAIN_PACKAGE, "list")
+    newCompositionFieldMetaMeta(fields, "fields", null, "field", META_MODEL_MAIN_PACKAGE, "list")
 }
 
 private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel<Resolved>) {
@@ -123,9 +123,9 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel<Resolved>) {
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newEnumerationFieldMetaMeta(fields, "type", null, "field_type", META_MODEL_MAIN_PACKAGE)
-    newEntityFieldMetaMeta(fields, "enumeration", null, "enumeration_info", META_MODEL_MAIN_PACKAGE, "optional")
+    newCompositionFieldMetaMeta(fields, "enumeration", null, "enumeration_info", META_MODEL_MAIN_PACKAGE, "optional")
     newPrimitiveFieldMetaMeta(fields, "association", null, "string", "list")
-    newEntityFieldMetaMeta(fields, "entity", null, "entity_info", META_MODEL_MAIN_PACKAGE, "optional")
+    newCompositionFieldMetaMeta(fields, "composition", null, "composition_info", META_MODEL_MAIN_PACKAGE, "optional")
     newPrimitiveFieldMetaMeta(fields, "is_key", null, "boolean", "optional")
     newEnumerationFieldMetaMeta(fields, "multiplicity", null, "multiplicity", META_MODEL_MAIN_PACKAGE, "optional")
 

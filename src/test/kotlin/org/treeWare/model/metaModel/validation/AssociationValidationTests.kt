@@ -331,16 +331,16 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "entity1_composition_field1",
-    |           "type": "entity",
-    |           "entity": {
+    |           "type": "composition",
+    |           "composition": {
     |             "name": "entity2",
     |             "package": "test.helper"
     |           }
     |         },
     |         {
     |           "name": "entity1_composition_field2",
-    |           "type": "entity",
-    |           "entity": {
+    |           "type": "composition",
+    |           "composition": {
     |             "name": "entity3",
     |             "package": "test.helper"
     |           },
@@ -353,8 +353,8 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "entity2_composition_field",
-    |           "type": "entity",
-    |           "entity": {
+    |           "type": "composition",
+    |           "composition": {
     |             "name": "entity3",
     |             "package": "test.helper"
     |           },

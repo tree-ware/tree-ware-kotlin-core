@@ -96,7 +96,7 @@ class BaseEntityStateMachine<Aux>(
             return true
         }
         return when (getFieldTypeMeta(fieldMeta)) {
-            FieldType.ENTITY -> handleComposition(fieldMeta)
+            FieldType.COMPOSITION -> handleComposition(fieldMeta)
             FieldType.ASSOCIATION -> handleAssociation(fieldMeta)
             else -> handleScalar(fieldMeta)
         }
