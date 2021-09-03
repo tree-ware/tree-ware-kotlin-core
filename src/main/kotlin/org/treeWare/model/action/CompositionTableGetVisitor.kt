@@ -1,8 +1,8 @@
 package org.treeWare.model.action
 
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.TraversalAction
 import org.treeWare.model.operator.dispatchVisit
 
 // IMPLEMENTATION: ./Get.md

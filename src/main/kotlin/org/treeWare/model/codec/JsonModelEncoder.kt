@@ -1,10 +1,10 @@
 package org.treeWare.model.codec
 
-import org.treeWare.common.codec.JsonWireFormatEncoder
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.codec.encoder.AuxEncoder
+import org.treeWare.model.codec.encoder.JsonWireFormatEncoder
 import org.treeWare.model.codec.encoder.ModelEncodingVisitor
 import org.treeWare.model.core.ElementModel
+import org.treeWare.model.operator.TraversalAction
 import org.treeWare.model.operator.forEach
 import java.io.Writer
 

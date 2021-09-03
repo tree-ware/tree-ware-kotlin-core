@@ -1,6 +1,5 @@
 package org.treeWare.model.operator
 
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.LeaderModelCursor

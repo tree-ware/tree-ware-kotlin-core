@@ -1,7 +1,5 @@
 package org.treeWare.model.codec.decoder.stateMachine
 
-import org.treeWare.common.codec.AbstractDecodingStateMachine
-import org.treeWare.common.codec.SkipUnknownStateMachine
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.getRootMeta
 import org.treeWare.model.core.MutableRootModel

@@ -1,13 +1,12 @@
 package org.treeWare.model.codec.encoder
 
-import org.treeWare.common.codec.WireFormatEncoder
-import org.treeWare.common.traversal.TraversalAction
 import org.treeWare.metaModel.getFieldTypeMeta
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.getRootMeta
 import org.treeWare.metaModel.isListFieldMeta
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
+import org.treeWare.model.operator.TraversalAction
 import org.treeWare.model.operator.forEach
 
 const val VALUE_KEY = "value"

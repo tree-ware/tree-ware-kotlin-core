@@ -1,4 +1,4 @@
-package org.treeWare.common.codec
+package org.treeWare.model.codec.encoder
 
 interface WireFormatEncoder {
     fun getAuxFieldName(fieldName: String?, auxName: String): String

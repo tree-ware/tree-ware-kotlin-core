@@ -1,7 +1,5 @@
 package org.treeWare.model.codec.decoder.stateMachine
 
-import org.treeWare.common.codec.AbstractDecodingStateMachine
-
 class StringAuxStateMachine(
     private val stack: DecodingStack
 ) : AuxDecodingStateMachine<String>, AbstractDecodingStateMachine(true) {
