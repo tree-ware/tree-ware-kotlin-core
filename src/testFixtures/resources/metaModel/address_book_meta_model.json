@@ -103,6 +103,11 @@
                   "multiplicity": "list"
                 },
                 {
+                  "name": "picture",
+                  "type": "blob",
+                  "multiplicity": "optional"
+                },
+                {
                   "name": "relation",
                   "type": "composition",
                   "composition": {

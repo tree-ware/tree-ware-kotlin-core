@@ -5,6 +5,7 @@ import org.treeWare.model.core.*
 import org.treeWare.model.operator.Leader1Follower0ModelVisitor
 import org.treeWare.model.operator.TraversalAction
 import org.treeWare.model.operator.forEach
+import java.util.*
 
 const val VALUE_KEY = "value"
 
@@ -96,8 +97,13 @@ class ModelEncodingVisitor<Aux>(
             FieldType.DOUBLE -> wireFormatEncoder.encodeNumericField(fieldName, value as Double)
             // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
             // are encoded as strings.
+            FieldType.LONG, FieldType.TIMESTAMP -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
+            FieldType.BLOB -> wireFormatEncoder.encodeStringField(
+                fieldName,
+                Base64.getEncoder().encodeToString(value as ByteArray)
+            )
             else -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
-            // TODO(deepak-nulu): special handling for "password1way", "password2way", "blob"
+            // TODO(deepak-nulu): special handling for "password1way", "password2way"
         }
         return TraversalAction.CONTINUE
     }
