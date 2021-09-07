@@ -144,7 +144,7 @@ private fun encodeCompositionField(fieldMeta: EntityModel<Resolved>, dotWriter: 
 
 private fun encodeFieldRow(fieldMeta: EntityModel<Resolved>, type: String, dotWriter: DotWriter) {
     val name = getMetaName(fieldMeta)
-    val multiplicity = getMultiplicityMeta(fieldMeta)
+    val multiplicity = getMultiplicityMeta(fieldMeta).name.lowercase()
     val keyIcon = if (isKeyFieldMeta(fieldMeta)) "key" else ""
 
     dotWriter.nodesWriteLine("<TR>")
