@@ -1,8 +1,8 @@
 package org.treeWare.model
 
 import org.treeWare.model.core.ElementModel
-import org.treeWare.model.core.Model
-import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
@@ -26,12 +26,12 @@ fun readFile(filePath: String): String? {
     return text
 }
 
-fun <Aux> getModel(
-    meta: Model<Resolved>,
+fun <Aux> getMainModel(
+    meta: MainModel<Resolved>,
     inputFilePath: String,
     expectedModelType: String = "data",
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
-): MutableModel<Aux> {
+): MutableMainModel<Aux> {
     val fileReader = getFileReader(inputFilePath)
     assertNotNull(fileReader)
     val model = decodeJson(fileReader, meta, expectedModelType, auxStateMachineFactory)

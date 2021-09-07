@@ -35,11 +35,11 @@ fun <LeaderAux, FollowerAux, Return> dispatchVisit(
     follower: ElementModel<FollowerAux>?,
     visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
 ): Return? = when (leader.elementType) {
-    ModelElementType.MODEL -> {
-        if (follower != null) assert(follower.elementType == ModelElementType.MODEL)
-        if (follower == null || follower.elementType == ModelElementType.MODEL) visitor.visit(
-            leader as Model<LeaderAux>,
-            follower as Model<FollowerAux>?
+    ModelElementType.MAIN -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.MAIN)
+        if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.visit(
+            leader as MainModel<LeaderAux>,
+            follower as MainModel<FollowerAux>?
         )
         else null
     }
@@ -123,11 +123,11 @@ fun <LeaderAux, FollowerAux, Return> dispatchLeave(
     visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
 ) {
     when (leader.elementType) {
-        ModelElementType.MODEL -> {
-            if (follower != null) assert(follower.elementType == ModelElementType.MODEL)
-            if (follower == null || follower.elementType == ModelElementType.MODEL) visitor.leave(
-                leader as Model<LeaderAux>,
-                follower as Model<FollowerAux>?
+        ModelElementType.MAIN -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.MAIN)
+            if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.leave(
+                leader as MainModel<LeaderAux>,
+                follower as MainModel<FollowerAux>?
             )
         }
         ModelElementType.ROOT -> {

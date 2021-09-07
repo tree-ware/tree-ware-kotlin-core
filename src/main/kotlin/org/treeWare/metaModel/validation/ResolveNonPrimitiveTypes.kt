@@ -11,13 +11,13 @@ import org.treeWare.model.core.*
  * Side effects:
  * 1. Non-primitive field types (except associations) are resolved.
  */
-fun resolveNonPrimitiveTypes(mainMeta: Model<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> =
+fun resolveNonPrimitiveTypes(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> =
     listOf(
         resolveRoot(mainMeta, nonPrimitiveTypes),
         resolvePackages(mainMeta, nonPrimitiveTypes)
     ).flatten()
 
-private fun resolveRoot(mainMeta: Model<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveRoot(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
     val rootMeta = getRootMeta(mainMeta)
     val packageName = getSingleString(rootMeta, "package")
     val entityName = getSingleString(rootMeta, "entity")
@@ -28,7 +28,7 @@ private fun resolveRoot(mainMeta: Model<Resolved>, nonPrimitiveTypes: NonPrimiti
     return listOf()
 }
 
-private fun resolvePackages(mainMeta: Model<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolvePackages(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
     val packagesMeta = getPackagesMeta(mainMeta)
     return packagesMeta.values.flatMap { resolvePackage(it, nonPrimitiveTypes) }
 }

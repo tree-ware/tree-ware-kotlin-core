@@ -10,12 +10,12 @@ import org.treeWare.model.core.*
  * Side effects:
  * 1. Association fields are resolved.
  */
-fun resolveAssociations(mainMeta: Model<Resolved>): List<String> {
+fun resolveAssociations(mainMeta: MainModel<Resolved>): List<String> {
     val rootMeta = getRootMeta(mainMeta)
     return resolvePackages(mainMeta, rootMeta)
 }
 
-private fun resolvePackages(mainMeta: Model<Resolved>, rootMeta: EntityModel<Resolved>): List<String> {
+private fun resolvePackages(mainMeta: MainModel<Resolved>, rootMeta: EntityModel<Resolved>): List<String> {
     val packagesMeta = getPackagesMeta(mainMeta)
     return packagesMeta.values.flatMap { resolvePackage(it, rootMeta) }
 }

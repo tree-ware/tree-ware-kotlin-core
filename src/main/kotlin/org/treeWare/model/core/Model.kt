@@ -10,11 +10,11 @@ interface ElementModel<Aux> {
 }
 
 /** The entire model (from the root entity). */
-interface Model<Aux> : ElementModel<Aux> {
+interface MainModel<Aux> : ElementModel<Aux> {
     override val elementType: ModelElementType
-        get() = ModelElementType.MODEL
+        get() = ModelElementType.MAIN
 
-    override val meta: Model<Resolved>?
+    override val meta: MainModel<Resolved>?
 
     val type: String
     val root: RootModel<Aux>
@@ -32,7 +32,7 @@ interface RootModel<Aux> : BaseEntityModel<Aux> {
     override val elementType: ModelElementType
         get() = ModelElementType.ROOT
 
-    override val parent: Model<Aux>
+    override val parent: MainModel<Aux>
 }
 
 interface EntityModel<Aux> : BaseEntityModel<Aux> {

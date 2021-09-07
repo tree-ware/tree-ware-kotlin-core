@@ -6,15 +6,15 @@ interface Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Re
     // Abstract elements are not visited
 
     suspend fun visit(
-        leaderModel1: Model<LeaderAux>,
-        followerModel1: Model<Follower1Aux>?,
-        followerModel2: Model<Follower2Aux>?
+        leaderMain1: MainModel<LeaderAux>,
+        followerMain1: MainModel<Follower1Aux>?,
+        followerMain2: MainModel<Follower2Aux>?
     ): Return
 
     suspend fun leave(
-        leaderModel1: Model<LeaderAux>,
-        followerModel1: Model<Follower1Aux>?,
-        followerModel2: Model<Follower2Aux>?
+        leaderMain1: MainModel<LeaderAux>,
+        followerMain1: MainModel<Follower1Aux>?,
+        followerMain2: MainModel<Follower2Aux>?
     )
 
     suspend fun visit(

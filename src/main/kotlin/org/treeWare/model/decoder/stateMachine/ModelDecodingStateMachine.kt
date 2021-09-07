@@ -1,8 +1,8 @@
 package org.treeWare.model.decoder.stateMachine
 
 import org.apache.logging.log4j.LogManager
-import org.treeWare.model.core.Model
-import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 import java.math.BigDecimal
 import java.util.*
@@ -18,14 +18,14 @@ typealias DecodingStack = ArrayDeque<DecodingStateMachine>
  * more than one element in *every* composition-list.
  */
 class ModelDecodingStateMachine<Aux>(
-    meta: Model<Resolved>,
+    meta: MainModel<Resolved>,
     expectedModelType: String,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     isWildcardModel: Boolean = false
 ) : DecodingStateMachine {
     private val stack = DecodingStack()
-    private val modelStateMachine =
-        ModelStateMachine(meta, expectedModelType, auxStateMachineFactory, stack, isWildcardModel)
+    private val mainModelStateMachine =
+        MainModelStateMachine(meta, expectedModelType, auxStateMachineFactory, stack, isWildcardModel)
     private val logger = LogManager.getLogger()
 
     init {
@@ -34,10 +34,10 @@ class ModelDecodingStateMachine<Aux>(
 
     private fun reinitialize() {
         stack.clear()
-        stack.addFirst(modelStateMachine)
+        stack.addFirst(mainModelStateMachine)
     }
 
-    val model: MutableModel<Aux>? get() = modelStateMachine.model
+    val mainModel: MutableMainModel<Aux>? get() = mainModelStateMachine.mainModel
 
     private fun getTopStateMachine(): DecodingStateMachine? {
         val top = stack.peekFirst()

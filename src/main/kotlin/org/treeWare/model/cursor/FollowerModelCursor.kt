@@ -53,13 +53,13 @@ private class NullFollowerState<LeaderAux, FollowerAux>(
     stateStack: FollowerStateStack<LeaderAux, FollowerAux>
 ) : FollowerState<LeaderAux, FollowerAux>(null, stateStack) {
     override fun follow(move: LeaderModelCursorMove<LeaderAux>): FollowerModelCursorMove<FollowerAux> = when (move) {
-        is VisitLeaderModel -> {
+        is VisitLeaderMainModel -> {
             stateStack.addFirst(this)
-            VisitFollowerModel(null)
+            VisitFollowerMainModel(null)
         }
-        is LeaveLeaderModel -> {
+        is LeaveLeaderMainModel -> {
             stateStack.pollFirst()
-            LeaveFollowerModel(null)
+            LeaveFollowerMainModel(null)
         }
         is VisitLeaderRootModel -> {
             stateStack.addFirst(this)
@@ -112,21 +112,21 @@ private class NullFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
-private class ModelFollowerState<LeaderAux, FollowerAux>(
-    private val model: Model<FollowerAux>,
+private class MainFollowerState<LeaderAux, FollowerAux>(
+    private val main: MainModel<FollowerAux>,
     stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
     private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(model, stateStack) {
-    override val visitCursorMove = VisitFollowerModel(model)
+) : FollowerState<LeaderAux, FollowerAux>(main, stateStack) {
+    override val visitCursorMove = VisitFollowerMainModel(main)
 
     override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
-        is LeaveLeaderModel -> {
+        is LeaveLeaderMainModel -> {
             stateStack.pollFirst()
-            LeaveFollowerModel(model)
+            LeaveFollowerMainModel(main)
         }
         is VisitLeaderRootModel -> {
             val rootState =
-                dispatchVisit(model.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+                dispatchVisit(main.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         }
@@ -303,7 +303,7 @@ private class EntityKeysFollowerState<LeaderAux, FollowerAux>(
 private class FollowerStateFactoryVisitor<LeaderAux, FollowerAux>(
     private val stateStack: FollowerStateStack<LeaderAux, FollowerAux>
 ) : AbstractLeader1Follower0ModelVisitor<FollowerAux, FollowerState<LeaderAux, FollowerAux>?>(null) {
-    override fun visit(leaderModel1: Model<FollowerAux>) = ModelFollowerState(leaderModel1, stateStack, this)
+    override fun visit(leaderMain1: MainModel<FollowerAux>) = MainFollowerState(leaderMain1, stateStack, this)
     override fun visit(leaderRoot1: RootModel<FollowerAux>) = RootFollowerState(leaderRoot1, stateStack, this)
     override fun visit(leaderEntity1: EntityModel<FollowerAux>) = EntityFollowerState(leaderEntity1, stateStack, this)
 

@@ -1,11 +1,11 @@
 package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.model.core.ElementModel
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
-import org.treeWare.model.core.ElementModel
 import org.treeWare.model.getFileReader
-import org.treeWare.model.getModel
+import org.treeWare.model.getMainModel
 import org.treeWare.model.operator.TraversalAction
 import org.treeWare.model.operator.dispatchLeave
 import org.treeWare.model.operator.dispatchVisit
@@ -37,7 +37,7 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val model = getModel<Unit>(metaModel, inputFilePath)
+    val model = getMainModel<Unit>(metaModel, inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -59,8 +59,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     assertTrue(metaModelErrors.isEmpty())
 
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getModel<Unit>(metaModel, inputFilePath)
-    val followerModel = getModel<Unit>(metaModel, inputFilePath)
+    val leaderModel = getMainModel<Unit>(metaModel, inputFilePath)
+    val followerModel = getMainModel<Unit>(metaModel, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -89,8 +89,8 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val leaderModel = getModel<Unit>(metaModel, leaderFilePath)
-    val followerModel = getModel<Unit>(metaModel, wildcardFilePath)
+    val leaderModel = getMainModel<Unit>(metaModel, leaderFilePath)
+    val followerModel = getMainModel<Unit>(metaModel, wildcardFilePath)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)

@@ -14,13 +14,13 @@ class ModelEncodingVisitor<Aux>(
 ) : Leader1Follower0ModelVisitor<Aux, TraversalAction> {
     private var encodingPathKeys = false
 
-    override fun visit(leaderModel1: Model<Aux>): TraversalAction {
+    override fun visit(leaderMain1: MainModel<Aux>): TraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
-        wireFormatEncoder.encodeObjectStart(leaderModel1.type)
+        wireFormatEncoder.encodeObjectStart(leaderMain1.type)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderModel1: Model<Aux>) {
+    override fun leave(leaderMain1: MainModel<Aux>) {
         wireFormatEncoder.encodeObjectEnd()
         wireFormatEncoder.encodeObjectEnd()
     }

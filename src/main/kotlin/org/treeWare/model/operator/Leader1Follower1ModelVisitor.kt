@@ -5,8 +5,8 @@ import org.treeWare.model.core.*
 interface Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return> {
     // Abstract elements are not visited
 
-    fun visit(leaderModel1: Model<LeaderAux>, followerModel1: Model<FollowerAux>?): Return
-    fun leave(leaderModel1: Model<LeaderAux>, followerModel1: Model<FollowerAux>?)
+    fun visit(leaderMain1: MainModel<LeaderAux>, followerModel1: MainModel<FollowerAux>?): Return
+    fun leave(leaderMain1: MainModel<LeaderAux>, followerModel1: MainModel<FollowerAux>?)
 
     fun visit(leaderRoot1: RootModel<LeaderAux>, followerRoot1: RootModel<FollowerAux>?): Return
     fun leave(leaderRoot1: RootModel<LeaderAux>, followerRoot1: RootModel<FollowerAux>?)

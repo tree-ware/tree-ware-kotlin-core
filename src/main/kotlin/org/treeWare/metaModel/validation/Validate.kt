@@ -1,7 +1,7 @@
 package org.treeWare.metaModel.validation
 
 import org.apache.logging.log4j.LogManager
-import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 
 /** Validates the specified meta-model.
@@ -11,7 +11,7 @@ import org.treeWare.model.core.Resolved
  * 1. full-names are set for named elements
  * 2. Non-primitive field types are resolved
  */
-fun validate(mainMeta: MutableModel<Resolved>, logFullNames: Boolean = false): List<String> {
+fun validate(mainMeta: MutableMainModel<Resolved>, logFullNames: Boolean = false): List<String> {
     val logger = LogManager.getLogger()
     fun logErrors(errors: List<String>) = errors.forEach { logger.error(it) }
 

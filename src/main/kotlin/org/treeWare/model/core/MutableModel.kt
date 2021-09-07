@@ -9,8 +9,8 @@ abstract class MutableElementModel<Aux> : ElementModel<Aux> {
         internal set
 }
 
-class MutableModel<Aux>(override val meta: Model<Resolved>?) :
-    MutableElementModel<Aux>(), Model<Aux> {
+class MutableMainModel<Aux>(override val meta: MainModel<Resolved>?) :
+    MutableElementModel<Aux>(), MainModel<Aux> {
     override val parent: ElementModel<Aux>? = null
 
     override var type = "data"
@@ -66,7 +66,7 @@ abstract class MutableBaseEntityModel<Aux>(
 
 class MutableRootModel<Aux>(
     meta: EntityModel<Resolved>?,
-    override val parent: MutableModel<Aux>
+    override val parent: MutableMainModel<Aux>
 ) : MutableBaseEntityModel<Aux>(meta), RootModel<Aux>
 
 class MutableEntityModel<Aux>(

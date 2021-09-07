@@ -8,7 +8,7 @@ import org.treeWare.model.decoder.stateMachine.DecodingStack
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.AuxEncoder
 import org.treeWare.model.encoder.ErrorAuxEncoder
-import org.treeWare.model.getModel
+import org.treeWare.model.getMainModel
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -54,7 +54,7 @@ class JsonCodecTests {
         val metaModelErrors = validate(metaModel, true)
         assertTrue(metaModelErrors.isEmpty())
 
-        val model = getModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
+        val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
         assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath)
     }
 }

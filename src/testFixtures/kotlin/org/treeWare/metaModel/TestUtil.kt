@@ -9,7 +9,7 @@ import java.io.StringReader
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-private val metaMetaModel = newMetaMetaModel()
+private val metaMetaModel = newMainMetaMetaModel()
 
 fun assertJsonStringValidationErrors(metaModelJsonString: String, expectedValidationErrors: List<String>) {
     val stringReader = StringReader(metaModelJsonString)

@@ -12,10 +12,10 @@ sealed class FollowerModelCursorMove<Aux>(val direction: CursorMoveDirection) {
     }
 }
 
-class VisitFollowerModel<Aux>(override val element: Model<Aux>?) :
+class VisitFollowerMainModel<Aux>(override val element: MainModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 
-class LeaveFollowerModel<Aux>(override val element: Model<Aux>?) :
+class LeaveFollowerMainModel<Aux>(override val element: MainModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
 class VisitFollowerRootModel<Aux>(override val element: RootModel<Aux>?) :
