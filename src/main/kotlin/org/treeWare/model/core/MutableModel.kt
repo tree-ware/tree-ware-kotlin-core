@@ -2,6 +2,7 @@ package org.treeWare.model.core
 
 import org.treeWare.metaModel.*
 import java.math.BigDecimal
+import java.util.*
 
 abstract class MutableElementModel<Aux> : ElementModel<Aux> {
     override val meta: ElementModel<Resolved>? = null
@@ -248,10 +249,14 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSett
             true
         }
         FieldType.PASSWORD1WAY,
-        FieldType.PASSWORD2WAY,
-        FieldType.BLOB -> {
-            // TODO(deepak-nulu): special handling for Password1WaySchema, Password2WaySchema, BlobSchema
+        FieldType.PASSWORD2WAY -> {
+            // TODO(deepak-nulu): special handling for "password1way", "password2way"
             setter(value)
+            true
+        }
+        FieldType.BLOB -> {
+            val blob = Base64.getDecoder().decode(value)
+            setter(blob)
             true
         }
         // 64-bit integers are encoded as strings because JavaScript integers are only 53-bits

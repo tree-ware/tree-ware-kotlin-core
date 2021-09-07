@@ -51,7 +51,7 @@ class JsonCodecTests {
         auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
     ) {
         val metaModel = newAddressBookMetaModel()
-        val metaModelErrors = validate(metaModel, true)
+        val metaModelErrors = validate(metaModel)
         assertTrue(metaModelErrors.isEmpty())
 
         val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
