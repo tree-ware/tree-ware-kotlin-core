@@ -3,11 +3,11 @@ package org.treeWare.metaModel.encoder
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.Model
+import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.Resolved
 import java.io.Writer
 
-fun encodeDot(mainMeta: Model<Resolved>, writer: Writer) {
+fun encodeDot(mainMeta: MainModel<Resolved>, writer: Writer) {
     val dotWriter = DotWriter()
     dotWriter.nodesIndent()
     encodePackages(mainMeta, dotWriter)
@@ -15,7 +15,7 @@ fun encodeDot(mainMeta: Model<Resolved>, writer: Writer) {
     dotWriter.writeAll(writer)
 }
 
-private fun encodePackages(mainMeta: Model<Resolved>, dotWriter: DotWriter) {
+private fun encodePackages(mainMeta: MainModel<Resolved>, dotWriter: DotWriter) {
     val packagesMeta = getPackagesMeta(mainMeta)
     packagesMeta.values.forEach { encodePackage(it, dotWriter) }
 }

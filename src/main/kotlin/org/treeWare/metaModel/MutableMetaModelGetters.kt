@@ -2,10 +2,10 @@ package org.treeWare.metaModel
 
 import org.treeWare.model.core.*
 
-fun getMutableRootMeta(mainMeta: MutableModel<Resolved>): MutableEntityModel<Resolved> =
+fun getMutableRootMeta(mainMeta: MutableMainModel<Resolved>): MutableEntityModel<Resolved> =
     getMutableSingleEntity(mainMeta.root, "root")
 
-fun getMutablePackagesMeta(mainMeta: MutableModel<Resolved>): MutableListFieldModel<Resolved> =
+fun getMutablePackagesMeta(mainMeta: MutableMainModel<Resolved>): MutableListFieldModel<Resolved> =
     getMutableListField(mainMeta.root, "packages")
 
 fun getMutableEnumerationsMeta(packageMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved>? =

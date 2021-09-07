@@ -27,8 +27,8 @@ fun <LeaderAux, Return> dispatchVisit(
     leader: ElementModel<LeaderAux>,
     visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
 ): Return? = when (leader.elementType) {
-    ModelElementType.MODEL -> {
-        visitor.visit(leader as Model<LeaderAux>)
+    ModelElementType.MAIN -> {
+        visitor.visit(leader as MainModel<LeaderAux>)
     }
     ModelElementType.ROOT -> {
         visitor.visit(leader as RootModel<LeaderAux>)
@@ -64,8 +64,8 @@ fun <LeaderAux, Return> dispatchLeave(
     visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
 ) {
     when (leader.elementType) {
-        ModelElementType.MODEL -> {
-            visitor.leave(leader as Model<LeaderAux>)
+        ModelElementType.MAIN -> {
+            visitor.leave(leader as MainModel<LeaderAux>)
         }
         ModelElementType.ROOT -> {
             visitor.leave(leader as RootModel<LeaderAux>)

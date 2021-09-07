@@ -13,7 +13,7 @@ private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
  * Side effects:
  * 1. full-names are set for named elements
  */
-fun validateNames(mainMeta: MutableModel<Resolved>, logFullNames: Boolean): List<String> {
+fun validateNames(mainMeta: MutableMainModel<Resolved>, logFullNames: Boolean): List<String> {
     val state = State()
 
     validateRootName(mainMeta, state)
@@ -49,13 +49,13 @@ private class State {
     }
 }
 
-private fun validateRootName(mainMeta: MutableModel<Resolved>, state: State) {
+private fun validateRootName(mainMeta: MutableMainModel<Resolved>, state: State) {
     val rootMeta = getMutableRootMeta(mainMeta)
     state.pushName(rootMeta, ELEMENT_NAME_REGEX)
     state.popName()
 }
 
-private fun validatePackagesNames(mainMeta: MutableModel<Resolved>, state: State) {
+private fun validatePackagesNames(mainMeta: MutableMainModel<Resolved>, state: State) {
     val packagesMeta = getMutablePackagesMeta(mainMeta)
     packagesMeta.values.forEach { validatePackageName(it, state) }
 }

@@ -2,9 +2,9 @@ package org.treeWare.metaModel
 
 import org.treeWare.model.core.*
 
-fun getRootMeta(mainMeta: Model<Resolved>): EntityModel<Resolved> = getSingleEntity(mainMeta.root, "root")
+fun getRootMeta(mainMeta: MainModel<Resolved>): EntityModel<Resolved> = getSingleEntity(mainMeta.root, "root")
 
-fun getPackagesMeta(mainMeta: Model<Resolved>): ListFieldModel<Resolved> = getListField(mainMeta.root, "packages")
+fun getPackagesMeta(mainMeta: MainModel<Resolved>): ListFieldModel<Resolved> = getListField(mainMeta.root, "packages")
 
 fun getEnumerationsMeta(packageMeta: EntityModel<Resolved>): ListFieldModel<Resolved>? =
     runCatching { getListField(packageMeta, "enumerations") }.getOrNull()

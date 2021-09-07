@@ -7,11 +7,11 @@ abstract class AbstractLeader1Follower0ModelVisitor<LeaderAux, Return>(
 ) : Leader1Follower0ModelVisitor<LeaderAux, Return> {
     // Abstract elements are not visited
 
-    override fun visit(leaderModel1: Model<LeaderAux>): Return {
+    override fun visit(leaderMain1: MainModel<LeaderAux>): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderModel1: Model<LeaderAux>) {}
+    override fun leave(leaderMain1: MainModel<LeaderAux>) {}
 
     override fun visit(leaderRoot1: RootModel<LeaderAux>): Return {
         return defaultVisitReturn

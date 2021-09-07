@@ -1,17 +1,17 @@
 package org.treeWare.model.action
 
-import org.treeWare.model.core.Model
-import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.operator.forEach
 
 // IMPLEMENTATION: ./Get.md
 
 suspend fun <MappingAux> get(
-    request: Model<Unit>,
-    mapping: Model<MappingAux>,
+    request: MainModel<Unit>,
+    mapping: MainModel<MappingAux>,
     visitor: GetVisitor<MappingAux>
-): Model<Unit> {
-    val response = MutableModel<Unit>(request.meta)
+): MainModel<Unit> {
+    val response = MutableMainModel<Unit>(request.meta)
     response.getOrNewRoot() // create an empty root
     forEach(leader = response, follower1 = request, follower2 = mapping, visitor = visitor)
     return response

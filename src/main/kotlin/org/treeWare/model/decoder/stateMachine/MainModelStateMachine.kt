@@ -1,17 +1,17 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.treeWare.model.core.Model
-import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 
-class ModelStateMachine<Aux>(
-    private val meta: Model<Resolved>,
+class MainModelStateMachine<Aux>(
+    private val meta: MainModel<Resolved>,
     private val expectedModelType: String,
     private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     private val stack: DecodingStack,
     private val isWildcardModel: Boolean
 ) : AbstractDecodingStateMachine(true) {
-    var model: MutableModel<Aux>? = null
+    var mainModel: MutableMainModel<Aux>? = null
         private set
 
     override fun decodeObjectStart(): Boolean {
@@ -40,18 +40,18 @@ class ModelStateMachine<Aux>(
         super.decodeKey(name)
 
         if (keyName != expectedModelType) return false
-        if (model == null) model = MutableModel(meta)
-        model?.also { decodeModel(expectedModelType, it) { auxStateMachineFactory(stack) } }
+        if (mainModel == null) mainModel = MutableMainModel(meta)
+        mainModel?.also { decodeModel(expectedModelType, it) { auxStateMachineFactory(stack) } }
         return true
     }
 
     private fun decodeModel(
         modelType: String,
-        newModel: MutableModel<Aux>,
+        newMain: MutableMainModel<Aux>,
         auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
     ) {
-        newModel.type = modelType
-        val root = newModel.getOrNewRoot()
+        newMain.type = modelType
+        val root = newMain.getOrNewRoot()
         stack.addFirst(RootModelStateMachine(root, stack, auxStateMachineFactory, isWildcardModel))
     }
 }

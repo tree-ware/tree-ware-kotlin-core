@@ -66,19 +66,19 @@ private abstract class LeaderState<Aux>(val element: ElementModel<Aux>, val stat
     }
 }
 
-private class ModelLeaderState<Aux>(
-    model: Model<Aux>,
+private class MainLeaderState<Aux>(
+    main: MainModel<Aux>,
     stateStack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
-) : LeaderState<Aux>(model, stateStack) {
-    override val visitCursorMove = VisitLeaderModel(model)
-    override val leaveCursorMove = LeaveLeaderModel(model)
+) : LeaderState<Aux>(main, stateStack) {
+    override val visitCursorMove = VisitLeaderMainModel(main)
+    override val leaveCursorMove = LeaveLeaderMainModel(main)
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
         val actionList = listOf<LeaderStateAction<Aux>> {
             val rootState =
-                dispatchVisit(model.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+                dispatchVisit(main.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         }
@@ -201,7 +201,7 @@ private class EntityKeysLeaderState<Aux>(
 private class LeaderStateFactoryVisitor<Aux>(
     private val stateStack: LeaderStateStack<Aux>
 ) : AbstractLeader1Follower0ModelVisitor<Aux, LeaderState<Aux>?>(null) {
-    override fun visit(leaderModel1: Model<Aux>) = ModelLeaderState(leaderModel1, stateStack, this)
+    override fun visit(leaderMain1: MainModel<Aux>) = MainLeaderState(leaderMain1, stateStack, this)
     override fun visit(leaderRoot1: RootModel<Aux>) = RootLeaderState(leaderRoot1, stateStack, this)
     override fun visit(leaderEntity1: EntityModel<Aux>) = EntityLeaderState(leaderEntity1, stateStack, this)
 

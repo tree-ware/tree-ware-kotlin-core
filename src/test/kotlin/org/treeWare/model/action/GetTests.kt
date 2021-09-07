@@ -6,9 +6,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
-import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.core.*
-import org.treeWare.model.getModel
+import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
+import org.treeWare.model.getMainModel
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -19,9 +19,9 @@ class GetTests {
         val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
         assertTrue(metaModelErrors.isEmpty())
 
-        val request = getModel<Unit>(metaModel, "model/address_book_get_person_request.json")
+        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json")
         val mapping =
-            getModel(metaModel, "model/address_book_mapping_model.json", "mapping") { StringAuxStateMachine(it) }
+            getMainModel(metaModel, "model/address_book_mapping_model.json", "mapping") { StringAuxStateMachine(it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
 

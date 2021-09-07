@@ -45,16 +45,16 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
     follower2: ElementModel<Follower2Aux>?,
     visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Return>
 ): Return? = when (leader.elementType) {
-    ModelElementType.MODEL -> {
-        if (follower1 != null) assert(follower1.elementType == ModelElementType.MODEL)
-        if (follower2 != null) assert(follower2.elementType == ModelElementType.MODEL)
+    ModelElementType.MAIN -> {
+        if (follower1 != null) assert(follower1.elementType == ModelElementType.MAIN)
+        if (follower2 != null) assert(follower2.elementType == ModelElementType.MAIN)
         if (
-            (follower1 == null || follower1.elementType == ModelElementType.MODEL) &&
-            (follower2 == null || follower2.elementType == ModelElementType.MODEL)
+            (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
+            (follower2 == null || follower2.elementType == ModelElementType.MAIN)
         ) visitor.visit(
-            leader as Model<LeaderAux>,
-            follower1 as Model<Follower1Aux>?,
-            follower2 as Model<Follower2Aux>?,
+            leader as MainModel<LeaderAux>,
+            follower1 as MainModel<Follower1Aux>?,
+            follower2 as MainModel<Follower2Aux>?,
         )
         else null
     }
@@ -184,16 +184,16 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
     visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Return>
 ) {
     when (leader.elementType) {
-        ModelElementType.MODEL -> {
-            if (follower1 != null) assert(follower1.elementType == ModelElementType.MODEL)
-            if (follower2 != null) assert(follower2.elementType == ModelElementType.MODEL)
+        ModelElementType.MAIN -> {
+            if (follower1 != null) assert(follower1.elementType == ModelElementType.MAIN)
+            if (follower2 != null) assert(follower2.elementType == ModelElementType.MAIN)
             if (
-                (follower1 == null || follower1.elementType == ModelElementType.MODEL) &&
-                (follower2 == null || follower2.elementType == ModelElementType.MODEL)
+                (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
+                (follower2 == null || follower2.elementType == ModelElementType.MAIN)
             ) visitor.leave(
-                leader as Model<LeaderAux>,
-                follower1 as Model<Follower1Aux>?,
-                follower2 as Model<Follower2Aux>?,
+                leader as MainModel<LeaderAux>,
+                follower1 as MainModel<Follower1Aux>?,
+                follower2 as MainModel<Follower2Aux>?,
             )
         }
         ModelElementType.ROOT -> {

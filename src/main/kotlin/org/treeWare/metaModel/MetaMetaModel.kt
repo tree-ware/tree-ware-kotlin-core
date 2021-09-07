@@ -3,7 +3,7 @@ package org.treeWare.metaModel
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutableListFieldModel
-import org.treeWare.model.core.MutableModel
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 
 enum class Multiplicity { REQUIRED, OPTIONAL, LIST }
@@ -29,7 +29,7 @@ enum class FieldType {
 
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
-fun newMetaMetaModel(): MutableModel<Resolved> {
+fun newMainMetaMetaModel(): MutableMainModel<Resolved> {
     val mainMeta = newMainMetaMeta()
     populateMain(mainMeta)
     val errors = validate(mainMeta)
@@ -37,7 +37,7 @@ fun newMetaMetaModel(): MutableModel<Resolved> {
     return mainMeta
 }
 
-private fun populateMain(mainMeta: MutableModel<Resolved>) {
+private fun populateMain(mainMeta: MutableMainModel<Resolved>) {
     newRootMetaMeta(mainMeta, "meta_model", "meta_model", "tree_ware_meta_model.main")
     val packagesMeta = newPackagesMetaMeta(mainMeta)
     populatePackages(packagesMeta)

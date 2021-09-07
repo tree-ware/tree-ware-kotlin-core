@@ -5,7 +5,7 @@ import org.treeWare.metaModel.getEnumerationsMeta
 import org.treeWare.metaModel.getPackagesMeta
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.Model
+import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.Resolved
 
 private class NonPrimitiveState {
@@ -13,13 +13,13 @@ private class NonPrimitiveState {
     val entities = mutableMapOf<String, EntityModel<Resolved>>()
 }
 
-fun getNonPrimitiveTypes(mainMeta: Model<Resolved>): NonPrimitiveTypes {
+fun getNonPrimitiveTypes(mainMeta: MainModel<Resolved>): NonPrimitiveTypes {
     val state = NonPrimitiveState()
     getFromPackages(mainMeta, state)
     return NonPrimitiveTypes(state.enumerations, state.entities)
 }
 
-private fun getFromPackages(mainMeta: Model<Resolved>, state: NonPrimitiveState) {
+private fun getFromPackages(mainMeta: MainModel<Resolved>, state: NonPrimitiveState) {
     val packagesMeta = getPackagesMeta(mainMeta)
     packagesMeta.values.forEach { getFromPackage(it, state) }
 }

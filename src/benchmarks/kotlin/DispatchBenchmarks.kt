@@ -1,13 +1,8 @@
 package org.treeWare.model.operator
 
 import org.openjdk.jmh.annotations.*
-import org.treeWare.model.core.EntityKeysModel
-import org.treeWare.model.core.Model
-import org.treeWare.model.core.MutableEntityKeysModel
-import org.treeWare.model.core.MutableModel
-import org.treeWare.schema.core.MutableEntitySchema
-import org.treeWare.schema.core.MutableRootSchema
-import org.treeWare.schema.core.MutableSchema
+import org.treeWare.metaModel.newMainMetaMeta
+import org.treeWare.model.core.*
 import java.util.concurrent.TimeUnit
 
 @State(Scope.Benchmark)
@@ -15,7 +10,7 @@ import java.util.concurrent.TimeUnit
 @Warmup(iterations = 2)
 @Measurement(iterations = 2, time = 1, timeUnit = TimeUnit.SECONDS)
 class DispatchBenchmarks {
-    private val model = getModel()
+    private val model = getMainModel()
     private val entityKeysModel = getEntityKeysModel()
     private val visitor = Visitor()
 
@@ -34,15 +29,14 @@ class DispatchBenchmarks {
     }
 }
 
-fun getModel(): Model<Unit> {
-    val rootSchema = MutableRootSchema("test_model", null, "test_package", "test_root")
-    val schema = MutableSchema(rootSchema, listOf())
-    return MutableModel(schema)
+fun getMainModel(): MainModel<Unit> {
+    return MutableMainModel(newMainMetaMeta())
 }
 
 fun getEntityKeysModel(): EntityKeysModel<Unit> {
-    val entitySchema = MutableEntitySchema("test_entity", null, listOf())
-    return MutableEntityKeysModel(entitySchema)
+    val dummyParent =
+        MutableAssociationModel<Unit>(MutableSingleFieldModel(null, MutableRootModel(null, MutableMainModel(null))))
+    return MutableEntityKeysModel(null, dummyParent)
 }
 
 class Visitor : AbstractLeader1Follower0ModelVisitor<Unit, TraversalAction>(TraversalAction.ABORT_TREE)

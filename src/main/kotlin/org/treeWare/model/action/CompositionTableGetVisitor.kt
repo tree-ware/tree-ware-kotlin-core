@@ -28,15 +28,15 @@ class CompositionTableGetVisitor<MappingAux>(
     }
 
     override suspend fun visit(
-        responseModel: Model<Unit>,
-        requestModel: Model<Unit>?,
-        mappingModel: Model<MappingAux>?
+        responseMain: MainModel<Unit>,
+        requestMain: MainModel<Unit>?,
+        mappingMain: MainModel<MappingAux>?
     ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
-        responseModel: Model<Unit>,
-        requestModel: Model<Unit>?,
-        mappingModel: Model<MappingAux>?
+        responseMain: MainModel<Unit>,
+        requestMain: MainModel<Unit>?,
+        mappingMain: MainModel<MappingAux>?
     ) {
     }
 

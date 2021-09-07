@@ -4,20 +4,20 @@ import org.treeWare.model.core.*
 
 // Functions for creating the meta-meta-model.
 
-fun newMainMetaMeta(): MutableModel<Resolved> {
-    val mainMeta = MutableModel<Resolved>(null)
+fun newMainMetaMeta(): MutableMainModel<Resolved> {
+    val mainMeta = MutableMainModel<Resolved>(null)
     mainMeta.root = MutableRootModel(null, mainMeta)
     return mainMeta
 }
 
-fun newRootMetaMeta(mainMeta: MutableModel<Resolved>, name: String, entityName: String, packageName: String) {
+fun newRootMetaMeta(mainMeta: MutableMainModel<Resolved>, name: String, entityName: String, packageName: String) {
     val root = newCompositionSingleField(mainMeta.root, "root")
     newStringSingleField(root, "name", name)
     newStringSingleField(root, "entity", entityName)
     newStringSingleField(root, "package", packageName)
 }
 
-fun newPackagesMetaMeta(mainMeta: MutableModel<Resolved>): MutableListFieldModel<Resolved> =
+fun newPackagesMetaMeta(mainMeta: MutableMainModel<Resolved>): MutableListFieldModel<Resolved> =
     newCompositionListField(mainMeta.root, "packages")
 
 fun newPackageMetaMeta(
@@ -152,7 +152,7 @@ private fun newFieldMetaMeta(
 // need to be passed to the model constructors. So dummy parent instances are
 // created and used.
 
-private val dummyMain = MutableModel<Resolved>(null)
+private val dummyMain = MutableMainModel<Resolved>(null)
 private val dummyRoot = MutableRootModel(null, dummyMain)
 private val dummyField = MutableSingleFieldModel(null, dummyRoot)
 

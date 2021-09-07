@@ -10,12 +10,12 @@ import org.treeWare.model.core.*
  *
  * Side effects: none
  */
-fun validateStructure(mainMeta: Model<Resolved>) = listOf(
+fun validateStructure(mainMeta: MainModel<Resolved>) = listOf(
     validateRoot(mainMeta),
     validatePackages(mainMeta)
 ).flatten()
 
-private fun validateRoot(mainMeta: Model<Resolved>): List<String> {
+private fun validateRoot(mainMeta: MainModel<Resolved>): List<String> {
     val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root is missing")
     return listOf(
         validateSingleStringField(rootMeta, "name", "Root"),
@@ -24,7 +24,7 @@ private fun validateRoot(mainMeta: Model<Resolved>): List<String> {
     ).flatten()
 }
 
-private fun validatePackages(mainMeta: Model<Resolved>): List<String> {
+private fun validatePackages(mainMeta: MainModel<Resolved>): List<String> {
     val packagesMeta =
         runCatching { getPackagesMeta(mainMeta) }.getOrNull() ?: return listOf("Packages are missing")
     return packagesMeta.values.flatMapIndexed { index, packageMeta -> validatePackage(packageMeta, index) }
