@@ -136,6 +136,32 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
         )
         else null
     }
+    ModelElementType.PASSWORD1WAY -> {
+        if (follower1 != null) assert(follower1.elementType == ModelElementType.PASSWORD1WAY)
+        if (follower2 != null) assert(follower2.elementType == ModelElementType.PASSWORD1WAY)
+        if (
+            (follower1 == null || follower1.elementType == ModelElementType.PASSWORD1WAY) &&
+            (follower2 == null || follower2.elementType == ModelElementType.PASSWORD1WAY)
+        ) visitor.visit(
+            leader as Password1wayModel<LeaderAux>,
+            follower1 as Password1wayModel<Follower1Aux>?,
+            follower2 as Password1wayModel<Follower2Aux>?,
+        )
+        else null
+    }
+    ModelElementType.PASSWORD2WAY -> {
+        if (follower1 != null) assert(follower1.elementType == ModelElementType.PASSWORD2WAY)
+        if (follower2 != null) assert(follower2.elementType == ModelElementType.PASSWORD2WAY)
+        if (
+            (follower1 == null || follower1.elementType == ModelElementType.PASSWORD2WAY) &&
+            (follower2 == null || follower2.elementType == ModelElementType.PASSWORD2WAY)
+        ) visitor.visit(
+            leader as Password2wayModel<LeaderAux>,
+            follower1 as Password2wayModel<Follower1Aux>?,
+            follower2 as Password2wayModel<Follower2Aux>?,
+        )
+        else null
+    }
     ModelElementType.ENUMERATION -> {
         if (follower1 != null) assert(follower1.elementType == ModelElementType.ENUMERATION)
         if (follower2 != null) assert(follower2.elementType == ModelElementType.ENUMERATION)
@@ -266,6 +292,30 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 leader as AliasModel<LeaderAux>,
                 follower1 as AliasModel<Follower1Aux>?,
                 follower2 as AliasModel<Follower2Aux>?,
+            )
+        }
+        ModelElementType.PASSWORD1WAY -> {
+            if (follower1 != null) assert(follower1.elementType == ModelElementType.PASSWORD1WAY)
+            if (follower2 != null) assert(follower2.elementType == ModelElementType.PASSWORD1WAY)
+            if (
+                (follower1 == null || follower1.elementType == ModelElementType.PASSWORD1WAY) &&
+                (follower2 == null || follower2.elementType == ModelElementType.PASSWORD1WAY)
+            ) visitor.leave(
+                leader as Password1wayModel<LeaderAux>,
+                follower1 as Password1wayModel<Follower1Aux>?,
+                follower2 as Password1wayModel<Follower2Aux>?,
+            )
+        }
+        ModelElementType.PASSWORD2WAY -> {
+            if (follower1 != null) assert(follower1.elementType == ModelElementType.PASSWORD2WAY)
+            if (follower2 != null) assert(follower2.elementType == ModelElementType.PASSWORD2WAY)
+            if (
+                (follower1 == null || follower1.elementType == ModelElementType.PASSWORD2WAY) &&
+                (follower2 == null || follower2.elementType == ModelElementType.PASSWORD2WAY)
+            ) visitor.leave(
+                leader as Password2wayModel<LeaderAux>,
+                follower1 as Password2wayModel<Follower1Aux>?,
+                follower2 as Password2wayModel<Follower2Aux>?,
             )
         }
         ModelElementType.ENUMERATION -> {

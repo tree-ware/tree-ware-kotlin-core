@@ -30,6 +30,12 @@ interface Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return> {
     fun visit(leaderValue1: AliasModel<LeaderAux>, followerValue1: AliasModel<FollowerAux>?): Return
     fun leave(leaderValue1: AliasModel<LeaderAux>, followerValue1: AliasModel<FollowerAux>?)
 
+    fun visit(leaderValue1: Password1wayModel<LeaderAux>, followerValue1: Password1wayModel<FollowerAux>?): Return
+    fun leave(leaderValue1: Password1wayModel<LeaderAux>, followerValue1: Password1wayModel<FollowerAux>?)
+
+    fun visit(leaderValue1: Password2wayModel<LeaderAux>, followerValue1: Password2wayModel<FollowerAux>?): Return
+    fun leave(leaderValue1: Password2wayModel<LeaderAux>, followerValue1: Password2wayModel<FollowerAux>?)
+
     fun visit(
         leaderValue1: EnumerationModel<LeaderAux>,
         followerValue1: EnumerationModel<FollowerAux>?

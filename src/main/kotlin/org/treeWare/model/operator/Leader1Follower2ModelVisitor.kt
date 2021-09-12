@@ -94,6 +94,30 @@ interface Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Re
     )
 
     suspend fun visit(
+        leaderValue1: Password1wayModel<LeaderAux>,
+        followerValue1: Password1wayModel<Follower1Aux>?,
+        followerValue2: Password1wayModel<Follower2Aux>?
+    ): Return
+
+    suspend fun leave(
+        leaderValue1: Password1wayModel<LeaderAux>,
+        followerValue1: Password1wayModel<Follower1Aux>?,
+        followerValue2: Password1wayModel<Follower2Aux>?
+    )
+
+    suspend fun visit(
+        leaderValue1: Password2wayModel<LeaderAux>,
+        followerValue1: Password2wayModel<Follower1Aux>?,
+        followerValue2: Password2wayModel<Follower2Aux>?
+    ): Return
+
+    suspend fun leave(
+        leaderValue1: Password2wayModel<LeaderAux>,
+        followerValue1: Password2wayModel<Follower1Aux>?,
+        followerValue2: Password2wayModel<Follower2Aux>?
+    )
+
+    suspend fun visit(
         leaderValue1: EnumerationModel<LeaderAux>,
         followerValue1: EnumerationModel<Follower1Aux>?,
         followerValue2: EnumerationModel<Follower2Aux>?

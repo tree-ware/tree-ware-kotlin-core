@@ -167,6 +167,32 @@ class CompositionTableGetVisitor<MappingAux>(
     }
 
     override suspend fun visit(
+        leaderValue1: Password1wayModel<Unit>,
+        followerValue1: Password1wayModel<Unit>?,
+        followerValue2: Password1wayModel<MappingAux>?
+    ) = TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        leaderValue1: Password1wayModel<Unit>,
+        followerValue1: Password1wayModel<Unit>?,
+        followerValue2: Password1wayModel<MappingAux>?
+    ) {
+    }
+
+    override suspend fun visit(
+        leaderValue1: Password2wayModel<Unit>,
+        followerValue1: Password2wayModel<Unit>?,
+        followerValue2: Password2wayModel<MappingAux>?
+    ) = TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        leaderValue1: Password2wayModel<Unit>,
+        followerValue1: Password2wayModel<Unit>?,
+        followerValue2: Password2wayModel<MappingAux>?
+    ) {
+    }
+
+    override suspend fun visit(
         responseField: EnumerationModel<Unit>,
         requestField: EnumerationModel<Unit>?,
         mappingField: EnumerationModel<MappingAux>?

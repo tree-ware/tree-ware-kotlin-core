@@ -48,6 +48,12 @@ fun <LeaderAux, Return> dispatchVisit(
     ModelElementType.ALIAS -> {
         visitor.visit(leader as AliasModel<LeaderAux>)
     }
+    ModelElementType.PASSWORD1WAY -> {
+        visitor.visit(leader as Password1wayModel<LeaderAux>)
+    }
+    ModelElementType.PASSWORD2WAY -> {
+        visitor.visit(leader as Password2wayModel<LeaderAux>)
+    }
     ModelElementType.ENUMERATION -> {
         visitor.visit(leader as EnumerationModel<LeaderAux>)
     }
@@ -84,6 +90,12 @@ fun <LeaderAux, Return> dispatchLeave(
         }
         ModelElementType.ALIAS -> {
             visitor.leave(leader as AliasModel<LeaderAux>)
+        }
+        ModelElementType.PASSWORD1WAY -> {
+            visitor.leave(leader as Password1wayModel<LeaderAux>)
+        }
+        ModelElementType.PASSWORD2WAY -> {
+            visitor.leave(leader as Password2wayModel<LeaderAux>)
         }
         ModelElementType.ENUMERATION -> {
             visitor.leave(leader as EnumerationModel<LeaderAux>)

@@ -187,6 +187,103 @@ class MutableAliasModel<Aux>(
     override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
 }
 
+class MutablePassword1wayModel<Aux>(
+    override val parent: MutableFieldModel<Aux>,
+    private val hasher: Password1wayHasherV1?
+) : MutableElementModel<Aux>(), Password1wayModel<Aux> {
+    override var unhashed: String? = null
+        internal set
+
+    override var hashed: String? = null
+        internal set
+
+    override var hashVersion: Int = 0
+        internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is Password1wayModel<*>) return false
+        if (this.unhashed != that.unhashed) return false
+        if (this.hashed != that.hashed) return false
+        if (this.hashVersion != that.hashVersion) return false
+        return true
+    }
+
+    fun setUnhashed(unhashed: String): Boolean {
+        if (hasher != null) {
+            this.unhashed = null
+            this.hashed = hasher.hash(unhashed)
+            this.hashVersion = 1
+        } else {
+            this.unhashed = unhashed
+            this.hashed = null
+            this.hashVersion = 0
+        }
+        return true
+    }
+
+    fun setHashed(hashed: String, hashVersion: Int): Boolean {
+        if (hashVersion <= 0) return false
+        this.unhashed = null
+        this.hashed = hashed
+        this.hashVersion = hashVersion
+        return true
+    }
+
+    fun verify(thatUnhashed: String): Boolean {
+        if (hasher == null) return false
+        if (this.hashVersion != 1) return false
+        return this.hashed?.let { hasher.verify(thatUnhashed, it) } ?: false
+    }
+}
+
+class MutablePassword2wayModel<Aux>(
+    override val parent: MutableFieldModel<Aux>,
+    private val cipher: Password2wayCipherV1?
+) : MutableElementModel<Aux>(), Password2wayModel<Aux> {
+    override var unencrypted: String? = null
+        internal set
+
+    override var encrypted: String? = null
+        internal set
+
+    override var encryptionVersion: Int = 0
+        internal set
+
+    override fun matches(that: ElementModel<*>): Boolean {
+        if (that !is Password2wayModel<*>) return false
+        if (this.unencrypted != that.unencrypted) return false
+        if (this.encrypted != that.encrypted) return false
+        if (this.encryptionVersion != that.encryptionVersion) return false
+        return true
+    }
+
+    fun setUnencrypted(unencrypted: String): Boolean {
+        if (cipher != null) {
+            this.unencrypted = null
+            this.encrypted = cipher.encrypt(unencrypted)
+            this.encryptionVersion = 1
+        } else {
+            this.unencrypted = unencrypted
+            this.encrypted = null
+            this.encryptionVersion = 0
+        }
+        return true
+    }
+
+    fun setEncrypted(encrypted: String, encryptionVersion: Int): Boolean {
+        if (encryptionVersion <= 0) return false
+        this.unencrypted = null
+        this.encrypted = encrypted
+        this.encryptionVersion = encryptionVersion
+        return true
+    }
+
+    fun decrypt(): String? {
+        if (cipher == null) return unencrypted
+        return this.encrypted?.let { cipher.decrypt(it) }
+    }
+}
+
 class MutableEnumerationModel<Aux>(
     parent: MutableFieldModel<Aux>
 ) : MutableScalarValueModel<Aux>(parent), EnumerationModel<Aux> {
