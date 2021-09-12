@@ -53,6 +53,18 @@ abstract class AbstractLeader1Follower0ModelVisitor<LeaderAux, Return>(
 
     override fun leave(leaderValue1: AliasModel<LeaderAux>) {}
 
+    override fun visit(leaderValue1: Password1wayModel<LeaderAux>): Return {
+        return defaultVisitReturn
+    }
+
+    override fun leave(leaderValue1: Password1wayModel<LeaderAux>) {}
+
+    override fun visit(leaderValue1: Password2wayModel<LeaderAux>): Return {
+        return defaultVisitReturn
+    }
+
+    override fun leave(leaderValue1: Password2wayModel<LeaderAux>) {}
+
     override fun visit(leaderValue1: EnumerationModel<LeaderAux>): Return {
         return defaultVisitReturn
     }

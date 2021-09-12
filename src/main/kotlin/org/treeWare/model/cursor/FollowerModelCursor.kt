@@ -319,6 +319,12 @@ private class FollowerStateFactoryVisitor<LeaderAux, FollowerAux>(
 
     override fun visit(leaderValue1: PrimitiveModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
     override fun visit(leaderValue1: AliasModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: Password1wayModel<FollowerAux>) =
+        ScalarValueFollowerState(leaderValue1, stateStack)
+
+    override fun visit(leaderValue1: Password2wayModel<FollowerAux>) =
+        ScalarValueFollowerState(leaderValue1, stateStack)
+
     override fun visit(leaderValue1: EnumerationModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
     override fun visit(leaderValue1: AssociationModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
 

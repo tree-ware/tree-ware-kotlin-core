@@ -91,6 +91,22 @@ fun <LeaderAux, FollowerAux, Return> dispatchVisit(
         )
         else null
     }
+    ModelElementType.PASSWORD1WAY -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD1WAY)
+        if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.visit(
+            leader as Password1wayModel<LeaderAux>,
+            follower as Password1wayModel<FollowerAux>?
+        )
+        else null
+    }
+    ModelElementType.PASSWORD2WAY -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD2WAY)
+        if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.visit(
+            leader as Password2wayModel<LeaderAux>,
+            follower as Password2wayModel<FollowerAux>?
+        )
+        else null
+    }
     ModelElementType.ENUMERATION -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION)
         if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.visit(
@@ -170,6 +186,20 @@ fun <LeaderAux, FollowerAux, Return> dispatchLeave(
             if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.leave(
                 leader as AliasModel<LeaderAux>,
                 follower as AliasModel<FollowerAux>?
+            )
+        }
+        ModelElementType.PASSWORD1WAY -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD1WAY)
+            if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.leave(
+                leader as Password1wayModel<LeaderAux>,
+                follower as Password1wayModel<FollowerAux>?
+            )
+        }
+        ModelElementType.PASSWORD2WAY -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD2WAY)
+            if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.leave(
+                leader as Password2wayModel<LeaderAux>,
+                follower as Password2wayModel<FollowerAux>?
             )
         }
         ModelElementType.ENUMERATION -> {

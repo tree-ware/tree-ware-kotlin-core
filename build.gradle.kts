@@ -7,6 +7,8 @@ version = "1.0-SNAPSHOT"
 val kotlinCoroutinesVersion = "1.5.0"
 val kotlinBenchmarkVersion = "0.3.1"
 
+val bouncyCastleVersion = "1.69"
+val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
 
 val log4j2Version = "2.14.1"
@@ -35,6 +37,8 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
+    implementation("org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion")
+    implementation("org.mindrot:jbcrypt:$jbcryptVersion")
     implementation("javax.json:javax.json-api:$jsonVersion")
     implementation("org.glassfish:javax.json:$jsonVersion")
 

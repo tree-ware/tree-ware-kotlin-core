@@ -8,6 +8,8 @@ enum class ModelElementType {
     LIST_FIELD,
     PRIMITIVE,
     ALIAS,
+    PASSWORD1WAY,
+    PASSWORD2WAY,
     ENUMERATION,
     ASSOCIATION,
     ENTITY_KEYS

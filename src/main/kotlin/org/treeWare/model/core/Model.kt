@@ -85,6 +85,28 @@ interface AliasModel<Aux> : ElementModel<Aux> {
     val value: Any?
 }
 
+interface Password1wayModel<Aux> : ElementModel<Aux> {
+    override val elementType: ModelElementType
+        get() = ModelElementType.PASSWORD1WAY
+
+    override val parent: FieldModel<Aux>
+
+    val unhashed: String?
+    val hashed: String?
+    val hashVersion: Int
+}
+
+interface Password2wayModel<Aux> : ElementModel<Aux> {
+    override val elementType: ModelElementType
+        get() = ModelElementType.PASSWORD2WAY
+
+    override val parent: FieldModel<Aux>
+
+    val unencrypted: String?
+    val encrypted: String?
+    val encryptionVersion: Int
+}
+
 interface EnumerationModel<Aux> : ElementModel<Aux> {
     override val elementType: ModelElementType
         get() = ModelElementType.ENUMERATION

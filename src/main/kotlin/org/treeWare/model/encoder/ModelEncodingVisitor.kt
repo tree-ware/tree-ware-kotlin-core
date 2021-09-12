@@ -75,7 +75,7 @@ class ModelEncodingVisitor<Aux>(
         wireFormatEncoder.encodeListEnd()
     }
 
-    // Scalar fields
+    // Values
 
     override fun visit(leaderValue1: PrimitiveModel<Aux>): TraversalAction {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
@@ -115,6 +115,44 @@ class ModelEncodingVisitor<Aux>(
 
     override fun visit(leaderValue1: AliasModel<Aux>): TraversalAction = TraversalAction.CONTINUE
     override fun leave(leaderValue1: AliasModel<Aux>) {}
+
+    override fun visit(leaderValue1: Password1wayModel<Aux>): TraversalAction {
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
+        val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
+        if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        wireFormatEncoder.encodeObjectStart(fieldName)
+        if (isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        leaderValue1.unhashed?.also { wireFormatEncoder.encodeStringField("unhashed", it) }
+        leaderValue1.hashed?.also {
+            wireFormatEncoder.encodeStringField("hashed", it)
+            wireFormatEncoder.encodeNumericField("hash_version", leaderValue1.hashVersion)
+        }
+        return TraversalAction.CONTINUE
+    }
+
+    override fun leave(leaderValue1: Password1wayModel<Aux>) {
+        wireFormatEncoder.encodeObjectEnd()
+    }
+
+    override fun visit(leaderValue1: Password2wayModel<Aux>): TraversalAction {
+        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
+        val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
+        if (!isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        wireFormatEncoder.encodeObjectStart(fieldName)
+        if (isListElement) auxEncoder?.also { it.encode(auxFieldName, leaderValue1.aux, wireFormatEncoder) }
+        leaderValue1.unencrypted?.also { wireFormatEncoder.encodeStringField("unencrypted", it) }
+        leaderValue1.encrypted?.also {
+            wireFormatEncoder.encodeStringField("encrypted", it)
+            wireFormatEncoder.encodeNumericField("encryption_version", leaderValue1.encryptionVersion)
+        }
+        return TraversalAction.CONTINUE
+    }
+
+    override fun leave(leaderValue1: Password2wayModel<Aux>) {
+        wireFormatEncoder.encodeObjectEnd()
+    }
 
     override fun visit(leaderValue1: EnumerationModel<Aux>): TraversalAction {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false

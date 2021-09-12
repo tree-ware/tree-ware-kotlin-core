@@ -214,6 +214,8 @@ private class LeaderStateFactoryVisitor<Aux>(
 
     override fun visit(leaderValue1: PrimitiveModel<Aux>) = ScalarValueLeaderState(leaderValue1, stateStack)
     override fun visit(leaderValue1: AliasModel<Aux>) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: Password1wayModel<Aux>) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: Password2wayModel<Aux>) = ScalarValueLeaderState(leaderValue1, stateStack)
     override fun visit(leaderValue1: EnumerationModel<Aux>) = ScalarValueLeaderState(leaderValue1, stateStack)
     override fun visit(leaderValue1: AssociationModel<Aux>) = ScalarValueLeaderState(leaderValue1, stateStack)
 
