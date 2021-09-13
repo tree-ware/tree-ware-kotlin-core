@@ -115,6 +115,26 @@
                     "package": "address_book.main"
                   },
                   "multiplicity": "list"
+                },
+                {
+                  "name": "password",
+                  "type": "password1way",
+                  "multiplicity": "optional"
+                },
+                {
+                  "name": "previous_passwords",
+                  "type": "password1way",
+                  "multiplicity": "list"
+                },
+                {
+                  "name": "main_secret",
+                  "type": "password2way",
+                  "multiplicity": "optional"
+                },
+                {
+                  "name": "other_secrets",
+                  "type": "password2way",
+                  "multiplicity": "list"
                 }
               ]
             },

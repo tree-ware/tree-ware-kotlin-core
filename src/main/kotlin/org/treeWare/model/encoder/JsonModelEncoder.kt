@@ -9,6 +9,7 @@ fun <Aux> encodeJson(
     element: ElementModel<Aux>,
     auxEncoder: AuxEncoder?,
     writer: Writer,
+    encodePasswords: EncodePasswords = EncodePasswords.NONE,
     prettyPrint: Boolean = false,
     indentSizeInSpaces: Int = 2
 ): Boolean {

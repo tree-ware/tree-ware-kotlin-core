@@ -1,26 +1,27 @@
 package org.treeWare.model.decoder.stateMachine
 
 import org.apache.logging.log4j.LogManager
-import org.treeWare.model.core.MutableAssociationModel
+import org.treeWare.model.core.MutablePassword2wayModel
+import java.math.BigDecimal
 
-class AssociationModelStateMachine<Aux>(
+class Password2wayModelStateMachine<Aux>(
     private val isListElement: Boolean,
-    private val associationFactory: () -> MutableAssociationModel<Aux>,
+    private val passwordFactory: () -> MutablePassword2wayModel<Aux>,
     private val stack: DecodingStack,
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private var auxStateMachine: AuxDecodingStateMachine<Aux>? = null
-    private var association: MutableAssociationModel<Aux>? = null
+    private var password2way: MutablePassword2wayModel<Aux>? = null
     private val logger = LogManager.getLogger()
 
     override fun setAux(aux: Aux) {
-        assert(association != null)
-        association?.aux = aux
+        assert(password2way != null)
+        password2way?.aux = aux
     }
 
     override fun decodeObjectStart(): Boolean {
-        association = associationFactory()
-        assert(association != null)
+        password2way = passwordFactory()
+        assert(password2way != null)
         return true
     }
 
@@ -29,7 +30,7 @@ class AssociationModelStateMachine<Aux>(
             // Remove self from stack
             stack.pollFirst()
         } else {
-            auxStateMachine?.getAux()?.also { association?.aux = it }
+            auxStateMachine?.getAux()?.also { password2way?.aux = it }
             // This state-machine instance gets reused in lists, so clear it.
             auxStateMachine = null
         }
@@ -50,7 +51,7 @@ class AssociationModelStateMachine<Aux>(
             stack.pollFirst()
             val parentStateMachine = stack.peekFirst()
             if (parentStateMachine == null) {
-                logger.error("No parent decoding state machine for association")
+                logger.error("No parent decoding state machine for password2way")
                 return false
             }
             return parentStateMachine.decodeListEnd()
@@ -70,7 +71,7 @@ class AssociationModelStateMachine<Aux>(
             stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
             return true
         }
-        val (fieldName, auxName) = fieldAndAuxNames
+        val (_, auxName) = fieldAndAuxNames
         if (auxName != null) {
             val auxStateMachine = auxStateMachineFactory()
             if (auxStateMachine != null) {
@@ -78,21 +79,22 @@ class AssociationModelStateMachine<Aux>(
                 auxStateMachine.newAux()
                 this.auxStateMachine = auxStateMachine
             } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
-            return true
         }
-        if (fieldName == "path_keys") {
-            association?.also {
-                stack.addFirst(AssociationPathStateMachine(it.newValue(), stack))
-            }
-            return true
-        }
-        stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
         return true
     }
 
-    override fun decodeNullValue(): Boolean {
-        association = associationFactory()
-        assert(association != null)
-        return association?.setNullValue() ?: false
+    override fun decodeStringValue(value: String): Boolean {
+        super.decodeStringValue(value)
+        when (keyName) {
+            "unencrypted" -> password2way?.unencrypted = value
+            "encrypted" -> password2way?.encrypted = value
+        }
+        return true
+    }
+
+    override fun decodeNumericValue(value: BigDecimal): Boolean {
+        super.decodeNumericValue(value)
+        if (keyName == "encryption_version") password2way?.encryptionVersion = value.toInt()
+        return true
     }
 }
