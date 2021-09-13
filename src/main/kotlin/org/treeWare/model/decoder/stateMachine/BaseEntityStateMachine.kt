@@ -96,8 +96,10 @@ class BaseEntityStateMachine<Aux>(
             return true
         }
         return when (getFieldTypeMeta(fieldMeta)) {
-            FieldType.COMPOSITION -> handleComposition(fieldMeta)
+            FieldType.PASSWORD1WAY -> handlePassword1way(fieldMeta)
+            FieldType.PASSWORD2WAY -> handlePassword2way(fieldMeta)
             FieldType.ASSOCIATION -> handleAssociation(fieldMeta)
+            FieldType.COMPOSITION -> handleComposition(fieldMeta)
             else -> handleScalar(fieldMeta)
         }
     }
@@ -126,6 +128,70 @@ class BaseEntityStateMachine<Aux>(
                     value
                 },
                 stack
+            )
+            addElementStateMachineToStack(elementStateMachine)
+        }
+        return true
+    }
+
+    private fun handlePassword1way(fieldMeta: EntityModel<Resolved>): Boolean {
+        val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
+        if (isListFieldMeta(fieldMeta)) {
+            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listElementStateMachine = Password1wayModelStateMachine(
+                true,
+                {
+                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutablePassword1wayModel<Aux>
+                    listFieldModel.addValue(value)
+                    value
+                },
+                stack,
+                auxStateMachineFactory
+            )
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
+        } else {
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val elementStateMachine = Password1wayModelStateMachine(
+                false,
+                {
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutablePassword1wayModel<Aux>
+                    singleFieldModel.setValue(value)
+                    value
+                },
+                stack,
+                auxStateMachineFactory
+            )
+            addElementStateMachineToStack(elementStateMachine)
+        }
+        return true
+    }
+
+    private fun handlePassword2way(fieldMeta: EntityModel<Resolved>): Boolean {
+        val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
+        if (isListFieldMeta(fieldMeta)) {
+            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listElementStateMachine = Password2wayModelStateMachine(
+                true,
+                {
+                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutablePassword2wayModel<Aux>
+                    listFieldModel.addValue(value)
+                    value
+                },
+                stack,
+                auxStateMachineFactory
+            )
+            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
+        } else {
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val elementStateMachine = Password2wayModelStateMachine(
+                false,
+                {
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutablePassword2wayModel<Aux>
+                    singleFieldModel.setValue(value)
+                    value
+                },
+                stack,
+                auxStateMachineFactory
             )
             addElementStateMachineToStack(elementStateMachine)
         }

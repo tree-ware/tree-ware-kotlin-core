@@ -1,5 +1,7 @@
 package org.treeWare.model
 
+import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
@@ -8,6 +10,7 @@ import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
 import org.treeWare.model.decoder.stateMachine.DecodingStack
 import org.treeWare.model.encoder.AuxEncoder
+import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.encodeJson
 import java.io.InputStreamReader
 import java.io.Reader
@@ -15,6 +18,21 @@ import java.io.StringWriter
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+
+fun <Aux> testRoundTrip(
+    inputFilePath: String,
+    outputFilePath: String? = null,
+    auxEncoder: AuxEncoder? = null,
+    expectedModelType: String = "data",
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
+) {
+    val metaModel = newAddressBookMetaModel()
+    val metaModelErrors = validate(metaModel)
+    assertTrue(metaModelErrors.isEmpty())
+
+    val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
+    assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, EncodePasswords.NONE)
+}
 
 fun getFileReader(filePath: String): Reader? =
     ClassLoader.getSystemResourceAsStream(filePath)?.let { InputStreamReader(it) }
@@ -42,10 +60,15 @@ fun <Aux> getMainModel(
 
 /** Encodes the model element to JSON and asserts that it matches the JSON in the file.
  */
-fun <Aux> assertMatchesJson(element: ElementModel<Aux>, auxEncoder: AuxEncoder?, jsonFilePath: String) {
+fun <Aux> assertMatchesJson(
+    element: ElementModel<Aux>,
+    auxEncoder: AuxEncoder?,
+    jsonFilePath: String,
+    encodePasswords: EncodePasswords
+) {
     val jsonWriter = StringWriter()
     val isEncoded = try {
-        encodeJson(element, auxEncoder, jsonWriter, true)
+        encodeJson(element, auxEncoder, jsonWriter, encodePasswords, true)
     } catch (e: Throwable) {
         e.printStackTrace()
         println("Encoded so far:")

@@ -9,6 +9,8 @@ fun <Aux> newMutableValueModel(
 ): MutableElementModel<Aux> {
     if (fieldMeta == null) throw IllegalStateException("fieldMeta is null when creating mutable value model")
     return when (getFieldTypeMeta(fieldMeta)) {
+        FieldType.PASSWORD1WAY -> MutablePassword1wayModel(parent)
+        FieldType.PASSWORD2WAY -> MutablePassword2wayModel(parent)
         FieldType.ENUMERATION -> MutableEnumerationModel(parent)
         FieldType.ASSOCIATION -> MutableAssociationModel(parent)
         FieldType.COMPOSITION -> MutableEntityModel(fieldMeta.aux?.compositionMeta, parent)

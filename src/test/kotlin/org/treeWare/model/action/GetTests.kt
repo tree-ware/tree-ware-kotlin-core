@@ -8,6 +8,7 @@ import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
+import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.getMainModel
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -85,6 +86,6 @@ class GetTests {
             delegate.fetchCompositionList(ofType(), listOf(), "relation_mapping")
             delegate.popPathEntity()
         }
-        assertMatchesJson(response, null, "model/address_book_get_person_response.json")
+        assertMatchesJson(response, null, "model/address_book_get_person_response.json", EncodePasswords.NONE)
     }
 }

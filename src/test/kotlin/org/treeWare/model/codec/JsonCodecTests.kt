@@ -1,16 +1,9 @@
 package org.treeWare.model.codec
 
-import org.treeWare.metaModel.newAddressBookMetaModel
-import org.treeWare.metaModel.validation.validate
-import org.treeWare.model.assertMatchesJson
-import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
-import org.treeWare.model.decoder.stateMachine.DecodingStack
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
-import org.treeWare.model.encoder.AuxEncoder
 import org.treeWare.model.encoder.ErrorAuxEncoder
-import org.treeWare.model.getMainModel
+import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class JsonCodecTests {
     @Test
@@ -41,20 +34,5 @@ class JsonCodecTests {
     @Test
     fun `JSON codec filter-all round trip must be lossless`() {
         testRoundTrip<Unit>("model/address_book_filter_all_model.json")
-    }
-
-    private fun <Aux> testRoundTrip(
-        inputFilePath: String,
-        outputFilePath: String? = null,
-        auxEncoder: AuxEncoder? = null,
-        expectedModelType: String = "data",
-        auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
-    ) {
-        val metaModel = newAddressBookMetaModel()
-        val metaModelErrors = validate(metaModel)
-        assertTrue(metaModelErrors.isEmpty())
-
-        val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
-        assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath)
     }
 }
