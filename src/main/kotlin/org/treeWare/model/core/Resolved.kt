@@ -1,6 +1,12 @@
 package org.treeWare.model.core
 
 class Resolved(val fullName: String) {
+    var password1wayHasher: Password1wayHasherV1? = null
+        internal set
+
+    var password2wayCipher: Password2wayCipherV1? = null
+        internal set
+
     var enumerationMeta: EntityModel<Resolved>? = null
         internal set
 

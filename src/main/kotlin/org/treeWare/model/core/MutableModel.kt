@@ -188,8 +188,7 @@ class MutableAliasModel<Aux>(
 }
 
 class MutablePassword1wayModel<Aux>(
-    override val parent: MutableFieldModel<Aux>,
-    private val hasher: Password1wayHasherV1?
+    override val parent: MutableFieldModel<Aux>
 ) : MutableElementModel<Aux>(), Password1wayModel<Aux> {
     override var unhashed: String? = null
         internal set
@@ -209,6 +208,7 @@ class MutablePassword1wayModel<Aux>(
     }
 
     fun setUnhashed(unhashed: String): Boolean {
+        val hasher = parent.meta?.aux?.password1wayHasher
         if (hasher != null) {
             this.unhashed = null
             this.hashed = hasher.hash(unhashed)
@@ -230,15 +230,14 @@ class MutablePassword1wayModel<Aux>(
     }
 
     fun verify(thatUnhashed: String): Boolean {
-        if (hasher == null) return false
+        val hasher = parent.meta?.aux?.password1wayHasher ?: return false
         if (this.hashVersion != 1) return false
         return this.hashed?.let { hasher.verify(thatUnhashed, it) } ?: false
     }
 }
 
 class MutablePassword2wayModel<Aux>(
-    override val parent: MutableFieldModel<Aux>,
-    private val cipher: Password2wayCipherV1?
+    override val parent: MutableFieldModel<Aux>
 ) : MutableElementModel<Aux>(), Password2wayModel<Aux> {
     override var unencrypted: String? = null
         internal set
@@ -258,6 +257,7 @@ class MutablePassword2wayModel<Aux>(
     }
 
     fun setUnencrypted(unencrypted: String): Boolean {
+        val cipher = parent.meta?.aux?.password2wayCipher
         if (cipher != null) {
             this.unencrypted = null
             this.encrypted = cipher.encrypt(unencrypted)
@@ -279,7 +279,7 @@ class MutablePassword2wayModel<Aux>(
     }
 
     fun decrypt(): String? {
-        if (cipher == null) return unencrypted
+        val cipher = parent.meta?.aux?.password2wayCipher ?: return unencrypted
         return this.encrypted?.let { cipher.decrypt(it) }
     }
 }
@@ -342,12 +342,6 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSett
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.STRING,
         FieldType.UUID -> {
-            setter(value)
-            true
-        }
-        FieldType.PASSWORD1WAY,
-        FieldType.PASSWORD2WAY -> {
-            // TODO(deepak-nulu): special handling for "password1way", "password2way"
             setter(value)
             true
         }
