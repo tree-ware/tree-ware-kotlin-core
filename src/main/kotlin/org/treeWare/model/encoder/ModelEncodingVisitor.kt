@@ -103,7 +103,6 @@ class ModelEncodingVisitor<Aux>(
                 Base64.getEncoder().encodeToString(value as ByteArray)
             )
             else -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
-            // TODO(deepak-nulu): special handling for "password1way", "password2way"
         }
         return TraversalAction.CONTINUE
     }
