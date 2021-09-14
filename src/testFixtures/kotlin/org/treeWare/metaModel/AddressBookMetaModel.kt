@@ -9,7 +9,7 @@ const val ADDRESS_BOOK_META_MODEL_FILE_PATH = "metaModel/address_book_meta_model
 
 fun newAddressBookMetaModel(): MutableMainModel<Resolved> {
     val metaMetaModel = newMainMetaMetaModel()
-    val metaModel = getMainModel<Resolved>(metaMetaModel, ADDRESS_BOOK_META_MODEL_FILE_PATH)
+    val metaModel = getMainModel<Resolved>(metaMetaModel, ADDRESS_BOOK_META_MODEL_FILE_PATH, "data", null, null)
     val errors = validate(metaModel)
     if (errors.isNotEmpty()) throw IllegalStateException("Address-book meta-model is not valid")
     return metaModel

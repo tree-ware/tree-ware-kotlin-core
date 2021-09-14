@@ -20,9 +20,15 @@ class GetTests {
         val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
         assertTrue(metaModelErrors.isEmpty())
 
-        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json")
+        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json", "data", null, null)
         val mapping =
-            getMainModel(metaModel, "model/address_book_mapping_model.json", "mapping") { StringAuxStateMachine(it) }
+            getMainModel(
+                metaModel,
+                "model/address_book_mapping_model.json",
+                "mapping",
+                null,
+                null
+            ) { StringAuxStateMachine(it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
 
