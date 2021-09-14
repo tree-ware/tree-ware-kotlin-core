@@ -1,7 +1,7 @@
 package org.treeWare.model.core
 
 interface Cipher {
-    val encryptionVersion: Int
+    val cipherVersion: Int
     fun encrypt(decrypted: String): String
     fun decrypt(encrypted: String): String
 }

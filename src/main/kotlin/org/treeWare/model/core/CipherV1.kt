@@ -20,7 +20,7 @@ class CipherV1(private val encryptionPassword: String) : org.treeWare.model.core
         const val ivSize = 16
     }
 
-    override val encryptionVersion = 1
+    override val cipherVersion = 1
 
     override fun encrypt(decrypted: String): String {
         val salt = newRandomBytes(saltSize)
