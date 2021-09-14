@@ -1,8 +1,8 @@
 package org.treeWare.model.encoder
 
 import org.treeWare.model.core.ElementModel
-import org.treeWare.model.operator.TraversalAction
-import org.treeWare.model.operator.forEach
+import org.treeWare.model.traversal.TraversalAction
+import org.treeWare.model.traversal.forEach
 import java.io.Writer
 
 fun <Aux> encodeJson(

@@ -6,9 +6,9 @@ import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
 import org.treeWare.model.getFileReader
 import org.treeWare.model.getMainModel
-import org.treeWare.model.operator.TraversalAction
-import org.treeWare.model.operator.dispatchLeave
-import org.treeWare.model.operator.dispatchVisit
+import org.treeWare.model.traversal.TraversalAction
+import org.treeWare.model.traversal.dispatchLeave
+import org.treeWare.model.traversal.dispatchVisit
 import java.io.StringWriter
 import kotlin.test.*
 

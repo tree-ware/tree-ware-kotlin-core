@@ -2,8 +2,8 @@ package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.*
-import org.treeWare.model.operator.AbstractLeader1Follower0ModelVisitor
-import org.treeWare.model.operator.dispatchVisit
+import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.traversal.dispatchVisit
 import java.util.*
 
 class FollowerModelCursor<LeaderAux, FollowerAux>(private val initial: ElementModel<FollowerAux>) {

@@ -1,4 +1,4 @@
-package org.treeWare.model.operator
+package org.treeWare.model.traversal
 
 import org.openjdk.jmh.annotations.*
 import org.treeWare.metaModel.newMainMetaMeta

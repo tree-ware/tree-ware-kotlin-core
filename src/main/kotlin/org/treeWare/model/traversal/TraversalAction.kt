@@ -1,4 +1,4 @@
-package org.treeWare.model.operator
+package org.treeWare.model.traversal
 
 enum class TraversalAction {
     /** Continue traversal. */

@@ -2,7 +2,7 @@ package org.treeWare.model.action
 
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.operator.forEach
+import org.treeWare.model.traversal.forEach
 
 // IMPLEMENTATION: ./Get.md
 
