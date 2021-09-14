@@ -15,9 +15,8 @@ class JsonCodecTests {
     fun `JSON codec error-model round trip must be lossless`() {
         testRoundTrip(
             "model/address_book_error_all_model.json",
-            null,
-            ErrorAuxEncoder(),
-            "error"
+            auxEncoder = ErrorAuxEncoder(),
+            expectedModelType = "error"
         ) { StringAuxStateMachine(it) }
     }
 

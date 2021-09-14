@@ -23,6 +23,7 @@ fun <Aux> testRoundTrip(
     inputFilePath: String,
     outputFilePath: String? = null,
     auxEncoder: AuxEncoder? = null,
+    encodePasswords: EncodePasswords = EncodePasswords.NONE,
     expectedModelType: String = "data",
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ) {
@@ -31,7 +32,7 @@ fun <Aux> testRoundTrip(
     assertTrue(metaModelErrors.isEmpty())
 
     val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
-    assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, EncodePasswords.NONE)
+    assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)
 }
 
 fun getFileReader(filePath: String): Reader? =
