@@ -245,14 +245,14 @@ class MutablePassword2wayModel<Aux>(
     override var encrypted: String? = null
         internal set
 
-    override var encryptionVersion: Int = 0
+    override var cipherVersion: Int = 0
         internal set
 
     override fun matches(that: ElementModel<*>): Boolean {
         if (that !is Password2wayModel<*>) return false
         if (this.unencrypted != that.unencrypted) return false
         if (this.encrypted != that.encrypted) return false
-        if (this.encryptionVersion != that.encryptionVersion) return false
+        if (this.cipherVersion != that.cipherVersion) return false
         return true
     }
 
@@ -261,26 +261,26 @@ class MutablePassword2wayModel<Aux>(
         if (cipher != null) {
             this.unencrypted = null
             this.encrypted = cipher.encrypt(unencrypted)
-            this.encryptionVersion = 1
+            this.cipherVersion = 1
         } else {
             this.unencrypted = unencrypted
             this.encrypted = null
-            this.encryptionVersion = 0
+            this.cipherVersion = 0
         }
         return true
     }
 
-    fun setEncrypted(encrypted: String, encryptionVersion: Int): Boolean {
-        if (encryptionVersion <= 0) return false
+    fun setEncrypted(encrypted: String, cipherVersion: Int): Boolean {
+        if (cipherVersion <= 0) return false
         this.unencrypted = null
         this.encrypted = encrypted
-        this.encryptionVersion = encryptionVersion
+        this.cipherVersion = cipherVersion
         return true
     }
 
     fun decrypt(): String? {
         val cipher = parent.meta?.aux?.password2wayCipher ?: return unencrypted
-        if (this.encryptionVersion != cipher.encryptionVersion) return null
+        if (this.cipherVersion != cipher.cipherVersion) return null
         return this.encrypted?.let { cipher.decrypt(it) }
     }
 }

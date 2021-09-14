@@ -97,7 +97,7 @@ class Password2wayModelStateMachine<Aux>(
 
     override fun decodeNumericValue(value: BigDecimal): Boolean {
         super.decodeNumericValue(value)
-        if (keyName == "encryption_version") password2way?.encryptionVersion = value.toInt()
+        if (keyName == "cipher_version") password2way?.cipherVersion = value.toInt()
         return true
     }
 }

@@ -9,7 +9,7 @@ private const val ENCRYPTED = "jjtphq6AZjMo1S824le3Xh6yVHhcWG29CfYH7J8tmcAhD5NhV
 private val CIPHER_CLIENT = null
 private val CIPHER_SERVER = CipherV1("secretKey123")
 
-private const val ENCRYPTION_VERSION = 1
+private const val CIPHER_VERSION = 1
 
 class Password2wayV1Tests {
     @Test
@@ -25,7 +25,7 @@ class Password2wayV1Tests {
         password2way.setUnencrypted(UNENCRYPTED)
         assertEquals(UNENCRYPTED, password2way.unencrypted)
         assertNull(password2way.encrypted)
-        assertEquals(0, password2way.encryptionVersion)
+        assertEquals(0, password2way.cipherVersion)
     }
 
     @Test
@@ -35,16 +35,16 @@ class Password2wayV1Tests {
         assertNull(password2way.unencrypted)
         assertNotNull(password2way.encrypted)
         assertNotEquals(UNENCRYPTED, password2way.encrypted)
-        assertEquals(ENCRYPTION_VERSION, password2way.encryptionVersion)
+        assertEquals(CIPHER_VERSION, password2way.cipherVersion)
     }
 
     @Test
     fun `Setting encrypted must set encrypted and version`() {
         val password2way = getPassword2wayModel(CIPHER_CLIENT)
-        password2way.setEncrypted(ENCRYPTED, ENCRYPTION_VERSION)
+        password2way.setEncrypted(ENCRYPTED, CIPHER_VERSION)
         assertNull(password2way.unencrypted)
         assertEquals(ENCRYPTED, password2way.encrypted)
-        assertEquals(ENCRYPTION_VERSION, password2way.encryptionVersion)
+        assertEquals(CIPHER_VERSION, password2way.cipherVersion)
     }
 
     @Test
@@ -63,7 +63,7 @@ class Password2wayV1Tests {
     @Test
     fun `Decrypting with encrypted in client library must return null`() {
         val password2way = getPassword2wayModel(CIPHER_CLIENT)
-        password2way.setEncrypted(ENCRYPTED, ENCRYPTION_VERSION)
+        password2way.setEncrypted(ENCRYPTED, CIPHER_VERSION)
         assertNull(password2way.decrypt())
     }
 
@@ -77,7 +77,7 @@ class Password2wayV1Tests {
     @Test
     fun `Decrypting after setting encrypted in server library must return decrypted`() {
         val password2way = getPassword2wayModel(CIPHER_SERVER)
-        password2way.setEncrypted(ENCRYPTED, ENCRYPTION_VERSION)
+        password2way.setEncrypted(ENCRYPTED, CIPHER_VERSION)
         assertEquals(UNENCRYPTED, password2way.decrypt())
     }
 }

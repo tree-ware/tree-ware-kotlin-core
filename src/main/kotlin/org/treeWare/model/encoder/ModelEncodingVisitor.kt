@@ -169,7 +169,7 @@ class ModelEncodingVisitor<Aux>(
         leaderValue1.encrypted?.also {
             if (encodePasswords == EncodePasswords.ALL || encodePasswords == EncodePasswords.HASHED_AND_ENCRYPTED) {
                 wireFormatEncoder.encodeStringField("encrypted", it)
-                wireFormatEncoder.encodeNumericField("encryption_version", leaderValue1.encryptionVersion)
+                wireFormatEncoder.encodeNumericField("cipher_version", leaderValue1.cipherVersion)
             }
         }
         wireFormatEncoder.encodeObjectEnd()

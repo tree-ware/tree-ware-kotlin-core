@@ -5,7 +5,7 @@ import org.treeWare.model.core.Cipher
 private const val PREFIX = "test-encrypted-"
 
 class TestCipherV1 : Cipher {
-    override val encryptionVersion: Int = 1
+    override val cipherVersion: Int = 1
 
     override fun encrypt(decrypted: String): String = "$PREFIX$decrypted"
 

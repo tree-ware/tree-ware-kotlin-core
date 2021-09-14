@@ -104,7 +104,7 @@ interface Password2wayModel<Aux> : ElementModel<Aux> {
 
     val unencrypted: String?
     val encrypted: String?
-    val encryptionVersion: Int
+    val cipherVersion: Int
 }
 
 interface EnumerationModel<Aux> : ElementModel<Aux> {
