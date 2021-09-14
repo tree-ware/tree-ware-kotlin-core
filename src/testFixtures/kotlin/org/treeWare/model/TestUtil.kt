@@ -1,7 +1,6 @@
 package org.treeWare.model
 
 import org.treeWare.metaModel.newAddressBookMetaModel
-import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
@@ -26,9 +25,7 @@ fun <Aux> testRoundTrip(
     cipher: Cipher? = null,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ) {
-    val metaModel = newAddressBookMetaModel()
-    val metaModelErrors = validate(metaModel)
-    assertTrue(metaModelErrors.isEmpty())
+    val metaModel = newAddressBookMetaModel(null, null)
 
     val model = getMainModel(metaModel, inputFilePath, expectedModelType, hasher, cipher, auxStateMachineFactory)
     assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)

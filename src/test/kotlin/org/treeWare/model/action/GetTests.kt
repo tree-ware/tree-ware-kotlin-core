@@ -11,14 +11,11 @@ import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.getMainModel
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class GetTests {
     @Test
     fun `get() returns the requested data`() = runBlocking {
-        val metaModel = newAddressBookMetaModel()
-        val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
-        assertTrue(metaModelErrors.isEmpty())
+        val metaModel = newAddressBookMetaModel(null, null)
 
         val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json", "data", null, null)
         val mapping =

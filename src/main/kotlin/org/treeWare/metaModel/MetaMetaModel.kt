@@ -33,7 +33,7 @@ private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 fun newMainMetaMetaModel(): MutableMainModel<Resolved> {
     val mainMeta = newMainMetaMeta()
     populateMain(mainMeta)
-    val errors = validate(mainMeta)
+    val errors = validate(mainMeta, null, null)
     if (errors.isNotEmpty()) throw IllegalStateException("Meta-meta-model is not valid")
     return mainMeta
 }

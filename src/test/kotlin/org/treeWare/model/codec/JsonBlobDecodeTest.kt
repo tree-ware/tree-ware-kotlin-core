@@ -1,7 +1,6 @@
 package org.treeWare.model.codec
 
 import org.treeWare.metaModel.newAddressBookMetaModel
-import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutableListFieldModel
 import org.treeWare.model.core.MutablePrimitiveModel
@@ -13,9 +12,7 @@ import kotlin.test.assertTrue
 class JsonBlobDecodeTest {
     @Test
     fun `JSON decoder decodes blob values`() {
-        val metaModel = newAddressBookMetaModel()
-        val metaModelErrors = validate(metaModel)
-        assertTrue(metaModelErrors.isEmpty())
+        val metaModel = newAddressBookMetaModel(null, null)
 
         val model = getMainModel<Unit>(metaModel, "model/address_book_1.json", "data", null, null) { null }
         val persons = model.root.fields["person"] as MutableListFieldModel<Unit>

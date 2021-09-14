@@ -11,10 +11,15 @@ import org.treeWare.model.core.*
  * Side effects:
  * 1. Non-primitive field types (except associations) are resolved.
  */
-fun resolveNonPrimitiveTypes(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> =
+fun resolveNonPrimitiveTypes(
+    mainMeta: MainModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    nonPrimitiveTypes: NonPrimitiveTypes
+): List<String> =
     listOf(
         resolveRoot(mainMeta, nonPrimitiveTypes),
-        resolvePackages(mainMeta, nonPrimitiveTypes)
+        resolvePackages(mainMeta, hasher, cipher, nonPrimitiveTypes)
     ).flatten()
 
 private fun resolveRoot(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
@@ -28,44 +33,84 @@ private fun resolveRoot(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPri
     return listOf()
 }
 
-private fun resolvePackages(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolvePackages(
+    mainMeta: MainModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    nonPrimitiveTypes: NonPrimitiveTypes
+): List<String> {
     val packagesMeta = getPackagesMeta(mainMeta)
-    return packagesMeta.values.flatMap { resolvePackage(it, nonPrimitiveTypes) }
+    return packagesMeta.values.flatMap { resolvePackage(it, hasher, cipher, nonPrimitiveTypes) }
 }
 
 private fun resolvePackage(
     packageElementMeta: ElementModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val packageMeta = packageElementMeta as EntityModel<Resolved>
-    return resolveEntities(packageMeta, nonPrimitiveTypes)
+    return resolveEntities(packageMeta, hasher, cipher, nonPrimitiveTypes)
 }
 
-private fun resolveEntities(packageMeta: EntityModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveEntities(
+    packageMeta: EntityModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    nonPrimitiveTypes: NonPrimitiveTypes
+): List<String> {
     val entitiesMeta = getEntitiesMeta(packageMeta)
-    return entitiesMeta?.values?.flatMap { resolveEntity(it, nonPrimitiveTypes) } ?: listOf()
+    return entitiesMeta?.values?.flatMap { resolveEntity(it, hasher, cipher, nonPrimitiveTypes) } ?: listOf()
 }
 
 private fun resolveEntity(
     entityElementMeta: ElementModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val entityMeta = entityElementMeta as EntityModel<Resolved>
-    return resolveFields(entityMeta, nonPrimitiveTypes)
+    return resolveFields(entityMeta, hasher, cipher, nonPrimitiveTypes)
 }
 
-private fun resolveFields(entityMeta: EntityModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveFields(
+    entityMeta: EntityModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    nonPrimitiveTypes: NonPrimitiveTypes
+): List<String> {
     val fieldsMeta = getFieldsMeta(entityMeta)
-    return fieldsMeta.values.flatMap { resolveField(it, nonPrimitiveTypes) }
+    return fieldsMeta.values.flatMap { resolveField(it, hasher, cipher, nonPrimitiveTypes) }
 }
 
-private fun resolveField(fieldElementMeta: ElementModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveField(
+    fieldElementMeta: ElementModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    nonPrimitiveTypes: NonPrimitiveTypes
+): List<String> {
     val fieldMeta = fieldElementMeta as EntityModel<Resolved>
     return when (getFieldTypeMeta(fieldMeta)) {
+        FieldType.PASSWORD1WAY -> resolvePassword1wayField(fieldMeta, hasher)
+        FieldType.PASSWORD2WAY -> resolvePassword2wayField(fieldMeta, cipher)
         FieldType.ENUMERATION -> resolveEnumerationField(fieldMeta, nonPrimitiveTypes)
         FieldType.COMPOSITION -> resolveCompositionField(fieldMeta, nonPrimitiveTypes)
         else -> listOf()
     }
+}
+
+fun resolvePassword1wayField(fieldMeta: EntityModel<Resolved>, hasher: Hasher?): List<String> {
+    val resolved = fieldMeta.aux
+        ?: throw IllegalStateException("Resolved aux is missing in password1way field")
+    resolved.password1wayHasher = hasher
+    return listOf()
+}
+
+fun resolvePassword2wayField(fieldMeta: EntityModel<Resolved>, cipher: Cipher?): List<String> {
+    val resolved = fieldMeta.aux
+        ?: throw IllegalStateException("Resolved aux is missing in password2way field")
+    resolved.password2wayCipher = cipher
+    return listOf()
 }
 
 private fun resolveEnumerationField(
