@@ -17,14 +17,12 @@ class GetTests {
     fun `get() returns the requested data`() = runBlocking {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json", "data", null, null)
+        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json", "data")
         val mapping =
             getMainModel(
                 metaModel,
                 "model/address_book_mapping_model.json",
-                "mapping",
-                null,
-                null
+                "mapping"
             ) { StringAuxStateMachine(it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)

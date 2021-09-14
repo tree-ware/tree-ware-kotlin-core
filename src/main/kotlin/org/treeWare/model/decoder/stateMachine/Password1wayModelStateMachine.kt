@@ -86,8 +86,11 @@ class Password1wayModelStateMachine<Aux>(
     override fun decodeStringValue(value: String): Boolean {
         super.decodeStringValue(value)
         when (keyName) {
-            "unhashed" -> password1way?.unhashed = value
-            "hashed" -> password1way?.hashed = value
+            "unhashed" -> password1way?.setUnhashed(value)
+            "hashed" -> {
+                password1way?.hashed = value
+                password1way?.unhashed = null
+            }
         }
         return true
     }

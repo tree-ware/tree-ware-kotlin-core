@@ -35,7 +35,7 @@ class FollowerModelCursorTests {
 private fun testFollowerSameModelInstance(inputFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
-    val model = getMainModel<Unit>(metaModel, inputFilePath, "data", null, null)
+    val model = getMainModel<Unit>(metaModel, inputFilePath, "data")
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -55,8 +55,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getMainModel<Unit>(metaModel, inputFilePath, "data", null, null)
-    val followerModel = getMainModel<Unit>(metaModel, inputFilePath, "data", null, null)
+    val leaderModel = getMainModel<Unit>(metaModel, inputFilePath, "data")
+    val followerModel = getMainModel<Unit>(metaModel, inputFilePath, "data")
 
     assertNotSame(leaderModel, followerModel)
 
@@ -83,8 +83,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
 private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
-    val leaderModel = getMainModel<Unit>(metaModel, leaderFilePath, "data", null, null)
-    val followerModel = getMainModel<Unit>(metaModel, wildcardFilePath, "data", null, null)
+    val leaderModel = getMainModel<Unit>(metaModel, leaderFilePath, "data")
+    val followerModel = getMainModel<Unit>(metaModel, wildcardFilePath, "data")
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)

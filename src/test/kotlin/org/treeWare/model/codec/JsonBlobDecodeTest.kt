@@ -14,7 +14,7 @@ class JsonBlobDecodeTest {
     fun `JSON decoder decodes blob values`() {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val model = getMainModel<Unit>(metaModel, "model/address_book_1.json", "data", null, null) { null }
+        val model = getMainModel<Unit>(metaModel, "model/address_book_1.json", "data") { null }
         val persons = model.root.fields["person"] as MutableListFieldModel<Unit>
 
         val clarkKent = persons.values[0] as MutableEntityModel<Unit>
