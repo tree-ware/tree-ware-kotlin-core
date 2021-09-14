@@ -25,9 +25,9 @@ fun <Aux> testRoundTrip(
     cipher: Cipher? = null,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ) {
-    val metaModel = newAddressBookMetaModel(null, null)
+    val metaModel = newAddressBookMetaModel(hasher, cipher)
 
-    val model = getMainModel(metaModel, inputFilePath, expectedModelType, hasher, cipher, auxStateMachineFactory)
+    val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
     assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)
 }
 
@@ -45,13 +45,11 @@ fun <Aux> getMainModel(
     meta: MainModel<Resolved>,
     inputFilePath: String,
     expectedModelType: String = "data",
-    hasher: Hasher?,
-    cipher: Cipher?,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ): MutableMainModel<Aux> {
     val fileReader = getFileReader(inputFilePath)
     assertNotNull(fileReader)
-    val model = decodeJson(fileReader, meta, expectedModelType, hasher, cipher, auxStateMachineFactory)
+    val model = decodeJson(fileReader, meta, expectedModelType, auxStateMachineFactory)
     fileReader.close()
     assertTrue(model != null)
     return model

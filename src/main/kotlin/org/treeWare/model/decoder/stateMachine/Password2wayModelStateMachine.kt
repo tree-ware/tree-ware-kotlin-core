@@ -86,8 +86,11 @@ class Password2wayModelStateMachine<Aux>(
     override fun decodeStringValue(value: String): Boolean {
         super.decodeStringValue(value)
         when (keyName) {
-            "unencrypted" -> password2way?.unencrypted = value
-            "encrypted" -> password2way?.encrypted = value
+            "unencrypted" -> password2way?.setUnencrypted(value)
+            "encrypted" -> {
+                password2way?.encrypted = value
+                password2way?.unencrypted = null
+            }
         }
         return true
     }
