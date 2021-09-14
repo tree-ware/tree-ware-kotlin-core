@@ -5,8 +5,8 @@ import org.treeWare.metaModel.isCompositionFieldMeta
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.ListFieldModel
 import org.treeWare.model.core.SingleFieldModel
-import org.treeWare.model.operator.AbstractLeader1Follower0ModelVisitor
-import org.treeWare.model.operator.dispatchVisit
+import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.traversal.dispatchVisit
 
 // IMPLEMENTATION: ./Get.md
 

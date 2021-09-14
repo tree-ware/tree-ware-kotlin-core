@@ -1,4 +1,4 @@
-package org.treeWare.model.operator
+package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection

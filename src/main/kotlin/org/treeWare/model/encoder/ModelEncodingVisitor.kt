@@ -2,9 +2,9 @@ package org.treeWare.model.encoder
 
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
-import org.treeWare.model.operator.Leader1Follower0ModelVisitor
-import org.treeWare.model.operator.TraversalAction
-import org.treeWare.model.operator.forEach
+import org.treeWare.model.traversal.Leader1Follower0ModelVisitor
+import org.treeWare.model.traversal.TraversalAction
+import org.treeWare.model.traversal.forEach
 import java.util.*
 
 const val VALUE_KEY = "value"
