@@ -6,7 +6,7 @@ private const val UNHASHED = "password123"
 private const val UNHASHED_INCORRECT = "incorrectPassword"
 
 private val HASHER_CLIENT = null
-private val HASHER_SERVER = Password1wayHasherV1()
+private val HASHER_SERVER = HasherV1()
 
 /** Hashed password corresponding to the above UNHASHED password. */
 private const val HASHED = "\$2a\$10\$u1r09AnODCkNaUh2mkP8bubLWZ2Wusu94BpJcYGUpCDlOXoJs05D6"
@@ -70,7 +70,7 @@ class Password1wayV1Tests {
     }
 }
 
-private fun getPassword1wayModel(hasher: Password1wayHasherV1?): MutablePassword1wayModel<Unit> {
+private fun getPassword1wayModel(hasher: HasherV1?): MutablePassword1wayModel<Unit> {
     val resolved = Resolved("dummy/field")
     resolved.password1wayHasher = hasher
 

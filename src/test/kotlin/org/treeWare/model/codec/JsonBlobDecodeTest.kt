@@ -17,7 +17,7 @@ class JsonBlobDecodeTest {
         val metaModelErrors = validate(metaModel)
         assertTrue(metaModelErrors.isEmpty())
 
-        val model = getMainModel<Unit>(metaModel, "model/address_book_1.json", "data") { null }
+        val model = getMainModel<Unit>(metaModel, "model/address_book_1.json", "data", null, null) { null }
         val persons = model.root.fields["person"] as MutableListFieldModel<Unit>
 
         val clarkKent = persons.values[0] as MutableEntityModel<Unit>

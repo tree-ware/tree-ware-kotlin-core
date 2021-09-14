@@ -7,15 +7,15 @@ private const val UNENCRYPTED = "password123"
 private const val ENCRYPTED = "jjtphq6AZjMo1S824le3Xh6yVHhcWG29CfYH7J8tmcAhD5NhVoQbuqRtzJgWn1H4"
 
 private val CIPHER_CLIENT = null
-private val CIPHER_SERVER = Password2wayCipherV1("secretKey123")
+private val CIPHER_SERVER = CipherV1("secretKey123")
 
 private const val ENCRYPTION_VERSION = 1
 
 class Password2wayV1Tests {
     @Test
     fun `Cipher getInstance() must not not return a shared instance`() {
-        val cipher1 = Cipher.getInstance(Password2wayCipherV1.cipherName)
-        val cipher2 = Cipher.getInstance(Password2wayCipherV1.cipherName)
+        val cipher1 = Cipher.getInstance(CipherV1.cipherName)
+        val cipher2 = Cipher.getInstance(CipherV1.cipherName)
         assertNotEquals(cipher1, cipher2)
     }
 
@@ -82,7 +82,7 @@ class Password2wayV1Tests {
     }
 }
 
-private fun getPassword2wayModel(cipher: Password2wayCipherV1?): MutablePassword2wayModel<Unit> {
+private fun getPassword2wayModel(cipher: CipherV1?): MutablePassword2wayModel<Unit> {
     val resolved = Resolved("dummy/field")
     resolved.password2wayCipher = cipher
 

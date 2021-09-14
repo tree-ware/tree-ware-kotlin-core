@@ -37,7 +37,7 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val model = getMainModel<Unit>(metaModel, inputFilePath)
+    val model = getMainModel<Unit>(metaModel, inputFilePath, "data", null, null)
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -59,8 +59,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     assertTrue(metaModelErrors.isEmpty())
 
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getMainModel<Unit>(metaModel, inputFilePath)
-    val followerModel = getMainModel<Unit>(metaModel, inputFilePath)
+    val leaderModel = getMainModel<Unit>(metaModel, inputFilePath, "data", null, null)
+    val followerModel = getMainModel<Unit>(metaModel, inputFilePath, "data", null, null)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -89,8 +89,8 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     val metaModelErrors = org.treeWare.metaModel.validation.validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val leaderModel = getMainModel<Unit>(metaModel, leaderFilePath)
-    val followerModel = getMainModel<Unit>(metaModel, wildcardFilePath)
+    val leaderModel = getMainModel<Unit>(metaModel, leaderFilePath, "data", null, null)
+    val followerModel = getMainModel<Unit>(metaModel, wildcardFilePath, "data", null, null)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)

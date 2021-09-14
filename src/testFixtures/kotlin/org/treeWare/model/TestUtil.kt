@@ -2,10 +2,7 @@ package org.treeWare.model
 
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.metaModel.validation.validate
-import org.treeWare.model.core.ElementModel
-import org.treeWare.model.core.MainModel
-import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.core.Resolved
+import org.treeWare.model.core.*
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
 import org.treeWare.model.decoder.stateMachine.DecodingStack
@@ -25,13 +22,15 @@ fun <Aux> testRoundTrip(
     auxEncoder: AuxEncoder? = null,
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
     expectedModelType: String = "data",
+    hasher: Hasher? = null,
+    cipher: Cipher? = null,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ) {
     val metaModel = newAddressBookMetaModel()
     val metaModelErrors = validate(metaModel)
     assertTrue(metaModelErrors.isEmpty())
 
-    val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
+    val model = getMainModel(metaModel, inputFilePath, expectedModelType, hasher, cipher, auxStateMachineFactory)
     assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)
 }
 
@@ -49,11 +48,13 @@ fun <Aux> getMainModel(
     meta: MainModel<Resolved>,
     inputFilePath: String,
     expectedModelType: String = "data",
+    hasher: Hasher?,
+    cipher: Cipher?,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ): MutableMainModel<Aux> {
     val fileReader = getFileReader(inputFilePath)
     assertNotNull(fileReader)
-    val model = decodeJson(fileReader, meta, expectedModelType, auxStateMachineFactory)
+    val model = decodeJson(fileReader, meta, expectedModelType, hasher, cipher, auxStateMachineFactory)
     fileReader.close()
     assertTrue(model != null)
     return model

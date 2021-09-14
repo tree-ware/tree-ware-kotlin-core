@@ -9,7 +9,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class Password2wayCipherV1(private val encryptionPassword: String) {
+class CipherV1(private val encryptionPassword: String) : org.treeWare.model.core.Cipher {
     companion object {
         const val secretKeyFactoryName = "PBKDF2WithHmacSHA1"
         const val keySpecIterationCount = 10000
@@ -20,7 +20,9 @@ class Password2wayCipherV1(private val encryptionPassword: String) {
         const val ivSize = 16
     }
 
-    fun encrypt(decrypted: String): String {
+    override val encryptionVersion = 1
+
+    override fun encrypt(decrypted: String): String {
         val salt = newRandomBytes(saltSize)
         val secretKey = newSecretKey(encryptionPassword, salt)
         val iv = newRandomBytes(ivSize)
@@ -31,12 +33,12 @@ class Password2wayCipherV1(private val encryptionPassword: String) {
         return Base64.getEncoder().encodeToString(combined)
     }
 
-    fun decrypt(saltIvEncrypted: String): String {
-        val combined = Base64.getDecoder().decode(saltIvEncrypted)
-        val (salt, iv, encrypted) = split(combined)
+    override fun decrypt(encrypted: String): String {
+        val combined = Base64.getDecoder().decode(encrypted)
+        val (salt, iv, encryptedActual) = split(combined)
         val secretKey = newSecretKey(encryptionPassword, salt)
         val cipher = newCipher(Cipher.DECRYPT_MODE, secretKey, iv)
-        val decrypted = cipher.doFinal(encrypted)
+        val decrypted = cipher.doFinal(encryptedActual)
         return String(decrypted, Charsets.UTF_8)
     }
 

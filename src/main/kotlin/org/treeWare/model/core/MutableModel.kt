@@ -231,7 +231,7 @@ class MutablePassword1wayModel<Aux>(
 
     fun verify(thatUnhashed: String): Boolean {
         val hasher = parent.meta?.aux?.password1wayHasher ?: return false
-        if (this.hashVersion != 1) return false
+        if (this.hashVersion != hasher.hashVersion) return false
         return this.hashed?.let { hasher.verify(thatUnhashed, it) } ?: false
     }
 }
@@ -280,6 +280,7 @@ class MutablePassword2wayModel<Aux>(
 
     fun decrypt(): String? {
         val cipher = parent.meta?.aux?.password2wayCipher ?: return unencrypted
+        if (this.encryptionVersion != cipher.encryptionVersion) return null
         return this.encrypted?.let { cipher.decrypt(it) }
     }
 }
