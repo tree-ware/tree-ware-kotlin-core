@@ -1,6 +1,8 @@
 package org.treeWare.metaModel.validation
 
 import org.apache.logging.log4j.LogManager
+import org.treeWare.model.core.Cipher
+import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 
@@ -10,8 +12,14 @@ import org.treeWare.model.core.Resolved
  * Side effects:
  * 1. full-names are set for named elements
  * 2. Non-primitive field types are resolved
+ * 3. Hasher and cipher instances are passed to password meta.
  */
-fun validate(mainMeta: MutableMainModel<Resolved>, logFullNames: Boolean = false): List<String> {
+fun validate(
+    mainMeta: MutableMainModel<Resolved>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    logFullNames: Boolean = false
+): List<String> {
     val logger = LogManager.getLogger()
     fun logErrors(errors: List<String>) = errors.forEach { logger.error(it) }
 
@@ -31,7 +39,7 @@ fun validate(mainMeta: MutableMainModel<Resolved>, logFullNames: Boolean = false
 
     // Resolve non-primitive field types.
     // Associations can be resolved only after compositions are resolved.
-    val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, nonPrimitiveTypes)
+    val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, nonPrimitiveTypes)
     val associationErrors = resolveAssociations(mainMeta)
 
     val allErrors = listOf(nameErrors, nonPrimitiveErrors, associationErrors).flatten()

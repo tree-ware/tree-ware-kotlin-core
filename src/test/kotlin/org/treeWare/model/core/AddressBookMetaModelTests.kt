@@ -9,7 +9,7 @@ import kotlin.test.Test
 class AddressBookMetaModelTests {
     @Test
     fun `Address-book meta-model JSON codec round trip must be lossless`() {
-        val metaModel = newAddressBookMetaModel()
+        val metaModel = newAddressBookMetaModel(null, null)
         assertMatchesJson(metaModel, null, ADDRESS_BOOK_META_MODEL_FILE_PATH, EncodePasswords.NONE)
     }
 }

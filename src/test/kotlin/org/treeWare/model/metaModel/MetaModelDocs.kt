@@ -12,7 +12,7 @@ import kotlin.test.Test
 class MetaModelDocs {
     @Test
     fun `Generate address-book meta-model docs`() {
-        val metaModel = newAddressBookMetaModel()
+        val metaModel = newAddressBookMetaModel(null, null)
 
         val metaModelName = getMetaName(getRootMeta(metaModel))
         val fileName = "${metaModelName}_meta_model"
