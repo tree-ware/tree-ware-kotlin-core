@@ -3,7 +3,7 @@ package org.treeWare.model.action
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.isCompositionFieldMeta
 import org.treeWare.metaModel.isKeyFieldMeta
-import org.treeWare.metaModel.isListFieldMeta
+import org.treeWare.metaModel.isSetFieldMeta
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.FieldModel
 import org.treeWare.model.core.SingleFieldModel
@@ -33,7 +33,7 @@ internal fun <FieldValue> getKeyFields(
 }
 
 fun isCompositionField(field: FieldModel<*>): Boolean =
-    !isListFieldMeta(field.meta) && isCompositionFieldMeta(field.meta)
+    !isSetFieldMeta(field.meta) && isCompositionFieldMeta(field.meta)
 
-fun isCompositionListField(field: FieldModel<*>): Boolean =
-    isListFieldMeta(field.meta) && isCompositionFieldMeta(field.meta)
+fun isCompositionSetField(field: FieldModel<*>): Boolean =
+    isSetFieldMeta(field.meta) && isCompositionFieldMeta(field.meta)

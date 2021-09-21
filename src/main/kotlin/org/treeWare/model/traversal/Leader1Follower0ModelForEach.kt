@@ -42,6 +42,9 @@ fun <LeaderAux, Return> dispatchVisit(
     ModelElementType.LIST_FIELD -> {
         visitor.visit(leader as ListFieldModel<LeaderAux>)
     }
+    ModelElementType.SET_FIELD -> {
+        visitor.visit(leader as SetFieldModel<LeaderAux>)
+    }
     ModelElementType.PRIMITIVE -> {
         visitor.visit(leader as PrimitiveModel<LeaderAux>)
     }
@@ -84,6 +87,9 @@ fun <LeaderAux, Return> dispatchLeave(
         }
         ModelElementType.LIST_FIELD -> {
             visitor.leave(leader as ListFieldModel<LeaderAux>)
+        }
+        ModelElementType.SET_FIELD -> {
+            visitor.leave(leader as SetFieldModel<LeaderAux>)
         }
         ModelElementType.PRIMITIVE -> {
             visitor.leave(leader as PrimitiveModel<LeaderAux>)

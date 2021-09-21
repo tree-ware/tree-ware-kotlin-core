@@ -42,6 +42,12 @@ class VisitLeaderListFieldModel<Aux>(override val element: ListFieldModel<Aux>) 
 class LeaveLeaderListFieldModel<Aux>(override val element: ListFieldModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
+class VisitLeaderSetFieldModel<Aux>(override val element: SetFieldModel<Aux>) :
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
+
+class LeaveLeaderSetFieldModel<Aux>(override val element: SetFieldModel<Aux>) :
+    LeaderModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
+
 class VisitLeaderValueModel<Aux>(override val element: ElementModel<Aux>) :
     LeaderModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 

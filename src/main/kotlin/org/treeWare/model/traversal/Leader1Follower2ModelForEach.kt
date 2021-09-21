@@ -110,6 +110,19 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
         )
         else null
     }
+    ModelElementType.SET_FIELD -> {
+        if (follower1 != null) assert(follower1.elementType == ModelElementType.SET_FIELD)
+        if (follower2 != null) assert(follower2.elementType == ModelElementType.SET_FIELD)
+        if (
+            (follower1 == null || follower1.elementType == ModelElementType.SET_FIELD) &&
+            (follower2 == null || follower2.elementType == ModelElementType.SET_FIELD)
+        ) visitor.visit(
+            leader as SetFieldModel<LeaderAux>,
+            follower1 as SetFieldModel<Follower1Aux>?,
+            follower2 as SetFieldModel<Follower2Aux>?,
+        )
+        else null
+    }
     ModelElementType.PRIMITIVE -> {
         if (follower1 != null) assert(follower1.elementType == ModelElementType.PRIMITIVE)
         if (follower2 != null) assert(follower2.elementType == ModelElementType.PRIMITIVE)
@@ -268,6 +281,18 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 leader as ListFieldModel<LeaderAux>,
                 follower1 as ListFieldModel<Follower1Aux>?,
                 follower2 as ListFieldModel<Follower2Aux>?,
+            )
+        }
+        ModelElementType.SET_FIELD -> {
+            if (follower1 != null) assert(follower1.elementType == ModelElementType.SET_FIELD)
+            if (follower2 != null) assert(follower2.elementType == ModelElementType.SET_FIELD)
+            if (
+                (follower1 == null || follower1.elementType == ModelElementType.SET_FIELD) &&
+                (follower2 == null || follower2.elementType == ModelElementType.SET_FIELD)
+            ) visitor.leave(
+                leader as SetFieldModel<LeaderAux>,
+                follower1 as SetFieldModel<Follower1Aux>?,
+                follower2 as SetFieldModel<Follower2Aux>?,
             )
         }
         ModelElementType.PRIMITIVE -> {

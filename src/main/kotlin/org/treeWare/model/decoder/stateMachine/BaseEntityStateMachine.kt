@@ -5,7 +5,8 @@ import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 
 class BaseEntityStateMachine<Aux>(
-    private val isListElement: Boolean,
+    private val isSetElement: Boolean,
+    private val parentSetField: MutableSetFieldModel<Aux>?,
     private val baseFactory: () -> MutableBaseEntityModel<Aux>,
     private val stack: DecodingStack,
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
@@ -39,10 +40,10 @@ class BaseEntityStateMachine<Aux>(
         }
         // This state-machine instance gets reused in lists, so clear the map.
         auxStateMachineMap.clear()
-        if (!isListElement) {
+        if (!isSetElement) {
             // Remove self from stack
             stack.pollFirst()
-        }
+        } else base?.also { parentSetField?.addValue(it) }
         return true
     }
 
@@ -53,7 +54,7 @@ class BaseEntityStateMachine<Aux>(
     }
 
     override fun decodeListEnd(): Boolean {
-        if (isListElement) {
+        if (isSetElement) {
             // End of the list needs to be handled by parent state machine.
             // So remove self from stack and call decodeListEnd() on previous
             // state machine.
@@ -232,30 +233,28 @@ class BaseEntityStateMachine<Aux>(
 
     private fun handleComposition(fieldMeta: EntityModel<Resolved>): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
-        if (isListFieldMeta(fieldMeta)) {
-            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
-            val listElementStateMachine =
+        if (isSetFieldMeta(fieldMeta)) {
+            val setFieldModel = fieldModel as? MutableSetFieldModel<Aux> ?: return false
+            val setElementStateMachine =
                 BaseEntityStateMachine(
                     true,
+                    setFieldModel,
                     {
-                        val first = listFieldModel.firstValue()
+                        val first = setFieldModel.firstValue()
                         if (isWildcardModel && first != null) first as MutableEntityModel<Aux>
-                        else {
-                            val value = newMutableValueModel(fieldMeta, listFieldModel) as MutableEntityModel<Aux>
-                            listFieldModel.addValue(value)
-                            value
-                        }
+                        else newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel<Aux>
                     },
                     stack,
                     auxStateMachineFactory,
                     isWildcardModel
                 )
-            addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
+            addSetElementStateMachineToStack(setFieldModel, setElementStateMachine, isWrappedElements = false)
         } else {
             val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
             val elementStateMachine =
                 BaseEntityStateMachine(
                     false,
+                    null,
                     {
                         val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableEntityModel<Aux>
                         singleFieldModel.setValue(value)
@@ -278,8 +277,20 @@ class BaseEntityStateMachine<Aux>(
         val elementStateMachine =
             if (!isWrappedElements) listElementStateMachine
             else ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachineFactory, stack)
-        val listStateMachine = ListFieldModelStateMachine(listFieldModel, elementStateMachine, stack)
+        val listStateMachine = CollectionFieldModelStateMachine(listFieldModel, elementStateMachine, stack)
         stack.addFirst(listStateMachine)
+    }
+
+    private fun addSetElementStateMachineToStack(
+        setFieldModel: MutableSetFieldModel<Aux>,
+        setElementStateMachine: ValueDecodingStateMachine<Aux>,
+        isWrappedElements: Boolean
+    ) {
+        val elementStateMachine =
+            if (!isWrappedElements) setElementStateMachine
+            else ValueAndAuxStateMachine(true, setElementStateMachine, auxStateMachineFactory, stack)
+        val setStateMachine = CollectionFieldModelStateMachine(setFieldModel, elementStateMachine, stack)
+        stack.addFirst(setStateMachine)
     }
 
     private fun addElementStateMachineToStack(elementStateMachine: ValueDecodingStateMachine<Aux>) {

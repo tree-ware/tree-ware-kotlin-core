@@ -42,6 +42,12 @@ class VisitFollowerListFieldModel<Aux>(override val element: ListFieldModel<Aux>
 class LeaveFollowerListFieldModel<Aux>(override val element: ListFieldModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
 
+class VisitFollowerSetFieldModel<Aux>(override val element: SetFieldModel<Aux>?) :
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
+
+class LeaveFollowerSetFieldModel<Aux>(override val element: SetFieldModel<Aux>?) :
+    FollowerModelCursorMove<Aux>(CursorMoveDirection.LEAVE)
+
 class VisitFollowerValueModel<Aux>(override val element: ElementModel<Aux>?) :
     FollowerModelCursorMove<Aux>(CursorMoveDirection.VISIT)
 

@@ -75,6 +75,14 @@ fun <LeaderAux, FollowerAux, Return> dispatchVisit(
         )
         else null
     }
+    ModelElementType.SET_FIELD -> {
+        if (follower != null) assert(follower.elementType == ModelElementType.SET_FIELD)
+        if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.visit(
+            leader as SetFieldModel<LeaderAux>,
+            follower as SetFieldModel<FollowerAux>?
+        )
+        else null
+    }
     ModelElementType.PRIMITIVE -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE)
         if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.visit(
@@ -172,6 +180,13 @@ fun <LeaderAux, FollowerAux, Return> dispatchLeave(
             if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.leave(
                 leader as ListFieldModel<LeaderAux>,
                 follower as ListFieldModel<FollowerAux>?
+            )
+        }
+        ModelElementType.SET_FIELD -> {
+            if (follower != null) assert(follower.elementType == ModelElementType.SET_FIELD)
+            if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.leave(
+                leader as SetFieldModel<LeaderAux>,
+                follower as SetFieldModel<FollowerAux>?
             )
         }
         ModelElementType.PRIMITIVE -> {

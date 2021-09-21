@@ -12,6 +12,9 @@ fun <Aux> getMutableSingleField(
     return meta.getField(fieldName) as? MutableSingleFieldModel<Aux> ?: throw IllegalStateException()
 }
 
-fun <Aux> getMutableListField(meta: MutableBaseEntityModel<Aux>, fieldName: String): MutableListFieldModel<Aux> {
-    return meta.getField(fieldName) as? MutableListFieldModel<Aux> ?: throw IllegalStateException()
+fun <Aux> getMutableCollectionField(
+    meta: MutableBaseEntityModel<Aux>,
+    fieldName: String
+): MutableCollectionFieldModel<Aux> {
+    return meta.getField(fieldName) as? MutableCollectionFieldModel<Aux> ?: throw IllegalStateException()
 }

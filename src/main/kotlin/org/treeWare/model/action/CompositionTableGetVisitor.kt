@@ -52,7 +52,7 @@ class CompositionTableGetVisitor<MappingAux>(
         if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
         delegate.pushPathEntity(responseRoot)
-        val (compositionListFields, fields) = requestRoot.fields.values.partition { isCompositionListField(it) }
+        val (compositionListFields, fields) = requestRoot.fields.values.partition { isCompositionSetField(it) }
         val mutableResponseRoot = responseRoot as MutableRootModel<Unit>
         val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux)
@@ -100,11 +100,7 @@ class CompositionTableGetVisitor<MappingAux>(
         responseField: ListFieldModel<Unit>,
         requestField: ListFieldModel<Unit>?,
         mappingField: ListFieldModel<MappingAux>?
-    ) = if (isCompositionListField(responseField)) visitCompositionList(
-        responseField,
-        requestField,
-        mappingField
-    ) else TraversalAction.CONTINUE
+    ) = TraversalAction.CONTINUE
 
     override suspend fun leave(
         responseField: ListFieldModel<Unit>,
@@ -113,10 +109,27 @@ class CompositionTableGetVisitor<MappingAux>(
     ) {
     }
 
-    private suspend fun visitCompositionList(
-        responseListField: ListFieldModel<Unit>,
-        requestListField: ListFieldModel<Unit>?,
-        mappingListField: ListFieldModel<MappingAux>?
+    override suspend fun visit(
+        responseField: SetFieldModel<Unit>,
+        requestField: SetFieldModel<Unit>?,
+        mappingField: SetFieldModel<MappingAux>?
+    ) = if (isCompositionSetField(responseField)) visitCompositionSet(
+        responseField,
+        requestField,
+        mappingField
+    ) else TraversalAction.CONTINUE
+
+    override suspend fun leave(
+        responseField: SetFieldModel<Unit>,
+        requestField: SetFieldModel<Unit>?,
+        mappingField: SetFieldModel<MappingAux>?
+    ) {
+    }
+
+    private suspend fun visitCompositionSet(
+        responseListField: SetFieldModel<Unit>,
+        requestListField: SetFieldModel<Unit>?,
+        mappingListField: SetFieldModel<MappingAux>?
     ): TraversalAction {
         if (requestListField == null) return TraversalAction.ABORT_SUB_TREE
 
@@ -125,8 +138,8 @@ class CompositionTableGetVisitor<MappingAux>(
         if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
 
         val requestEntityFields = (requestListField.firstValue() as? EntityModel<Unit>)?.fields ?: LinkedHashMap()
-        val (compositionListFields, fields) = requestEntityFields.values.partition { isCompositionListField(it) }
-        val mutableResponseListField = responseListField as MutableListFieldModel<Unit>
+        val (compositionListFields, fields) = requestEntityFields.values.partition { isCompositionSetField(it) }
+        val mutableResponseListField = responseListField as MutableSetFieldModel<Unit>
         val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
         delegate.fetchCompositionList(mutableResponseListField, fieldNames, mappingAux)
         mutableResponseListField.values.forEach {

@@ -67,6 +67,18 @@ interface Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Re
         followerField2: ListFieldModel<Follower2Aux>?
     )
 
+    suspend fun visit(
+        leaderField1: SetFieldModel<LeaderAux>,
+        followerField1: SetFieldModel<Follower1Aux>?,
+        followerField2: SetFieldModel<Follower2Aux>?
+    ): Return
+
+    suspend fun leave(
+        leaderField1: SetFieldModel<LeaderAux>,
+        followerField1: SetFieldModel<Follower1Aux>?,
+        followerField2: SetFieldModel<Follower2Aux>?
+    )
+
     // Values
 
     suspend fun visit(

@@ -39,7 +39,7 @@
                     "name": "address_book_person",
                     "package": "address_book.main"
                   },
-                  "multiplicity": "list"
+                  "multiplicity": "set"
                 },
                 {
                   "name": "city_info",
@@ -48,7 +48,7 @@
                     "name": "address_book_city_info",
                     "package": "address_book.city"
                   },
-                  "multiplicity": "list"
+                  "multiplicity": "set"
                 }
               ]
             },
@@ -114,7 +114,7 @@
                     "name": "address_book_relation",
                     "package": "address_book.main"
                   },
-                  "multiplicity": "list"
+                  "multiplicity": "set"
                 },
                 {
                   "name": "password",

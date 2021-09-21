@@ -5,17 +5,17 @@ import org.treeWare.model.core.*
 fun getMutableRootMeta(mainMeta: MutableMainModel<Resolved>): MutableEntityModel<Resolved> =
     getMutableSingleEntity(mainMeta.root, "root")
 
-fun getMutablePackagesMeta(mainMeta: MutableMainModel<Resolved>): MutableListFieldModel<Resolved> =
-    getMutableListField(mainMeta.root, "packages")
+fun getMutablePackagesMeta(mainMeta: MutableMainModel<Resolved>): MutableCollectionFieldModel<Resolved> =
+    getMutableCollectionField(mainMeta.root, "packages")
 
-fun getMutableEnumerationsMeta(packageMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved>? =
-    runCatching { getMutableListField(packageMeta, "enumerations") }.getOrNull()
+fun getMutableEnumerationsMeta(packageMeta: MutableEntityModel<Resolved>): MutableCollectionFieldModel<Resolved>? =
+    runCatching { getMutableCollectionField(packageMeta, "enumerations") }.getOrNull()
 
-fun getMutableEnumerationValuesMeta(enumerationMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved> =
-    getMutableListField(enumerationMeta, "values")
+fun getMutableEnumerationValuesMeta(enumerationMeta: MutableEntityModel<Resolved>): MutableCollectionFieldModel<Resolved> =
+    getMutableCollectionField(enumerationMeta, "values")
 
-fun getMutableEntitiesMeta(packageMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved>? =
-    runCatching { getMutableListField(packageMeta, "entities") }.getOrNull()
+fun getMutableEntitiesMeta(packageMeta: MutableEntityModel<Resolved>): MutableCollectionFieldModel<Resolved>? =
+    runCatching { getMutableCollectionField(packageMeta, "entities") }.getOrNull()
 
-fun getMutableFieldsMeta(entityMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved> =
-    getMutableListField(entityMeta, "fields")
+fun getMutableFieldsMeta(entityMeta: MutableEntityModel<Resolved>): MutableCollectionFieldModel<Resolved> =
+    getMutableCollectionField(entityMeta, "fields")

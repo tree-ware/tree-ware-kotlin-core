@@ -6,6 +6,7 @@ enum class ModelElementType {
     ENTITY,
     SINGLE_FIELD,
     LIST_FIELD,
+    SET_FIELD,
     PRIMITIVE,
     ALIAS,
     PASSWORD1WAY,
