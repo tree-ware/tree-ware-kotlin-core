@@ -26,6 +26,7 @@ interface BaseEntityModel<Aux> : ElementModel<Aux> {
     val fields: Map<String, FieldModel<Aux>>
 
     fun getField(fieldName: String): FieldModel<Aux>?
+    fun getMatchingHashCode(): Int
 }
 
 interface RootModel<Aux> : BaseEntityModel<Aux> {
@@ -56,15 +57,21 @@ interface SingleFieldModel<Aux> : FieldModel<Aux> {
     val value: ElementModel<Aux>?
 }
 
-interface ListFieldModel<Aux> : FieldModel<Aux> {
-    override val elementType: ModelElementType
-        get() = ModelElementType.LIST_FIELD
-
-    val values: List<ElementModel<Aux>>
+interface CollectionFieldModel<Aux> : FieldModel<Aux> {
+    val values: Collection<ElementModel<Aux>>
 
     fun firstValue(): ElementModel<Aux>?
-    fun getValue(index: Int): ElementModel<Aux>?
     fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>?
+}
+
+interface ListFieldModel<Aux> : CollectionFieldModel<Aux> {
+    override val elementType: ModelElementType
+        get() = ModelElementType.LIST_FIELD
+}
+
+interface SetFieldModel<Aux> : CollectionFieldModel<Aux> {
+    override val elementType: ModelElementType
+        get() = ModelElementType.SET_FIELD
 }
 
 // Values

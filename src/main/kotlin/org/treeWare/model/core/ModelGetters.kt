@@ -47,6 +47,10 @@ fun <Aux> getListField(meta: BaseEntityModel<Aux>, fieldName: String): ListField
     return meta.getField(fieldName) as? ListFieldModel<Aux> ?: throw IllegalStateException()
 }
 
+fun <Aux> getCollectionField(meta: BaseEntityModel<Aux>, fieldName: String): CollectionFieldModel<Aux> {
+    return meta.getField(fieldName) as? CollectionFieldModel<Aux> ?: throw IllegalStateException()
+}
+
 fun <Aux> getListStrings(listFieldMeta: ListFieldModel<Aux>): List<String> {
     val firstElement = listFieldMeta.values.firstOrNull() ?: return listOf()
     val firstPrimitive = firstElement as? PrimitiveModel<Aux> ?: throw IllegalStateException()

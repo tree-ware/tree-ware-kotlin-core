@@ -22,6 +22,9 @@ interface Leader1Follower0ModelVisitor<LeaderAux, Return> {
     fun visit(leaderField1: ListFieldModel<LeaderAux>): Return
     fun leave(leaderField1: ListFieldModel<LeaderAux>)
 
+    fun visit(leaderField1: SetFieldModel<LeaderAux>): Return
+    fun leave(leaderField1: SetFieldModel<LeaderAux>)
+
     // Values
 
     fun visit(leaderValue1: PrimitiveModel<LeaderAux>): Return

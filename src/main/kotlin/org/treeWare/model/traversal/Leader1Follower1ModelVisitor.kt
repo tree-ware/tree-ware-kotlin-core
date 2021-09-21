@@ -22,6 +22,9 @@ interface Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return> {
     fun visit(leaderField1: ListFieldModel<LeaderAux>, followerField1: ListFieldModel<FollowerAux>?): Return
     fun leave(leaderField1: ListFieldModel<LeaderAux>, followerField1: ListFieldModel<FollowerAux>?)
 
+    fun visit(leaderField1: SetFieldModel<LeaderAux>, followerField1: SetFieldModel<FollowerAux>?): Return
+    fun leave(leaderField1: SetFieldModel<LeaderAux>, followerField1: SetFieldModel<FollowerAux>?)
+
     // Values
 
     fun visit(leaderValue1: PrimitiveModel<LeaderAux>, followerValue1: PrimitiveModel<FollowerAux>?): Return

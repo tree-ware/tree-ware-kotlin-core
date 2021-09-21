@@ -39,6 +39,12 @@ abstract class AbstractLeader1Follower0ModelVisitor<LeaderAux, Return>(
 
     override fun leave(leaderField1: ListFieldModel<LeaderAux>) {}
 
+    override fun visit(leaderField1: SetFieldModel<LeaderAux>): Return {
+        return defaultVisitReturn
+    }
+
+    override fun leave(leaderField1: SetFieldModel<LeaderAux>) {}
+
     // Values
 
     override fun visit(leaderValue1: PrimitiveModel<LeaderAux>): Return {

@@ -49,7 +49,7 @@ class RootModelStateMachine<Aux>(
         val key = keyName ?: ""
         if (key == rootName) {
             val entityStateMachine =
-                BaseEntityStateMachine(false, { root }, stack, auxStateMachineFactory, isWildcardModel)
+                BaseEntityStateMachine(false, null, { root }, stack, auxStateMachineFactory, isWildcardModel)
             stack.addFirst(entityStateMachine)
             return true
         } else if (auxStateMachine != null) {

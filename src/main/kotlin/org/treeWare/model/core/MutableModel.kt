@@ -44,11 +44,18 @@ abstract class MutableBaseEntityModel<Aux>(
 
     override fun matches(that: ElementModel<*>): Boolean {
         if (that !is BaseEntityModel<*>) return false
-        val thisKeyFields = this.fields.values.filter { isKeyFieldMeta(it.meta) }
+        val thisKeyFields = getKeyFields()
+        if (thisKeyFields.isEmpty()) throw IllegalStateException("Entity does not have key fields")
         return thisKeyFields.all { thisKeyField ->
             val thatKeyField = that.getField(getMetaName(thisKeyField.meta)) ?: return false
             thisKeyField.matches(thatKeyField)
         }
+    }
+
+    // NOTE: key values cannot be changed after an entity has been added to its parent set.
+    override fun getMatchingHashCode(): Int {
+        val keyValues = getKeyValues().toTypedArray()
+        return Objects.hash(*keyValues)
     }
 
     override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields[fieldName]
@@ -58,10 +65,29 @@ abstract class MutableBaseEntityModel<Aux>(
         if (existing != null) return existing
         val fieldMeta = meta?.let { getFieldMeta(it, fieldName) }
             ?: throw IllegalStateException("fieldMeta is null when creating mutable field model")
-        val newField = if (isListFieldMeta(fieldMeta)) MutableListFieldModel(fieldMeta, this)
-        else MutableSingleFieldModel(fieldMeta, this)
+        val newField = when (getMultiplicityMeta(fieldMeta)) {
+            Multiplicity.LIST -> MutableListFieldModel(fieldMeta, this)
+            Multiplicity.SET -> MutableSetFieldModel(fieldMeta, this)
+            else -> MutableSingleFieldModel(fieldMeta, this)
+        }
         fields[fieldName] = newField
         return newField
+    }
+
+    private fun getKeyFields(): List<MutableFieldModel<Aux>> {
+        val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return listOf()
+        val keyFieldsMeta = filterKeyFields(fieldsMeta.values)
+        return keyFieldsMeta.mapNotNull { fieldMeta -> this.fields[getMetaName(fieldMeta)] }
+    }
+
+    private fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
+        if (field.elementType == ModelElementType.SINGLE_FIELD) {
+            val singleField = field as MutableSingleFieldModel
+            when (getFieldTypeMeta(singleField.meta)) {
+                FieldType.COMPOSITION -> (singleField.value as MutableBaseEntityModel<Aux>).getKeyValues()
+                else -> listOf((singleField.value as MutablePrimitiveModel<Aux>).value)
+            }
+        } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.meta?.aux?.fullName}")
     }
 }
 
@@ -111,15 +137,21 @@ class MutableSingleFieldModel<Aux>(
     }
 }
 
+abstract class MutableCollectionFieldModel<Aux>(
+    meta: EntityModel<Resolved>?,
+    parent: MutableBaseEntityModel<Aux>
+) : MutableFieldModel<Aux>(meta, parent), CollectionFieldModel<Aux> {
+    abstract override val values: MutableCollection<MutableElementModel<Aux>>
+}
+
 class MutableListFieldModel<Aux>(
     meta: EntityModel<Resolved>?,
     parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(meta, parent), ListFieldModel<Aux> {
+) : MutableCollectionFieldModel<Aux>(meta, parent), ListFieldModel<Aux> {
     override val values = mutableListOf<MutableElementModel<Aux>>()
 
     override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
     override fun firstValue(): ElementModel<Aux>? = values.firstOrNull()
-    override fun getValue(index: Int): ElementModel<Aux>? = values.getOrNull(index)
     override fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>? = values.find { it.matches(that) }
 
     /** Adds a new value to the list and returns the new value. */
@@ -131,6 +163,28 @@ class MutableListFieldModel<Aux>(
 
     fun addValue(value: MutableElementModel<Aux>) {
         values.add(value)
+    }
+}
+
+class MutableSetFieldModel<Aux>(
+    meta: EntityModel<Resolved>?,
+    parent: MutableBaseEntityModel<Aux>
+) : MutableCollectionFieldModel<Aux>(meta, parent), SetFieldModel<Aux> {
+    private val linkedHashMap = LinkedHashMap<ElementModelId, MutableElementModel<Aux>>()
+    override val values get() = linkedHashMap.values
+
+    override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
+    override fun firstValue(): ElementModel<Aux>? = values.iterator().takeIf { it.hasNext() }?.next()
+    override fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>? = linkedHashMap[newElementModelId(that)]
+
+    /**
+     * Returns a new value.
+     * WARNING: the new value needs to be added to the set after the key fields are set in it.
+     */
+    fun getNewValue(): MutableElementModel<Aux> = newMutableValueModel(meta, this)
+
+    fun addValue(value: MutableElementModel<Aux>) {
+        linkedHashMap[newElementModelId(value)] = value
     }
 }
 
@@ -407,6 +461,7 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: BigDecimal, setter: Value
 
 fun setValue(fieldMeta: EntityModel<Resolved>?, value: Boolean, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
+        null, // fieldMeta is null when constructing the meta-meta-model.
         FieldType.BOOLEAN -> {
             setter(value)
             true
@@ -422,6 +477,7 @@ fun setEnumerationValue(
     value: String,
     setter: StringSetter
 ): Boolean {
+    // fieldMeta is null when constructing the meta-meta-model.
     val enumerationValue = if (fieldMeta == null) value else {
         val resolvedEnumeration = fieldMeta.aux?.enumerationMeta
             ?: throw IllegalStateException("Enumeration has not been resolved")

@@ -93,6 +93,14 @@ private class NullFollowerState<LeaderAux, FollowerAux>(
             stateStack.pollFirst()
             LeaveFollowerListFieldModel(null)
         }
+        is VisitLeaderSetFieldModel -> {
+            stateStack.addFirst(this)
+            VisitFollowerSetFieldModel(null)
+        }
+        is LeaveLeaderSetFieldModel -> {
+            stateStack.pollFirst()
+            LeaveFollowerSetFieldModel(null)
+        }
         is VisitLeaderValueModel -> {
             stateStack.addFirst(this)
             VisitFollowerValueModel(null)
@@ -142,6 +150,7 @@ private abstract class BaseEntityFollowerState<LeaderAux, FollowerAux>(
     override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
         is VisitLeaderSingleFieldModel -> visitField(move.element, VisitFollowerSingleFieldModel(null))
         is VisitLeaderListFieldModel -> visitField(move.element, VisitFollowerListFieldModel(null))
+        is VisitLeaderSetFieldModel -> visitField(move.element, VisitFollowerSetFieldModel(null))
         else -> super.follow(move)
     }
 
@@ -263,6 +272,43 @@ private class ListFieldFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
+private class SetFieldFollowerState<LeaderAux, FollowerAux>(
+    private val field: SetFieldModel<FollowerAux>,
+    stack: FollowerStateStack<LeaderAux, FollowerAux>,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
+) : FollowerState<LeaderAux, FollowerAux>(field, stack) {
+    override val visitCursorMove = VisitFollowerSetFieldModel(field)
+
+    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move) {
+        is LeaveLeaderSetFieldModel -> {
+            stateStack.pollFirst()
+            LeaveFollowerSetFieldModel(field)
+        }
+        is VisitLeaderValueModel -> {
+            val leaderValue =
+                move.element as? ElementModel<LeaderAux> ?: throw IllegalStateException("expected set field value")
+            val followerValue: ElementModel<FollowerAux>? = field.getValueMatching(leaderValue)
+            val elementState =
+                if (followerValue == null) NullFollowerState(VisitFollowerValueModel(null), stateStack)
+                else dispatchVisit(followerValue, stateFactoryVisitor)
+                    ?: throw IllegalStateException("null element state")
+            stateStack.addFirst(elementState)
+            elementState.visitCursorMove
+        }
+        is VisitLeaderEntityModel -> {
+            val leaderEntity = move.element
+            val followerEntity = field.getValueMatching(leaderEntity)
+            val elementState =
+                if (followerEntity == null) NullFollowerState(VisitFollowerEntityModel(null), stateStack)
+                else dispatchVisit(followerEntity, stateFactoryVisitor)
+                    ?: throw IllegalStateException("null element state")
+            stateStack.addFirst(elementState)
+            elementState.visitCursorMove
+        }
+        else -> super.follow(move)
+    }
+}
+
 // Values
 
 private class ScalarValueFollowerState<LeaderAux, FollowerAux>(
@@ -314,6 +360,9 @@ private class FollowerStateFactoryVisitor<LeaderAux, FollowerAux>(
 
     override fun visit(leaderField1: ListFieldModel<FollowerAux>) =
         ListFieldFollowerState(leaderField1, stateStack, this)
+
+    override fun visit(leaderField1: SetFieldModel<FollowerAux>) =
+        SetFieldFollowerState(leaderField1, stateStack, this)
 
     // Values
 

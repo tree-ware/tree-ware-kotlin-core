@@ -1,8 +1,8 @@
 package org.treeWare.model.action
 
 import org.treeWare.model.core.BaseEntityModel
-import org.treeWare.model.core.MutableListFieldModel
 import org.treeWare.model.core.MutableRootModel
+import org.treeWare.model.core.MutableSetFieldModel
 
 // IMPLEMENTATION: ./Get.md
 
@@ -17,7 +17,7 @@ interface CompositionTableGetVisitorDelegate<MappingAux> {
     )
 
     suspend fun fetchCompositionList(
-        responseListField: MutableListFieldModel<Unit>,
+        responseListField: MutableSetFieldModel<Unit>,
         requestFieldNames: List<String>,
         mappingAux: MappingAux
     )
