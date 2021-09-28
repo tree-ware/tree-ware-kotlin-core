@@ -66,11 +66,12 @@ class PackageValidationTests {
             |   }
             | }
         """.trimMargin()
-        val expectedErrors = listOf(
-            "Package 0 name is missing",
-            "Package 2 name is missing"
+        val expectedDecodeErrors = listOf(
+            "Missing key fields: [name]",
+            "Missing key fields: [name]"
         )
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+        val expectedErrors = listOf("Root entity cannot be resolved")
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 
     @Test

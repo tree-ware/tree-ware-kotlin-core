@@ -1,7 +1,6 @@
 package org.treeWare.model.decoder
 
 import org.treeWare.model.core.MainModel
-import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
 import org.treeWare.model.decoder.stateMachine.DecodingStack
@@ -12,10 +11,13 @@ fun <Aux> decodeJson(
     reader: Reader,
     meta: MainModel<Resolved>,
     expectedModelType: String,
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
-): MutableMainModel<Aux>? {
-    val decodingStateMachine = ModelDecodingStateMachine(meta, expectedModelType, auxStateMachineFactory)
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
+): ModelDecoderResult<Aux> {
+    val decodingStateMachine =
+        ModelDecodingStateMachine(meta, expectedModelType, options, auxStateMachineFactory)
     val wireFormatDecoder = JsonWireFormatDecoder()
     val decoded = wireFormatDecoder.decode(reader, decodingStateMachine)
-    return if (decoded) decodingStateMachine.mainModel else null
+    val mainModel = if (decoded) decodingStateMachine.mainModel else null
+    return ModelDecoderResult(mainModel, decodingStateMachine.errors)
 }

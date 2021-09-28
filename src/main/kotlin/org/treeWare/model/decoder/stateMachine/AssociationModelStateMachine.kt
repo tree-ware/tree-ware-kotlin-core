@@ -2,11 +2,14 @@ package org.treeWare.model.decoder.stateMachine
 
 import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.MutableAssociationModel
+import org.treeWare.model.decoder.ModelDecoderOptions
 
 class AssociationModelStateMachine<Aux>(
     private val isListElement: Boolean,
     private val associationFactory: () -> MutableAssociationModel<Aux>,
     private val stack: DecodingStack,
+    private val options: ModelDecoderOptions,
+    private val errors: MutableList<String>,
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private var auxStateMachine: AuxDecodingStateMachine<Aux>? = null
@@ -82,7 +85,7 @@ class AssociationModelStateMachine<Aux>(
         }
         if (fieldName == "path_keys") {
             association?.also {
-                stack.addFirst(AssociationPathStateMachine(it.newValue(), stack))
+                stack.addFirst(AssociationPathStateMachine(it.newValue(), stack, options, errors))
             }
             return true
         }

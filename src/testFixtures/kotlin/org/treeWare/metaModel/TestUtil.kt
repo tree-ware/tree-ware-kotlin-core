@@ -11,20 +11,33 @@ import kotlin.test.assertNotNull
 
 private val metaMetaModel = newMainMetaMetaModel()
 
-fun assertJsonStringValidationErrors(metaModelJsonString: String, expectedValidationErrors: List<String>) {
+fun assertJsonStringValidationErrors(
+    metaModelJsonString: String,
+    expectedValidationErrors: List<String>,
+    expectedDecodeErrors: List<String> = listOf()
+) {
     val stringReader = StringReader(metaModelJsonString)
-    assertJsonValidationErrors(stringReader, expectedValidationErrors)
+    assertJsonValidationErrors(stringReader, expectedValidationErrors, expectedDecodeErrors)
 }
 
-fun assertJsonFileValidationErrors(metaModelJsonFile: String, expectedValidationErrors: List<String>) {
+fun assertJsonFileValidationErrors(
+    metaModelJsonFile: String,
+    expectedValidationErrors: List<String>,
+    expectedDecodeErrors: List<String> = listOf()
+) {
     val fileReader = getFileReader(metaModelJsonFile)
     assertNotNull(fileReader)
-    assertJsonValidationErrors(fileReader, expectedValidationErrors)
+    assertJsonValidationErrors(fileReader, expectedValidationErrors, expectedDecodeErrors)
 }
 
-private fun assertJsonValidationErrors(jsonReader: Reader, expectedValidationErrors: List<String>) {
-    val metaModel = decodeJson<Resolved>(jsonReader, metaMetaModel, "data") { null }
+private fun assertJsonValidationErrors(
+    jsonReader: Reader,
+    expectedValidationErrors: List<String>,
+    expectedDecodeErrors: List<String>
+) {
+    val (metaModel, decodeErrors) = decodeJson<Resolved>(jsonReader, metaMetaModel, "data") { null }
     val errors = if (metaModel != null) validate(metaModel, null, null)
     else listOf("Meta-model decoding failed")
+    assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     assertEquals(expectedValidationErrors.joinToString("\n"), errors.joinToString("\n"))
 }

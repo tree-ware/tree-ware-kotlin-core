@@ -5,15 +5,24 @@
       "person__mapping_": "person_mapping",
       "person": [
         {
+          "id": null,
           "relation__mapping_": "relation_mapping",
           "relation": [
-            {}
+            {
+              "id": null
+            }
           ]
         }
       ],
       "city_info__mapping_": "city_info_mapping",
       "city_info": [
-        {}
+        {
+          "city": {
+            "name": null,
+            "state": null,
+            "country": null
+          }
+        }
       ]
     }
   }
