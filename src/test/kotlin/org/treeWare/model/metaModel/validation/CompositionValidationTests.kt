@@ -334,6 +334,14 @@ private fun testHelperPackageJson() = """
     |         {
     |           "name": "non_key_boolean_field",
     |           "type": "boolean"
+    |         },
+    |         {
+    |           "name": "non_key_composition_field",
+    |           "type": "composition",
+    |           "composition": {
+    |             "name": "entity_with_only_primitive_keys",
+    |             "package": "test.helper"
+    |           }
     |         }
     |       ]
     |     }
