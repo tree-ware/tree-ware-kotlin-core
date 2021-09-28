@@ -3,12 +3,16 @@ package org.treeWare.model.decoder.stateMachine
 import org.apache.logging.log4j.LogManager
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
+import org.treeWare.model.decoder.ModelDecoderOptions
+import org.treeWare.model.decoder.OnMissingKeys
 
 class BaseEntityStateMachine<Aux>(
     private val isSetElement: Boolean,
     private val parentSetField: MutableSetFieldModel<Aux>?,
     private val baseFactory: () -> MutableBaseEntityModel<Aux>,
     private val stack: DecodingStack,
+    private val options: ModelDecoderOptions,
+    private val errors: MutableList<String>,
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
     private val isWildcardModel: Boolean
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
@@ -40,11 +44,19 @@ class BaseEntityStateMachine<Aux>(
         }
         // This state-machine instance gets reused in lists, so clear the map.
         auxStateMachineMap.clear()
-        if (!isSetElement) {
+        return if (!isSetElement) {
             // Remove self from stack
             stack.pollFirst()
-        } else base?.also { parentSetField?.addValue(it) }
-        return true
+            true
+        } else base?.let {
+            try {
+                parentSetField?.addValue(it)
+                true
+            } catch (e: MissingKeysException) {
+                errors.add(e.message ?: "Missing keys")
+                options.onMissingKeys == OnMissingKeys.SKIP_WITH_ERRORS
+            }
+        } ?: true
     }
 
     override fun decodeListStart(): Boolean {
@@ -211,6 +223,8 @@ class BaseEntityStateMachine<Aux>(
                     value
                 },
                 stack,
+                options,
+                errors,
                 auxStateMachineFactory
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
@@ -224,6 +238,8 @@ class BaseEntityStateMachine<Aux>(
                     value
                 },
                 stack,
+                options,
+                errors,
                 auxStateMachineFactory
             )
             addElementStateMachineToStack(elementStateMachine)
@@ -245,6 +261,8 @@ class BaseEntityStateMachine<Aux>(
                         else newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel<Aux>
                     },
                     stack,
+                    options,
+                    errors,
                     auxStateMachineFactory,
                     isWildcardModel
                 )
@@ -261,6 +279,8 @@ class BaseEntityStateMachine<Aux>(
                         value
                     },
                     stack,
+                    options,
+                    errors,
                     auxStateMachineFactory,
                     isWildcardModel
                 )

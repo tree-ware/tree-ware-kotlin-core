@@ -3,10 +3,13 @@ package org.treeWare.model.decoder.stateMachine
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.getRootMeta
 import org.treeWare.model.core.MutableRootModel
+import org.treeWare.model.decoder.ModelDecoderOptions
 
 class RootModelStateMachine<Aux>(
     private val root: MutableRootModel<Aux>,
     private val stack: DecodingStack,
+    private val options: ModelDecoderOptions,
+    private val errors: MutableList<String>,
     private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
     private val isWildcardModel: Boolean
 ) : AbstractDecodingStateMachine(true) {
@@ -49,7 +52,16 @@ class RootModelStateMachine<Aux>(
         val key = keyName ?: ""
         if (key == rootName) {
             val entityStateMachine =
-                BaseEntityStateMachine(false, null, { root }, stack, auxStateMachineFactory, isWildcardModel)
+                BaseEntityStateMachine(
+                    false,
+                    null,
+                    { root },
+                    stack,
+                    options,
+                    errors,
+                    auxStateMachineFactory,
+                    isWildcardModel
+                )
             stack.addFirst(entityStateMachine)
             return true
         } else if (auxStateMachine != null) {

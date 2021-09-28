@@ -2,6 +2,7 @@ package org.treeWare.model
 
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.*
+import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
 import org.treeWare.model.decoder.stateMachine.DecodingStack
@@ -20,14 +21,17 @@ fun <Aux> testRoundTrip(
     outputFilePath: String? = null,
     auxEncoder: AuxEncoder? = null,
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
+    expectedDecodeErrors: List<String> = listOf(),
     hasher: Hasher? = null,
     cipher: Cipher? = null,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ) {
     val metaModel = newAddressBookMetaModel(hasher, cipher)
 
-    val model = getMainModel(metaModel, inputFilePath, expectedModelType, auxStateMachineFactory)
+    val model =
+        getMainModel(metaModel, inputFilePath, options, expectedModelType, expectedDecodeErrors, auxStateMachineFactory)
     assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)
 }
 
@@ -44,15 +48,24 @@ fun readFile(filePath: String): String? {
 fun <Aux> getMainModel(
     meta: MainModel<Resolved>,
     inputFilePath: String,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
+    expectedDecodeErrors: List<String> = listOf(),
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ): MutableMainModel<Aux> {
     val fileReader = getFileReader(inputFilePath)
     assertNotNull(fileReader)
-    val model = decodeJson(fileReader, meta, expectedModelType, auxStateMachineFactory)
+    val (mainModel, decodeErrors) = decodeJson(
+        fileReader,
+        meta,
+        expectedModelType,
+        options,
+        auxStateMachineFactory
+    )
     fileReader.close()
-    assertTrue(model != null)
-    return model
+    assertTrue(mainModel != null)
+    assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
+    return mainModel
 }
 
 /** Encodes the model element to JSON and asserts that it matches the JSON in the file.

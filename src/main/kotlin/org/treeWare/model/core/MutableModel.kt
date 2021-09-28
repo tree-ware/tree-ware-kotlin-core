@@ -45,7 +45,7 @@ abstract class MutableBaseEntityModel<Aux>(
     override fun matches(that: ElementModel<*>): Boolean {
         if (that !is BaseEntityModel<*>) return false
         val thisKeyFields = getKeyFields()
-        if (thisKeyFields.isEmpty()) throw IllegalStateException("Entity does not have key fields")
+        if (thisKeyFields.isEmpty()) throw MissingKeysException("No key fields")
         return thisKeyFields.all { thisKeyField ->
             val thatKeyField = that.getField(getMetaName(thisKeyField.meta)) ?: return false
             thisKeyField.matches(thatKeyField)
@@ -77,7 +77,15 @@ abstract class MutableBaseEntityModel<Aux>(
     private fun getKeyFields(): List<MutableFieldModel<Aux>> {
         val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return listOf()
         val keyFieldsMeta = filterKeyFields(fieldsMeta.values)
-        return keyFieldsMeta.mapNotNull { fieldMeta -> this.fields[getMetaName(fieldMeta)] }
+        val missingKeys = mutableListOf<String>()
+        val keyFields = mutableListOf<MutableFieldModel<Aux>>()
+        keyFieldsMeta.forEach { fieldMeta ->
+            val keyFieldName = getMetaName(fieldMeta)
+            val keyField = this.fields[keyFieldName]
+            if (keyField == null) missingKeys.add(keyFieldName) else keyFields.add(keyField)
+        }
+        if (missingKeys.isNotEmpty()) throw MissingKeysException("Missing key fields: $missingKeys")
+        return keyFields
     }
 
     private fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
@@ -487,3 +495,5 @@ fun setEnumerationValue(
     setter(enumerationValue)
     return true
 }
+
+class MissingKeysException(message: String) : Exception(message)

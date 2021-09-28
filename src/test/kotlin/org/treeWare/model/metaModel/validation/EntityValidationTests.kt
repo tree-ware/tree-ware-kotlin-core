@@ -24,8 +24,9 @@ class EntityValidationTests {
             | }
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testMetaModelCommonRootJson, testPackageJson)
-        val expectedErrors = listOf("Package 0 entity 0 name is missing")
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+        val expectedDecodeErrors = listOf("Missing key fields: [name]")
+        val expectedErrors = listOf("Root entity cannot be resolved")
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 
     @Test

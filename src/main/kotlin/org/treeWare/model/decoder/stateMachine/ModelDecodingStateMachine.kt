@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
+import org.treeWare.model.decoder.ModelDecoderOptions
 import java.math.BigDecimal
 import java.util.*
 
@@ -20,12 +21,13 @@ typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 class ModelDecodingStateMachine<Aux>(
     meta: MainModel<Resolved>,
     expectedModelType: String,
+    options: ModelDecoderOptions,
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
     isWildcardModel: Boolean = false
 ) : DecodingStateMachine {
     private val stack = DecodingStack()
     private val mainModelStateMachine =
-        MainModelStateMachine(meta, expectedModelType, auxStateMachineFactory, stack, isWildcardModel)
+        MainModelStateMachine(meta, expectedModelType, stack, options, auxStateMachineFactory, isWildcardModel)
     private val logger = LogManager.getLogger()
 
     init {
@@ -38,6 +40,7 @@ class ModelDecodingStateMachine<Aux>(
     }
 
     val mainModel: MutableMainModel<Aux>? get() = mainModelStateMachine.mainModel
+    val errors: List<String> = mainModelStateMachine.errors
 
     private fun getTopStateMachine(): DecodingStateMachine? {
         val top = stack.peekFirst()

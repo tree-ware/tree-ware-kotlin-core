@@ -17,12 +17,12 @@ class GetTests {
     fun `get() returns the requested data`() = runBlocking {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json", "data")
+        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json")
         val mapping =
             getMainModel(
                 metaModel,
                 "model/address_book_mapping_model.json",
-                "mapping"
+                expectedModelType = "mapping"
             ) { StringAuxStateMachine(it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
@@ -53,7 +53,7 @@ class GetTests {
         }
         // Fetch person list.
         coEvery {
-            delegate.fetchCompositionList(ofType(), listOf("first_name", "email"), "person_mapping")
+            delegate.fetchCompositionList(ofType(), listOf("id", "first_name", "email"), "person_mapping")
         } answers {
             val setField = arg<MutableSetFieldModel<Unit>>(0)
 
@@ -88,7 +88,7 @@ class GetTests {
                 listOf("name", "last_updated", "settings/last_name_first", "settings/card_colors"),
                 "root_mapping"
             )
-            delegate.fetchCompositionList(ofType(), listOf("first_name", "email"), "person_mapping")
+            delegate.fetchCompositionList(ofType(), listOf("id", "first_name", "email"), "person_mapping")
             // TODO(deepak-nulu): the following stopped getting called when compositions were changed from lists to sets.
             // delegate.fetchCompositionList(ofType(), listOf(), "relation_mapping")
             // delegate.fetchCompositionList(ofType(), listOf(), "relation_mapping")
