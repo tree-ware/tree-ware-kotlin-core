@@ -203,8 +203,11 @@ private fun validateFieldIsKey(fieldMeta: EntityModel<Resolved>, fieldId: String
     if (!isKeyFieldMeta(fieldMeta)) return listOf()
     val errors = mutableListOf<String>()
     if (getMultiplicityMeta(fieldMeta) != Multiplicity.REQUIRED) errors.add("$fieldId is a key but not defined as required")
-    val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()
-    if (fieldTypeMeta == FieldType.ASSOCIATION) errors.add("$fieldId is an association field and they cannot be keys")
+    when (runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()) {
+        FieldType.PASSWORD1WAY, FieldType.PASSWORD2WAY -> errors.add("$fieldId is a password field and they cannot be keys")
+        FieldType.ASSOCIATION -> errors.add("$fieldId is an association field and they cannot be keys")
+        else -> Unit
+    }
     return errors
 }
 
