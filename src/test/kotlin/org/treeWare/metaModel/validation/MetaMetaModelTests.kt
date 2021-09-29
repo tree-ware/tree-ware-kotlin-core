@@ -1,4 +1,4 @@
-package org.treeWare.model.metaModel.validation
+package org.treeWare.metaModel.validation
 
 import org.treeWare.metaModel.newMainMetaMetaModel
 import kotlin.test.Test

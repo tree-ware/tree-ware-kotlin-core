@@ -1,9 +1,6 @@
-package org.treeWare.model.metaModel
+package org.treeWare.metaModel
 
 import org.treeWare.metaModel.encoder.encodeDot
-import org.treeWare.metaModel.getMetaName
-import org.treeWare.metaModel.getRootMeta
-import org.treeWare.metaModel.newAddressBookMetaModel
 import java.io.File
 import kotlin.test.Test
 
