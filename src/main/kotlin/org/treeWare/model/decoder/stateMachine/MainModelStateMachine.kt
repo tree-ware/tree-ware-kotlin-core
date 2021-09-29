@@ -10,8 +10,7 @@ class MainModelStateMachine<Aux>(
     private val expectedModelType: String,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
-    private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?,
-    private val isWildcardModel: Boolean
+    private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
 ) : AbstractDecodingStateMachine(true) {
     var mainModel: MutableMainModel<Aux>? = null
         private set
@@ -55,6 +54,6 @@ class MainModelStateMachine<Aux>(
     ) {
         newMain.type = modelType
         val root = newMain.getOrNewRoot()
-        stack.addFirst(RootModelStateMachine(root, stack, options, errors, auxStateMachineFactory, isWildcardModel))
+        stack.addFirst(RootModelStateMachine(root, stack, options, errors, auxStateMachineFactory))
     }
 }

@@ -13,8 +13,7 @@ class BaseEntityStateMachine<Aux>(
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
-    private val isWildcardModel: Boolean
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
     private val auxStateMachineMap = HashMap<String, AuxDecodingStateMachine<Aux>>()
 
@@ -251,21 +250,15 @@ class BaseEntityStateMachine<Aux>(
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isSetFieldMeta(fieldMeta)) {
             val setFieldModel = fieldModel as? MutableSetFieldModel<Aux> ?: return false
-            val setElementStateMachine =
-                BaseEntityStateMachine(
-                    true,
-                    setFieldModel,
-                    {
-                        val first = setFieldModel.firstValue()
-                        if (isWildcardModel && first != null) first as MutableEntityModel<Aux>
-                        else newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel<Aux>
-                    },
-                    stack,
-                    options,
-                    errors,
-                    auxStateMachineFactory,
-                    isWildcardModel
-                )
+            val setElementStateMachine = BaseEntityStateMachine(
+                true,
+                setFieldModel,
+                { newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel<Aux> },
+                stack,
+                options,
+                errors,
+                auxStateMachineFactory
+            )
             addSetElementStateMachineToStack(setFieldModel, setElementStateMachine, isWrappedElements = false)
         } else {
             val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
@@ -281,8 +274,7 @@ class BaseEntityStateMachine<Aux>(
                     stack,
                     options,
                     errors,
-                    auxStateMachineFactory,
-                    isWildcardModel
+                    auxStateMachineFactory
                 )
             addElementStateMachineToStack(elementStateMachine)
         }
