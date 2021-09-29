@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
+import org.treeWare.model.decoder.OnDuplicateKeys
 import org.treeWare.model.decoder.OnMissingKeys
 
 class BaseEntityStateMachine<Aux>(
@@ -49,6 +50,13 @@ class BaseEntityStateMachine<Aux>(
             true
         } else base?.let {
             try {
+                if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
+                    val existing = parentSetField?.getValueMatching(it)
+                    if (existing != null) {
+                        errors.add("Entity with duplicate keys: ${existing.meta?.aux?.fullName}: ${it.getKeyValues()}")
+                        return@let true
+                    }
+                }
                 parentSetField?.addValue(it)
                 true
             } catch (e: MissingKeysException) {
