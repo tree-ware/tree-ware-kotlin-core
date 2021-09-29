@@ -88,7 +88,7 @@ abstract class MutableBaseEntityModel<Aux>(
         return keyFields
     }
 
-    private fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
+    fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
         if (field.elementType == ModelElementType.SINGLE_FIELD) {
             val singleField = field as MutableSingleFieldModel
             when (getFieldTypeMeta(singleField.meta)) {

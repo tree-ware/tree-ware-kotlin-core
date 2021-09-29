@@ -8,24 +8,24 @@ class NameValidationTests {
     @Test
     fun `Names must be valid`() {
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson())
+        val expectedDecodeErrors = listOf(
+            "Entity with duplicate keys: /tree_ware_meta_model.main/field: [duplicate_field_name_1]",
+            "Entity with duplicate keys: /tree_ware_meta_model.main/field: [duplicate_field_name_2]",
+            "Entity with duplicate keys: /tree_ware_meta_model.main/enumeration: [duplicate_enumeration_name]",
+            "Entity with duplicate keys: /tree_ware_meta_model.main/enumeration_value: [duplicate_value]"
+        )
         val expectedErrors = listOf(
             "Invalid name: /hyphens-not-allowed-for-packages",
             "Invalid name: /hyphens-not-allowed-for-packages/dots.not_allowed_for.enumerations",
             "Invalid name: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-enumerations",
-            "Duplicate name: /hyphens-not-allowed-for-packages/duplicate_enumeration_name",
-            "Duplicate name: /hyphens-not-allowed-for-packages/duplicate_enumeration_name/value1",
-            "Duplicate name: /hyphens-not-allowed-for-packages/duplicate_enumeration_name/value2",
-            "Duplicate name: /hyphens-not-allowed-for-packages/enumeration_with_duplicate_values/duplicate_value",
             "Invalid name: /hyphens-not-allowed-for-packages/dots.not_allowed_for.entities",
             "Invalid name: /hyphens-not-allowed-for-packages/dots.not_allowed_for.entities/dots.not_allowed_for.primitive_fields",
             "Invalid name: /hyphens-not-allowed-for-packages/dots.not_allowed_for.entities/hyphens-not-allowed-for-primitive-fields",
             "Invalid name: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities",
             "Invalid name: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/dots.not_allowed_for.association_fields",
-            "Invalid name: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/hyphens-not-allowed-for-association-fields",
-            "Duplicate name: /hyphens-not-allowed-for-packages/valid_entity_name/duplicate_field_name_1",
-            "Duplicate name: /hyphens-not-allowed-for-packages/valid_entity_name/duplicate_field_name_2",
+            "Invalid name: /hyphens-not-allowed-for-packages/hyphens-not-allowed-for-entities/hyphens-not-allowed-for-association-fields"
         )
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 }
 
