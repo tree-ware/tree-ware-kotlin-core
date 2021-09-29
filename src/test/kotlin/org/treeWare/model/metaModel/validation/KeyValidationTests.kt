@@ -42,6 +42,16 @@ class KeyValidationTests {
         val expectedErrors = listOf<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
+
+    @Test
+    fun `Passwords must not be key fields`() {
+        val metaModelJson = getPasswordsMetaModelJson(true)
+        val expectedErrors = listOf(
+            "Package 1 entity 0 field 0 is a password field and they cannot be keys",
+            "Package 1 entity 0 field 1 is a password field and they cannot be keys"
+        )
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
 }
 
 // NOTE: association fields cannot be keys, so they are not included below.
@@ -142,6 +152,32 @@ private fun getCompositionSetMetaModelJson(): String {
         |           },
         |           "is_key": true
         |           $multiplicityJson
+        |         }
+        |       ]
+        |     }
+        |   ]
+        | }
+    """.trimMargin()
+    return newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, mainPackageJson)
+}
+
+private fun getPasswordsMetaModelJson(isKey: Boolean): String {
+    val mainPackageJson = """
+        | {
+        |   "name": "test.main",
+        |   "entities": [
+        |     {
+        |       "name": "main_entity1",
+        |       "fields": [
+        |         {
+        |           "name": "password1way_field",
+        |           "type": "password1way",
+        |           "is_key": $isKey
+        |         },
+        |         {
+        |           "name": "password2way_field",
+        |           "type": "password2way",
+        |           "is_key": $isKey
         |         }
         |       ]
         |     }
