@@ -344,7 +344,7 @@ private fun testHelperPackageJson() = """
     |             "name": "entity3",
     |             "package": "test.helper"
     |           },
-    |           "multiplicity": "list"
+    |           "multiplicity": "set"
     |         }
     |       ]
     |     },
@@ -358,7 +358,7 @@ private fun testHelperPackageJson() = """
     |             "name": "entity3",
     |             "package": "test.helper"
     |           },
-    |           "multiplicity": "list"
+    |           "multiplicity": "set"
     |         }
     |       ]
     |     },

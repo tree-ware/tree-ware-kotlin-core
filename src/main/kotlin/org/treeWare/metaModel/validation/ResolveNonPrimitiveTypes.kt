@@ -146,8 +146,8 @@ private fun resolveCompositionField(
     if (isKeyFieldMeta(fieldMeta) && !hasOnlyPrimitiveKeyFields(targetEntity)) errors.add(
         "Composition key field ${resolved.fullName} target entity does not have only primitive keys"
     )
-    if (isListFieldMeta(fieldMeta) && !hasKeyFields(targetEntity)) errors.add(
-        "Composition list field ${resolved.fullName} target entity does not have keys"
+    if (isSetFieldMeta(fieldMeta) && !hasKeyFields(targetEntity)) errors.add(
+        "Composition set field ${resolved.fullName} target entity does not have keys"
     )
     return errors
 }

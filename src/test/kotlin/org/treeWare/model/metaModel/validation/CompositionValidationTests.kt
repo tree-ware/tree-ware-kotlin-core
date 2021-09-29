@@ -208,7 +208,7 @@ class CompositionValidationTests {
     }
 
     @Test
-    fun `Composition list target entity must have keys`() {
+    fun `Composition set target entity must have keys`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",
@@ -223,7 +223,7 @@ class CompositionValidationTests {
             |             "name": "entity_with_no_keys",
             |             "package": "test.helper"
             |           },
-            |           "multiplicity": "list"
+            |           "multiplicity": "set"
             |         }
             |       ]
             |     }
@@ -232,13 +232,13 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Composition list field /test.main/test_entity/test_field target entity does not have keys"
+            "Composition set field /test.main/test_entity/test_field target entity does not have keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
     @Test
-    fun `Composition list is valid if target entity has keys`() {
+    fun `Composition set is valid if target entity has keys`() {
         val testPackageJson = """
             | {
             |   "name": "test.main",
@@ -253,7 +253,7 @@ class CompositionValidationTests {
             |             "name": "entity_with_primitive_and_composition_keys",
             |             "package": "test.helper"
             |           },
-            |           "multiplicity": "list"
+            |           "multiplicity": "set"
             |         }
             |       ]
             |     }

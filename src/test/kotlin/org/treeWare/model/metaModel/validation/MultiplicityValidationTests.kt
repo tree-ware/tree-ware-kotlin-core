@@ -26,9 +26,9 @@ class MultiplicityValidationTests {
     }
 
     @Test
-    fun `Multiplicity must be valid if specified as 'list'`() {
+    fun `Multiplicity must not be 'list' for compositions`() {
         val metaModelJson = getMetaModelJson("list")
-        val expectedErrors = listOf<String>()
+        val expectedErrors = listOf("Package 1 entity 0 field 3 is a composition field and they cannot be lists")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -36,6 +36,17 @@ class MultiplicityValidationTests {
     fun `Multiplicity must be specified with a valid value`() {
         val metaModelJson = getMetaModelJson("invalid")
         val expectedErrors = listOf("Meta-model decoding failed")
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
+    fun `Multiplicity may be 'set' only for compositions`() {
+        val metaModelJson = getMetaModelJson("set")
+        val expectedErrors = listOf(
+            "Package 1 entity 0 field 0 cannot be a 'set'. Only compositions can be sets.",
+            "Package 1 entity 0 field 1 cannot be a 'set'. Only compositions can be sets.",
+            "Package 1 entity 0 field 2 cannot be a 'set'. Only compositions can be sets."
+        )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 }

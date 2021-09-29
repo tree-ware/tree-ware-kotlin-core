@@ -187,7 +187,16 @@ private fun validateFieldMultiplicity(fieldMeta: EntityModel<Resolved>, fieldId:
     if (!Multiplicity.values().contains(multiplicityMeta)) {
         return listOf("$fieldId has an invalid multiplicity: ${multiplicityMeta.name.lowercase()}")
     }
-    return listOf()
+    val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull() ?: return listOf()
+    return when (multiplicityMeta) {
+        Multiplicity.LIST ->
+            if (fieldTypeMeta != FieldType.COMPOSITION) listOf()
+            else listOf("$fieldId is a composition field and they cannot be lists")
+        Multiplicity.SET ->
+            if (fieldTypeMeta == FieldType.COMPOSITION) listOf()
+            else listOf("$fieldId cannot be a 'set'. Only compositions can be sets.")
+        else -> listOf()
+    }
 }
 
 private fun validateFieldIsKey(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
