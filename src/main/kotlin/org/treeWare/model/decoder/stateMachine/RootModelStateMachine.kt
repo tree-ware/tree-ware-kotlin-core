@@ -10,8 +10,7 @@ class RootModelStateMachine<Aux>(
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
-    private val isWildcardModel: Boolean
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
 ) : AbstractDecodingStateMachine(true) {
     private val auxStateMachine = auxStateMachineFactory()
 
@@ -52,16 +51,7 @@ class RootModelStateMachine<Aux>(
         val key = keyName ?: ""
         if (key == rootName) {
             val entityStateMachine =
-                BaseEntityStateMachine(
-                    false,
-                    null,
-                    { root },
-                    stack,
-                    options,
-                    errors,
-                    auxStateMachineFactory,
-                    isWildcardModel
-                )
+                BaseEntityStateMachine(false, null, { root }, stack, options, errors, auxStateMachineFactory)
             stack.addFirst(entityStateMachine)
             return true
         } else if (auxStateMachine != null) {
