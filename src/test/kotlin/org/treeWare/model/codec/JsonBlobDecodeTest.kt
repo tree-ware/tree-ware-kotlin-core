@@ -5,7 +5,7 @@ import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutablePrimitiveModel
 import org.treeWare.model.core.MutableSetFieldModel
 import org.treeWare.model.core.MutableSingleFieldModel
-import org.treeWare.model.getMainModel
+import org.treeWare.model.getMainModelFromJsonFile
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -14,7 +14,7 @@ class JsonBlobDecodeTest {
     fun `JSON decoder decodes blob values`() {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val model = getMainModel<Unit>(metaModel, "model/address_book_1.json") { null }
+        val model = getMainModelFromJsonFile<Unit>(metaModel, "model/address_book_1.json") { null }
         val persons = model.root.fields["person"] as MutableSetFieldModel<Unit>
 
         val clarkKent = persons.values.first() as MutableEntityModel<Unit>

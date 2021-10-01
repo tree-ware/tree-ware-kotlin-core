@@ -11,9 +11,9 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.encodeJson
 import java.io.InputStreamReader
 import java.io.Reader
+import java.io.StringReader
 import java.io.StringWriter
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 fun <Aux> testRoundTrip(
@@ -31,38 +31,76 @@ fun <Aux> testRoundTrip(
     val metaModel = newAddressBookMetaModel(hasher, cipher)
 
     val model =
-        getMainModel(metaModel, inputFilePath, options, expectedModelType, expectedDecodeErrors, auxStateMachineFactory)
+        getMainModelFromJsonFile(
+            metaModel,
+            inputFilePath,
+            options,
+            expectedModelType,
+            expectedDecodeErrors,
+            auxStateMachineFactory
+        )
     assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)
 }
 
-fun getFileReader(filePath: String): Reader? =
+fun getFileReader(filePath: String): Reader =
     ClassLoader.getSystemResourceAsStream(filePath)?.let { InputStreamReader(it) }
+        ?: throw IllegalArgumentException("File $filePath not found")
 
-fun readFile(filePath: String): String? {
+fun readFile(filePath: String): String {
     val reader = getFileReader(filePath)
-    val text = reader?.readText()
-    reader?.close()
+    val text = reader.readText()
+    reader.close()
     return text
 }
 
-fun <Aux> getMainModel(
+fun <Aux> getMainModelFromJsonString(
     meta: MainModel<Resolved>,
-    inputFilePath: String,
+    jsonString: String,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    expectedModelType: String = "data",
+    expectedDecodeErrors: List<String> = listOf(),
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
+): MutableMainModel<Aux> = getMainModelFromJson(
+    meta,
+    StringReader(jsonString),
+    options,
+    expectedModelType,
+    expectedDecodeErrors,
+    auxStateMachineFactory
+)
+
+fun <Aux> getMainModelFromJsonFile(
+    meta: MainModel<Resolved>,
+    jsonFilePath: String,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    expectedModelType: String = "data",
+    expectedDecodeErrors: List<String> = listOf(),
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
+): MutableMainModel<Aux> = getMainModelFromJson(
+    meta,
+    getFileReader(jsonFilePath),
+    options,
+    expectedModelType,
+    expectedDecodeErrors,
+    auxStateMachineFactory
+)
+
+fun <Aux> getMainModelFromJson(
+    meta: MainModel<Resolved>,
+    jsonReader: Reader,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
     auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
 ): MutableMainModel<Aux> {
-    val fileReader = getFileReader(inputFilePath)
-    assertNotNull(fileReader)
     val (mainModel, decodeErrors) = decodeJson(
-        fileReader,
+        jsonReader,
         meta,
         expectedModelType,
         options,
         auxStateMachineFactory
     )
-    fileReader.close()
+    jsonReader.close()
     assertTrue(mainModel != null)
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     return mainModel
@@ -89,8 +127,6 @@ fun <Aux> assertMatchesJson(
     assertTrue(isEncoded)
 
     val expected = readFile(jsonFilePath)
-    assertNotNull(expected)
-
     val actual = jsonWriter.toString()
     assertEquals(expected, actual)
 }

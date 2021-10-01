@@ -5,7 +5,7 @@ import org.treeWare.model.core.ElementModel
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
 import org.treeWare.model.getFileReader
-import org.treeWare.model.getMainModel
+import org.treeWare.model.getMainModelFromJsonFile
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchLeave
 import org.treeWare.model.traversal.dispatchVisit
@@ -35,7 +35,7 @@ class FollowerModelCursorTests {
 private fun testFollowerSameModelInstance(inputFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
-    val model = getMainModel<Unit>(metaModel, inputFilePath)
+    val model = getMainModelFromJsonFile<Unit>(metaModel, inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
     val followerCursor = FollowerModelCursor<Unit, Unit>(model)
@@ -55,8 +55,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getMainModel<Unit>(metaModel, inputFilePath)
-    val followerModel = getMainModel<Unit>(metaModel, inputFilePath)
+    val leaderModel = getMainModelFromJsonFile<Unit>(metaModel, inputFilePath)
+    val followerModel = getMainModelFromJsonFile<Unit>(metaModel, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -83,8 +83,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
 private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
-    val leaderModel = getMainModel<Unit>(metaModel, leaderFilePath)
-    val followerModel = getMainModel<Unit>(metaModel, wildcardFilePath)
+    val leaderModel = getMainModelFromJsonFile<Unit>(metaModel, leaderFilePath)
+    val followerModel = getMainModelFromJsonFile<Unit>(metaModel, wildcardFilePath)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
@@ -110,7 +110,6 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     }
 
     val fileReader = getFileReader(leaderFilePath)
-    assertNotNull(fileReader)
     val expected = fileReader.readText()
     fileReader.close()
     val actual = jsonWriter.toString()

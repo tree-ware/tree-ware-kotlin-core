@@ -8,7 +8,6 @@ import org.treeWare.model.getFileReader
 import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class DecoderMissingKeysTests {
@@ -32,7 +31,6 @@ class DecoderMissingKeysTests {
     @Test
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
         val fileReader = getFileReader("model/address_book_missing_keys.json")
-        assertNotNull(fileReader)
         val metaModel = newAddressBookMetaModel(null, null)
         val (mainModel, decodeErrors) = decodeJson<Unit>(
             fileReader,
