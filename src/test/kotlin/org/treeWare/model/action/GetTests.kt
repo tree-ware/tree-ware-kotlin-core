@@ -9,7 +9,7 @@ import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.EncodePasswords
-import org.treeWare.model.getMainModel
+import org.treeWare.model.getMainModelFromJsonFile
 import kotlin.test.Test
 
 class GetTests {
@@ -17,9 +17,9 @@ class GetTests {
     fun `get() returns the requested data`() = runBlocking {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val request = getMainModel<Unit>(metaModel, "model/address_book_get_person_request.json")
+        val request = getMainModelFromJsonFile<Unit>(metaModel, "model/address_book_get_person_request.json")
         val mapping =
-            getMainModel(
+            getMainModelFromJsonFile(
                 metaModel,
                 "model/address_book_mapping_model.json",
                 expectedModelType = "mapping"

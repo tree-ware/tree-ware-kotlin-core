@@ -7,7 +7,6 @@ import org.treeWare.model.getFileReader
 import java.io.Reader
 import java.io.StringReader
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 private val metaMetaModel = newMainMetaMetaModel()
 
@@ -15,20 +14,14 @@ fun assertJsonStringValidationErrors(
     metaModelJsonString: String,
     expectedValidationErrors: List<String>,
     expectedDecodeErrors: List<String> = listOf()
-) {
-    val stringReader = StringReader(metaModelJsonString)
-    assertJsonValidationErrors(stringReader, expectedValidationErrors, expectedDecodeErrors)
-}
+) = assertJsonValidationErrors(StringReader(metaModelJsonString), expectedValidationErrors, expectedDecodeErrors)
+
 
 fun assertJsonFileValidationErrors(
     metaModelJsonFile: String,
     expectedValidationErrors: List<String>,
     expectedDecodeErrors: List<String> = listOf()
-) {
-    val fileReader = getFileReader(metaModelJsonFile)
-    assertNotNull(fileReader)
-    assertJsonValidationErrors(fileReader, expectedValidationErrors, expectedDecodeErrors)
-}
+) = assertJsonValidationErrors(getFileReader(metaModelJsonFile), expectedValidationErrors, expectedDecodeErrors)
 
 private fun assertJsonValidationErrors(
     jsonReader: Reader,
