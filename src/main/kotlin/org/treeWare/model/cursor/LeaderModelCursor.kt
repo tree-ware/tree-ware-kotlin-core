@@ -71,8 +71,8 @@ private class MainLeaderState<Aux>(
     stateStack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : LeaderState<Aux>(main, stateStack) {
-    override val visitCursorMove = VisitLeaderMainModel(main)
-    override val leaveCursorMove = LeaveLeaderMainModel(main)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, main)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, main)
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
@@ -110,8 +110,8 @@ private class RootLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : BaseEntityLeaderState<Aux>(root, stack, stateFactoryVisitor) {
-    override val visitCursorMove = VisitLeaderRootModel(root)
-    override val leaveCursorMove = LeaveLeaderRootModel(root)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, root)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, root)
 }
 
 private class EntityLeaderState<Aux>(
@@ -119,8 +119,8 @@ private class EntityLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : BaseEntityLeaderState<Aux>(entity, stack, stateFactoryVisitor) {
-    override val visitCursorMove = VisitLeaderEntityModel(entity)
-    override val leaveCursorMove = LeaveLeaderEntityModel(entity)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, entity)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, entity)
 }
 
 // Fields
@@ -130,8 +130,8 @@ private class SingleFieldLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : LeaderState<Aux>(field, stack) {
-    override val visitCursorMove = VisitLeaderSingleFieldModel(field)
-    override val leaveCursorMove = LeaveLeaderSingleFieldModel(field)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, field)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, field)
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
@@ -153,8 +153,8 @@ private class ListFieldLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : LeaderState<Aux>(field, stack) {
-    override val visitCursorMove = VisitLeaderListFieldModel(field)
-    override val leaveCursorMove = LeaveLeaderListFieldModel(field)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, field)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, field)
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
@@ -174,8 +174,8 @@ private class SetFieldLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : LeaderState<Aux>(field, stack) {
-    override val visitCursorMove = VisitLeaderSetFieldModel(field)
-    override val leaveCursorMove = LeaveLeaderSetFieldModel(field)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, field)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, field)
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
@@ -196,8 +196,8 @@ private class ScalarValueLeaderState<Aux>(
     value: ElementModel<Aux>,
     stack: LeaderStateStack<Aux>
 ) : LeaderState<Aux>(value, stack) {
-    override val visitCursorMove = VisitLeaderValueModel(value)
-    override val leaveCursorMove = LeaveLeaderValueModel(value)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, value)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, value)
     override val actionIterator: Iterator<LeaderStateAction<Aux>>
 
     init {
@@ -213,8 +213,8 @@ private class EntityKeysLeaderState<Aux>(
     stack: LeaderStateStack<Aux>,
     stateFactoryVisitor: LeaderStateFactoryVisitor<Aux>
 ) : BaseEntityLeaderState<Aux>(entityKeys, stack, stateFactoryVisitor) {
-    override val visitCursorMove = VisitLeaderEntityKeysModel(entityKeys)
-    override val leaveCursorMove = LeaveLeaderEntityKeysModel(entityKeys)
+    override val visitCursorMove = LeaderModelCursorMove(CursorMoveDirection.VISIT, entityKeys)
+    override val leaveCursorMove = LeaderModelCursorMove(CursorMoveDirection.LEAVE, entityKeys)
 }
 
 // State factory visitor
