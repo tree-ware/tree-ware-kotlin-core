@@ -41,16 +41,6 @@ class LeaderModelCursor<Aux>(private val initial: ElementModel<Aux>) {
 private typealias LeaderStateStack<Aux> = ArrayDeque<LeaderState<Aux>>
 private typealias LeaderStateAction<Aux> = () -> LeaderModelCursorMove<Aux>?
 
-private class IteratorAdapter<T, R>(
-    private val adapteeFactory: () -> Iterator<T>,
-    private val transform: (T) -> R
-) : Iterator<R> {
-    private var _adaptee: Iterator<T>? = null
-    private val adaptee: Iterator<T> get() = _adaptee ?: adapteeFactory().also { _adaptee = it }
-    override fun hasNext(): Boolean = adaptee.hasNext()
-    override fun next(): R = transform(adaptee.next())
-}
-
 private abstract class LeaderState<Aux>(val element: ElementModel<Aux>, val stateStack: LeaderStateStack<Aux>) {
     abstract val visitCursorMove: LeaderModelCursorMove<Aux>
     abstract val leaveCursorMove: LeaderModelCursorMove<Aux>
