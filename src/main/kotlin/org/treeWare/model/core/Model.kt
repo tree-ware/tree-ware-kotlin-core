@@ -67,6 +67,8 @@ interface CollectionFieldModel<Aux> : FieldModel<Aux> {
 interface ListFieldModel<Aux> : CollectionFieldModel<Aux> {
     override val elementType: ModelElementType
         get() = ModelElementType.LIST_FIELD
+
+    override val values: List<ElementModel<Aux>>
 }
 
 interface SetFieldModel<Aux> : CollectionFieldModel<Aux> {

@@ -22,6 +22,11 @@ fun getEnumerationValues(enumerationMeta: EntityModel<Resolved>): List<String> =
 fun getEntitiesMeta(packageMeta: EntityModel<Resolved>): CollectionFieldModel<Resolved>? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
 
+fun getPackageName(entityMeta: EntityModel<Resolved>): String = getMetaName(entityMeta.parent.parent)
+
+fun getFieldNames(entityMeta: EntityModel<Resolved>): List<String> =
+    getFieldsMeta(entityMeta).values.map { getMetaName(it as EntityModel<Resolved>) }
+
 fun getFieldsMeta(entityMeta: EntityModel<Resolved>): CollectionFieldModel<Resolved> =
     getCollectionField(entityMeta, "fields")
 
