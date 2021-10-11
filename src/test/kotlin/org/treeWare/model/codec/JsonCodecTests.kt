@@ -1,6 +1,7 @@
 package org.treeWare.model.codec
 
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
+import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.ErrorAuxEncoder
 import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
@@ -8,7 +9,7 @@ import kotlin.test.Test
 class JsonCodecTests {
     @Test
     fun `JSON codec data round trip must be lossless`() {
-        testRoundTrip<Unit>("model/address_book_1.json")
+        testRoundTrip<Unit>("model/address_book_1.json", encodePasswords = EncodePasswords.ALL)
     }
 
     @Test

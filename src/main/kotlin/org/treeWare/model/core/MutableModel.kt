@@ -226,6 +226,10 @@ class MutablePrimitiveModel<Aux>(
     override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
     override fun setValue(value: BigDecimal): Boolean = setValue(parent.meta, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
+
+    fun copyValueFrom(that: PrimitiveModel<Aux>) {
+        this.value = that.value
+    }
 }
 
 class MutableAliasModel<Aux>(
@@ -247,6 +251,10 @@ class MutableAliasModel<Aux>(
     override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
     override fun setValue(value: BigDecimal): Boolean = setValue(parent.meta, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
+
+    fun copyValueFrom(that: AliasModel<Aux>) {
+        this.value = that.value
+    }
 }
 
 class MutablePassword1wayModel<Aux>(
@@ -295,6 +303,12 @@ class MutablePassword1wayModel<Aux>(
         val hasher = parent.meta?.aux?.password1wayHasher ?: return false
         if (this.hashVersion != hasher.hashVersion) return false
         return this.hashed?.let { hasher.verify(thatUnhashed, it) } ?: false
+    }
+
+    fun copyValueFrom(that: Password1wayModel<Aux>) {
+        this.unhashed = that.unhashed
+        this.hashed = that.hashed
+        this.hashVersion = that.hashVersion
     }
 }
 
@@ -345,6 +359,12 @@ class MutablePassword2wayModel<Aux>(
         if (this.cipherVersion != cipher.cipherVersion) return null
         return this.encrypted?.let { cipher.decrypt(it) }
     }
+
+    fun copyValueFrom(that: Password2wayModel<Aux>) {
+        this.unencrypted = that.unencrypted
+        this.encrypted = that.encrypted
+        this.cipherVersion = that.cipherVersion
+    }
 }
 
 class MutableEnumerationModel<Aux>(
@@ -364,6 +384,10 @@ class MutableEnumerationModel<Aux>(
     }
 
     override fun setValue(value: String): Boolean = setEnumerationValue(parent.meta, value) { this.value = it }
+
+    fun copyValueFrom(that: EnumerationModel<Aux>) {
+        this.value = that.value
+    }
 }
 
 class MutableAssociationModel<Aux>(

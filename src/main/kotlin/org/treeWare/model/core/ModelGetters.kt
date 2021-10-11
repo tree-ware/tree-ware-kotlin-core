@@ -1,5 +1,7 @@
 package org.treeWare.model.core
 
+import org.treeWare.metaModel.getMetaName
+
 fun <Aux> getSingleEntity(meta: BaseEntityModel<Aux>, fieldName: String): EntityModel<Aux> {
     val singleField = getSingleField(meta, fieldName)
     return singleField.value as? EntityModel<Aux> ?: throw IllegalStateException()
@@ -50,6 +52,9 @@ fun <Aux> getListField(meta: BaseEntityModel<Aux>, fieldName: String): ListField
 fun <Aux> getCollectionField(meta: BaseEntityModel<Aux>, fieldName: String): CollectionFieldModel<Aux> {
     return meta.getField(fieldName) as? CollectionFieldModel<Aux> ?: throw IllegalStateException()
 }
+
+fun <Aux> getFieldName(field: FieldModel<Aux>): String =
+    field.meta?.let { getMetaName(it) } ?: throw IllegalStateException()
 
 fun <Aux> getListStrings(listFieldMeta: ListFieldModel<Aux>): List<String> {
     val firstElement = listFieldMeta.values.firstOrNull() ?: return listOf()

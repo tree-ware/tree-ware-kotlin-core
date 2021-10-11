@@ -28,7 +28,19 @@
               "value": "superman@dc.com"
             }
           ],
+          "password": {
+            "unhashed": "hello123"
+          },
           "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
+          "previous_passwords": [
+            {
+              "hashed": "test-hashed-superman",
+              "hash_version": 1
+            }
+          ],
+          "main_secret": {
+            "unencrypted": "Alien from Krypton"
+          },
           "relation": [
             {
               "id": "05ade278-4b44-43da-a0cc-14463854e397",

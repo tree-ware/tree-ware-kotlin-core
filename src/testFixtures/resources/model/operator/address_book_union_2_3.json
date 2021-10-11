@@ -24,13 +24,26 @@
           "first_name": "Clark",
           "last_name": "Kent",
           "hero_name": "Superman",
-          "other_secrets": [
+          "email": [
             {
-              "unencrypted": "secret1"
+              "value": "clark.kent@dailyplanet.com"
             },
             {
-              "encrypted": "test-encrypted-secret2",
-              "cipher_version": 1
+              "value": "superman@dc.com"
+            }
+          ],
+          "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
+          "relation": [
+            {
+              "id": "05ade278-4b44-43da-a0cc-14463854e397",
+              "relationship": "colleague",
+              "person": {
+                "path_keys": [
+                  {
+                    "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
+                  }
+                ]
+              }
             }
           ],
           "password": {
@@ -44,26 +57,30 @@
               "hashed": "test-hashed-superman",
               "hash_version": 1
             }
+          ],
+          "main_secret": {
+            "unencrypted": "Alien from Krypton"
+          },
+          "other_secrets": [
+            {
+              "unencrypted": "secret1"
+            },
+            {
+              "encrypted": "test-encrypted-secret2",
+              "cipher_version": 1
+            }
           ]
         },
         {
+          "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
           "first_name": "Lois",
           "last_name": "Lane",
-          "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
           "email": [
             {
               "value": "lois.lane@dailyplanet.com"
             }
           ],
           "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
-          "main_secret": {
-            "encrypted": "test-encrypted-main-secret",
-            "cipher_version": 1
-          },
-          "password": {
-            "hashed": "test-hashed-lois",
-            "hash_version": 1
-          },
           "relation": [
             {
               "id": "16634916-8f83-4376-ad42-37038e108a0b",
@@ -77,15 +94,10 @@
               }
             }
           ],
-          "other_secrets": [
-            {
-              "unencrypted": "secret1"
-            },
-            {
-              "encrypted": "test-encrypted-secret2",
-              "cipher_version": 1
-            }
-          ],
+          "password": {
+            "hashed": "test-hashed-lois",
+            "hash_version": 1
+          },
           "previous_passwords": [
             {
               "unhashed": "password1"
@@ -93,6 +105,19 @@
             {
               "hashed": "test-hashed-password2",
               "hash_version": 1
+            }
+          ],
+          "main_secret": {
+            "encrypted": "test-encrypted-main-secret",
+            "cipher_version": 1
+          },
+          "other_secrets": [
+            {
+              "unencrypted": "secret1"
+            },
+            {
+              "encrypted": "test-encrypted-secret2",
+              "cipher_version": 1
             }
           ]
         }
@@ -131,21 +156,42 @@
           ]
         },
         {
-          "info": "Home of Princeton University",
-          "related_city_info": [],
           "city": {
-            "name": "Princeton",
-            "state": "New Jersey",
+            "name": "Albany",
+            "state": "New York",
             "country": "United States of America"
-          }
+          },
+          "info": "Capital of New York state",
+          "related_city_info": [
+            {
+              "path_keys": [
+                {
+                  "city": {
+                    "name": "New York City",
+                    "state": "New York",
+                    "country": "United States of America"
+                  }
+                }
+              ]
+            }
+          ]
         },
         {
-          "info": "The cultural and financial center of Northern California",
           "city": {
             "name": "San Francisco",
             "state": "California",
             "country": "United States of America"
-          }
+          },
+          "info": "The cultural and financial center of Northern California"
+        },
+        {
+          "city": {
+            "name": "Princeton",
+            "state": "New Jersey",
+            "country": "United States of America"
+          },
+          "info": "Home of Princeton University",
+          "related_city_info": []
         }
       ]
     }

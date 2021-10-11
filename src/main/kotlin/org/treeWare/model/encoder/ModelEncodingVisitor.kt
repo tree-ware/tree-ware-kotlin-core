@@ -58,7 +58,7 @@ class ModelEncodingVisitor<Aux>(
     // Fields
 
     override fun visit(leaderField1: SingleFieldModel<Aux>): TraversalAction {
-        val fieldName = leaderField1.meta?.let { getMetaName(it) }
+        val fieldName = getFieldName(leaderField1)
         auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
         return TraversalAction.CONTINUE
     }
@@ -66,7 +66,7 @@ class ModelEncodingVisitor<Aux>(
     override fun leave(leaderField1: SingleFieldModel<Aux>) {}
 
     override fun visit(leaderField1: ListFieldModel<Aux>): TraversalAction {
-        val fieldName = leaderField1.meta?.let { getMetaName(it) }
+        val fieldName = getFieldName(leaderField1)
         auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
@@ -77,7 +77,7 @@ class ModelEncodingVisitor<Aux>(
     }
 
     override fun visit(leaderField1: SetFieldModel<Aux>): TraversalAction {
-        val fieldName = leaderField1.meta?.let { getMetaName(it) }
+        val fieldName = getFieldName(leaderField1)
         auxEncoder?.also { it.encode(fieldName, leaderField1.aux, wireFormatEncoder) }
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
