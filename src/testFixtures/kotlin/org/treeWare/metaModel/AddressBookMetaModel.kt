@@ -6,12 +6,18 @@ import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.Resolved
 import org.treeWare.model.getMainModelFromJsonFile
+import org.treeWare.model.operator.union
 
-const val ADDRESS_BOOK_META_MODEL_FILE_PATH = "metaModel/address_book_meta_model.json"
+val ADDRESS_BOOK_META_MODEL_FILES = listOf(
+    "metaModel/address_book_root.json",
+    "metaModel/address_book_main.json",
+    "metaModel/address_book_city.json",
+)
 
 fun newAddressBookMetaModel(hasher: Hasher?, cipher: Cipher?): MutableMainModel<Resolved> {
     val metaMetaModel = newMainMetaMetaModel()
-    val metaModel = getMainModelFromJsonFile<Resolved>(metaMetaModel, ADDRESS_BOOK_META_MODEL_FILE_PATH)
+    val metaModelParts = ADDRESS_BOOK_META_MODEL_FILES.map { getMainModelFromJsonFile<Resolved>(metaMetaModel, it) }
+    val metaModel = union(metaModelParts)
     val errors = validate(metaModel, hasher, cipher)
     if (errors.isNotEmpty()) throw IllegalStateException("Address-book meta-model is not valid")
     return metaModel
