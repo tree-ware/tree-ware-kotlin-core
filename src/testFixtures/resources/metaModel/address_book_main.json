@@ -1,15 +1,64 @@
 {
   "data": {
     "meta_model": {
-      "root": {
-        "name": "address_book",
-        "entity": "address_book_root",
-        "package": "address_book.main"
-      },
       "packages": [
         {
           "name": "address_book.main",
           "info": "Schema for storing address book information",
+          "enumerations": [
+            {
+              "name": "address_book_color",
+              "values": [
+                {
+                  "name": "violet"
+                },
+                {
+                  "name": "indigo"
+                },
+                {
+                  "name": "blue"
+                },
+                {
+                  "name": "green"
+                },
+                {
+                  "name": "yellow"
+                },
+                {
+                  "name": "orange"
+                },
+                {
+                  "name": "red"
+                }
+              ]
+            },
+            {
+              "name": "address_book_relationship",
+              "values": [
+                {
+                  "name": "parent"
+                },
+                {
+                  "name": "child"
+                },
+                {
+                  "name": "spouse"
+                },
+                {
+                  "name": "sibling"
+                },
+                {
+                  "name": "family"
+                },
+                {
+                  "name": "friend"
+                },
+                {
+                  "name": "colleague"
+                }
+              ]
+            }
+          ],
           "entities": [
             {
               "name": "address_book_root",
@@ -165,121 +214,6 @@
                       "value": "person"
                     }
                   ]
-                }
-              ]
-            }
-          ],
-          "enumerations": [
-            {
-              "name": "address_book_color",
-              "values": [
-                {
-                  "name": "violet"
-                },
-                {
-                  "name": "indigo"
-                },
-                {
-                  "name": "blue"
-                },
-                {
-                  "name": "green"
-                },
-                {
-                  "name": "yellow"
-                },
-                {
-                  "name": "orange"
-                },
-                {
-                  "name": "red"
-                }
-              ]
-            },
-            {
-              "name": "address_book_relationship",
-              "values": [
-                {
-                  "name": "parent"
-                },
-                {
-                  "name": "child"
-                },
-                {
-                  "name": "spouse"
-                },
-                {
-                  "name": "sibling"
-                },
-                {
-                  "name": "family"
-                },
-                {
-                  "name": "friend"
-                },
-                {
-                  "name": "colleague"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "address_book.city",
-          "info": "Schema for storing city information",
-          "entities": [
-            {
-              "name": "address_book_city",
-              "fields": [
-                {
-                  "name": "name",
-                  "info": "City name",
-                  "type": "string",
-                  "is_key": true
-                },
-                {
-                  "name": "state",
-                  "info": "Name of the state in which the city is",
-                  "type": "string",
-                  "is_key": true
-                },
-                {
-                  "name": "country",
-                  "info": "Name of the country in which the city is",
-                  "type": "string",
-                  "is_key": true
-                }
-              ]
-            },
-            {
-              "name": "address_book_city_info",
-              "fields": [
-                {
-                  "name": "city",
-                  "type": "composition",
-                  "composition": {
-                    "name": "address_book_city",
-                    "package": "address_book.city"
-                  },
-                  "is_key": true
-                },
-                {
-                  "name": "info",
-                  "info": "Information about the city",
-                  "type": "string"
-                },
-                {
-                  "name": "related_city_info",
-                  "type": "association",
-                  "association": [
-                    {
-                      "value": "address_book"
-                    },
-                    {
-                      "value": "city_info"
-                    }
-                  ],
-                  "multiplicity": "list"
                 }
               ]
             }
