@@ -4,7 +4,7 @@ import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.LeaderManyModelCursor
 
-suspend fun <LeaderAux> forEach(
+fun <LeaderAux> forEach(
     leaders: List<ElementModel<LeaderAux>>,
     visitor: LeaderManyFollower0ModelVisitor<LeaderAux, TraversalAction>
 ): TraversalAction {
@@ -27,7 +27,7 @@ suspend fun <LeaderAux> forEach(
     return action
 }
 
-suspend fun <LeaderAux, Return> dispatchVisit(
+fun <LeaderAux, Return> dispatchVisit(
     elementType: ModelElementType,
     leaders: List<ElementModel<LeaderAux>?>,
     visitor: LeaderManyFollower0ModelVisitor<LeaderAux, Return>
@@ -47,7 +47,7 @@ suspend fun <LeaderAux, Return> dispatchVisit(
     else -> throw UnsupportedOperationException("Dispatching to unsupported model element type: $elementType")
 }
 
-suspend fun <LeaderAux, Return> dispatchLeave(
+fun <LeaderAux, Return> dispatchLeave(
     elementType: ModelElementType,
     leaders: List<ElementModel<LeaderAux>?>,
     visitor: LeaderManyFollower0ModelVisitor<LeaderAux, Return>

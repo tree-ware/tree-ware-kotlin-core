@@ -1,6 +1,5 @@
 package org.treeWare.model.operator
 
-import kotlinx.coroutines.runBlocking
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.encoder.EncodePasswords
@@ -11,7 +10,7 @@ import kotlin.test.assertNotEquals
 
 class UnionTests {
     @Test
-    fun `Union operator must return union of its inputs`() = runBlocking {
+    fun `Union operator must return union of its inputs`() {
         // Ensure inputs and output are all different so that the test is not trivial.
         val expectedOutputJsonFile = "model/operator/address_book_union_2_3.json"
         val jsonInput1 = readFile("model/address_book_2.json")
@@ -24,7 +23,7 @@ class UnionTests {
         val metaModel = newAddressBookMetaModel(null, null)
         val input1 = getMainModelFromJsonString<Unit>(metaModel, jsonInput1)
         val input2 = getMainModelFromJsonString<Unit>(metaModel, jsonInput2)
-        val output = union(input1, input2)
+        val output = union(listOf(input1, input2))
         assertMatchesJson(output, null, expectedOutputJsonFile, EncodePasswords.ALL)
     }
 }
