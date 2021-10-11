@@ -37,6 +37,16 @@ Single field: relationship, null
 Enumeration: colleague, null
 Single field: person, null
 Association: [address_book, person], null
+Single field: password, password
+Password1way: {hello123, null, 0}, {kryptonite, null, 0}
+List field: previous_passwords, previous_passwords
+Password1way: {null, test-hashed-superman, 1}, {hello123, null, 0}
+Password1way: null, {null, test-hashed-superman, 1}
+Single field: main_secret, null
+Password2way: {Alien from Krypton, null, 0}, null
+List field: null, other_secrets
+Password2way: null, {secret1, null, 0}
+Password2way: null, {null, test-encrypted-secret2, 1}
 Entity: null, address_book.main/address_book_person
 Single field: null, id
 Primitive: null, a8aacf55-7810-4b43-afe5-4344f25435fd
@@ -56,6 +66,16 @@ Single field: null, relationship
 Enumeration: null, colleague
 Single field: null, person
 Association: null, [address_book, person]
+Single field: null, password
+Password1way: null, {null, test-hashed-lois, 1}
+List field: null, previous_passwords
+Password1way: null, {password1, null, 0}
+Password1way: null, {null, test-hashed-password2, 1}
+Single field: null, main_secret
+Password2way: null, {null, test-encrypted-main-secret, 1}
+List field: null, other_secrets
+Password2way: null, {secret1, null, 0}
+Password2way: null, {null, test-encrypted-secret2, 1}
 Set field: city_info, city_info
 Entity: address_book.city/address_book_city_info, address_book.city/address_book_city_info
 Single field: city, city

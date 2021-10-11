@@ -71,12 +71,14 @@ class LeaderManyFollower0PrintVisitor(private val writer: Writer) :
     }
 
     override suspend fun visitPassword1way(leaderValueList: List<Password1wayModel<Unit>?>): TraversalAction {
-        print("Password1way")
+        val values = leaderValueList.map { it?.let { "{${it.unhashed}, ${it.hashed}, ${it.hashVersion}}" } }
+        print("Password1way", values)
         return TraversalAction.CONTINUE
     }
 
     override suspend fun visitPassword2way(leaderValueList: List<Password2wayModel<Unit>?>): TraversalAction {
-        print("Password2way")
+        val values = leaderValueList.map { it?.let { "{${it.unencrypted}, ${it.encrypted}, ${it.cipherVersion}}" } }
+        print("Password2way", values)
         return TraversalAction.CONTINUE
     }
 

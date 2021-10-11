@@ -2,6 +2,7 @@ package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.ElementModel
+import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
 import org.treeWare.model.getFileReader
@@ -91,7 +92,7 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
 
     val jsonWriter = StringWriter()
     val wireFormatEncoder = JsonWireFormatEncoder(jsonWriter, true)
-    val encodingVisitor = ModelEncodingVisitor<Unit>(wireFormatEncoder, null)
+    val encodingVisitor = ModelEncodingVisitor<Unit>(wireFormatEncoder, null, EncodePasswords.ALL)
 
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {

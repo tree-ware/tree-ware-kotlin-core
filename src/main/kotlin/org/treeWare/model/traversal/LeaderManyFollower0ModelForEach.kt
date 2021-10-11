@@ -8,6 +8,8 @@ suspend fun <LeaderAux> forEach(
     leaders: List<ElementModel<LeaderAux>>,
     visitor: LeaderManyFollower0ModelVisitor<LeaderAux, TraversalAction>
 ): TraversalAction {
+    val mainMeta = leaders[0].meta ?: throw IllegalArgumentException("Leader does not have meta-model")
+    if (!leaders.all { it.meta === mainMeta }) throw IllegalArgumentException("Leaders do not have identical meta-models")
     val leaderCursor = LeaderManyModelCursor(leaders)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
