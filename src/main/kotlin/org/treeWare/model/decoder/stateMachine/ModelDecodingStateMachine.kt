@@ -14,11 +14,11 @@ class ModelDecodingStateMachine(
     meta: MainModel,
     expectedModelType: String,
     options: ModelDecoderOptions,
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine?
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : DecodingStateMachine {
     private val stack = DecodingStack()
     private val mainModelStateMachine =
-        MainModelStateMachine(meta, expectedModelType, stack, options, auxStateMachineFactory)
+        MainModelStateMachine(meta, expectedModelType, stack, options, multiAuxDecodingStateMachineFactory)
     private val logger = LogManager.getLogger()
 
     init {

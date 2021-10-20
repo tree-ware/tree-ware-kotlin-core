@@ -11,10 +11,14 @@ const val VALUE_KEY = "value"
 
 class ModelEncodingVisitor(
     private val wireFormatEncoder: WireFormatEncoder,
-    private val auxEncoder: AuxEncoder?,
+    private val multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     private val encodePasswords: EncodePasswords = EncodePasswords.NONE
 ) : Leader1Follower0ModelVisitor<TraversalAction> {
     private var encodingPathKeys = false
+
+    private fun encodeAuxs(name: String?, element: ElementModel) {
+        element.auxs?.forEach { (auxName, aux) -> multiAuxEncoder.encode(name, auxName, aux, wireFormatEncoder) }
+    }
 
     override fun visit(leaderMain1: MainModel): TraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
@@ -34,7 +38,7 @@ class ModelEncodingVisitor(
         val mainMeta = leaderRoot1.parent.meta
         val unresolvedRootMeta = mainMeta?.let { getRootMeta(mainMeta) }
         val name = unresolvedRootMeta?.let { getMetaName(unresolvedRootMeta) }
-        auxEncoder?.also { it.encode(name, leaderRoot1.getAux(it.auxType), wireFormatEncoder) }
+        encodeAuxs(name, leaderRoot1)
         wireFormatEncoder.encodeObjectStart(name)
         return TraversalAction.CONTINUE
     }
@@ -47,11 +51,7 @@ class ModelEncodingVisitor(
         val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)
         val isSetElement = leaderEntity1.parent.meta?.let { isSetFieldMeta(it) } ?: false
-        if (isSetElement && auxEncoder != null) auxEncoder.encode(
-            null,
-            leaderEntity1.getAux(auxEncoder.auxType),
-            wireFormatEncoder
-        )
+        if (isSetElement) encodeAuxs(null, leaderEntity1)
         return TraversalAction.CONTINUE
     }
 
@@ -63,7 +63,7 @@ class ModelEncodingVisitor(
 
     override fun visit(leaderField1: SingleFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
-        auxEncoder?.also { it.encode(fieldName, leaderField1.getAux(it.auxType), wireFormatEncoder) }
+        encodeAuxs(fieldName, leaderField1)
         return TraversalAction.CONTINUE
     }
 
@@ -71,7 +71,7 @@ class ModelEncodingVisitor(
 
     override fun visit(leaderField1: ListFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
-        auxEncoder?.also { it.encode(fieldName, leaderField1.getAux(it.auxType), wireFormatEncoder) }
+        encodeAuxs(fieldName, leaderField1)
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
     }
@@ -82,7 +82,7 @@ class ModelEncodingVisitor(
 
     override fun visit(leaderField1: SetFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
-        auxEncoder?.also { it.encode(fieldName, leaderField1.getAux(it.auxType), wireFormatEncoder) }
+        encodeAuxs(fieldName, leaderField1)
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
     }
@@ -98,7 +98,7 @@ class ModelEncodingVisitor(
         val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
-        auxEncoder?.also { it.encode(auxFieldName, leaderValue1.getAux(it.auxType), wireFormatEncoder) }
+        encodeAuxs(auxFieldName, leaderValue1)
         val value = leaderValue1.value
         if (value == null) {
             wireFormatEncoder.encodeNullField(fieldName)
@@ -133,10 +133,9 @@ class ModelEncodingVisitor(
 
     override fun visit(leaderValue1: Password1wayModel): TraversalAction {
         when (encodePasswords) {
-            EncodePasswords.NONE ->
-                if (auxEncoder == null || leaderValue1.getAux<Any>(auxEncoder.auxType) == null) return TraversalAction.CONTINUE
+            EncodePasswords.NONE -> if (leaderValue1.auxs?.isEmpty() != false) return TraversalAction.CONTINUE
             EncodePasswords.HASHED_AND_ENCRYPTED ->
-                if (leaderValue1.hashed == null && (auxEncoder == null || leaderValue1.getAux<Any>(auxEncoder.auxType) == null)) return TraversalAction.CONTINUE
+                if (leaderValue1.hashed == null && leaderValue1.auxs?.isEmpty() != false) return TraversalAction.CONTINUE
             EncodePasswords.ALL -> {
             }
         }
@@ -144,21 +143,9 @@ class ModelEncodingVisitor(
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (!isListElement) auxEncoder?.also {
-            it.encode(
-                auxFieldName,
-                leaderValue1.getAux(it.auxType),
-                wireFormatEncoder
-            )
-        }
+        if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) auxEncoder?.also {
-            it.encode(
-                auxFieldName,
-                leaderValue1.getAux(it.auxType),
-                wireFormatEncoder
-            )
-        }
+        if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
         leaderValue1.unhashed?.also {
             if (encodePasswords == EncodePasswords.ALL) wireFormatEncoder.encodeStringField("unhashed", it)
         }
@@ -176,10 +163,9 @@ class ModelEncodingVisitor(
 
     override fun visit(leaderValue1: Password2wayModel): TraversalAction {
         when (encodePasswords) {
-            EncodePasswords.NONE ->
-                if (auxEncoder == null || leaderValue1.getAux<Any>(auxEncoder.auxType) == null) return TraversalAction.CONTINUE
+            EncodePasswords.NONE -> if (leaderValue1.auxs?.isEmpty() != false) return TraversalAction.CONTINUE
             EncodePasswords.HASHED_AND_ENCRYPTED ->
-                if (leaderValue1.encrypted == null && (auxEncoder == null || leaderValue1.getAux<Any>(auxEncoder.auxType) == null)) return TraversalAction.CONTINUE
+                if (leaderValue1.encrypted == null && leaderValue1.auxs?.isEmpty() != false) return TraversalAction.CONTINUE
             EncodePasswords.ALL -> {
             }
         }
@@ -187,21 +173,9 @@ class ModelEncodingVisitor(
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (!isListElement) auxEncoder?.also {
-            it.encode(
-                auxFieldName,
-                leaderValue1.getAux(it.auxType),
-                wireFormatEncoder
-            )
-        }
+        if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) auxEncoder?.also {
-            it.encode(
-                auxFieldName,
-                leaderValue1.getAux(it.auxType),
-                wireFormatEncoder
-            )
-        }
+        if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
         leaderValue1.unencrypted?.also {
             if (encodePasswords == EncodePasswords.ALL) wireFormatEncoder.encodeStringField("unencrypted", it)
         }
@@ -222,7 +196,7 @@ class ModelEncodingVisitor(
         val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
-        auxEncoder?.also { it.encode(auxFieldName, leaderValue1.getAux(it.auxType), wireFormatEncoder) }
+        encodeAuxs(auxFieldName, leaderValue1)
         val value = leaderValue1.value
         if (value == null) wireFormatEncoder.encodeNullField(fieldName)
         else wireFormatEncoder.encodeStringField(fieldName, value)
@@ -238,25 +212,13 @@ class ModelEncodingVisitor(
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (!isListElement) auxEncoder?.also {
-            it.encode(
-                auxFieldName,
-                leaderValue1.getAux(it.auxType),
-                wireFormatEncoder
-            )
-        }
+        if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
         if (leaderValue1.value.isEmpty()) {
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) auxEncoder?.also {
-            it.encode(
-                auxFieldName,
-                leaderValue1.getAux(it.auxType),
-                wireFormatEncoder
-            )
-        }
+        if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeListStart("path_keys")
         encodingPathKeys = true
         leaderValue1.value.forEach { entityKeys ->

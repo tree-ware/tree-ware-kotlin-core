@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.core.*
+import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.getMainModelFromJsonFile
@@ -18,12 +19,16 @@ class GetTests {
         val metaModel = newAddressBookMetaModel(null, null)
 
         val request = getMainModelFromJsonFile(metaModel, "model/address_book_get_person_request.json")
+        val auxName = "mapping"
         val mapping =
             getMainModelFromJsonFile(
                 metaModel,
                 "model/address_book_mapping_model.json",
-                expectedModelType = "mapping"
-            ) { StringAuxStateMachine("mapping", it) }
+                expectedModelType = "mapping",
+                multiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(
+                    auxName to { StringAuxStateMachine(it) }
+                )
+            )
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
 
@@ -94,6 +99,6 @@ class GetTests {
             // delegate.fetchCompositionList(ofType(), listOf(), "relation_mapping")
             delegate.popPathEntity()
         }
-        assertMatchesJson(response, null, "model/address_book_get_person_response.json", EncodePasswords.NONE)
+        assertMatchesJson(response, "model/address_book_get_person_response.json", EncodePasswords.NONE)
     }
 }

@@ -9,7 +9,7 @@ fun getFieldAndAuxNames(name: String): FieldAndAuxNames? {
     if (!name.endsWith("_")) return FieldAndAuxNames(name, null)
     val splits = name.split("__")
     return when (splits.size) {
-        1 -> FieldAndAuxNames("", name)
+        1 -> FieldAndAuxNames("", name.dropLast(1))
         2 -> {
             val (fieldName, auxTrailingUnderscore) = splits
             val auxName = if (auxTrailingUnderscore.isBlank()) null else auxTrailingUnderscore.dropLast(1)

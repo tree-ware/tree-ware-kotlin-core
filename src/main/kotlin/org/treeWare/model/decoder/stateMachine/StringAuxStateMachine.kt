@@ -1,7 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
 class StringAuxStateMachine(
-    override val auxType: String,
     private val stack: DecodingStack
 ) : AuxDecodingStateMachine, AbstractDecodingStateMachine(true) {
     private var aux: String? = null

@@ -7,13 +7,13 @@ import java.io.Writer
 
 fun encodeJson(
     element: ElementModel,
-    auxEncoder: AuxEncoder?,
     writer: Writer,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
     prettyPrint: Boolean = false,
     indentSizeInSpaces: Int = 2
 ): Boolean {
     val wireFormatEncoder = JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)
-    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, auxEncoder, encodePasswords)
+    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, multiAuxEncoder, encodePasswords)
     return forEach(element, encodingVisitor) != TraversalAction.ABORT_TREE
 }

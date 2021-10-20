@@ -8,16 +8,16 @@ class Password2wayModelStateMachine(
     private val isListElement: Boolean,
     private val passwordFactory: () -> MutablePassword2wayModel,
     private val stack: DecodingStack,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
-    private var auxStateMachine: AuxDecodingStateMachine? = null
+    private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
     private var password2way: MutablePassword2wayModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(auxType: String, aux: Any?) {
+    override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
         assert(password2way != null)
-        password2way?.setAux(auxType, aux)
+        password2way?.setAux(auxName, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -31,9 +31,11 @@ class Password2wayModelStateMachine(
             // Remove self from stack
             stack.pollFirst()
         } else {
-            auxStateMachine?.also { setAux(it.auxType, it.getAux()) }
+            auxStateMachines.forEach { (auxName, auxStateMachine) ->
+                setAux(auxName, auxStateMachine.getAux())
+            }
             // This state-machine instance gets reused in lists, so clear it.
-            auxStateMachine = null
+            auxStateMachines.clear()
         }
         return true
     }
@@ -74,11 +76,11 @@ class Password2wayModelStateMachine(
         }
         val (_, auxName) = fieldAndAuxNames
         if (auxName != null) {
-            val auxStateMachine = auxStateMachineFactory()
+            val auxStateMachine = multiAuxDecodingStateMachineFactory.newAuxDecodingStateMachine(auxName, stack)
             if (auxStateMachine != null) {
                 stack.addFirst(auxStateMachine)
                 auxStateMachine.newAux()
-                this.auxStateMachine = auxStateMachine
+                auxStateMachines[auxName] = auxStateMachine
             } else stack.addFirst(SkipUnknownStateMachine(stack))
         }
         return true

@@ -7,9 +7,9 @@ class CollectionFieldModelStateMachine(
     private val listElementStateMachine: DecodingStateMachine,
     private val stack: DecodingStack
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
-    override fun setAux(auxType: String, aux: Any?) {
+    override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
-        collectionFieldModel.setAux(auxType, aux)
+        collectionFieldModel.setAux(auxName, aux)
     }
 
     override fun decodeObjectStart(): Boolean {

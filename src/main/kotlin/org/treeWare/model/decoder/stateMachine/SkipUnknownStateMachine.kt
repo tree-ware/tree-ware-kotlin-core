@@ -5,8 +5,6 @@ import java.math.BigDecimal
 class SkipUnknownStateMachine(
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true), AuxDecodingStateMachine {
-    override val auxType = "unknown"
-
     private var depth = 0
 
     private fun popIfDone() {

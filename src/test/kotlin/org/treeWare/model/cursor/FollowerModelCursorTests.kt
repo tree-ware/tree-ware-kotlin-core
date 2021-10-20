@@ -93,7 +93,7 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
 
     val jsonWriter = StringWriter()
     val wireFormatEncoder = JsonWireFormatEncoder(jsonWriter, true)
-    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, null, EncodePasswords.ALL)
+    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, encodePasswords = EncodePasswords.ALL)
 
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
