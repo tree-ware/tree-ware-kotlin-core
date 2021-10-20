@@ -14,7 +14,7 @@ class JsonPasswordsClientCodecTests {
             "model/address_book_passwords_and_secrets_none.json",
             auxEncoder = ErrorAuxEncoder(),
             encodePasswords = EncodePasswords.NONE
-        ) { StringAuxStateMachine(it) }
+        ) { StringAuxStateMachine("error", it) }
     }
 
     @Test
@@ -24,7 +24,7 @@ class JsonPasswordsClientCodecTests {
             "model/address_book_passwords_and_secrets_hashed_and_encrypted.json",
             auxEncoder = ErrorAuxEncoder(),
             encodePasswords = EncodePasswords.HASHED_AND_ENCRYPTED
-        ) { StringAuxStateMachine(it) }
+        ) { StringAuxStateMachine("error", it) }
     }
 
     @Test
@@ -33,6 +33,6 @@ class JsonPasswordsClientCodecTests {
             "model/address_book_passwords_and_secrets.json",
             auxEncoder = ErrorAuxEncoder(),
             encodePasswords = EncodePasswords.ALL
-        ) { StringAuxStateMachine(it) }
+        ) { StringAuxStateMachine("error", it) }
     }
 }

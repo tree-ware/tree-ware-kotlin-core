@@ -5,8 +5,8 @@ import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import java.io.Writer
 
-fun <Aux> encodeJson(
-    element: ElementModel<Aux>,
+fun encodeJson(
+    element: ElementModel,
     auxEncoder: AuxEncoder?,
     writer: Writer,
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
@@ -14,6 +14,6 @@ fun <Aux> encodeJson(
     indentSizeInSpaces: Int = 2
 ): Boolean {
     val wireFormatEncoder = JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)
-    val encodingVisitor = ModelEncodingVisitor<Aux>(wireFormatEncoder, auxEncoder, encodePasswords)
+    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, auxEncoder, encodePasswords)
     return forEach(element, encodingVisitor) != TraversalAction.ABORT_TREE
 }

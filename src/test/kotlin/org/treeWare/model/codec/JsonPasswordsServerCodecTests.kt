@@ -18,6 +18,6 @@ class JsonPasswordsServerCodecTests {
             encodePasswords = EncodePasswords.ALL,
             hasher = TestHasherV1(),
             cipher = TestCipherV1()
-        ) { StringAuxStateMachine(it) }
+        ) { StringAuxStateMachine("error", it) }
     }
 }

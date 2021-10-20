@@ -1,142 +1,147 @@
 package org.treeWare.model.core
 
-interface ElementModel<Aux> {
+interface ElementModel {
     val elementType: ModelElementType
-    val meta: ElementModel<Resolved>?
-    val parent: ElementModel<Aux>?
-    val aux: Aux?
+    val meta: ElementModel?
+    val parent: ElementModel?
+    val auxs: Map<String, Any>?
 
-    fun matches(that: ElementModel<*>): Boolean
+    fun matches(that: ElementModel): Boolean
 }
 
+inline fun <reified Aux> ElementModel.getAux(auxType: String): Aux? = this.auxs?.let { it[auxType] as? Aux? }
+
+fun ElementModel.getMetaAux(): Resolved? = this.meta?.getAux<Resolved>(RESOLVED_AUX)
+
 /** The entire model (from the root entity). */
-interface MainModel<Aux> : ElementModel<Aux> {
+interface MainModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.MAIN
 
-    override val meta: MainModel<Resolved>?
+    override val meta: MainModel?
 
     val type: String
-    val root: RootModel<Aux>
+    val auxTypes: List<String>
+    val root: RootModel
 }
 
-interface BaseEntityModel<Aux> : ElementModel<Aux> {
-    override val meta: EntityModel<Resolved>?
+interface BaseEntityModel : ElementModel {
+    override val meta: EntityModel?
 
-    val fields: Map<String, FieldModel<Aux>>
+    val fields: Map<String, FieldModel>
 
-    fun getField(fieldName: String): FieldModel<Aux>?
+    fun getField(fieldName: String): FieldModel?
     fun getMatchingHashCode(): Int
 }
 
-interface RootModel<Aux> : BaseEntityModel<Aux> {
+interface RootModel : BaseEntityModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ROOT
 
-    override val parent: MainModel<Aux>
+    override val parent: MainModel
 }
 
-interface EntityModel<Aux> : BaseEntityModel<Aux> {
+interface EntityModel : BaseEntityModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENTITY
 
-    override val parent: FieldModel<Aux>
+    override val parent: FieldModel
 }
 
 // Fields
 
-interface FieldModel<Aux> : ElementModel<Aux> {
-    override val meta: EntityModel<Resolved>?
-    override val parent: BaseEntityModel<Aux>
+interface FieldModel : ElementModel {
+    override val meta: EntityModel?
+    override val parent: BaseEntityModel
 }
 
-interface SingleFieldModel<Aux> : FieldModel<Aux> {
+interface SingleFieldModel : FieldModel {
     override val elementType: ModelElementType
         get() = ModelElementType.SINGLE_FIELD
 
-    val value: ElementModel<Aux>?
+    val value: ElementModel?
 }
 
-interface CollectionFieldModel<Aux> : FieldModel<Aux> {
-    val values: Collection<ElementModel<Aux>>
+interface CollectionFieldModel : FieldModel {
+    val values: Collection<ElementModel>
 
-    fun firstValue(): ElementModel<Aux>?
-    fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>?
+    fun firstValue(): ElementModel?
+    fun getValueMatching(that: ElementModel): ElementModel?
 }
 
-interface ListFieldModel<Aux> : CollectionFieldModel<Aux> {
+interface ListFieldModel : CollectionFieldModel {
     override val elementType: ModelElementType
         get() = ModelElementType.LIST_FIELD
 
-    override val values: List<ElementModel<Aux>>
+    override val values: List<ElementModel>
 }
 
-interface SetFieldModel<Aux> : CollectionFieldModel<Aux> {
+interface SetFieldModel : CollectionFieldModel {
     override val elementType: ModelElementType
         get() = ModelElementType.SET_FIELD
 }
 
 // Values
 
-interface PrimitiveModel<Aux> : ElementModel<Aux> {
+interface PrimitiveModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.PRIMITIVE
 
-    override val parent: FieldModel<Aux>
+    override val parent: FieldModel
     val value: Any?
 }
 
-interface AliasModel<Aux> : ElementModel<Aux> {
+interface AliasModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ALIAS
 
-    override val parent: FieldModel<Aux>
+    override val parent: FieldModel
     val value: Any?
 }
 
-interface Password1wayModel<Aux> : ElementModel<Aux> {
+interface Password1wayModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.PASSWORD1WAY
 
-    override val parent: FieldModel<Aux>
+    override val parent: FieldModel
 
     val unhashed: String?
     val hashed: String?
     val hashVersion: Int
 }
 
-interface Password2wayModel<Aux> : ElementModel<Aux> {
+interface Password2wayModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.PASSWORD2WAY
 
-    override val parent: FieldModel<Aux>
+    override val parent: FieldModel
 
     val unencrypted: String?
     val encrypted: String?
     val cipherVersion: Int
 }
 
-interface EnumerationModel<Aux> : ElementModel<Aux> {
+interface EnumerationModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENUMERATION
 
-    override val parent: FieldModel<Aux>
+    override val parent: FieldModel
     val value: String?
 }
 
-interface AssociationModel<Aux> : ElementModel<Aux> {
+interface AssociationModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ASSOCIATION
 
-    override val parent: FieldModel<Aux>
-    val value: List<EntityKeysModel<Aux>>
+    override val parent: FieldModel
+    val value: List<EntityKeysModel>
 }
 
 // Sub-values
 
-interface EntityKeysModel<Aux> : BaseEntityModel<Aux> {
+interface EntityKeysModel : BaseEntityModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENTITY_KEYS
 
-    override val parent: AssociationModel<Aux>
+    override val parent: AssociationModel
 }

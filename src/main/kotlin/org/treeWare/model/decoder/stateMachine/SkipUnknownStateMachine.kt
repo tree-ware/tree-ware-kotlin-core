@@ -2,9 +2,11 @@ package org.treeWare.model.decoder.stateMachine
 
 import java.math.BigDecimal
 
-class SkipUnknownStateMachine<Aux>(
+class SkipUnknownStateMachine(
     private val stack: DecodingStack
-) : AbstractDecodingStateMachine(true), AuxDecodingStateMachine<Aux> {
+) : AbstractDecodingStateMachine(true), AuxDecodingStateMachine {
+    override val auxType = "unknown"
+
     private var depth = 0
 
     private fun popIfDone() {
@@ -64,7 +66,7 @@ class SkipUnknownStateMachine<Aux>(
         // Nothing to do
     }
 
-    override fun getAux(): Aux? {
+    override fun getAux(): Any? {
         return null
     }
 }

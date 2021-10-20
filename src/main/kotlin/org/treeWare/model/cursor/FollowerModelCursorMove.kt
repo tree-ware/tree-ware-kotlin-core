@@ -3,11 +3,10 @@ package org.treeWare.model.cursor
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.BaseEntityModel
 import org.treeWare.model.core.ElementModel
-import org.treeWare.model.core.Resolved
 
-class FollowerModelCursorMove<Aux>(private val direction: CursorMoveDirection, val element: ElementModel<Aux>?) {
+class FollowerModelCursorMove(private val direction: CursorMoveDirection, val element: ElementModel?) {
     override fun toString(): String {
-        val name = (element?.meta as? BaseEntityModel<Resolved>)?.let { getMetaName(it) } ?: ""
+        val name = (element?.meta as? BaseEntityModel)?.let { getMetaName(it) } ?: ""
         return "$direction ${element?.elementType} $name"
     }
 }

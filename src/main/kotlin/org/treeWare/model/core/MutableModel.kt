@@ -4,46 +4,52 @@ import org.treeWare.metaModel.*
 import java.math.BigDecimal
 import java.util.*
 
-abstract class MutableElementModel<Aux> : ElementModel<Aux> {
-    override val meta: ElementModel<Resolved>? = null
-    override var aux: Aux? = null
-        internal set
+abstract class MutableElementModel : ElementModel {
+    override val meta: ElementModel? = null
+    override var auxs: LinkedHashMap<String, Any>? = null
+
+    fun setAux(auxType: String, aux: Any) {
+        if (auxs == null) auxs = LinkedHashMap()
+        auxs?.also { it[auxType] = aux }
+    }
 }
 
-class MutableMainModel<Aux>(override val meta: MainModel<Resolved>?) :
-    MutableElementModel<Aux>(), MainModel<Aux> {
-    override val parent: ElementModel<Aux>? = null
+class MutableMainModel(override val meta: MainModel?) :
+    MutableElementModel(), MainModel {
+    override val parent: ElementModel? = null
 
     override var type = "data"
         internal set
 
-    override var root: MutableRootModel<Aux>
+    override val auxTypes = mutableListOf<String>()
+
+    override var root: MutableRootModel
         get() = _root ?: throw IllegalStateException("Root has not been set")
         internal set(value) {
             _root = value
         }
-    private var _root: MutableRootModel<Aux>? = null
+    private var _root: MutableRootModel? = null
 
-    override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
+    override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
 
-    fun getOrNewRoot(): MutableRootModel<Aux> {
+    fun getOrNewRoot(): MutableRootModel {
         if (_root == null) {
             val rootMeta = meta?.let { getRootMeta(it) }
-            val resolvedRootMeta = rootMeta?.aux?.compositionMeta
+            val resolvedRootMeta = rootMeta?.getAux<Resolved>(RESOLVED_AUX)?.compositionMeta
             _root = MutableRootModel(resolvedRootMeta, this)
         }
         return root
     }
 }
 
-abstract class MutableBaseEntityModel<Aux>(
-    override val meta: EntityModel<Resolved>?
-) : MutableElementModel<Aux>(), BaseEntityModel<Aux> {
-    override var fields = LinkedHashMap<String, MutableFieldModel<Aux>>()
+abstract class MutableBaseEntityModel(
+    override val meta: EntityModel?
+) : MutableElementModel(), BaseEntityModel {
+    override var fields = LinkedHashMap<String, MutableFieldModel>()
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is BaseEntityModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is BaseEntityModel) return false
         val thisKeyFields = getKeyFields()
         if (thisKeyFields.isEmpty()) throw MissingKeysException("No key fields")
         return thisKeyFields.all { thisKeyField ->
@@ -58,9 +64,9 @@ abstract class MutableBaseEntityModel<Aux>(
         return Objects.hash(*keyValues)
     }
 
-    override fun getField(fieldName: String): MutableFieldModel<Aux>? = fields[fieldName]
+    override fun getField(fieldName: String): MutableFieldModel? = fields[fieldName]
 
-    fun getOrNewField(fieldName: String): MutableFieldModel<Aux> {
+    fun getOrNewField(fieldName: String): MutableFieldModel {
         val existing = getField(fieldName)
         if (existing != null) return existing
         val fieldMeta = meta?.let { getFieldMeta(it, fieldName) }
@@ -74,11 +80,11 @@ abstract class MutableBaseEntityModel<Aux>(
         return newField
     }
 
-    private fun getKeyFields(): List<MutableFieldModel<Aux>> {
+    private fun getKeyFields(): List<MutableFieldModel> {
         val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return listOf()
         val keyFieldsMeta = filterKeyFields(fieldsMeta.values)
         val missingKeys = mutableListOf<String>()
-        val keyFields = mutableListOf<MutableFieldModel<Aux>>()
+        val keyFields = mutableListOf<MutableFieldModel>()
         keyFieldsMeta.forEach { fieldMeta ->
             val keyFieldName = getMetaName(fieldMeta)
             val keyField = this.fields[keyFieldName]
@@ -92,39 +98,39 @@ abstract class MutableBaseEntityModel<Aux>(
         if (field.elementType == ModelElementType.SINGLE_FIELD) {
             val singleField = field as MutableSingleFieldModel
             when (getFieldTypeMeta(singleField.meta)) {
-                FieldType.COMPOSITION -> (singleField.value as MutableBaseEntityModel<Aux>).getKeyValues()
-                else -> listOf((singleField.value as MutablePrimitiveModel<Aux>).value)
+                FieldType.COMPOSITION -> (singleField.value as MutableBaseEntityModel).getKeyValues()
+                else -> listOf((singleField.value as MutablePrimitiveModel).value)
             }
-        } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.meta?.aux?.fullName}")
+        } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.getMetaAux()?.fullName}")
     }
 }
 
-class MutableRootModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    override val parent: MutableMainModel<Aux>
-) : MutableBaseEntityModel<Aux>(meta), RootModel<Aux>
+class MutableRootModel(
+    meta: EntityModel?,
+    override val parent: MutableMainModel
+) : MutableBaseEntityModel(meta), RootModel
 
-class MutableEntityModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    override val parent: MutableFieldModel<Aux>
-) : MutableBaseEntityModel<Aux>(meta), EntityModel<Aux>
+class MutableEntityModel(
+    meta: EntityModel?,
+    override val parent: MutableFieldModel
+) : MutableBaseEntityModel(meta), EntityModel
 
 // Fields
 
-abstract class MutableFieldModel<Aux>(
-    override val meta: EntityModel<Resolved>?,
-    override val parent: MutableBaseEntityModel<Aux>
-) : MutableElementModel<Aux>(), FieldModel<Aux>
+abstract class MutableFieldModel(
+    override val meta: EntityModel?,
+    override val parent: MutableBaseEntityModel
+) : MutableElementModel(), FieldModel
 
-class MutableSingleFieldModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(meta, parent), SingleFieldModel<Aux> {
-    override var value: MutableElementModel<Aux>? = null
+class MutableSingleFieldModel(
+    meta: EntityModel?,
+    parent: MutableBaseEntityModel
+) : MutableFieldModel(meta, parent), SingleFieldModel {
+    override var value: MutableElementModel? = null
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is SingleFieldModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is SingleFieldModel) return false
         val thisValue = this.value
         val thatValue = that.value
         if (thisValue == null) return thatValue == null
@@ -132,7 +138,7 @@ class MutableSingleFieldModel<Aux>(
         return thisValue.matches(thatValue)
     }
 
-    fun getOrNewValue(): MutableElementModel<Aux> {
+    fun getOrNewValue(): MutableElementModel {
         val existing = value
         if (existing != null) return existing
         val newValue = newMutableValueModel(meta, this)
@@ -140,81 +146,81 @@ class MutableSingleFieldModel<Aux>(
         return newValue
     }
 
-    fun setValue(value: MutableElementModel<Aux>?) {
+    fun setValue(value: MutableElementModel?) {
         this.value = value
     }
 }
 
-abstract class MutableCollectionFieldModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableFieldModel<Aux>(meta, parent), CollectionFieldModel<Aux> {
-    abstract override val values: MutableCollection<MutableElementModel<Aux>>
+abstract class MutableCollectionFieldModel(
+    meta: EntityModel?,
+    parent: MutableBaseEntityModel
+) : MutableFieldModel(meta, parent), CollectionFieldModel {
+    abstract override val values: MutableCollection<MutableElementModel>
 }
 
-class MutableListFieldModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableCollectionFieldModel<Aux>(meta, parent), ListFieldModel<Aux> {
-    override val values = mutableListOf<MutableElementModel<Aux>>()
+class MutableListFieldModel(
+    meta: EntityModel?,
+    parent: MutableBaseEntityModel
+) : MutableCollectionFieldModel(meta, parent), ListFieldModel {
+    override val values = mutableListOf<MutableElementModel>()
 
-    override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
-    override fun firstValue(): ElementModel<Aux>? = values.firstOrNull()
-    override fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>? = values.find { it.matches(that) }
+    override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
+    override fun firstValue(): ElementModel? = values.firstOrNull()
+    override fun getValueMatching(that: ElementModel): ElementModel? = values.find { it.matches(that) }
 
     /** Adds a new value to the list and returns the new value. */
-    fun getNewValue(): MutableElementModel<Aux> {
+    fun getNewValue(): MutableElementModel {
         val newValue = newMutableValueModel(meta, this)
         addValue(newValue)
         return newValue
     }
 
-    fun addValue(value: MutableElementModel<Aux>) {
+    fun addValue(value: MutableElementModel) {
         values.add(value)
     }
 }
 
-class MutableSetFieldModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    parent: MutableBaseEntityModel<Aux>
-) : MutableCollectionFieldModel<Aux>(meta, parent), SetFieldModel<Aux> {
-    private val linkedHashMap = LinkedHashMap<ElementModelId, MutableElementModel<Aux>>()
+class MutableSetFieldModel(
+    meta: EntityModel?,
+    parent: MutableBaseEntityModel
+) : MutableCollectionFieldModel(meta, parent), SetFieldModel {
+    private val linkedHashMap = LinkedHashMap<ElementModelId, MutableElementModel>()
     override val values get() = linkedHashMap.values
 
-    override fun matches(that: ElementModel<*>): Boolean = false // Not yet needed, so not yet supported.
-    override fun firstValue(): ElementModel<Aux>? = values.iterator().takeIf { it.hasNext() }?.next()
-    override fun getValueMatching(that: ElementModel<*>): ElementModel<Aux>? = linkedHashMap[newElementModelId(that)]
+    override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
+    override fun firstValue(): ElementModel? = values.iterator().takeIf { it.hasNext() }?.next()
+    override fun getValueMatching(that: ElementModel): ElementModel? = linkedHashMap[newElementModelId(that)]
 
     /**
      * Returns a new value.
      * WARNING: the new value needs to be added to the set after the key fields are set in it.
      */
-    fun getNewValue(): MutableElementModel<Aux> = newMutableValueModel(meta, this)
+    fun getNewValue(): MutableElementModel = newMutableValueModel(meta, this)
 
-    fun addValue(value: MutableElementModel<Aux>) {
+    fun addValue(value: MutableElementModel) {
         linkedHashMap[newElementModelId(value)] = value
     }
 }
 
 // Values
 
-abstract class MutableScalarValueModel<Aux>(
-    override val parent: MutableFieldModel<Aux>
-) : MutableElementModel<Aux>() {
+abstract class MutableScalarValueModel(
+    override val parent: MutableFieldModel
+) : MutableElementModel() {
     open fun setNullValue(): Boolean = false
     open fun setValue(value: String): Boolean = false
     open fun setValue(value: BigDecimal): Boolean = false
     open fun setValue(value: Boolean): Boolean = false
 }
 
-class MutablePrimitiveModel<Aux>(
-    parent: MutableFieldModel<Aux>
-) : MutableScalarValueModel<Aux>(parent), PrimitiveModel<Aux> {
+class MutablePrimitiveModel(
+    parent: MutableFieldModel
+) : MutableScalarValueModel(parent), PrimitiveModel {
     override var value: Any? = null
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is PrimitiveModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is PrimitiveModel) return false
         return this.value == that.value
     }
 
@@ -227,19 +233,19 @@ class MutablePrimitiveModel<Aux>(
     override fun setValue(value: BigDecimal): Boolean = setValue(parent.meta, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
 
-    fun copyValueFrom(that: PrimitiveModel<Aux>) {
+    fun copyValueFrom(that: PrimitiveModel) {
         this.value = that.value
     }
 }
 
-class MutableAliasModel<Aux>(
-    parent: MutableFieldModel<Aux>
-) : MutableScalarValueModel<Aux>(parent), AliasModel<Aux> {
+class MutableAliasModel(
+    parent: MutableFieldModel
+) : MutableScalarValueModel(parent), AliasModel {
     override var value: Any? = null
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is AliasModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is AliasModel) return false
         return this.value == that.value
     }
 
@@ -252,14 +258,14 @@ class MutableAliasModel<Aux>(
     override fun setValue(value: BigDecimal): Boolean = setValue(parent.meta, value) { this.value = it }
     override fun setValue(value: Boolean): Boolean = setValue(parent.meta, value) { this.value = it }
 
-    fun copyValueFrom(that: AliasModel<Aux>) {
+    fun copyValueFrom(that: AliasModel) {
         this.value = that.value
     }
 }
 
-class MutablePassword1wayModel<Aux>(
-    override val parent: MutableFieldModel<Aux>
-) : MutableElementModel<Aux>(), Password1wayModel<Aux> {
+class MutablePassword1wayModel(
+    override val parent: MutableFieldModel
+) : MutableElementModel(), Password1wayModel {
     override var unhashed: String? = null
         internal set
 
@@ -269,8 +275,8 @@ class MutablePassword1wayModel<Aux>(
     override var hashVersion: Int = 0
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is Password1wayModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is Password1wayModel) return false
         if (this.unhashed != that.unhashed) return false
         if (this.hashed != that.hashed) return false
         if (this.hashVersion != that.hashVersion) return false
@@ -278,7 +284,7 @@ class MutablePassword1wayModel<Aux>(
     }
 
     fun setUnhashed(unhashed: String): Boolean {
-        val hasher = parent.meta?.aux?.password1wayHasher
+        val hasher = parent.getMetaAux()?.password1wayHasher
         if (hasher != null) {
             this.unhashed = null
             this.hashed = hasher.hash(unhashed)
@@ -300,21 +306,21 @@ class MutablePassword1wayModel<Aux>(
     }
 
     fun verify(thatUnhashed: String): Boolean {
-        val hasher = parent.meta?.aux?.password1wayHasher ?: return false
+        val hasher = parent.getMetaAux()?.password1wayHasher ?: return false
         if (this.hashVersion != hasher.hashVersion) return false
         return this.hashed?.let { hasher.verify(thatUnhashed, it) } ?: false
     }
 
-    fun copyValueFrom(that: Password1wayModel<Aux>) {
+    fun copyValueFrom(that: Password1wayModel) {
         this.unhashed = that.unhashed
         this.hashed = that.hashed
         this.hashVersion = that.hashVersion
     }
 }
 
-class MutablePassword2wayModel<Aux>(
-    override val parent: MutableFieldModel<Aux>
-) : MutableElementModel<Aux>(), Password2wayModel<Aux> {
+class MutablePassword2wayModel(
+    override val parent: MutableFieldModel
+) : MutableElementModel(), Password2wayModel {
     override var unencrypted: String? = null
         internal set
 
@@ -324,8 +330,8 @@ class MutablePassword2wayModel<Aux>(
     override var cipherVersion: Int = 0
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is Password2wayModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is Password2wayModel) return false
         if (this.unencrypted != that.unencrypted) return false
         if (this.encrypted != that.encrypted) return false
         if (this.cipherVersion != that.cipherVersion) return false
@@ -333,7 +339,7 @@ class MutablePassword2wayModel<Aux>(
     }
 
     fun setUnencrypted(unencrypted: String): Boolean {
-        val cipher = parent.meta?.aux?.password2wayCipher
+        val cipher = parent.getMetaAux()?.password2wayCipher
         if (cipher != null) {
             this.unencrypted = null
             this.encrypted = cipher.encrypt(unencrypted)
@@ -355,26 +361,26 @@ class MutablePassword2wayModel<Aux>(
     }
 
     fun decrypt(): String? {
-        val cipher = parent.meta?.aux?.password2wayCipher ?: return unencrypted
+        val cipher = parent.getMetaAux()?.password2wayCipher ?: return unencrypted
         if (this.cipherVersion != cipher.cipherVersion) return null
         return this.encrypted?.let { cipher.decrypt(it) }
     }
 
-    fun copyValueFrom(that: Password2wayModel<Aux>) {
+    fun copyValueFrom(that: Password2wayModel) {
         this.unencrypted = that.unencrypted
         this.encrypted = that.encrypted
         this.cipherVersion = that.cipherVersion
     }
 }
 
-class MutableEnumerationModel<Aux>(
-    parent: MutableFieldModel<Aux>
-) : MutableScalarValueModel<Aux>(parent), EnumerationModel<Aux> {
+class MutableEnumerationModel(
+    parent: MutableFieldModel
+) : MutableScalarValueModel(parent), EnumerationModel {
     override var value: String? = null
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is EnumerationModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is EnumerationModel) return false
         return this.value == that.value
     }
 
@@ -385,19 +391,19 @@ class MutableEnumerationModel<Aux>(
 
     override fun setValue(value: String): Boolean = setEnumerationValue(parent.meta, value) { this.value = it }
 
-    fun copyValueFrom(that: EnumerationModel<Aux>) {
+    fun copyValueFrom(that: EnumerationModel) {
         this.value = that.value
     }
 }
 
-class MutableAssociationModel<Aux>(
-    override val parent: MutableFieldModel<Aux>
-) : MutableElementModel<Aux>(), AssociationModel<Aux> {
-    override var value: List<MutableEntityKeysModel<Aux>> = listOf()
+class MutableAssociationModel(
+    override val parent: MutableFieldModel
+) : MutableElementModel(), AssociationModel {
+    override var value: List<MutableEntityKeysModel> = listOf()
         internal set
 
-    override fun matches(that: ElementModel<*>): Boolean {
-        if (that !is AssociationModel<*>) return false
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is AssociationModel) return false
         if (this.value.size != that.value.size) return false
         return this.value.zip(that.value).all { (a, b) -> a.matches(b) }
     }
@@ -407,8 +413,8 @@ class MutableAssociationModel<Aux>(
         return true
     }
 
-    fun newValue(): List<MutableEntityKeysModel<Aux>> {
-        val keyEntityMetaList = parent.meta?.aux?.associationMeta?.keyEntityMetaList ?: listOf()
+    fun newValue(): List<MutableEntityKeysModel> {
+        val keyEntityMetaList = parent.getMetaAux()?.associationMeta?.keyEntityMetaList ?: listOf()
         value = keyEntityMetaList.map { MutableEntityKeysModel(it, this) }
         return value
     }
@@ -416,16 +422,16 @@ class MutableAssociationModel<Aux>(
 
 // Sub-values
 
-class MutableEntityKeysModel<Aux>(
-    meta: EntityModel<Resolved>?,
-    override val parent: AssociationModel<Aux>
-) : MutableBaseEntityModel<Aux>(meta), EntityKeysModel<Aux>
+class MutableEntityKeysModel(
+    meta: EntityModel?,
+    override val parent: AssociationModel
+) : MutableBaseEntityModel(meta), EntityKeysModel
 
 // Helpers
 
 typealias ValueSetter = (Any) -> Unit
 
-fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSetter): Boolean {
+fun setValue(fieldMeta: EntityModel?, value: String, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.STRING,
         FieldType.UUID -> {
@@ -450,7 +456,7 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: String, setter: ValueSett
     }
 }
 
-fun setValue(fieldMeta: EntityModel<Resolved>?, value: BigDecimal, setter: ValueSetter): Boolean {
+fun setValue(fieldMeta: EntityModel?, value: BigDecimal, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.BYTE ->
             try {
@@ -491,7 +497,7 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: BigDecimal, setter: Value
     }
 }
 
-fun setValue(fieldMeta: EntityModel<Resolved>?, value: Boolean, setter: ValueSetter): Boolean {
+fun setValue(fieldMeta: EntityModel?, value: Boolean, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
         null, // fieldMeta is null when constructing the meta-meta-model.
         FieldType.BOOLEAN -> {
@@ -505,13 +511,13 @@ fun setValue(fieldMeta: EntityModel<Resolved>?, value: Boolean, setter: ValueSet
 typealias StringSetter = (String) -> Unit
 
 fun setEnumerationValue(
-    fieldMeta: EntityModel<Resolved>?,
+    fieldMeta: EntityModel?,
     value: String,
     setter: StringSetter
 ): Boolean {
     // fieldMeta is null when constructing the meta-meta-model.
     val enumerationValue = if (fieldMeta == null) value else {
-        val resolvedEnumeration = fieldMeta.aux?.enumerationMeta
+        val resolvedEnumeration = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.enumerationMeta
             ?: throw IllegalStateException("Enumeration has not been resolved")
         val enumerationValues = getEnumerationValues(resolvedEnumeration)
         if (enumerationValues.contains(value)) value else return false

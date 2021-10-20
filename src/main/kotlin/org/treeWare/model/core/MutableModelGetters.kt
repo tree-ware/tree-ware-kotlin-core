@@ -1,20 +1,20 @@
 package org.treeWare.model.core
 
-fun <Aux> getMutableSingleEntity(meta: MutableBaseEntityModel<Aux>, fieldName: String): MutableEntityModel<Aux> {
+fun getMutableSingleEntity(meta: MutableBaseEntityModel, fieldName: String): MutableEntityModel {
     val singleField = getMutableSingleField(meta, fieldName)
-    return singleField.value as? MutableEntityModel<Aux> ?: throw IllegalStateException()
+    return singleField.value as? MutableEntityModel ?: throw IllegalStateException()
 }
 
-fun <Aux> getMutableSingleField(
-    meta: MutableBaseEntityModel<Aux>,
+fun getMutableSingleField(
+    meta: MutableBaseEntityModel,
     fieldName: String
-): MutableSingleFieldModel<Aux> {
-    return meta.getField(fieldName) as? MutableSingleFieldModel<Aux> ?: throw IllegalStateException()
+): MutableSingleFieldModel {
+    return meta.getField(fieldName) as? MutableSingleFieldModel ?: throw IllegalStateException()
 }
 
-fun <Aux> getMutableCollectionField(
-    meta: MutableBaseEntityModel<Aux>,
+fun getMutableCollectionField(
+    meta: MutableBaseEntityModel,
     fieldName: String
-): MutableCollectionFieldModel<Aux> {
-    return meta.getField(fieldName) as? MutableCollectionFieldModel<Aux> ?: throw IllegalStateException()
+): MutableCollectionFieldModel {
+    return meta.getField(fieldName) as? MutableCollectionFieldModel ?: throw IllegalStateException()
 }

@@ -2,78 +2,78 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 
-abstract class AbstractLeaderManyFollower0ModelVisitor<LeaderAux, Return>(
+abstract class AbstractLeaderManyFollower0ModelVisitor<Return>(
     private val defaultVisitReturn: Return
-) : LeaderManyFollower0ModelVisitor<LeaderAux, Return> {
-    override fun visitMain(leaderMainList: List<MainModel<LeaderAux>?>): Return {
+) : LeaderManyFollower0ModelVisitor<Return> {
+    override fun visitMain(leaderMainList: List<MainModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveMain(leaderMainList: List<MainModel<LeaderAux>?>) {}
+    override fun leaveMain(leaderMainList: List<MainModel?>) {}
 
-    override fun visitRoot(leaderRootList: List<RootModel<LeaderAux>?>): Return {
+    override fun visitRoot(leaderRootList: List<RootModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveRoot(leaderRootList: List<RootModel<LeaderAux>?>) {}
+    override fun leaveRoot(leaderRootList: List<RootModel?>) {}
 
-    override fun visitEntity(leaderEntityList: List<EntityModel<LeaderAux>?>): Return {
+    override fun visitEntity(leaderEntityList: List<EntityModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveEntity(leaderEntityList: List<EntityModel<LeaderAux>?>) {}
+    override fun leaveEntity(leaderEntityList: List<EntityModel?>) {}
 
-    override fun visitSingleField(leaderFieldList: List<SingleFieldModel<LeaderAux>?>): Return {
+    override fun visitSingleField(leaderFieldList: List<SingleFieldModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveSingleField(leaderFieldList: List<SingleFieldModel<LeaderAux>?>) {}
+    override fun leaveSingleField(leaderFieldList: List<SingleFieldModel?>) {}
 
-    override fun visitListField(leaderFieldList: List<ListFieldModel<LeaderAux>?>): Return {
+    override fun visitListField(leaderFieldList: List<ListFieldModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveListField(leaderFieldList: List<ListFieldModel<LeaderAux>?>) {}
+    override fun leaveListField(leaderFieldList: List<ListFieldModel?>) {}
 
-    override fun visitSetField(leaderFieldList: List<SetFieldModel<LeaderAux>?>): Return {
+    override fun visitSetField(leaderFieldList: List<SetFieldModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveSetField(leaderFieldList: List<SetFieldModel<LeaderAux>?>) {}
+    override fun leaveSetField(leaderFieldList: List<SetFieldModel?>) {}
 
-    override fun visitPrimitive(leaderValueList: List<PrimitiveModel<LeaderAux>?>): Return {
+    override fun visitPrimitive(leaderValueList: List<PrimitiveModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leavePrimitive(leaderValueList: List<PrimitiveModel<LeaderAux>?>) {}
+    override fun leavePrimitive(leaderValueList: List<PrimitiveModel?>) {}
 
-    override fun visitAlias(leaderValueList: List<AliasModel<LeaderAux>?>): Return {
+    override fun visitAlias(leaderValueList: List<AliasModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveAlias(leaderValueList: List<AliasModel<LeaderAux>?>) {}
+    override fun leaveAlias(leaderValueList: List<AliasModel?>) {}
 
-    override fun visitPassword1way(leaderValueList: List<Password1wayModel<LeaderAux>?>): Return {
+    override fun visitPassword1way(leaderValueList: List<Password1wayModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leavePassword1way(leaderValueList: List<Password1wayModel<LeaderAux>?>) {}
+    override fun leavePassword1way(leaderValueList: List<Password1wayModel?>) {}
 
-    override fun visitPassword2way(leaderValueList: List<Password2wayModel<LeaderAux>?>): Return {
+    override fun visitPassword2way(leaderValueList: List<Password2wayModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leavePassword2way(leaderValueList: List<Password2wayModel<LeaderAux>?>) {}
+    override fun leavePassword2way(leaderValueList: List<Password2wayModel?>) {}
 
-    override fun visitEnumeration(leaderValueList: List<EnumerationModel<LeaderAux>?>): Return {
+    override fun visitEnumeration(leaderValueList: List<EnumerationModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveEnumeration(leaderValueList: List<EnumerationModel<LeaderAux>?>) {}
+    override fun leaveEnumeration(leaderValueList: List<EnumerationModel?>) {}
 
-    override fun visitAssociation(leaderValueList: List<AssociationModel<LeaderAux>?>): Return {
+    override fun visitAssociation(leaderValueList: List<AssociationModel?>): Return {
         return defaultVisitReturn
     }
 
-    override fun leaveAssociation(leaderValueList: List<AssociationModel<LeaderAux>?>) {}
+    override fun leaveAssociation(leaderValueList: List<AssociationModel?>) {}
 }

@@ -6,12 +6,12 @@ import org.treeWare.model.traversal.forEach
 
 // IMPLEMENTATION: ./Get.md
 
-suspend fun <MappingAux> get(
-    request: MainModel<Unit>,
-    mapping: MainModel<MappingAux>,
-    visitor: GetVisitor<MappingAux>
-): MainModel<Unit> {
-    val response = MutableMainModel<Unit>(request.meta)
+suspend fun get(
+    request: MainModel,
+    mapping: MainModel,
+    visitor: GetVisitor
+): MainModel {
+    val response = MutableMainModel(request.meta)
     response.getOrNewRoot() // create an empty root
     forEach(leader = response, follower1 = request, follower2 = mapping, visitor = visitor)
     return response

@@ -5,13 +5,13 @@ import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.FollowerModelCursor
 import org.treeWare.model.cursor.LeaderModelCursor
 
-fun <LeaderAux, FollowerAux> forEach(
-    leader: ElementModel<LeaderAux>,
-    follower: ElementModel<FollowerAux>,
-    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, TraversalAction>
+fun forEach(
+    leader: ElementModel,
+    follower: ElementModel,
+    visitor: Leader1Follower1ModelVisitor<TraversalAction>
 ): TraversalAction {
     val leaderCursor = LeaderModelCursor(leader)
-    val followerCursor = FollowerModelCursor<LeaderAux, FollowerAux>(follower)
+    val followerCursor = FollowerModelCursor(follower)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
@@ -30,212 +30,212 @@ fun <LeaderAux, FollowerAux> forEach(
     return action
 }
 
-fun <LeaderAux, FollowerAux, Return> dispatchVisit(
-    leader: ElementModel<LeaderAux>,
-    follower: ElementModel<FollowerAux>?,
-    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
+fun <Return> dispatchVisit(
+    leader: ElementModel,
+    follower: ElementModel?,
+    visitor: Leader1Follower1ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
     ModelElementType.MAIN -> {
         if (follower != null) assert(follower.elementType == ModelElementType.MAIN)
         if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.visit(
-            leader as MainModel<LeaderAux>,
-            follower as MainModel<FollowerAux>?
+            leader as MainModel,
+            follower as MainModel?
         )
         else null
     }
     ModelElementType.ROOT -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
         if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.visit(
-            leader as RootModel<LeaderAux>,
-            follower as RootModel<FollowerAux>?
+            leader as RootModel,
+            follower as RootModel?
         )
         else null
     }
     ModelElementType.ENTITY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
         if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.visit(
-            leader as EntityModel<LeaderAux>,
-            follower as EntityModel<FollowerAux>?
+            leader as EntityModel,
+            follower as EntityModel?
         )
         else null
     }
     ModelElementType.SINGLE_FIELD -> {
         if (follower != null) assert(follower.elementType == ModelElementType.SINGLE_FIELD)
         if (follower == null || follower.elementType == ModelElementType.SINGLE_FIELD) visitor.visit(
-            leader as SingleFieldModel<LeaderAux>,
-            follower as SingleFieldModel<FollowerAux>?
+            leader as SingleFieldModel,
+            follower as SingleFieldModel?
         )
         else null
     }
     ModelElementType.LIST_FIELD -> {
         if (follower != null) assert(follower.elementType == ModelElementType.LIST_FIELD)
         if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.visit(
-            leader as ListFieldModel<LeaderAux>,
-            follower as ListFieldModel<FollowerAux>?
+            leader as ListFieldModel,
+            follower as ListFieldModel?
         )
         else null
     }
     ModelElementType.SET_FIELD -> {
         if (follower != null) assert(follower.elementType == ModelElementType.SET_FIELD)
         if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.visit(
-            leader as SetFieldModel<LeaderAux>,
-            follower as SetFieldModel<FollowerAux>?
+            leader as SetFieldModel,
+            follower as SetFieldModel?
         )
         else null
     }
     ModelElementType.PRIMITIVE -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE)
         if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.visit(
-            leader as PrimitiveModel<LeaderAux>,
-            follower as PrimitiveModel<FollowerAux>?
+            leader as PrimitiveModel,
+            follower as PrimitiveModel?
         )
         else null
     }
     ModelElementType.ALIAS -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ALIAS)
         if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.visit(
-            leader as AliasModel<LeaderAux>,
-            follower as AliasModel<FollowerAux>?
+            leader as AliasModel,
+            follower as AliasModel?
         )
         else null
     }
     ModelElementType.PASSWORD1WAY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD1WAY)
         if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.visit(
-            leader as Password1wayModel<LeaderAux>,
-            follower as Password1wayModel<FollowerAux>?
+            leader as Password1wayModel,
+            follower as Password1wayModel?
         )
         else null
     }
     ModelElementType.PASSWORD2WAY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD2WAY)
         if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.visit(
-            leader as Password2wayModel<LeaderAux>,
-            follower as Password2wayModel<FollowerAux>?
+            leader as Password2wayModel,
+            follower as Password2wayModel?
         )
         else null
     }
     ModelElementType.ENUMERATION -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION)
         if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.visit(
-            leader as EnumerationModel<LeaderAux>,
-            follower as EnumerationModel<FollowerAux>?
+            leader as EnumerationModel,
+            follower as EnumerationModel?
         )
         else null
     }
     ModelElementType.ASSOCIATION -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION)
         if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.visit(
-            leader as AssociationModel<LeaderAux>,
-            follower as AssociationModel<FollowerAux>?
+            leader as AssociationModel,
+            follower as AssociationModel?
         )
         else null
     }
     ModelElementType.ENTITY_KEYS -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENTITY_KEYS)
         if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.visit(
-            leader as EntityKeysModel<LeaderAux>,
-            follower as EntityKeysModel<FollowerAux>?
+            leader as EntityKeysModel,
+            follower as EntityKeysModel?
         )
         else null
     }
 }
 
-fun <LeaderAux, FollowerAux, Return> dispatchLeave(
-    leader: ElementModel<LeaderAux>,
-    follower: ElementModel<FollowerAux>?,
-    visitor: Leader1Follower1ModelVisitor<LeaderAux, FollowerAux, Return>
+fun <Return> dispatchLeave(
+    leader: ElementModel,
+    follower: ElementModel?,
+    visitor: Leader1Follower1ModelVisitor<Return>
 ) {
     when (leader.elementType) {
         ModelElementType.MAIN -> {
             if (follower != null) assert(follower.elementType == ModelElementType.MAIN)
             if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.leave(
-                leader as MainModel<LeaderAux>,
-                follower as MainModel<FollowerAux>?
+                leader as MainModel,
+                follower as MainModel?
             )
         }
         ModelElementType.ROOT -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
             if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.leave(
-                leader as RootModel<LeaderAux>,
-                follower as RootModel<FollowerAux>?
+                leader as RootModel,
+                follower as RootModel?
             )
         }
         ModelElementType.ENTITY -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
             if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.leave(
-                leader as EntityModel<LeaderAux>,
-                follower as EntityModel<FollowerAux>?
+                leader as EntityModel,
+                follower as EntityModel?
             )
         }
         ModelElementType.SINGLE_FIELD -> {
             if (follower != null) assert(follower.elementType == ModelElementType.SINGLE_FIELD)
             if (follower == null || follower.elementType == ModelElementType.SINGLE_FIELD) visitor.leave(
-                leader as SingleFieldModel<LeaderAux>,
-                follower as SingleFieldModel<FollowerAux>?
+                leader as SingleFieldModel,
+                follower as SingleFieldModel?
             )
         }
         ModelElementType.LIST_FIELD -> {
             if (follower != null) assert(follower.elementType == ModelElementType.LIST_FIELD)
             if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.leave(
-                leader as ListFieldModel<LeaderAux>,
-                follower as ListFieldModel<FollowerAux>?
+                leader as ListFieldModel,
+                follower as ListFieldModel?
             )
         }
         ModelElementType.SET_FIELD -> {
             if (follower != null) assert(follower.elementType == ModelElementType.SET_FIELD)
             if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.leave(
-                leader as SetFieldModel<LeaderAux>,
-                follower as SetFieldModel<FollowerAux>?
+                leader as SetFieldModel,
+                follower as SetFieldModel?
             )
         }
         ModelElementType.PRIMITIVE -> {
             if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE)
             if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.leave(
-                leader as PrimitiveModel<LeaderAux>,
-                follower as PrimitiveModel<FollowerAux>?
+                leader as PrimitiveModel,
+                follower as PrimitiveModel?
             )
         }
         ModelElementType.ALIAS -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ALIAS)
             if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.leave(
-                leader as AliasModel<LeaderAux>,
-                follower as AliasModel<FollowerAux>?
+                leader as AliasModel,
+                follower as AliasModel?
             )
         }
         ModelElementType.PASSWORD1WAY -> {
             if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD1WAY)
             if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.leave(
-                leader as Password1wayModel<LeaderAux>,
-                follower as Password1wayModel<FollowerAux>?
+                leader as Password1wayModel,
+                follower as Password1wayModel?
             )
         }
         ModelElementType.PASSWORD2WAY -> {
             if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD2WAY)
             if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.leave(
-                leader as Password2wayModel<LeaderAux>,
-                follower as Password2wayModel<FollowerAux>?
+                leader as Password2wayModel,
+                follower as Password2wayModel?
             )
         }
         ModelElementType.ENUMERATION -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION)
             if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.leave(
-                leader as EnumerationModel<LeaderAux>,
-                follower as EnumerationModel<FollowerAux>?
+                leader as EnumerationModel,
+                follower as EnumerationModel?
             )
         }
         ModelElementType.ASSOCIATION -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION)
             if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.leave(
-                leader as AssociationModel<LeaderAux>,
-                follower as AssociationModel<FollowerAux>?
+                leader as AssociationModel,
+                follower as AssociationModel?
             )
         }
         ModelElementType.ENTITY_KEYS -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ENTITY_KEYS)
             if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.leave(
-                leader as EntityKeysModel<LeaderAux>,
-                follower as EntityKeysModel<FollowerAux>?
+                leader as EntityKeysModel,
+                follower as EntityKeysModel?
             )
         }
     }

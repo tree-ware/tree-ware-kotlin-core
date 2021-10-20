@@ -2,13 +2,14 @@ package org.treeWare.model.decoder.stateMachine
 
 import org.treeWare.model.core.MutableFieldModel
 
-class CollectionFieldModelStateMachine<Aux>(
-    private val collectionFieldModel: MutableFieldModel<Aux>,
+class CollectionFieldModelStateMachine(
+    private val collectionFieldModel: MutableFieldModel,
     private val listElementStateMachine: DecodingStateMachine,
     private val stack: DecodingStack
-) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    override fun setAux(aux: Aux) {
-        collectionFieldModel.aux = aux
+) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
+    override fun setAux(auxType: String, aux: Any?) {
+        if (aux == null) return
+        collectionFieldModel.setAux(auxType, aux)
     }
 
     override fun decodeObjectStart(): Boolean {

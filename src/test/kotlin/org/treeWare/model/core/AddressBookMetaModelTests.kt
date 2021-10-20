@@ -13,7 +13,7 @@ class AddressBookMetaModelTests {
         val metaMetaModel = newMainMetaMetaModel()
         ADDRESS_BOOK_META_MODEL_FILES.forEach { file ->
             println("Testing file: $file...")
-            val metaModel = getMainModelFromJsonFile<Resolved>(metaMetaModel, file)
+            val metaModel = getMainModelFromJsonFile(metaMetaModel, file)
             assertMatchesJson(metaModel, null, file, EncodePasswords.NONE)
         }
     }

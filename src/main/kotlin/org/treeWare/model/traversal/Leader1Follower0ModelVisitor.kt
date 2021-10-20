@@ -2,51 +2,51 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 
-interface Leader1Follower0ModelVisitor<LeaderAux, Return> {
+interface Leader1Follower0ModelVisitor<Return> {
     // Abstract elements are not visited
 
-    fun visit(leaderMain1: MainModel<LeaderAux>): Return
-    fun leave(leaderMain1: MainModel<LeaderAux>)
+    fun visit(leaderMain1: MainModel): Return
+    fun leave(leaderMain1: MainModel)
 
-    fun visit(leaderRoot1: RootModel<LeaderAux>): Return
-    fun leave(leaderRoot1: RootModel<LeaderAux>)
+    fun visit(leaderRoot1: RootModel): Return
+    fun leave(leaderRoot1: RootModel)
 
-    fun visit(leaderEntity1: EntityModel<LeaderAux>): Return
-    fun leave(leaderEntity1: EntityModel<LeaderAux>)
+    fun visit(leaderEntity1: EntityModel): Return
+    fun leave(leaderEntity1: EntityModel)
 
     // Fields
 
-    fun visit(leaderField1: SingleFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: SingleFieldModel<LeaderAux>)
+    fun visit(leaderField1: SingleFieldModel): Return
+    fun leave(leaderField1: SingleFieldModel)
 
-    fun visit(leaderField1: ListFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: ListFieldModel<LeaderAux>)
+    fun visit(leaderField1: ListFieldModel): Return
+    fun leave(leaderField1: ListFieldModel)
 
-    fun visit(leaderField1: SetFieldModel<LeaderAux>): Return
-    fun leave(leaderField1: SetFieldModel<LeaderAux>)
+    fun visit(leaderField1: SetFieldModel): Return
+    fun leave(leaderField1: SetFieldModel)
 
     // Values
 
-    fun visit(leaderValue1: PrimitiveModel<LeaderAux>): Return
-    fun leave(leaderValue1: PrimitiveModel<LeaderAux>)
+    fun visit(leaderValue1: PrimitiveModel): Return
+    fun leave(leaderValue1: PrimitiveModel)
 
-    fun visit(leaderValue1: AliasModel<LeaderAux>): Return
-    fun leave(leaderValue1: AliasModel<LeaderAux>)
+    fun visit(leaderValue1: AliasModel): Return
+    fun leave(leaderValue1: AliasModel)
 
-    fun visit(leaderValue1: Password1wayModel<LeaderAux>): Return
-    fun leave(leaderValue1: Password1wayModel<LeaderAux>)
+    fun visit(leaderValue1: Password1wayModel): Return
+    fun leave(leaderValue1: Password1wayModel)
 
-    fun visit(leaderValue1: Password2wayModel<LeaderAux>): Return
-    fun leave(leaderValue1: Password2wayModel<LeaderAux>)
+    fun visit(leaderValue1: Password2wayModel): Return
+    fun leave(leaderValue1: Password2wayModel)
 
-    fun visit(leaderValue1: EnumerationModel<LeaderAux>): Return
-    fun leave(leaderValue1: EnumerationModel<LeaderAux>)
+    fun visit(leaderValue1: EnumerationModel): Return
+    fun leave(leaderValue1: EnumerationModel)
 
-    fun visit(leaderValue1: AssociationModel<LeaderAux>): Return
-    fun leave(leaderValue1: AssociationModel<LeaderAux>)
+    fun visit(leaderValue1: AssociationModel): Return
+    fun leave(leaderValue1: AssociationModel)
 
     // Sub-values
 
-    fun visit(leaderEntityKeys1: EntityKeysModel<LeaderAux>): Return
-    fun leave(leaderEntityKeys1: EntityKeysModel<LeaderAux>)
+    fun visit(leaderEntityKeys1: EntityKeysModel): Return
+    fun leave(leaderEntityKeys1: EntityKeysModel)
 }

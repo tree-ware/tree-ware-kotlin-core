@@ -1,11 +1,10 @@
 package org.treeWare.model.encoder
 
-private const val AUX_KEY = "error"
-
 class ErrorAuxEncoder : AuxEncoder {
+    override val auxType = "error"
     override fun encode(fieldName: String?, aux: Any?, wireFormatEncoder: WireFormatEncoder) {
         aux?.also {
-            val auxFieldName = wireFormatEncoder.getAuxFieldName(fieldName, AUX_KEY)
+            val auxFieldName = wireFormatEncoder.getAuxFieldName(fieldName, auxType)
             wireFormatEncoder.encodeStringField(auxFieldName, it.toString())
         }
     }

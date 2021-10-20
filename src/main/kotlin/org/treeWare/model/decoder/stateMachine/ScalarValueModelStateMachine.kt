@@ -4,17 +4,18 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.MutableScalarValueModel
 import java.math.BigDecimal
 
-class ScalarValueModelStateMachine<Aux>(
+class ScalarValueModelStateMachine(
     private val isListElement: Boolean,
-    private val valueFactory: () -> MutableScalarValueModel<Aux>,
+    private val valueFactory: () -> MutableScalarValueModel,
     private val stack: DecodingStack
-) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private var value: MutableScalarValueModel<Aux>? = null
+) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
+    private var value: MutableScalarValueModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(aux: Aux) {
+    override fun setAux(auxType: String, aux: Any?) {
+        if (aux == null) return
         assert(value != null)
-        value?.aux = aux
+        value?.setAux(auxType, aux)
     }
 
     override fun decodeObjectStart(): Boolean {

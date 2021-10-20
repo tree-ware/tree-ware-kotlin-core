@@ -2,63 +2,63 @@ package org.treeWare.model.core
 
 import org.treeWare.metaModel.getMetaName
 
-fun <Aux> getSingleEntity(meta: BaseEntityModel<Aux>, fieldName: String): EntityModel<Aux> {
+fun getSingleEntity(meta: BaseEntityModel, fieldName: String): EntityModel {
     val singleField = getSingleField(meta, fieldName)
-    return singleField.value as? EntityModel<Aux> ?: throw IllegalStateException()
+    return singleField.value as? EntityModel ?: throw IllegalStateException()
 }
 
-fun <Aux> getSingleString(meta: BaseEntityModel<Aux>, fieldName: String): String {
+fun getSingleString(meta: BaseEntityModel, fieldName: String): String {
     val singleField = getSingleField(meta, fieldName)
-    val primitive = singleField.value as? PrimitiveModel<Aux> ?: throw IllegalStateException()
+    val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
-fun <Aux> getOptionalSingleBoolean(meta: BaseEntityModel<Aux>, fieldName: String): Boolean? {
+fun getOptionalSingleBoolean(meta: BaseEntityModel, fieldName: String): Boolean? {
     val singleField = getOptionalSingleField(meta, fieldName) ?: return null
-    val primitive = singleField.value as? PrimitiveModel<Aux> ?: throw IllegalStateException()
+    val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()
     return primitive.value as? Boolean ?: throw IllegalStateException()
 }
 
-fun <Aux> getSingleEnumeration(meta: BaseEntityModel<Aux>, fieldName: String): String {
+fun getSingleEnumeration(meta: BaseEntityModel, fieldName: String): String {
     val singleField = getSingleField(meta, fieldName)
-    val enumeration = singleField.value as? EnumerationModel<Aux> ?: throw IllegalStateException()
+    val enumeration = singleField.value as? EnumerationModel ?: throw IllegalStateException()
     return enumeration.value ?: throw IllegalStateException()
 }
 
-fun <Aux> getOptionalSingleEnumeration(
-    meta: BaseEntityModel<Aux>,
+fun getOptionalSingleEnumeration(
+    meta: BaseEntityModel,
     fieldName: String
 ): String? {
     val singleField = getOptionalSingleField(meta, fieldName) ?: return null
-    val enumeration = singleField.value as? EnumerationModel<Aux> ?: throw IllegalStateException()
+    val enumeration = singleField.value as? EnumerationModel ?: throw IllegalStateException()
     return enumeration.value ?: throw IllegalStateException()
 }
 
-fun <Aux> getSingleField(meta: BaseEntityModel<Aux>, fieldName: String): SingleFieldModel<Aux> {
-    return meta.getField(fieldName) as? SingleFieldModel<Aux> ?: throw IllegalStateException()
+fun getSingleField(meta: BaseEntityModel, fieldName: String): SingleFieldModel {
+    return meta.getField(fieldName) as? SingleFieldModel ?: throw IllegalStateException()
 }
 
-fun <Aux> getOptionalSingleField(
-    meta: BaseEntityModel<Aux>,
+fun getOptionalSingleField(
+    meta: BaseEntityModel,
     fieldName: String
-): SingleFieldModel<Aux>? {
-    return meta.getField(fieldName) as? SingleFieldModel<Aux>?
+): SingleFieldModel? {
+    return meta.getField(fieldName) as? SingleFieldModel?
 }
 
-fun <Aux> getListField(meta: BaseEntityModel<Aux>, fieldName: String): ListFieldModel<Aux> {
-    return meta.getField(fieldName) as? ListFieldModel<Aux> ?: throw IllegalStateException()
+fun getListField(meta: BaseEntityModel, fieldName: String): ListFieldModel {
+    return meta.getField(fieldName) as? ListFieldModel ?: throw IllegalStateException()
 }
 
-fun <Aux> getCollectionField(meta: BaseEntityModel<Aux>, fieldName: String): CollectionFieldModel<Aux> {
-    return meta.getField(fieldName) as? CollectionFieldModel<Aux> ?: throw IllegalStateException()
+fun getCollectionField(meta: BaseEntityModel, fieldName: String): CollectionFieldModel {
+    return meta.getField(fieldName) as? CollectionFieldModel ?: throw IllegalStateException()
 }
 
-fun <Aux> getFieldName(field: FieldModel<Aux>): String =
+fun getFieldName(field: FieldModel): String =
     field.meta?.let { getMetaName(it) } ?: throw IllegalStateException()
 
-fun <Aux> getListStrings(listFieldMeta: ListFieldModel<Aux>): List<String> {
+fun getListStrings(listFieldMeta: ListFieldModel): List<String> {
     val firstElement = listFieldMeta.values.firstOrNull() ?: return listOf()
-    val firstPrimitive = firstElement as? PrimitiveModel<Aux> ?: throw IllegalStateException()
+    val firstPrimitive = firstElement as? PrimitiveModel ?: throw IllegalStateException()
     firstPrimitive.value as? String ?: throw IllegalStateException()
-    return listFieldMeta.values.map { (it as PrimitiveModel<Aux>).value as String }
+    return listFieldMeta.values.map { (it as PrimitiveModel).value as String }
 }

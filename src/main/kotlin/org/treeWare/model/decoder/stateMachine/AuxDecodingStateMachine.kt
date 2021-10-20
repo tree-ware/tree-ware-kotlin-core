@@ -1,6 +1,7 @@
 package org.treeWare.model.decoder.stateMachine
 
-interface AuxDecodingStateMachine<Aux> : DecodingStateMachine {
+interface AuxDecodingStateMachine : DecodingStateMachine {
+    val auxType: String
     fun newAux()
-    fun getAux(): Aux?
+    fun getAux(): Any?
 }

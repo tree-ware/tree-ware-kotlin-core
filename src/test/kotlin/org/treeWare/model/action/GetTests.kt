@@ -17,13 +17,13 @@ class GetTests {
     fun `get() returns the requested data`() = runBlocking {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val request = getMainModelFromJsonFile<Unit>(metaModel, "model/address_book_get_person_request.json")
+        val request = getMainModelFromJsonFile(metaModel, "model/address_book_get_person_request.json")
         val mapping =
             getMainModelFromJsonFile(
                 metaModel,
                 "model/address_book_mapping_model.json",
                 expectedModelType = "mapping"
-            ) { StringAuxStateMachine(it) }
+            ) { StringAuxStateMachine("mapping", it) }
 
         val delegate = mockk<CompositionTableGetVisitorDelegate<String>>(relaxUnitFun = true)
 
@@ -37,7 +37,7 @@ class GetTests {
                 "root_mapping"
             )
         } answers {
-            val root = arg<MutableRootModel<Unit>>(0)
+            val root = arg<MutableRootModel>(0)
             val nameField = root.getOrNewField("name") as MutableSingleFieldModel
             (nameField.getOrNewValue() as MutablePrimitiveModel).setValue("Super Heroes")
             val lastUpdatedField = root.getOrNewField("last_updated") as MutableSingleFieldModel
@@ -55,7 +55,7 @@ class GetTests {
         coEvery {
             delegate.fetchCompositionList(ofType(), listOf("id", "first_name", "email"), "person_mapping")
         } answers {
-            val setField = arg<MutableSetFieldModel<Unit>>(0)
+            val setField = arg<MutableSetFieldModel>(0)
 
             val entity1 = setField.getNewValue() as MutableEntityModel
             val id1 = entity1.getOrNewField("id") as MutableSingleFieldModel

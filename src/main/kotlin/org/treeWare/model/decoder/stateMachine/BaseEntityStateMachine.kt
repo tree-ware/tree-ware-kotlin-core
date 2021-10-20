@@ -7,24 +7,25 @@ import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnDuplicateKeys
 import org.treeWare.model.decoder.OnMissingKeys
 
-class BaseEntityStateMachine<Aux>(
+class BaseEntityStateMachine(
     private val isSetElement: Boolean,
-    private val parentSetField: MutableSetFieldModel<Aux>?,
-    private val baseFactory: () -> MutableBaseEntityModel<Aux>,
+    private val parentSetField: MutableSetFieldModel?,
+    private val baseFactory: () -> MutableBaseEntityModel,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
-) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private val auxStateMachineMap = HashMap<String, AuxDecodingStateMachine<Aux>>()
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
+    private val auxStateMachineMap = HashMap<String, AuxDecodingStateMachine>()
 
-    private var base: MutableBaseEntityModel<Aux>? = null
-    private var entityMeta: EntityModel<Resolved>? = null
+    private var base: MutableBaseEntityModel? = null
+    private var entityMeta: EntityModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(aux: Aux) {
+    override fun setAux(auxType: String, aux: Any?) {
+        if (aux == null) return
         assert(base != null)
-        base?.aux = aux
+        base?.setAux(auxType, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -39,8 +40,12 @@ class BaseEntityStateMachine<Aux>(
         assert(base != null)
         // TODO(deepak-nulu): set aux when found rather than on the way out.
         auxStateMachineMap.forEach { (fieldName, auxStateMachine) ->
-            if (fieldName.isEmpty()) base?.aux = auxStateMachine.getAux()
-            else base?.getField(fieldName)?.aux = auxStateMachine.getAux()
+            auxStateMachine.also { state ->
+                state.getAux()?.also {
+                    if (fieldName.isEmpty()) setAux(state.auxType, it)
+                    else base?.getField(fieldName)?.setAux(state.auxType, it)
+                }
+            }
         }
         // This state-machine instance gets reused in lists, so clear the map.
         auxStateMachineMap.clear()
@@ -53,7 +58,7 @@ class BaseEntityStateMachine<Aux>(
                 if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
                     val existing = parentSetField?.getValueMatching(it)
                     if (existing != null) {
-                        errors.add("Entity with duplicate keys: ${existing.meta?.aux?.fullName}: ${it.getKeyValues()}")
+                        errors.add("Entity with duplicate keys: ${existing.getMetaAux()?.fullName}: ${it.getKeyValues()}")
                         return@let true
                     }
                 }
@@ -97,7 +102,7 @@ class BaseEntityStateMachine<Aux>(
         val key = keyName ?: ""
         val fieldAndAuxNames = getFieldAndAuxNames(key)
         if (fieldAndAuxNames == null) {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
         val (fieldName, auxName) = fieldAndAuxNames
@@ -107,12 +112,12 @@ class BaseEntityStateMachine<Aux>(
                 auxStateMachineMap[fieldName] = auxStateMachine
                 stack.addFirst(auxStateMachine)
                 auxStateMachine.newAux()
-            } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            } else stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
         val fieldMeta = entityMeta?.let { getFieldMeta(it, fieldName) }
         if (fieldMeta == null) {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
         return when (getFieldTypeMeta(fieldMeta)) {
@@ -124,14 +129,14 @@ class BaseEntityStateMachine<Aux>(
         }
     }
 
-    private fun handleScalar(fieldMeta: EntityModel<Resolved>): Boolean {
+    private fun handleScalar(fieldMeta: EntityModel): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
-            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listFieldModel = fieldModel as? MutableListFieldModel ?: return false
             val listElementStateMachine = ScalarValueModelStateMachine(
                 true,
                 {
-                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutableScalarValueModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutableScalarValueModel
                     listFieldModel.addValue(value)
                     value
                 },
@@ -139,11 +144,11 @@ class BaseEntityStateMachine<Aux>(
             )
             addListElementStateMachineToStack(fieldModel, listElementStateMachine, isWrappedElements = true)
         } else {
-            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
             val elementStateMachine = ScalarValueModelStateMachine(
                 false,
                 {
-                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableScalarValueModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableScalarValueModel
                     singleFieldModel.setValue(value)
                     value
                 },
@@ -154,14 +159,14 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handlePassword1way(fieldMeta: EntityModel<Resolved>): Boolean {
+    private fun handlePassword1way(fieldMeta: EntityModel): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
-            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listFieldModel = fieldModel as? MutableListFieldModel ?: return false
             val listElementStateMachine = Password1wayModelStateMachine(
                 true,
                 {
-                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutablePassword1wayModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutablePassword1wayModel
                     listFieldModel.addValue(value)
                     value
                 },
@@ -170,11 +175,11 @@ class BaseEntityStateMachine<Aux>(
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
-            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
             val elementStateMachine = Password1wayModelStateMachine(
                 false,
                 {
-                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutablePassword1wayModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutablePassword1wayModel
                     singleFieldModel.setValue(value)
                     value
                 },
@@ -186,14 +191,14 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handlePassword2way(fieldMeta: EntityModel<Resolved>): Boolean {
+    private fun handlePassword2way(fieldMeta: EntityModel): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
-            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listFieldModel = fieldModel as? MutableListFieldModel ?: return false
             val listElementStateMachine = Password2wayModelStateMachine(
                 true,
                 {
-                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutablePassword2wayModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutablePassword2wayModel
                     listFieldModel.addValue(value)
                     value
                 },
@@ -202,11 +207,11 @@ class BaseEntityStateMachine<Aux>(
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
-            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
             val elementStateMachine = Password2wayModelStateMachine(
                 false,
                 {
-                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutablePassword2wayModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutablePassword2wayModel
                     singleFieldModel.setValue(value)
                     value
                 },
@@ -218,14 +223,14 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handleAssociation(fieldMeta: EntityModel<Resolved>): Boolean {
+    private fun handleAssociation(fieldMeta: EntityModel): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
-            val listFieldModel = fieldModel as? MutableListFieldModel<Aux> ?: return false
+            val listFieldModel = fieldModel as? MutableListFieldModel ?: return false
             val listElementStateMachine = AssociationModelStateMachine(
                 true,
                 {
-                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutableAssociationModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutableAssociationModel
                     listFieldModel.addValue(value)
                     value
                 },
@@ -236,11 +241,11 @@ class BaseEntityStateMachine<Aux>(
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
-            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
             val elementStateMachine = AssociationModelStateMachine(
                 false,
                 {
-                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableAssociationModel<Aux>
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableAssociationModel
                     singleFieldModel.setValue(value)
                     value
                 },
@@ -254,14 +259,14 @@ class BaseEntityStateMachine<Aux>(
         return true
     }
 
-    private fun handleComposition(fieldMeta: EntityModel<Resolved>): Boolean {
+    private fun handleComposition(fieldMeta: EntityModel): Boolean {
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isSetFieldMeta(fieldMeta)) {
-            val setFieldModel = fieldModel as? MutableSetFieldModel<Aux> ?: return false
+            val setFieldModel = fieldModel as? MutableSetFieldModel ?: return false
             val setElementStateMachine = BaseEntityStateMachine(
                 true,
                 setFieldModel,
-                { newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel<Aux> },
+                { newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel },
                 stack,
                 options,
                 errors,
@@ -269,13 +274,13 @@ class BaseEntityStateMachine<Aux>(
             )
             addSetElementStateMachineToStack(setFieldModel, setElementStateMachine, isWrappedElements = false)
         } else {
-            val singleFieldModel = fieldModel as? MutableSingleFieldModel<Aux> ?: return false
+            val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
             val elementStateMachine =
                 BaseEntityStateMachine(
                     false,
                     null,
                     {
-                        val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableEntityModel<Aux>
+                        val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableEntityModel
                         singleFieldModel.setValue(value)
                         value
                     },
@@ -290,8 +295,8 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun addListElementStateMachineToStack(
-        listFieldModel: MutableListFieldModel<Aux>,
-        listElementStateMachine: ValueDecodingStateMachine<Aux>,
+        listFieldModel: MutableListFieldModel,
+        listElementStateMachine: ValueDecodingStateMachine,
         isWrappedElements: Boolean
     ) {
         val elementStateMachine =
@@ -302,8 +307,8 @@ class BaseEntityStateMachine<Aux>(
     }
 
     private fun addSetElementStateMachineToStack(
-        setFieldModel: MutableSetFieldModel<Aux>,
-        setElementStateMachine: ValueDecodingStateMachine<Aux>,
+        setFieldModel: MutableSetFieldModel,
+        setElementStateMachine: ValueDecodingStateMachine,
         isWrappedElements: Boolean
     ) {
         val elementStateMachine =
@@ -313,7 +318,7 @@ class BaseEntityStateMachine<Aux>(
         stack.addFirst(setStateMachine)
     }
 
-    private fun addElementStateMachineToStack(elementStateMachine: ValueDecodingStateMachine<Aux>) {
+    private fun addElementStateMachineToStack(elementStateMachine: ValueDecodingStateMachine) {
         stack.addFirst(elementStateMachine)
     }
 }

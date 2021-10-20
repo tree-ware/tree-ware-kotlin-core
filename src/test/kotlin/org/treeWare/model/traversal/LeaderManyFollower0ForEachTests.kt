@@ -18,8 +18,8 @@ class LeaderManyFollower0ForEachTests {
         assertNotEquals(jsonAddressBook2, jsonAddressBook3)
 
         val metaModel = newAddressBookMetaModel(null, null)
-        val addressBook2 = getMainModelFromJsonString<Unit>(metaModel, jsonAddressBook2)
-        val addressBook3 = getMainModelFromJsonString<Unit>(metaModel, jsonAddressBook3)
+        val addressBook2 = getMainModelFromJsonString(metaModel, jsonAddressBook2)
+        val addressBook3 = getMainModelFromJsonString(metaModel, jsonAddressBook3)
 
         val writer = StringWriter()
         val printVisitor = LeaderManyFollower0PrintVisitor(writer)

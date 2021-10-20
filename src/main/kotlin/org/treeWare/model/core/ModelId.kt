@@ -5,14 +5,14 @@ interface ElementModelId {
     override fun hashCode(): Int
 }
 
-fun newElementModelId(element: ElementModel<*>): ElementModelId = when (val type = element.elementType) {
-    ModelElementType.ENTITY -> EntityModelId(element as BaseEntityModel<*>)
+fun newElementModelId(element: ElementModel): ElementModelId = when (val type = element.elementType) {
+    ModelElementType.ENTITY -> EntityModelId(element as BaseEntityModel)
     else -> throw UnsupportedOperationException("Not supported for $type elements")
 }
 
-class EntityModelId<Aux>(private val entity: BaseEntityModel<Aux>) : ElementModelId {
+class EntityModelId(private val entity: BaseEntityModel) : ElementModelId {
     override fun equals(other: Any?): Boolean {
-        val thatId = other as? EntityModelId<*> ?: return false
+        val thatId = other as? EntityModelId ?: return false
         return entity.matches(thatId.entity)
     }
 

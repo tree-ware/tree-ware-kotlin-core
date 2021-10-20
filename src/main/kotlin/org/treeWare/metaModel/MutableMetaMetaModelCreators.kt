@@ -4,57 +4,57 @@ import org.treeWare.model.core.*
 
 // Functions for creating the meta-meta-model.
 
-fun newMainMetaMeta(): MutableMainModel<Resolved> {
-    val mainMeta = MutableMainModel<Resolved>(null)
+fun newMainMetaMeta(): MutableMainModel {
+    val mainMeta = MutableMainModel(null)
     mainMeta.root = MutableRootModel(null, mainMeta)
     return mainMeta
 }
 
-fun newRootMetaMeta(mainMeta: MutableMainModel<Resolved>, name: String, entityName: String, packageName: String) {
+fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String, packageName: String) {
     val root = newCompositionSingleField(mainMeta.root, "root")
     newStringSingleField(root, "name", name)
     newStringSingleField(root, "entity", entityName)
     newStringSingleField(root, "package", packageName)
 }
 
-fun newPackagesMetaMeta(mainMeta: MutableMainModel<Resolved>): MutableListFieldModel<Resolved> =
+fun newPackagesMetaMeta(mainMeta: MutableMainModel): MutableListFieldModel =
     newCompositionListField(mainMeta.root, "packages")
 
 fun newPackageMetaMeta(
-    packagesMeta: MutableListFieldModel<Resolved>,
+    packagesMeta: MutableListFieldModel,
     name: String,
     info: String? = null
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val pkg = newCompositionListElement(packagesMeta)
     newStringSingleField(pkg, "name", name)
     info?.also { newStringSingleField(pkg, "info", it) }
     return pkg
 }
 
-fun newEntitiesMetaMeta(packageMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved> =
+fun newEntitiesMetaMeta(packageMeta: MutableEntityModel): MutableListFieldModel =
     newCompositionListField(packageMeta, "entities")
 
 fun newEntityMetaMeta(
-    entitiesMeta: MutableListFieldModel<Resolved>,
+    entitiesMeta: MutableListFieldModel,
     name: String,
     info: String? = null
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val entity = newCompositionListElement(entitiesMeta)
     newStringSingleField(entity, "name", name)
     info?.also { newStringSingleField(entity, "info", it) }
     return entity
 }
 
-fun newFieldsMetaMeta(entityMeta: MutableEntityModel<Resolved>) =
+fun newFieldsMetaMeta(entityMeta: MutableEntityModel) =
     newCompositionListField(entityMeta, "fields")
 
-fun newEnumerationsMetaMeta(packageMeta: MutableEntityModel<Resolved>): MutableListFieldModel<Resolved> =
+fun newEnumerationsMetaMeta(packageMeta: MutableEntityModel): MutableListFieldModel =
     newCompositionListField(packageMeta, "enumerations")
 
 data class EnumerationValueMetaMeta(val name: String, val info: String? = null)
 
 fun newEnumerationMetaMeta(
-    enumerations: MutableListFieldModel<Resolved>,
+    enumerations: MutableListFieldModel,
     name: String,
     info: String?,
     values: List<EnumerationValueMetaMeta>
@@ -71,23 +71,23 @@ fun newEnumerationMetaMeta(
 }
 
 fun newPrimitiveFieldMetaMeta(
-    parent: MutableListFieldModel<Resolved>,
+    parent: MutableListFieldModel,
     name: String,
     info: String?,
     type: String,
     multiplicity: String? = null,
     isKey: Boolean = false
-): MutableEntityModel<Resolved> = newFieldMetaMeta(parent, name, info, type, multiplicity, isKey)
+): MutableEntityModel = newFieldMetaMeta(parent, name, info, type, multiplicity, isKey)
 
 fun newEnumerationFieldMetaMeta(
-    parent: MutableListFieldModel<Resolved>,
+    parent: MutableListFieldModel,
     name: String,
     info: String?,
     enumerationName: String,
     packageName: String,
     multiplicity: String? = null,
     isKey: Boolean = false
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val fieldMeta = newFieldMetaMeta(parent, name, info, "enumeration", multiplicity, isKey)
     val entityMeta = newCompositionSingleField(fieldMeta, "enumeration")
     newStringSingleField(entityMeta, "name", enumerationName)
@@ -96,13 +96,13 @@ fun newEnumerationFieldMetaMeta(
 }
 
 fun newAssociationFieldMetaMeta(
-    parent: MutableListFieldModel<Resolved>,
+    parent: MutableListFieldModel,
     name: String,
     info: String?,
     entityPath: List<String>,
     multiplicity: String? = null,
     isKey: Boolean = false
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val fieldMeta = newFieldMetaMeta(parent, name, info, "association", multiplicity, isKey)
     val associationMeta = newStringListField(fieldMeta, "association")
     entityPath.forEach { addStringToListField(associationMeta, it) }
@@ -110,14 +110,14 @@ fun newAssociationFieldMetaMeta(
 }
 
 fun newCompositionFieldMetaMeta(
-    parent: MutableListFieldModel<Resolved>,
+    parent: MutableListFieldModel,
     name: String,
     info: String?,
     entityName: String,
     packageName: String,
     multiplicity: String? = null,
     isKey: Boolean = false
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val fieldMeta = newFieldMetaMeta(parent, name, info, "composition", multiplicity, isKey)
     val entityMeta = newCompositionSingleField(fieldMeta, "composition")
     newStringSingleField(entityMeta, "name", entityName)
@@ -126,13 +126,13 @@ fun newCompositionFieldMetaMeta(
 }
 
 private fun newFieldMetaMeta(
-    parent: MutableListFieldModel<Resolved>,
+    parent: MutableListFieldModel,
     name: String,
     info: String?,
     type: String,
     multiplicity: String?,
     isKey: Boolean
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val fieldMeta = MutableEntityModel(null, parent)
     newStringSingleField(fieldMeta, "name", name)
     info?.also { newStringSingleField(fieldMeta, "info", it) }
@@ -152,14 +152,14 @@ private fun newFieldMetaMeta(
 // need to be passed to the model constructors. So dummy parent instances are
 // created and used.
 
-private val dummyMain = MutableMainModel<Resolved>(null)
+private val dummyMain = MutableMainModel(null)
 private val dummyRoot = MutableRootModel(null, dummyMain)
 private val dummyField = MutableSingleFieldModel(null, dummyRoot)
 
 private val stringFieldMeta = getFieldTypeMeta("string")
 private val booleanFieldMeta = getFieldTypeMeta("boolean")
 
-private fun getFieldTypeMeta(type: String): MutableEntityModel<Resolved> {
+private fun getFieldTypeMeta(type: String): MutableEntityModel {
     val fieldMeta = MutableEntityModel(null, dummyField)
     newEnumerationSingleField(fieldMeta, "type", type)
     return fieldMeta
@@ -171,9 +171,9 @@ private fun getFieldTypeMeta(type: String): MutableEntityModel<Resolved> {
 // meta-meta-models.
 
 private fun newCompositionSingleField(
-    entity: MutableBaseEntityModel<Resolved>,
+    entity: MutableBaseEntityModel,
     name: String
-): MutableEntityModel<Resolved> {
+): MutableEntityModel {
     val field = MutableSingleFieldModel(null, entity)
     entity.fields[name] = field
     val value = MutableEntityModel(null, field)
@@ -181,7 +181,7 @@ private fun newCompositionSingleField(
     return value
 }
 
-private fun newStringSingleField(entity: MutableBaseEntityModel<Resolved>, name: String, value: String) {
+private fun newStringSingleField(entity: MutableBaseEntityModel, name: String, value: String) {
     val field = MutableSingleFieldModel(stringFieldMeta, entity)
     entity.fields[name] = field
     val primitive = MutablePrimitiveModel(field)
@@ -189,7 +189,7 @@ private fun newStringSingleField(entity: MutableBaseEntityModel<Resolved>, name:
     primitive.setValue(value)
 }
 
-private fun newBooleanSingleField(entity: MutableBaseEntityModel<Resolved>, name: String, value: Boolean) {
+private fun newBooleanSingleField(entity: MutableBaseEntityModel, name: String, value: Boolean) {
     val field = MutableSingleFieldModel(booleanFieldMeta, entity)
     entity.fields[name] = field
     val primitive = MutablePrimitiveModel(field)
@@ -198,7 +198,7 @@ private fun newBooleanSingleField(entity: MutableBaseEntityModel<Resolved>, name
 }
 
 private fun newEnumerationSingleField(
-    entity: MutableBaseEntityModel<Resolved>,
+    entity: MutableBaseEntityModel,
     name: String,
     value: String
 ) {
@@ -210,30 +210,30 @@ private fun newEnumerationSingleField(
 }
 
 private fun newStringListField(
-    entity: MutableBaseEntityModel<Resolved>,
+    entity: MutableBaseEntityModel,
     name: String
-): MutableListFieldModel<Resolved> {
+): MutableListFieldModel {
     val field = MutableListFieldModel(stringFieldMeta, entity)
     entity.fields[name] = field
     return field
 }
 
-private fun addStringToListField(listField: MutableListFieldModel<Resolved>, value: String) {
+private fun addStringToListField(listField: MutableListFieldModel, value: String) {
     val primitive = MutablePrimitiveModel(listField)
     primitive.setValue(value)
     listField.addValue(primitive)
 }
 
 private fun newCompositionListField(
-    entity: MutableBaseEntityModel<Resolved>,
+    entity: MutableBaseEntityModel,
     name: String
-): MutableListFieldModel<Resolved> {
+): MutableListFieldModel {
     val field = MutableListFieldModel(null, entity)
     entity.fields[name] = field
     return field
 }
 
-private fun newCompositionListElement(listField: MutableListFieldModel<Resolved>): MutableEntityModel<Resolved> {
+private fun newCompositionListElement(listField: MutableListFieldModel): MutableEntityModel {
     val entity = MutableEntityModel(null, listField)
     listField.addValue(entity)
     return entity

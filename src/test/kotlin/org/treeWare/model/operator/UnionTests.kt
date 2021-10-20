@@ -21,8 +21,8 @@ class UnionTests {
         assertNotEquals(jsonInput2, expectedJsonOutput)
 
         val metaModel = newAddressBookMetaModel(null, null)
-        val input1 = getMainModelFromJsonString<Unit>(metaModel, jsonInput1)
-        val input2 = getMainModelFromJsonString<Unit>(metaModel, jsonInput2)
+        val input1 = getMainModelFromJsonString(metaModel, jsonInput1)
+        val input2 = getMainModelFromJsonString(metaModel, jsonInput2)
         val output = union(listOf(input1, input2))
         assertMatchesJson(output, null, expectedOutputJsonFile, EncodePasswords.ALL)
     }

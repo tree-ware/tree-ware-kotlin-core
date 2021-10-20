@@ -12,7 +12,7 @@ import org.treeWare.model.core.*
  * 1. Non-primitive field types (except associations) are resolved.
  */
 fun resolveNonPrimitiveTypes(
-    mainMeta: MainModel<Resolved>,
+    mainMeta: MainModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
@@ -22,19 +22,20 @@ fun resolveNonPrimitiveTypes(
         resolvePackages(mainMeta, hasher, cipher, nonPrimitiveTypes)
     ).flatten()
 
-private fun resolveRoot(mainMeta: MainModel<Resolved>, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveRoot(mainMeta: MainModel, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
     val rootMeta = getRootMeta(mainMeta)
     val packageName = getSingleString(rootMeta, "package")
     val entityName = getSingleString(rootMeta, "entity")
     val targetFullName = "/$packageName/$entityName"
     val targetEntity = nonPrimitiveTypes.entities[targetFullName] ?: return listOf("Root entity cannot be resolved")
-    val resolved = rootMeta.aux ?: throw IllegalStateException("Resolved aux is missing in root")
+    val resolved =
+        rootMeta.getAux<Resolved>(RESOLVED_AUX) ?: throw IllegalStateException("Resolved aux is missing in root")
     resolved.compositionMeta = targetEntity
     return listOf()
 }
 
 private fun resolvePackages(
-    mainMeta: MainModel<Resolved>,
+    mainMeta: MainModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
@@ -44,17 +45,17 @@ private fun resolvePackages(
 }
 
 private fun resolvePackage(
-    packageElementMeta: ElementModel<Resolved>,
+    packageElementMeta: ElementModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
-    val packageMeta = packageElementMeta as EntityModel<Resolved>
+    val packageMeta = packageElementMeta as EntityModel
     return resolveEntities(packageMeta, hasher, cipher, nonPrimitiveTypes)
 }
 
 private fun resolveEntities(
-    packageMeta: EntityModel<Resolved>,
+    packageMeta: EntityModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
@@ -64,17 +65,17 @@ private fun resolveEntities(
 }
 
 private fun resolveEntity(
-    entityElementMeta: ElementModel<Resolved>,
+    entityElementMeta: ElementModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
-    val entityMeta = entityElementMeta as EntityModel<Resolved>
+    val entityMeta = entityElementMeta as EntityModel
     return resolveFields(entityMeta, hasher, cipher, nonPrimitiveTypes)
 }
 
 private fun resolveFields(
-    entityMeta: EntityModel<Resolved>,
+    entityMeta: EntityModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
@@ -84,12 +85,12 @@ private fun resolveFields(
 }
 
 private fun resolveField(
-    fieldElementMeta: ElementModel<Resolved>,
+    fieldElementMeta: ElementModel,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
-    val fieldMeta = fieldElementMeta as EntityModel<Resolved>
+    val fieldMeta = fieldElementMeta as EntityModel
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.PASSWORD1WAY -> resolvePassword1wayField(fieldMeta, hasher)
         FieldType.PASSWORD2WAY -> resolvePassword2wayField(fieldMeta, cipher)
@@ -99,22 +100,22 @@ private fun resolveField(
     }
 }
 
-fun resolvePassword1wayField(fieldMeta: EntityModel<Resolved>, hasher: Hasher?): List<String> {
-    val resolved = fieldMeta.aux
+fun resolvePassword1wayField(fieldMeta: EntityModel, hasher: Hasher?): List<String> {
+    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
         ?: throw IllegalStateException("Resolved aux is missing in password1way field")
     resolved.password1wayHasher = hasher
     return listOf()
 }
 
-fun resolvePassword2wayField(fieldMeta: EntityModel<Resolved>, cipher: Cipher?): List<String> {
-    val resolved = fieldMeta.aux
+fun resolvePassword2wayField(fieldMeta: EntityModel, cipher: Cipher?): List<String> {
+    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
         ?: throw IllegalStateException("Resolved aux is missing in password2way field")
     resolved.password2wayCipher = cipher
     return listOf()
 }
 
 private fun resolveEnumerationField(
-    fieldMeta: EntityModel<Resolved>,
+    fieldMeta: EntityModel,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val enumerationInfoMeta = getEnumerationInfoMeta(fieldMeta)
@@ -123,14 +124,14 @@ private fun resolveEnumerationField(
     val targetFullName = "/$packageName/$enumerationName"
     val targetEnumeration = nonPrimitiveTypes.enumerations[targetFullName]
         ?: return listOf("Enumeration $targetFullName cannot be resolved")
-    val resolved = fieldMeta.aux
+    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
         ?: throw IllegalStateException("Resolved aux is missing in enumeration field targeting $targetFullName")
     resolved.enumerationMeta = targetEnumeration
     return listOf()
 }
 
 private fun resolveCompositionField(
-    fieldMeta: EntityModel<Resolved>,
+    fieldMeta: EntityModel,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val entityInfoMeta = getEntityInfoMeta(fieldMeta)
@@ -139,7 +140,7 @@ private fun resolveCompositionField(
     val targetFullName = "/$packageName/$entityName"
     val targetEntity = nonPrimitiveTypes.entities[targetFullName]
         ?: return listOf("Entity $targetFullName cannot be resolved")
-    val resolved = fieldMeta.aux
+    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
     resolved.compositionMeta = targetEntity
     val errors = mutableListOf<String>()

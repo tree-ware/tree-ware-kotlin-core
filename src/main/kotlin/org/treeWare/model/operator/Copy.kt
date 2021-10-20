@@ -6,42 +6,42 @@ import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import java.util.*
 
-fun <Aux> copy(from: ElementModel<Aux>, to: MutableElementModel<Aux>) {
+fun copy(from: ElementModel, to: MutableElementModel) {
     if (from.elementType != to.elementType) throw IllegalArgumentException("Types of from and to are different: ${from.elementType}, ${to.elementType}")
-    val copyVisitor = CopyVisitor<Aux>(to)
+    val copyVisitor = CopyVisitor(to)
     forEach(from, copyVisitor)
 }
 
-private class CopyVisitor<Aux>(
-    private val to: MutableElementModel<Aux>
-) : AbstractLeader1Follower0ModelVisitor<Aux, TraversalAction>(TraversalAction.CONTINUE) {
-    val modelStack = ArrayDeque<MutableElementModel<Aux>>()
+private class CopyVisitor(
+    private val to: MutableElementModel
+) : AbstractLeader1Follower0ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+    val modelStack = ArrayDeque<MutableElementModel>()
 
-    override fun visit(leaderMain1: MainModel<Aux>): TraversalAction {
+    override fun visit(leaderMain1: MainModel): TraversalAction {
         assert(modelStack.isEmpty())
         modelStack.addFirst(to)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderMain1: MainModel<Aux>) {
+    override fun leave(leaderMain1: MainModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderRoot1: RootModel<Aux>): TraversalAction {
+    override fun visit(leaderRoot1: RootModel): TraversalAction {
         val copyRoot = if (modelStack.isEmpty()) to
         else {
-            val copyParent = modelStack.peekFirst() as MutableMainModel<Aux>
+            val copyParent = modelStack.peekFirst() as MutableMainModel
             copyParent.getOrNewRoot()
         }
         modelStack.addFirst(copyRoot)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderRoot1: RootModel<Aux>) {
+    override fun leave(leaderRoot1: RootModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderEntity1: EntityModel<Aux>): TraversalAction {
+    override fun visit(leaderEntity1: EntityModel): TraversalAction {
         val copyEntity = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -51,90 +51,90 @@ private class CopyVisitor<Aux>(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderEntity1: EntityModel<Aux>) {
-        val copyEntity = modelStack.pollFirst() as MutableEntityModel<Aux>
+    override fun leave(leaderEntity1: EntityModel) {
+        val copyEntity = modelStack.pollFirst() as MutableEntityModel
         // NOTE: entities should be added to set-fields only after the entity
         // has key fields.
         val copyParent = modelStack.peekFirst()
-        if (copyParent.elementType == ModelElementType.SET_FIELD) (copyParent as MutableSetFieldModel<Aux>).addValue(
+        if (copyParent.elementType == ModelElementType.SET_FIELD) (copyParent as MutableSetFieldModel).addValue(
             copyEntity
         )
     }
 
-    override fun visit(leaderField1: SingleFieldModel<Aux>): TraversalAction = visitField(leaderField1)
+    override fun visit(leaderField1: SingleFieldModel): TraversalAction = visitField(leaderField1)
 
-    override fun leave(leaderField1: SingleFieldModel<Aux>) {
+    override fun leave(leaderField1: SingleFieldModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderField1: ListFieldModel<Aux>): TraversalAction = visitField(leaderField1)
+    override fun visit(leaderField1: ListFieldModel): TraversalAction = visitField(leaderField1)
 
-    override fun leave(leaderField1: ListFieldModel<Aux>) {
+    override fun leave(leaderField1: ListFieldModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderField1: SetFieldModel<Aux>): TraversalAction = visitField(leaderField1)
+    override fun visit(leaderField1: SetFieldModel): TraversalAction = visitField(leaderField1)
 
-    override fun leave(leaderField1: SetFieldModel<Aux>) {
+    override fun leave(leaderField1: SetFieldModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderValue1: PrimitiveModel<Aux>): TraversalAction {
+    override fun visit(leaderValue1: PrimitiveModel): TraversalAction {
         val copyPrimitive = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
             getNewFieldValue(copyParent)
-        } as MutablePrimitiveModel<Aux>
+        } as MutablePrimitiveModel
         copyPrimitive.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: AliasModel<Aux>): TraversalAction {
+    override fun visit(leaderValue1: AliasModel): TraversalAction {
         val copyAlias = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
             getNewFieldValue(copyParent)
-        } as MutableAliasModel<Aux>
+        } as MutableAliasModel
         copyAlias.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: Password1wayModel<Aux>): TraversalAction {
+    override fun visit(leaderValue1: Password1wayModel): TraversalAction {
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
             getNewFieldValue(copyParent)
-        } as MutablePassword1wayModel<Aux>
+        } as MutablePassword1wayModel
         copyPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: Password2wayModel<Aux>): TraversalAction {
+    override fun visit(leaderValue1: Password2wayModel): TraversalAction {
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
             getNewFieldValue(copyParent)
-        } as MutablePassword2wayModel<Aux>
+        } as MutablePassword2wayModel
         copyPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: EnumerationModel<Aux>): TraversalAction {
+    override fun visit(leaderValue1: EnumerationModel): TraversalAction {
         val copyEnumeration = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
             getNewFieldValue(copyParent)
-        } as MutableEnumerationModel<Aux>
+        } as MutableEnumerationModel
         copyEnumeration.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: AssociationModel<Aux>): TraversalAction {
+    override fun visit(leaderValue1: AssociationModel): TraversalAction {
         val copyAssociation = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
             getNewFieldValue(copyParent)
-        } as MutableAssociationModel<Aux>
+        } as MutableAssociationModel
         // NOTE: forEach() does not traverse the association's entity-keys.
         // So they have to be explicitly copied by this method.
         copyAssociation.newValue()
@@ -144,22 +144,22 @@ private class CopyVisitor<Aux>(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderEntityKeys1: EntityKeysModel<Aux>): TraversalAction {
+    override fun visit(leaderEntityKeys1: EntityKeysModel): TraversalAction {
         assert(modelStack.isEmpty())
-        val copyEntityKeys = to as MutableEntityKeysModel<Aux>
+        val copyEntityKeys = to as MutableEntityKeysModel
         modelStack.addFirst(copyEntityKeys)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderEntityKeys1: EntityKeysModel<Aux>) {
+    override fun leave(leaderEntityKeys1: EntityKeysModel) {
         modelStack.pollFirst()
     }
 
     // Helpers
 
-    private fun visitField(leaderField1: FieldModel<Aux>): TraversalAction {
+    private fun visitField(leaderField1: FieldModel): TraversalAction {
         val leaderFieldName = getFieldName(leaderField1)
-        val copyParent = modelStack.peekFirst() as MutableBaseEntityModel<Aux>
+        val copyParent = modelStack.peekFirst() as MutableBaseEntityModel
         val copyField = copyParent.getOrNewField(leaderFieldName)
         modelStack.addFirst(copyField)
         return TraversalAction.CONTINUE
