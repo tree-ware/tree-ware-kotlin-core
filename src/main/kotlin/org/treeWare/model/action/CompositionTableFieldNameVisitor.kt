@@ -10,19 +10,19 @@ import org.treeWare.model.traversal.dispatchVisit
 
 // IMPLEMENTATION: ./Get.md
 
-class CompositionTableFieldNameVisitor : AbstractLeader1Follower0ModelVisitor<Unit, List<String>>(listOf()) {
+class CompositionTableFieldNameVisitor : AbstractLeader1Follower0ModelVisitor<List<String>>(listOf()) {
     // Fields
 
-    override fun visit(leaderField1: SingleFieldModel<Unit>): List<String> =
+    override fun visit(leaderField1: SingleFieldModel): List<String> =
         if (isCompositionFieldMeta(leaderField1.meta)) {
             // Recurse into the composition (but only fields that are not composition-lists).
-            val entity1 = leaderField1.value as EntityModel<Unit>
+            val entity1 = leaderField1.value as EntityModel
             val nested = entity1.fields.values.filter { !isCompositionSetField(it) }
                 .flatMap { dispatchVisit(it, this) ?: listOf() }
             nested.map { "${getMetaName(leaderField1.meta)}/${it}" }
         } else listOf(getMetaName(leaderField1.meta))
 
-    override fun visit(leaderField1: ListFieldModel<Unit>): List<String> =
+    override fun visit(leaderField1: ListFieldModel): List<String> =
         if (isCompositionFieldMeta(leaderField1.meta)) {
             // Composition list fields are not flattened, and so their field names
             // are not returned.

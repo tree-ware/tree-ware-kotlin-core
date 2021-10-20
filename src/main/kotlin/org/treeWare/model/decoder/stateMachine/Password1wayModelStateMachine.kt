@@ -4,19 +4,20 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.MutablePassword1wayModel
 import java.math.BigDecimal
 
-class Password1wayModelStateMachine<Aux>(
+class Password1wayModelStateMachine(
     private val isListElement: Boolean,
-    private val passwordFactory: () -> MutablePassword1wayModel<Aux>,
+    private val passwordFactory: () -> MutablePassword1wayModel,
     private val stack: DecodingStack,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
-) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private var auxStateMachine: AuxDecodingStateMachine<Aux>? = null
-    private var password1way: MutablePassword1wayModel<Aux>? = null
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
+    private var auxStateMachine: AuxDecodingStateMachine? = null
+    private var password1way: MutablePassword1wayModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(aux: Aux) {
+    override fun setAux(auxType: String, aux: Any?) {
+        if (aux == null) return
         assert(password1way != null)
-        password1way?.aux = aux
+        password1way?.setAux(auxType, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -30,7 +31,7 @@ class Password1wayModelStateMachine<Aux>(
             // Remove self from stack
             stack.pollFirst()
         } else {
-            auxStateMachine?.getAux()?.also { password1way?.aux = it }
+            auxStateMachine?.also { setAux(it.auxType, it.getAux()) }
             // This state-machine instance gets reused in lists, so clear it.
             auxStateMachine = null
         }
@@ -68,7 +69,7 @@ class Password1wayModelStateMachine<Aux>(
         val key = keyName ?: ""
         val fieldAndAuxNames = getFieldAndAuxNames(key)
         if (fieldAndAuxNames == null) {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
         val (_, auxName) = fieldAndAuxNames
@@ -78,7 +79,7 @@ class Password1wayModelStateMachine<Aux>(
                 stack.addFirst(auxStateMachine)
                 auxStateMachine.newAux()
                 this.auxStateMachine = auxStateMachine
-            } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            } else stack.addFirst(SkipUnknownStateMachine(stack))
         }
         return true
     }

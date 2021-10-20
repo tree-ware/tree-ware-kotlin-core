@@ -3,7 +3,6 @@ package org.treeWare.model.decoder.stateMachine
 import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.core.Resolved
 import org.treeWare.model.decoder.ModelDecoderOptions
 import java.math.BigDecimal
 import java.util.*
@@ -11,11 +10,11 @@ import java.util.*
 typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 
 /** Main state-machine for decoding a model. */
-class ModelDecodingStateMachine<Aux>(
-    meta: MainModel<Resolved>,
+class ModelDecodingStateMachine(
+    meta: MainModel,
     expectedModelType: String,
     options: ModelDecoderOptions,
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine?
 ) : DecodingStateMachine {
     private val stack = DecodingStack()
     private val mainModelStateMachine =
@@ -31,7 +30,7 @@ class ModelDecodingStateMachine<Aux>(
         stack.addFirst(mainModelStateMachine)
     }
 
-    val mainModel: MutableMainModel<Aux>? get() = mainModelStateMachine.mainModel
+    val mainModel: MutableMainModel? get() = mainModelStateMachine.mainModel
     val errors: List<String> = mainModelStateMachine.errors
 
     private fun getTopStateMachine(): DecodingStateMachine? {

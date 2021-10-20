@@ -4,9 +4,9 @@ import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.LeaderManyModelCursor
 
-fun <LeaderAux> forEach(
-    leaders: List<ElementModel<LeaderAux>>,
-    visitor: LeaderManyFollower0ModelVisitor<LeaderAux, TraversalAction>
+fun forEach(
+    leaders: List<ElementModel>,
+    visitor: LeaderManyFollower0ModelVisitor<TraversalAction>
 ): TraversalAction {
     val mainMeta = leaders[0].meta ?: throw IllegalArgumentException("Leader does not have meta-model")
     if (!leaders.all { it.meta === mainMeta }) throw IllegalArgumentException("Leaders do not have identical meta-models")
@@ -27,42 +27,42 @@ fun <LeaderAux> forEach(
     return action
 }
 
-fun <LeaderAux, Return> dispatchVisit(
+fun <Return> dispatchVisit(
     elementType: ModelElementType,
-    leaders: List<ElementModel<LeaderAux>?>,
-    visitor: LeaderManyFollower0ModelVisitor<LeaderAux, Return>
+    leaders: List<ElementModel?>,
+    visitor: LeaderManyFollower0ModelVisitor<Return>
 ): Return? = when (elementType) {
-    ModelElementType.MAIN -> visitor.visitMain(leaders as List<MainModel<LeaderAux>?>)
-    ModelElementType.ROOT -> visitor.visitRoot(leaders as List<RootModel<LeaderAux>?>)
-    ModelElementType.ENTITY -> visitor.visitEntity(leaders as List<EntityModel<LeaderAux>?>)
-    ModelElementType.SINGLE_FIELD -> visitor.visitSingleField(leaders as List<SingleFieldModel<LeaderAux>?>)
-    ModelElementType.LIST_FIELD -> visitor.visitListField(leaders as List<ListFieldModel<LeaderAux>?>)
-    ModelElementType.SET_FIELD -> visitor.visitSetField(leaders as List<SetFieldModel<LeaderAux>?>)
-    ModelElementType.PRIMITIVE -> visitor.visitPrimitive(leaders as List<PrimitiveModel<LeaderAux>?>)
-    ModelElementType.ALIAS -> visitor.visitAlias(leaders as List<AliasModel<LeaderAux>?>)
-    ModelElementType.PASSWORD1WAY -> visitor.visitPassword1way(leaders as List<Password1wayModel<LeaderAux>?>)
-    ModelElementType.PASSWORD2WAY -> visitor.visitPassword2way(leaders as List<Password2wayModel<LeaderAux>?>)
-    ModelElementType.ENUMERATION -> visitor.visitEnumeration(leaders as List<EnumerationModel<LeaderAux>?>)
-    ModelElementType.ASSOCIATION -> visitor.visitAssociation(leaders as List<AssociationModel<LeaderAux>?>)
+    ModelElementType.MAIN -> visitor.visitMain(leaders as List<MainModel?>)
+    ModelElementType.ROOT -> visitor.visitRoot(leaders as List<RootModel?>)
+    ModelElementType.ENTITY -> visitor.visitEntity(leaders as List<EntityModel?>)
+    ModelElementType.SINGLE_FIELD -> visitor.visitSingleField(leaders as List<SingleFieldModel?>)
+    ModelElementType.LIST_FIELD -> visitor.visitListField(leaders as List<ListFieldModel?>)
+    ModelElementType.SET_FIELD -> visitor.visitSetField(leaders as List<SetFieldModel?>)
+    ModelElementType.PRIMITIVE -> visitor.visitPrimitive(leaders as List<PrimitiveModel?>)
+    ModelElementType.ALIAS -> visitor.visitAlias(leaders as List<AliasModel?>)
+    ModelElementType.PASSWORD1WAY -> visitor.visitPassword1way(leaders as List<Password1wayModel?>)
+    ModelElementType.PASSWORD2WAY -> visitor.visitPassword2way(leaders as List<Password2wayModel?>)
+    ModelElementType.ENUMERATION -> visitor.visitEnumeration(leaders as List<EnumerationModel?>)
+    ModelElementType.ASSOCIATION -> visitor.visitAssociation(leaders as List<AssociationModel?>)
     else -> throw UnsupportedOperationException("Dispatching to unsupported model element type: $elementType")
 }
 
-fun <LeaderAux, Return> dispatchLeave(
+fun <Return> dispatchLeave(
     elementType: ModelElementType,
-    leaders: List<ElementModel<LeaderAux>?>,
-    visitor: LeaderManyFollower0ModelVisitor<LeaderAux, Return>
+    leaders: List<ElementModel?>,
+    visitor: LeaderManyFollower0ModelVisitor<Return>
 ) = when (elementType) {
-    ModelElementType.MAIN -> visitor.leaveMain(leaders as List<MainModel<LeaderAux>?>)
-    ModelElementType.ROOT -> visitor.leaveRoot(leaders as List<RootModel<LeaderAux>?>)
-    ModelElementType.ENTITY -> visitor.leaveEntity(leaders as List<EntityModel<LeaderAux>?>)
-    ModelElementType.SINGLE_FIELD -> visitor.leaveSingleField(leaders as List<SingleFieldModel<LeaderAux>?>)
-    ModelElementType.LIST_FIELD -> visitor.leaveListField(leaders as List<ListFieldModel<LeaderAux>?>)
-    ModelElementType.SET_FIELD -> visitor.leaveSetField(leaders as List<SetFieldModel<LeaderAux>?>)
-    ModelElementType.PRIMITIVE -> visitor.leavePrimitive(leaders as List<PrimitiveModel<LeaderAux>?>)
-    ModelElementType.ALIAS -> visitor.leaveAlias(leaders as List<AliasModel<LeaderAux>?>)
-    ModelElementType.PASSWORD1WAY -> visitor.leavePassword1way(leaders as List<Password1wayModel<LeaderAux>?>)
-    ModelElementType.PASSWORD2WAY -> visitor.leavePassword2way(leaders as List<Password2wayModel<LeaderAux>?>)
-    ModelElementType.ENUMERATION -> visitor.leaveEnumeration(leaders as List<EnumerationModel<LeaderAux>?>)
-    ModelElementType.ASSOCIATION -> visitor.leaveAssociation(leaders as List<AssociationModel<LeaderAux>?>)
+    ModelElementType.MAIN -> visitor.leaveMain(leaders as List<MainModel?>)
+    ModelElementType.ROOT -> visitor.leaveRoot(leaders as List<RootModel?>)
+    ModelElementType.ENTITY -> visitor.leaveEntity(leaders as List<EntityModel?>)
+    ModelElementType.SINGLE_FIELD -> visitor.leaveSingleField(leaders as List<SingleFieldModel?>)
+    ModelElementType.LIST_FIELD -> visitor.leaveListField(leaders as List<ListFieldModel?>)
+    ModelElementType.SET_FIELD -> visitor.leaveSetField(leaders as List<SetFieldModel?>)
+    ModelElementType.PRIMITIVE -> visitor.leavePrimitive(leaders as List<PrimitiveModel?>)
+    ModelElementType.ALIAS -> visitor.leaveAlias(leaders as List<AliasModel?>)
+    ModelElementType.PASSWORD1WAY -> visitor.leavePassword1way(leaders as List<Password1wayModel?>)
+    ModelElementType.PASSWORD2WAY -> visitor.leavePassword2way(leaders as List<Password2wayModel?>)
+    ModelElementType.ENUMERATION -> visitor.leaveEnumeration(leaders as List<EnumerationModel?>)
+    ModelElementType.ASSOCIATION -> visitor.leaveAssociation(leaders as List<AssociationModel?>)
     else -> throw UnsupportedOperationException("Dispatching to unsupported model element type: $elementType")
 }

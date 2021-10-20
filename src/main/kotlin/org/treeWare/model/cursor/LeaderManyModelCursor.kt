@@ -5,11 +5,11 @@ import org.treeWare.model.core.*
 import org.treeWare.model.traversal.TraversalAction
 import java.util.*
 
-class LeaderManyModelCursor<Aux>(private val initialList: List<ElementModel<Aux>>) {
-    private val stateStack = LeaderManyStateStack<Aux>()
+class LeaderManyModelCursor(private val initialList: List<ElementModel>) {
+    private val stateStack = LeaderManyStateStack()
     private var isAtStart = true
 
-    fun next(previousAction: TraversalAction): LeaderManyModelCursorMove<Aux>? = when {
+    fun next(previousAction: TraversalAction): LeaderManyModelCursorMove? = when {
         previousAction == TraversalAction.ABORT_SUB_TREE -> {
             // Remove current state from the stack to abort its sub-tree.
             val currentState = stateStack.pollFirst()
@@ -34,15 +34,15 @@ class LeaderManyModelCursor<Aux>(private val initialList: List<ElementModel<Aux>
     }
 }
 
-private typealias LeaderManyStateStack<Aux> = ArrayDeque<LeaderManyState<Aux>>
-private typealias LeaderManyStateAction<Aux> = () -> LeaderManyModelCursorMove<Aux>?
+private typealias LeaderManyStateStack = ArrayDeque<LeaderManyState>
+private typealias LeaderManyStateAction = () -> LeaderManyModelCursorMove?
 
-private abstract class LeaderManyState<Aux>(leaders: Leaders<Aux>, val stateStack: LeaderManyStateStack<Aux>) {
+private abstract class LeaderManyState(leaders: Leaders, val stateStack: LeaderManyStateStack) {
     val visitCursorMove = LeaderManyModelCursorMove(CursorMoveDirection.VISIT, leaders)
     val leaveCursorMove = LeaderManyModelCursorMove(CursorMoveDirection.LEAVE, leaders)
-    protected abstract val actionIterator: Iterator<LeaderManyStateAction<Aux>>
+    protected abstract val actionIterator: Iterator<LeaderManyStateAction>
 
-    fun next(): LeaderManyModelCursorMove<Aux>? = if (actionIterator.hasNext()) {
+    fun next(): LeaderManyModelCursorMove? = if (actionIterator.hasNext()) {
         val action = actionIterator.next()
         action()
     } else {
@@ -52,15 +52,15 @@ private abstract class LeaderManyState<Aux>(leaders: Leaders<Aux>, val stateStac
     }
 }
 
-private class MainLeaderManyState<Aux>(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-) : LeaderManyState<Aux>(leaders, stateStack) {
-    override val actionIterator: Iterator<LeaderManyStateAction<Aux>>
+private class MainLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    override val actionIterator: Iterator<LeaderManyStateAction>
 
     init {
         val actionList = listOf {
-            val rootList = (leaders.elements as List<MainModel<Aux>?>).map { it?.root }
+            val rootList = (leaders.elements as List<MainModel?>).map { it?.root }
             val rootLeaders = Leaders(rootList)
             val rootState = newLeaderManyState(rootLeaders, stateStack)
             stateStack.addFirst(rootState)
@@ -70,20 +70,20 @@ private class MainLeaderManyState<Aux>(
     }
 }
 
-private abstract class BaseEntityLeaderManyState<Aux>(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-) : LeaderManyState<Aux>(leaders, stateStack) {
-    final override val actionIterator: Iterator<LeaderManyStateAction<Aux>>
+private abstract class BaseEntityLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    final override val actionIterator: Iterator<LeaderManyStateAction>
 
     init {
         // Traverse entity fields in the order in which they are defined in
         // the meta-model.
-        val baseEntityMeta = (leaders.nonNullElement as BaseEntityModel<Aux>?)?.meta
+        val baseEntityMeta = (leaders.nonNullElement as BaseEntityModel?)?.meta
         val fieldNames = baseEntityMeta?.let { getFieldNames(it) } ?: emptyList()
         val fieldLeadersList = fieldNames.mapNotNull { fieldName ->
             val fields = leaders.elements.map { baseEntityElement ->
-                val baseEntity = baseEntityElement as BaseEntityModel<Aux>?
+                val baseEntity = baseEntityElement as BaseEntityModel?
                 baseEntity?.getField(fieldName)
             }
             val fieldLeaders = Leaders(fields)
@@ -100,23 +100,23 @@ private abstract class BaseEntityLeaderManyState<Aux>(
     }
 }
 
-private class RootLeaderManyState<Aux>(leaders: Leaders<Aux>, stateStack: LeaderManyStateStack<Aux>) :
-    BaseEntityLeaderManyState<Aux>(leaders, stateStack)
+private class RootLeaderManyState(leaders: Leaders, stateStack: LeaderManyStateStack) :
+    BaseEntityLeaderManyState(leaders, stateStack)
 
-private class EntityLeaderManyState<Aux>(leaders: Leaders<Aux>, stateStack: LeaderManyStateStack<Aux>) :
-    BaseEntityLeaderManyState<Aux>(leaders, stateStack)
+private class EntityLeaderManyState(leaders: Leaders, stateStack: LeaderManyStateStack) :
+    BaseEntityLeaderManyState(leaders, stateStack)
 
 // Fields
 
-private class SingleFieldLeaderManyState<Aux>(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-) : LeaderManyState<Aux>(leaders, stateStack) {
-    override val actionIterator: Iterator<LeaderManyStateAction<Aux>>
+private class SingleFieldLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    override val actionIterator: Iterator<LeaderManyStateAction>
 
     init {
         val actionList = listOf {
-            val valueList = (leaders.elements as List<SingleFieldModel<Aux>?>).map { it?.value }
+            val valueList = (leaders.elements as List<SingleFieldModel?>).map { it?.value }
             val valueLeaders = Leaders(valueList)
             val valueState = newLeaderManyState(valueLeaders, stateStack)
             stateStack.addFirst(valueState)
@@ -126,15 +126,15 @@ private class SingleFieldLeaderManyState<Aux>(
     }
 }
 
-private class ListFieldLeaderManyState<Aux>(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-) : LeaderManyState<Aux>(leaders, stateStack) {
-    override val actionIterator: Iterator<LeaderManyStateAction<Aux>>
+private class ListFieldLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    override val actionIterator: Iterator<LeaderManyStateAction>
 
     init {
         // Traverse list elements at each index together.
-        val lists = leaders.elements as List<ListFieldModel<Aux>?>
+        val lists = leaders.elements as List<ListFieldModel?>
         val maxSize = lists.maxOf { it?.values?.size ?: 0 }
         actionIterator = IteratorAdapter({ (0 until maxSize).iterator() }) { index ->
             {
@@ -147,11 +147,11 @@ private class ListFieldLeaderManyState<Aux>(
     }
 }
 
-private class SetFieldLeaderManyState<Aux>(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-) : LeaderManyState<Aux>(leaders, stateStack) {
-    override val actionIterator: Iterator<LeaderManyStateAction<Aux>>
+private class SetFieldLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    override val actionIterator: Iterator<LeaderManyStateAction>
 
     init {
         // Traverse set elements from first leader to the last. For each
@@ -170,24 +170,24 @@ private class SetFieldLeaderManyState<Aux>(
     }
 }
 
-fun <Aux> getSetElementLeadersList(leaders: Leaders<Aux>): List<Leaders<Aux>> =
-    leaders.elements.flatMapIndexed { leaderIndex: Int, leaderElementModel: ElementModel<Aux>? ->
-        val leaderSetField = leaderElementModel as SetFieldModel<Aux>?
-        leaderSetField?.values?.mapNotNull { getSetElementLeaders(it as EntityModel<Aux>, leaderIndex, leaders) }
+fun getSetElementLeadersList(leaders: Leaders): List<Leaders> =
+    leaders.elements.flatMapIndexed { leaderIndex: Int, leaderElementModel: ElementModel? ->
+        val leaderSetField = leaderElementModel as SetFieldModel?
+        leaderSetField?.values?.mapNotNull { getSetElementLeaders(it as EntityModel, leaderIndex, leaders) }
             ?: emptyList()
     }
 
-fun <Aux> getSetElementLeaders(
-    matching: EntityModel<Aux>,
+fun getSetElementLeaders(
+    matching: EntityModel,
     inSetLeaderIndex: Int,
-    setLeaders: Leaders<Aux>
-): Leaders<Aux>? {
-    val elementList = mutableListOf<EntityModel<Aux>?>()
+    setLeaders: Leaders
+): Leaders? {
+    val elementList = mutableListOf<EntityModel?>()
     setLeaders.elements.forEachIndexed { leaderIndex, leaderElementModel ->
         if (leaderIndex == inSetLeaderIndex) elementList.add(matching)
         else {
-            val leaderSetField = leaderElementModel as SetFieldModel<Aux>?
-            val matched = leaderSetField?.getValueMatching(matching) as EntityModel<Aux>?
+            val leaderSetField = leaderElementModel as SetFieldModel?
+            val matched = leaderSetField?.getValueMatching(matching) as EntityModel?
             // Skip elements that have already been traversed.
             if (matched != null && leaderIndex < inSetLeaderIndex) return null
             elementList.add(matched)
@@ -198,19 +198,19 @@ fun <Aux> getSetElementLeaders(
 
 // Values
 
-private class ScalarValueLeaderManyState<Aux>(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-) : LeaderManyState<Aux>(leaders, stateStack) {
-    override val actionIterator = emptyList<LeaderManyStateAction<Aux>>().iterator()
+private class ScalarValueLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    override val actionIterator = emptyList<LeaderManyStateAction>().iterator()
 }
 
 // State factory
 
-private fun <Aux> newLeaderManyState(
-    leaders: Leaders<Aux>,
-    stateStack: LeaderManyStateStack<Aux>
-): LeaderManyState<Aux> = when (leaders.elementType) {
+private fun newLeaderManyState(
+    leaders: Leaders,
+    stateStack: LeaderManyStateStack
+): LeaderManyState = when (leaders.elementType) {
     ModelElementType.MAIN -> MainLeaderManyState(leaders, stateStack)
     ModelElementType.ROOT -> RootLeaderManyState(leaders, stateStack)
     ModelElementType.ENTITY -> EntityLeaderManyState(leaders, stateStack)

@@ -3,8 +3,8 @@ package org.treeWare.model.decoder.stateMachine
 import org.treeWare.model.core.MutableEntityKeysModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 
-class AssociationPathStateMachine<Aux>(
-    private val modelList: List<MutableEntityKeysModel<Aux>>,
+class AssociationPathStateMachine(
+    private val modelList: List<MutableEntityKeysModel>,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>

@@ -20,7 +20,7 @@ class DecoderMissingKeysTests {
             "Missing key fields: [name, state, country]",
             "Missing key fields: [state, country]"
         )
-        testRoundTrip<Unit>(
+        testRoundTrip(
             "model/address_book_missing_keys.json",
             "model/address_book_missing_keys_skipped.json",
             options = ModelDecoderOptions(onMissingKeys = OnMissingKeys.SKIP_WITH_ERRORS),
@@ -32,7 +32,7 @@ class DecoderMissingKeysTests {
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
         val fileReader = getFileReader("model/address_book_missing_keys.json")
         val metaModel = newAddressBookMetaModel(null, null)
-        val (mainModel, decodeErrors) = decodeJson<Unit>(
+        val (mainModel, decodeErrors) = decodeJson(
             fileReader,
             metaModel,
             "data",

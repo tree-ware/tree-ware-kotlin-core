@@ -5,14 +5,19 @@ import org.treeWare.metaModel.getRootMeta
 import org.treeWare.model.core.MutableRootModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 
-class RootModelStateMachine<Aux>(
-    private val root: MutableRootModel<Aux>,
+class RootModelStateMachine(
+    private val root: MutableRootModel,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
 ) : AbstractDecodingStateMachine(true) {
     private val auxStateMachine = auxStateMachineFactory()
+
+    private fun setAux(auxType: String, aux: Any?) {
+        if (aux == null) return
+        root.setAux(auxType, aux)
+    }
 
     override fun decodeObjectStart(): Boolean {
         return true
@@ -20,7 +25,7 @@ class RootModelStateMachine<Aux>(
 
     override fun decodeObjectEnd(): Boolean {
         // TODO(deepak-nulu): set aux when found rather than on the way out.
-        auxStateMachine?.getAux()?.also { root.aux = it }
+        auxStateMachine?.also { setAux(it.auxType, it.getAux()) }
         // Remove self from stack
         stack.pollFirst()
         return true
@@ -63,7 +68,7 @@ class RootModelStateMachine<Aux>(
                 return true
             }
         }
-        stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+        stack.addFirst(SkipUnknownStateMachine(stack))
         return true
     }
 }

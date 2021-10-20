@@ -7,17 +7,17 @@ import org.treeWare.model.core.MutableSetFieldModel
 // IMPLEMENTATION: ./Get.md
 
 interface CompositionTableGetVisitorDelegate<MappingAux> {
-    fun pushPathEntity(entity: BaseEntityModel<*>)
+    fun pushPathEntity(entity: BaseEntityModel)
     fun popPathEntity()
 
     suspend fun fetchRoot(
-        responseRoot: MutableRootModel<Unit>,
+        responseRoot: MutableRootModel,
         requestFieldNames: List<String>,
         mappingAux: MappingAux
     )
 
     suspend fun fetchCompositionList(
-        responseListField: MutableSetFieldModel<Unit>,
+        responseListField: MutableSetFieldModel,
         requestFieldNames: List<String>,
         mappingAux: MappingAux
     )

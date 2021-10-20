@@ -10,12 +10,12 @@ import org.treeWare.model.core.*
  *
  * Side effects: none
  */
-fun validateStructure(mainMeta: MainModel<Resolved>) = listOf(
+fun validateStructure(mainMeta: MainModel) = listOf(
     validateRoot(mainMeta),
     validatePackages(mainMeta)
 ).flatten()
 
-private fun validateRoot(mainMeta: MainModel<Resolved>): List<String> {
+private fun validateRoot(mainMeta: MainModel): List<String> {
     val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root is missing")
     return listOf(
         validateSingleStringField(rootMeta, "name", "Root"),
@@ -24,15 +24,15 @@ private fun validateRoot(mainMeta: MainModel<Resolved>): List<String> {
     ).flatten()
 }
 
-private fun validatePackages(mainMeta: MainModel<Resolved>): List<String> {
+private fun validatePackages(mainMeta: MainModel): List<String> {
     val packagesMeta =
         runCatching { getPackagesMeta(mainMeta) }.getOrNull() ?: return listOf("Packages are missing")
     return packagesMeta.values.flatMapIndexed { index, packageMeta -> validatePackage(packageMeta, index) }
 }
 
-private fun validatePackage(packageElementMeta: ElementModel<Resolved>, packageIndex: Int): List<String> {
+private fun validatePackage(packageElementMeta: ElementModel, packageIndex: Int): List<String> {
     val packageId = getPackageId(packageIndex)
-    val packageMeta = packageElementMeta as? EntityModel<Resolved>
+    val packageMeta = packageElementMeta as? EntityModel
         ?: return listOf("$packageId is not an EntityModel. It is: ${packageElementMeta.javaClass.simpleName}")
     return listOf(
         validateSingleStringField(packageMeta, "name", packageId),
@@ -41,7 +41,7 @@ private fun validatePackage(packageElementMeta: ElementModel<Resolved>, packageI
     ).flatten()
 }
 
-private fun validateEnumerations(packageMeta: EntityModel<Resolved>, packageId: String): List<String> {
+private fun validateEnumerations(packageMeta: EntityModel, packageId: String): List<String> {
     val enumerationsMeta = getEnumerationsMeta(packageMeta)
     return enumerationsMeta?.values?.flatMapIndexed { enumerationIndex, enumerationMeta ->
         validateEnumeration(
@@ -53,12 +53,12 @@ private fun validateEnumerations(packageMeta: EntityModel<Resolved>, packageId: 
 }
 
 private fun validateEnumeration(
-    enumerationElementMeta: ElementModel<Resolved>,
+    enumerationElementMeta: ElementModel,
     packageId: String,
     enumerationIndex: Int
 ): List<String> {
     val enumerationId = getEnumerationId(packageId, enumerationIndex)
-    val enumerationMeta = enumerationElementMeta as? EntityModel<Resolved>
+    val enumerationMeta = enumerationElementMeta as? EntityModel
         ?: return listOf("$enumerationId is not an EntityModel. It is: ${enumerationElementMeta.javaClass.simpleName}")
     return listOf(
         validateSingleStringField(enumerationMeta, "name", enumerationId),
@@ -67,7 +67,7 @@ private fun validateEnumeration(
 }
 
 private fun validateEnumerationValues(
-    enumerationMeta: EntityModel<Resolved>,
+    enumerationMeta: EntityModel,
     enumerationId: String
 ): List<String> {
     val enumerationValuesMeta = runCatching { getEnumerationValuesMeta(enumerationMeta) }.getOrNull()
@@ -83,17 +83,17 @@ private fun validateEnumerationValues(
 }
 
 private fun validateEnumerationValue(
-    enumerationValueElementMeta: ElementModel<Resolved>,
+    enumerationValueElementMeta: ElementModel,
     enumerationId: String,
     valueIndex: Int
 ): List<String> {
     val id = getEnumerationValueId(enumerationId, valueIndex)
-    val enumerationValueMeta = enumerationValueElementMeta as? EntityModel<Resolved>
+    val enumerationValueMeta = enumerationValueElementMeta as? EntityModel
         ?: return listOf("$id is not an EntityModel. It is: ${enumerationValueElementMeta.javaClass.simpleName}")
     return validateSingleStringField(enumerationValueMeta, "name", id)
 }
 
-private fun validateEntities(packageMeta: EntityModel<Resolved>, packageId: String): List<String> {
+private fun validateEntities(packageMeta: EntityModel, packageId: String): List<String> {
     val entitiesMeta = getEntitiesMeta(packageMeta)
     return entitiesMeta?.values?.flatMapIndexed { entityIndex, entityMeta ->
         validateEntity(
@@ -105,12 +105,12 @@ private fun validateEntities(packageMeta: EntityModel<Resolved>, packageId: Stri
 }
 
 private fun validateEntity(
-    entityElementMeta: ElementModel<Resolved>,
+    entityElementMeta: ElementModel,
     packageId: String,
     entityIndex: Int
 ): List<String> {
     val entityId = getEntityId(packageId, entityIndex)
-    val entityMeta = entityElementMeta as? EntityModel<Resolved>
+    val entityMeta = entityElementMeta as? EntityModel
         ?: return listOf("$entityId is not an EntityModel. It is: ${entityElementMeta.javaClass.simpleName}")
     return listOf(
         validateSingleStringField(entityMeta, "name", entityId),
@@ -118,7 +118,7 @@ private fun validateEntity(
     ).flatten()
 }
 
-private fun validateFields(entityMeta: EntityModel<Resolved>, entityId: String): List<String> {
+private fun validateFields(entityMeta: EntityModel, entityId: String): List<String> {
     val fieldsMeta = runCatching { getFieldsMeta(entityMeta) }.getOrNull()
         ?: return listOf("$entityId fields are missing")
     if (fieldsMeta.values.isEmpty()) return listOf("$entityId fields are empty")
@@ -126,12 +126,12 @@ private fun validateFields(entityMeta: EntityModel<Resolved>, entityId: String):
 }
 
 private fun validateField(
-    fieldElementMeta: ElementModel<Resolved>,
+    fieldElementMeta: ElementModel,
     entityId: String,
     fieldIndex: Int
 ): List<String> {
     val fieldId = getFieldId(entityId, fieldIndex)
-    val fieldMeta = fieldElementMeta as? EntityModel<Resolved>
+    val fieldMeta = fieldElementMeta as? EntityModel
         ?: return listOf("$fieldId is not an EntityModel. It is: ${fieldElementMeta.javaClass.simpleName}")
     return listOf(
         validateSingleStringField(fieldMeta, "name", fieldId),
@@ -141,7 +141,7 @@ private fun validateField(
     ).flatten()
 }
 
-private fun validateFieldType(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+private fun validateFieldType(fieldMeta: EntityModel, fieldId: String): List<String> {
     val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()
         ?: return listOf("$fieldId type is missing")
     return if (!FieldType.values().contains(fieldTypeMeta)) {
@@ -154,7 +154,7 @@ private fun validateFieldType(fieldMeta: EntityModel<Resolved>, fieldId: String)
     }
 }
 
-private fun validateEnumerationInfo(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+private fun validateEnumerationInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
     val infoId = "$fieldId enumeration info"
     val enumerationInfoMeta = runCatching { getEnumerationInfoMeta(fieldMeta) }.getOrNull()
         ?: return listOf("$infoId is missing")
@@ -164,7 +164,7 @@ private fun validateEnumerationInfo(fieldMeta: EntityModel<Resolved>, fieldId: S
     ).flatten()
 }
 
-private fun validateAssociationInfo(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+private fun validateAssociationInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
     val infoId = "$fieldId association info"
     val associationInfoMeta = runCatching { getAssociationInfoMeta(fieldMeta) }.getOrNull()
         ?: return listOf("$infoId is missing")
@@ -172,7 +172,7 @@ private fun validateAssociationInfo(fieldMeta: EntityModel<Resolved>, fieldId: S
     else listOf()
 }
 
-private fun validateEntityInfo(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+private fun validateEntityInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
     val infoId = "$fieldId entity info"
     val entityInfoMeta = runCatching { getEntityInfoMeta(fieldMeta) }.getOrNull()
         ?: return listOf("$infoId is missing")
@@ -182,7 +182,7 @@ private fun validateEntityInfo(fieldMeta: EntityModel<Resolved>, fieldId: String
     ).flatten()
 }
 
-private fun validateFieldMultiplicity(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+private fun validateFieldMultiplicity(fieldMeta: EntityModel, fieldId: String): List<String> {
     val multiplicityMeta = getMultiplicityMeta(fieldMeta)
     if (!Multiplicity.values().contains(multiplicityMeta)) {
         return listOf("$fieldId has an invalid multiplicity: ${multiplicityMeta.name.lowercase()}")
@@ -199,7 +199,7 @@ private fun validateFieldMultiplicity(fieldMeta: EntityModel<Resolved>, fieldId:
     }
 }
 
-private fun validateFieldIsKey(fieldMeta: EntityModel<Resolved>, fieldId: String): List<String> {
+private fun validateFieldIsKey(fieldMeta: EntityModel, fieldId: String): List<String> {
     if (!isKeyFieldMeta(fieldMeta)) return listOf()
     val errors = mutableListOf<String>()
     if (getMultiplicityMeta(fieldMeta) != Multiplicity.REQUIRED) errors.add("$fieldId is a key but not defined as required")
@@ -213,7 +213,7 @@ private fun validateFieldIsKey(fieldMeta: EntityModel<Resolved>, fieldId: String
 
 // Helpers
 
-private fun validateSingleStringField(meta: BaseEntityModel<Resolved>, fieldName: String, id: String): List<String> =
+private fun validateSingleStringField(meta: BaseEntityModel, fieldName: String, id: String): List<String> =
     when (runCatching { getSingleString(meta, fieldName) }.getOrNull()) {
         null -> listOf("$id $fieldName is missing")
         else -> listOf()

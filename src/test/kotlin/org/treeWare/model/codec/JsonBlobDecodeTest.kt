@@ -14,18 +14,18 @@ class JsonBlobDecodeTest {
     fun `JSON decoder decodes blob values`() {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val model = getMainModelFromJsonFile<Unit>(metaModel, "model/address_book_1.json") { null }
-        val persons = model.root.fields["person"] as MutableSetFieldModel<Unit>
+        val model = getMainModelFromJsonFile(metaModel, "model/address_book_1.json") { null }
+        val persons = model.root.fields["person"] as MutableSetFieldModel
 
-        val clarkKent = persons.values.first() as MutableEntityModel<Unit>
-        val clarkKentPictureField = clarkKent.fields["picture"] as MutableSingleFieldModel<Unit>
-        val clarkKentPicturePrimitive = clarkKentPictureField.value as MutablePrimitiveModel<Unit>
+        val clarkKent = persons.values.first() as MutableEntityModel
+        val clarkKentPictureField = clarkKent.fields["picture"] as MutableSingleFieldModel
+        val clarkKentPicturePrimitive = clarkKentPictureField.value as MutablePrimitiveModel
         val clarkKentPicture = clarkKentPicturePrimitive.value as ByteArray
         assertTrue("Picture of Clark Kent".toByteArray().contentEquals(clarkKentPicture))
 
-        val loisLane = persons.values.last() as MutableEntityModel<Unit>
-        val loisLanePictureField = loisLane.fields["picture"] as MutableSingleFieldModel<Unit>
-        val loisLanePicturePrimitive = loisLanePictureField.value as MutablePrimitiveModel<Unit>
+        val loisLane = persons.values.last() as MutableEntityModel
+        val loisLanePictureField = loisLane.fields["picture"] as MutableSingleFieldModel
+        val loisLanePicturePrimitive = loisLanePictureField.value as MutablePrimitiveModel
         val loisLanePicture = loisLanePicturePrimitive.value as ByteArray
         assertTrue("Picture of Lois Lane".toByteArray().contentEquals(loisLanePicture))
     }

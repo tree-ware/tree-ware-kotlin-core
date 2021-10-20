@@ -1,5 +1,7 @@
 package org.treeWare.model.core
 
+const val RESOLVED_AUX = "resolved"
+
 class Resolved(val fullName: String) {
     var password1wayHasher: Hasher? = null
         internal set
@@ -7,19 +9,19 @@ class Resolved(val fullName: String) {
     var password2wayCipher: Cipher? = null
         internal set
 
-    var enumerationMeta: EntityModel<Resolved>? = null
+    var enumerationMeta: EntityModel? = null
         internal set
 
     var associationMeta: ResolvedAssociationMeta? = null
         internal set
 
-    var compositionMeta: EntityModel<Resolved>? = null
+    var compositionMeta: EntityModel? = null
         internal set
 }
 
 data class ResolvedAssociationMeta(
-    val target: EntityModel<Resolved>,
-    val pathEntityMetaList: List<EntityModel<Resolved>>,
+    val target: EntityModel,
+    val pathEntityMetaList: List<EntityModel>,
     val keyPathElementList: List<String>,
-    val keyEntityMetaList: List<EntityModel<Resolved>>
+    val keyEntityMetaList: List<EntityModel>
 )

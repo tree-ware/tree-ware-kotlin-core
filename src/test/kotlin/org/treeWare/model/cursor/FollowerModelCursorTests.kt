@@ -2,6 +2,7 @@ package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.ElementModel
+import org.treeWare.model.core.getMetaAux
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
@@ -36,10 +37,10 @@ class FollowerModelCursorTests {
 private fun testFollowerSameModelInstance(inputFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
-    val model = getMainModelFromJsonFile<Unit>(metaModel, inputFilePath)
+    val model = getMainModelFromJsonFile(metaModel, inputFilePath)
 
     val leaderCursor = LeaderModelCursor(model)
-    val followerCursor = FollowerModelCursor<Unit, Unit>(model)
+    val followerCursor = FollowerModelCursor(model)
 
     val action = TraversalAction.CONTINUE
     while (true) {
@@ -56,13 +57,13 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getMainModelFromJsonFile<Unit>(metaModel, inputFilePath)
-    val followerModel = getMainModelFromJsonFile<Unit>(metaModel, inputFilePath)
+    val leaderModel = getMainModelFromJsonFile(metaModel, inputFilePath)
+    val followerModel = getMainModelFromJsonFile(metaModel, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
-    val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
+    val followerCursor = FollowerModelCursor(followerModel)
 
     val action = TraversalAction.CONTINUE
     while (true) {
@@ -84,15 +85,15 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
 private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
     val metaModel = newAddressBookMetaModel(null, null)
 
-    val leaderModel = getMainModelFromJsonFile<Unit>(metaModel, leaderFilePath)
-    val followerModel = getMainModelFromJsonFile<Unit>(metaModel, wildcardFilePath)
+    val leaderModel = getMainModelFromJsonFile(metaModel, leaderFilePath)
+    val followerModel = getMainModelFromJsonFile(metaModel, wildcardFilePath)
 
     val leaderCursor = LeaderModelCursor(leaderModel)
-    val followerCursor = FollowerModelCursor<Unit, Unit>(followerModel)
+    val followerCursor = FollowerModelCursor(followerModel)
 
     val jsonWriter = StringWriter()
     val wireFormatEncoder = JsonWireFormatEncoder(jsonWriter, true)
-    val encodingVisitor = ModelEncodingVisitor<Unit>(wireFormatEncoder, null, EncodePasswords.ALL)
+    val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, null, EncodePasswords.ALL)
 
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
@@ -118,4 +119,4 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
 }
 
 // TODO(deepak-nulu): return model path instead of meta-model path
-private fun <Aux> getPath(element: ElementModel<Aux>?): String? = element?.meta?.aux?.fullName
+private fun getPath(element: ElementModel?): String? = element?.getMetaAux()?.fullName

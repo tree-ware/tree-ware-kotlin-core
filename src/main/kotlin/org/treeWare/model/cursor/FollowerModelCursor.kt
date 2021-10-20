@@ -6,14 +6,14 @@ import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
 import org.treeWare.model.traversal.dispatchVisit
 import java.util.*
 
-class FollowerModelCursor<LeaderAux, FollowerAux>(private val initial: ElementModel<FollowerAux>) {
-    private val stateStack = FollowerStateStack<LeaderAux, FollowerAux>()
+class FollowerModelCursor(private val initial: ElementModel) {
+    private val stateStack = FollowerStateStack()
     private val stateFactoryVisitor = FollowerStateFactoryVisitor(stateStack)
     private var isAtStart = true
 
-    val element: ElementModel<FollowerAux>? get() = stateStack.peekFirst()?.element
+    val element: ElementModel? get() = stateStack.peekFirst()?.element
 
-    fun follow(move: LeaderModelCursorMove<LeaderAux>): FollowerModelCursorMove<FollowerAux>? = when {
+    fun follow(move: LeaderModelCursorMove): FollowerModelCursorMove? = when {
         isAtStart -> {
             isAtStart = false
             val initialState =
@@ -33,37 +33,37 @@ class FollowerModelCursor<LeaderAux, FollowerAux>(private val initial: ElementMo
     }
 }
 
-private typealias FollowerStateStack<LeaderAux, FollowerAux> = ArrayDeque<FollowerState<LeaderAux, FollowerAux>>
+private typealias FollowerStateStack = ArrayDeque<FollowerState>
 
-private abstract class FollowerState<LeaderAux, FollowerAux>(
-    val element: ElementModel<FollowerAux>?,
-    protected val stateStack: FollowerStateStack<LeaderAux, FollowerAux>
+private abstract class FollowerState(
+    val element: ElementModel?,
+    protected val stateStack: FollowerStateStack
 ) {
-    abstract val visitCursorMove: FollowerModelCursorMove<FollowerAux>
+    abstract val visitCursorMove: FollowerModelCursorMove
 
-    open fun follow(move: LeaderModelCursorMove<LeaderAux>): FollowerModelCursorMove<FollowerAux>? {
+    open fun follow(move: LeaderModelCursorMove): FollowerModelCursorMove? {
         throw IllegalStateException("Unknown move $move in state $this")
     }
 }
 
-private class NullFollowerState<LeaderAux, FollowerAux>(
-    override val visitCursorMove: FollowerModelCursorMove<FollowerAux>,
-    stateStack: FollowerStateStack<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(null, stateStack) {
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>): FollowerModelCursorMove<FollowerAux> {
+private class NullFollowerState(
+    override val visitCursorMove: FollowerModelCursorMove,
+    stateStack: FollowerStateStack
+) : FollowerState(null, stateStack) {
+    override fun follow(move: LeaderModelCursorMove): FollowerModelCursorMove {
         if (move.direction == CursorMoveDirection.VISIT) stateStack.addFirst(this) else stateStack.pollFirst()
         return FollowerModelCursorMove(move.direction, null)
     }
 }
 
-private class MainFollowerState<LeaderAux, FollowerAux>(
-    private val main: MainModel<FollowerAux>,
-    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(main, stateStack) {
+private class MainFollowerState(
+    private val main: MainModel,
+    stateStack: FollowerStateStack,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+) : FollowerState(main, stateStack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, main)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when {
+    override fun follow(move: LeaderModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.MAIN -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, main)
@@ -78,23 +78,23 @@ private class MainFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
-private abstract class BaseEntityFollowerState<LeaderAux, FollowerAux>(
-    private val baseEntity: BaseEntityModel<FollowerAux>,
-    stack: FollowerStateStack<LeaderAux, FollowerAux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(baseEntity, stack) {
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move.direction) {
+private abstract class BaseEntityFollowerState(
+    private val baseEntity: BaseEntityModel,
+    stack: FollowerStateStack,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+) : FollowerState(baseEntity, stack) {
+    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
         CursorMoveDirection.VISIT -> when (move.element.elementType) {
             ModelElementType.SINGLE_FIELD -> visitField(
-                move.element as SingleFieldModel<LeaderAux>,
+                move.element as SingleFieldModel,
                 FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
             )
             ModelElementType.LIST_FIELD -> visitField(
-                move.element as ListFieldModel<LeaderAux>,
+                move.element as ListFieldModel,
                 FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
             )
             ModelElementType.SET_FIELD -> visitField(
-                move.element as SetFieldModel<LeaderAux>,
+                move.element as SetFieldModel,
                 FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
             )
             else -> super.follow(move)
@@ -103,9 +103,9 @@ private abstract class BaseEntityFollowerState<LeaderAux, FollowerAux>(
     }
 
     private fun visitField(
-        leaderField: FieldModel<LeaderAux>,
-        nullVisitCursorMove: FollowerModelCursorMove<FollowerAux>
-    ): FollowerModelCursorMove<FollowerAux> {
+        leaderField: FieldModel,
+        nullVisitCursorMove: FollowerModelCursorMove
+    ): FollowerModelCursorMove {
         val leaderMeta = leaderField.meta ?: throw IllegalStateException("Meta is missing for leader field")
         val followerField = baseEntity.getField(getMetaName(leaderMeta))
         val fieldState = if (followerField == null) NullFollowerState(nullVisitCursorMove, stateStack)
@@ -115,14 +115,14 @@ private abstract class BaseEntityFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
-private class RootFollowerState<LeaderAux, FollowerAux>(
-    private val root: RootModel<FollowerAux>,
-    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
-    stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : BaseEntityFollowerState<LeaderAux, FollowerAux>(root, stateStack, stateFactoryVisitor) {
+private class RootFollowerState(
+    private val root: RootModel,
+    stateStack: FollowerStateStack,
+    stateFactoryVisitor: FollowerStateFactoryVisitor
+) : BaseEntityFollowerState(root, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, root)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when {
+    override fun follow(move: LeaderModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ROOT -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, root)
@@ -131,14 +131,14 @@ private class RootFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
-private class EntityFollowerState<LeaderAux, FollowerAux>(
-    private val entity: EntityModel<FollowerAux>,
-    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
-    stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : BaseEntityFollowerState<LeaderAux, FollowerAux>(entity, stateStack, stateFactoryVisitor) {
+private class EntityFollowerState(
+    private val entity: EntityModel,
+    stateStack: FollowerStateStack,
+    stateFactoryVisitor: FollowerStateFactoryVisitor
+) : BaseEntityFollowerState(entity, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, entity)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when {
+    override fun follow(move: LeaderModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ENTITY -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, entity)
@@ -149,14 +149,14 @@ private class EntityFollowerState<LeaderAux, FollowerAux>(
 
 // Fields
 
-private class SingleFieldFollowerState<LeaderAux, FollowerAux>(
-    private val field: SingleFieldModel<FollowerAux>,
-    stack: FollowerStateStack<LeaderAux, FollowerAux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(field, stack) {
+private class SingleFieldFollowerState(
+    private val field: SingleFieldModel,
+    stack: FollowerStateStack,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move.direction) {
+    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.SINGLE_FIELD -> {
                 stateStack.pollFirst()
@@ -199,14 +199,14 @@ private class SingleFieldFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
-private class ListFieldFollowerState<LeaderAux, FollowerAux>(
-    private val field: ListFieldModel<FollowerAux>,
-    stack: FollowerStateStack<LeaderAux, FollowerAux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(field, stack) {
+private class ListFieldFollowerState(
+    private val field: ListFieldModel,
+    stack: FollowerStateStack,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move.direction) {
+    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.LIST_FIELD -> {
                 stateStack.pollFirst()
@@ -222,8 +222,8 @@ private class ListFieldFollowerState<LeaderAux, FollowerAux>(
             ModelElementType.ENUMERATION,
             ModelElementType.ASSOCIATION -> {
                 val leaderValue =
-                    move.element as? ElementModel<LeaderAux> ?: throw IllegalStateException("expected list field value")
-                val followerValue: ElementModel<FollowerAux>? = field.getValueMatching(leaderValue)
+                    move.element as? ElementModel ?: throw IllegalStateException("expected list field value")
+                val followerValue: ElementModel? = field.getValueMatching(leaderValue)
                 val elementState =
                     if (followerValue == null) NullFollowerState(
                         FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
@@ -252,14 +252,14 @@ private class ListFieldFollowerState<LeaderAux, FollowerAux>(
     }
 }
 
-private class SetFieldFollowerState<LeaderAux, FollowerAux>(
-    private val field: SetFieldModel<FollowerAux>,
-    stack: FollowerStateStack<LeaderAux, FollowerAux>,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(field, stack) {
+private class SetFieldFollowerState(
+    private val field: SetFieldModel,
+    stack: FollowerStateStack,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move.direction) {
+    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.SET_FIELD -> {
                 stateStack.pollFirst()
@@ -275,8 +275,8 @@ private class SetFieldFollowerState<LeaderAux, FollowerAux>(
             ModelElementType.ENUMERATION,
             ModelElementType.ASSOCIATION -> {
                 val leaderValue =
-                    move.element as? ElementModel<LeaderAux> ?: throw IllegalStateException("expected set field value")
-                val followerValue: ElementModel<FollowerAux>? = field.getValueMatching(leaderValue)
+                    move.element as? ElementModel ?: throw IllegalStateException("expected set field value")
+                val followerValue: ElementModel? = field.getValueMatching(leaderValue)
                 val elementState =
                     if (followerValue == null) NullFollowerState(
                         FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
@@ -307,13 +307,13 @@ private class SetFieldFollowerState<LeaderAux, FollowerAux>(
 
 // Values
 
-private class ScalarValueFollowerState<LeaderAux, FollowerAux>(
-    private val value: ElementModel<FollowerAux>,
-    stack: FollowerStateStack<LeaderAux, FollowerAux>
-) : FollowerState<LeaderAux, FollowerAux>(value, stack) {
+private class ScalarValueFollowerState(
+    private val value: ElementModel,
+    stack: FollowerStateStack
+) : FollowerState(value, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, value)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when (move.direction) {
+    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.PRIMITIVE,
             ModelElementType.ALIAS,
@@ -332,14 +332,14 @@ private class ScalarValueFollowerState<LeaderAux, FollowerAux>(
 
 // Sub-values
 
-private class EntityKeysFollowerState<LeaderAux, FollowerAux>(
-    private val entityKeys: EntityKeysModel<FollowerAux>,
-    stateStack: FollowerStateStack<LeaderAux, FollowerAux>,
-    stateFactoryVisitor: FollowerStateFactoryVisitor<LeaderAux, FollowerAux>
-) : BaseEntityFollowerState<LeaderAux, FollowerAux>(entityKeys, stateStack, stateFactoryVisitor) {
+private class EntityKeysFollowerState(
+    private val entityKeys: EntityKeysModel,
+    stateStack: FollowerStateStack,
+    stateFactoryVisitor: FollowerStateFactoryVisitor
+) : BaseEntityFollowerState(entityKeys, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, entityKeys)
 
-    override fun follow(move: LeaderModelCursorMove<LeaderAux>) = when {
+    override fun follow(move: LeaderModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ENTITY_KEYS -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, entityKeys)
@@ -350,39 +350,39 @@ private class EntityKeysFollowerState<LeaderAux, FollowerAux>(
 
 // State factory visitor
 
-private class FollowerStateFactoryVisitor<LeaderAux, FollowerAux>(
-    private val stateStack: FollowerStateStack<LeaderAux, FollowerAux>
-) : AbstractLeader1Follower0ModelVisitor<FollowerAux, FollowerState<LeaderAux, FollowerAux>?>(null) {
-    override fun visit(leaderMain1: MainModel<FollowerAux>) = MainFollowerState(leaderMain1, stateStack, this)
-    override fun visit(leaderRoot1: RootModel<FollowerAux>) = RootFollowerState(leaderRoot1, stateStack, this)
-    override fun visit(leaderEntity1: EntityModel<FollowerAux>) = EntityFollowerState(leaderEntity1, stateStack, this)
+private class FollowerStateFactoryVisitor(
+    private val stateStack: FollowerStateStack
+) : AbstractLeader1Follower0ModelVisitor<FollowerState?>(null) {
+    override fun visit(leaderMain1: MainModel) = MainFollowerState(leaderMain1, stateStack, this)
+    override fun visit(leaderRoot1: RootModel) = RootFollowerState(leaderRoot1, stateStack, this)
+    override fun visit(leaderEntity1: EntityModel) = EntityFollowerState(leaderEntity1, stateStack, this)
 
     // Fields
 
-    override fun visit(leaderField1: SingleFieldModel<FollowerAux>) =
+    override fun visit(leaderField1: SingleFieldModel) =
         SingleFieldFollowerState(leaderField1, stateStack, this)
 
-    override fun visit(leaderField1: ListFieldModel<FollowerAux>) =
+    override fun visit(leaderField1: ListFieldModel) =
         ListFieldFollowerState(leaderField1, stateStack, this)
 
-    override fun visit(leaderField1: SetFieldModel<FollowerAux>) =
+    override fun visit(leaderField1: SetFieldModel) =
         SetFieldFollowerState(leaderField1, stateStack, this)
 
     // Values
 
-    override fun visit(leaderValue1: PrimitiveModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: AliasModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: Password1wayModel<FollowerAux>) =
+    override fun visit(leaderValue1: PrimitiveModel) = ScalarValueFollowerState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: AliasModel) = ScalarValueFollowerState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: Password1wayModel) =
         ScalarValueFollowerState(leaderValue1, stateStack)
 
-    override fun visit(leaderValue1: Password2wayModel<FollowerAux>) =
+    override fun visit(leaderValue1: Password2wayModel) =
         ScalarValueFollowerState(leaderValue1, stateStack)
 
-    override fun visit(leaderValue1: EnumerationModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: AssociationModel<FollowerAux>) = ScalarValueFollowerState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: EnumerationModel) = ScalarValueFollowerState(leaderValue1, stateStack)
+    override fun visit(leaderValue1: AssociationModel) = ScalarValueFollowerState(leaderValue1, stateStack)
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: EntityKeysModel<FollowerAux>) =
+    override fun visit(leaderEntityKeys1: EntityKeysModel) =
         EntityKeysFollowerState(leaderEntityKeys1, stateStack, this)
 }

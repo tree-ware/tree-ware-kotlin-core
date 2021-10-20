@@ -1,7 +1,6 @@
 package org.treeWare.metaModel
 
 import org.treeWare.metaModel.validation.validate
-import org.treeWare.model.core.Resolved
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.getFileReader
 import java.io.Reader
@@ -28,7 +27,7 @@ private fun assertJsonValidationErrors(
     expectedValidationErrors: List<String>,
     expectedDecodeErrors: List<String>
 ) {
-    val (metaModel, decodeErrors) = decodeJson<Resolved>(jsonReader, metaMetaModel, "data") { null }
+    val (metaModel, decodeErrors) = decodeJson(jsonReader, metaMetaModel, "data") { null }
     val errors = if (metaModel != null) validate(metaModel, null, null)
     else listOf("Meta-model decoding failed")
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))

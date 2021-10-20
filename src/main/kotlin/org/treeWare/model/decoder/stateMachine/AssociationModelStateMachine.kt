@@ -4,21 +4,22 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.MutableAssociationModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 
-class AssociationModelStateMachine<Aux>(
+class AssociationModelStateMachine(
     private val isListElement: Boolean,
-    private val associationFactory: () -> MutableAssociationModel<Aux>,
+    private val associationFactory: () -> MutableAssociationModel,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
-) : ValueDecodingStateMachine<Aux>, AbstractDecodingStateMachine(true) {
-    private var auxStateMachine: AuxDecodingStateMachine<Aux>? = null
-    private var association: MutableAssociationModel<Aux>? = null
+    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
+    private var auxStateMachine: AuxDecodingStateMachine? = null
+    private var association: MutableAssociationModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(aux: Aux) {
+    override fun setAux(auxType: String, aux: Any?) {
+        if (aux == null) return
         assert(association != null)
-        association?.aux = aux
+        association?.setAux(auxType, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -32,7 +33,7 @@ class AssociationModelStateMachine<Aux>(
             // Remove self from stack
             stack.pollFirst()
         } else {
-            auxStateMachine?.getAux()?.also { association?.aux = it }
+            auxStateMachine?.also { setAux(it.auxType, it.getAux()) }
             // This state-machine instance gets reused in lists, so clear it.
             auxStateMachine = null
         }
@@ -70,7 +71,7 @@ class AssociationModelStateMachine<Aux>(
         val key = keyName ?: ""
         val fieldAndAuxNames = getFieldAndAuxNames(key)
         if (fieldAndAuxNames == null) {
-            stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
         val (fieldName, auxName) = fieldAndAuxNames
@@ -80,7 +81,7 @@ class AssociationModelStateMachine<Aux>(
                 stack.addFirst(auxStateMachine)
                 auxStateMachine.newAux()
                 this.auxStateMachine = auxStateMachine
-            } else stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+            } else stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
         if (fieldName == "path_keys") {
@@ -89,7 +90,7 @@ class AssociationModelStateMachine<Aux>(
             }
             return true
         }
-        stack.addFirst(SkipUnknownStateMachine<Aux>(stack))
+        stack.addFirst(SkipUnknownStateMachine(stack))
         return true
     }
 

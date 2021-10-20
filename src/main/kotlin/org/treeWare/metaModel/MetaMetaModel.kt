@@ -4,7 +4,6 @@ import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutableListFieldModel
 import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.core.Resolved
 
 enum class Multiplicity { REQUIRED, OPTIONAL, LIST, SET }
 
@@ -30,7 +29,7 @@ enum class FieldType {
 
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
-fun newMainMetaMetaModel(): MutableMainModel<Resolved> {
+fun newMainMetaMetaModel(): MutableMainModel {
     val mainMeta = newMainMetaMeta()
     populateMain(mainMeta)
     val errors = validate(mainMeta, null, null)
@@ -38,25 +37,25 @@ fun newMainMetaMetaModel(): MutableMainModel<Resolved> {
     return mainMeta
 }
 
-private fun populateMain(mainMeta: MutableMainModel<Resolved>) {
+private fun populateMain(mainMeta: MutableMainModel) {
     newRootMetaMeta(mainMeta, "meta_model", "meta_model", "tree_ware_meta_model.main")
     val packagesMeta = newPackagesMetaMeta(mainMeta)
     populatePackages(packagesMeta)
 }
 
-private fun populatePackages(packagesMeta: MutableListFieldModel<Resolved>) {
+private fun populatePackages(packagesMeta: MutableListFieldModel) {
     val mainPackage = newPackageMetaMeta(packagesMeta, META_MODEL_MAIN_PACKAGE)
     populateMainPackage(mainPackage)
 }
 
-private fun populateMainPackage(mainPackage: MutableEntityModel<Resolved>) {
+private fun populateMainPackage(mainPackage: MutableEntityModel) {
     val entitiesMeta = newEntitiesMetaMeta(mainPackage)
     populateMainEntities(entitiesMeta)
     val enumerationsMeta = newEnumerationsMetaMeta(mainPackage)
     populateMainEnumerations(enumerationsMeta)
 }
 
-private fun populateMainEntities(entitiesMeta: MutableListFieldModel<Resolved>) {
+private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
     val metaModelEntityMeta = newEntityMetaMeta(entitiesMeta, "meta_model")
     populateMetaModelEntity(metaModelEntityMeta)
     val rootEntityMeta = newEntityMetaMeta(entitiesMeta, "root")
@@ -77,13 +76,13 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel<Resolved>) 
     populateEntityInfoEntity(entityInfoEntityMeta)
 }
 
-private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(metaModelEntityMeta)
     newCompositionFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE)
     newCompositionFieldMetaMeta(fields, "packages", null, "package", META_MODEL_MAIN_PACKAGE, "set")
 }
 
-private fun populateRootEntity(rootEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateRootEntity(rootEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(rootEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string")
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
@@ -91,7 +90,7 @@ private fun populateRootEntity(rootEntityMeta: MutableEntityModel<Resolved>) {
     newPrimitiveFieldMetaMeta(fields, "package", null, "string")
 }
 
-private fun populatePackageEntity(packageEntityMeta: MutableEntityModel<Resolved>) {
+private fun populatePackageEntity(packageEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(packageEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
@@ -99,27 +98,27 @@ private fun populatePackageEntity(packageEntityMeta: MutableEntityModel<Resolved
     newCompositionFieldMetaMeta(fields, "entities", null, "entity", META_MODEL_MAIN_PACKAGE, "set")
 }
 
-private fun populateEnumerationEntity(enumerationEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateEnumerationEntity(enumerationEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(enumerationEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newCompositionFieldMetaMeta(fields, "values", null, "enumeration_value", META_MODEL_MAIN_PACKAGE, "set")
 }
 
-private fun populateEnumerationValueEntity(enumerationValueEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateEnumerationValueEntity(enumerationValueEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(enumerationValueEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
 }
 
-private fun populateEntityEntity(entityEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateEntityEntity(entityEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(entityEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newCompositionFieldMetaMeta(fields, "fields", null, "field", META_MODEL_MAIN_PACKAGE, "set")
 }
 
-private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(fieldEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
@@ -132,24 +131,24 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel<Resolved>) {
 
 }
 
-private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(enumerationInfoEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string")
     newPrimitiveFieldMetaMeta(fields, "package", null, "string")
 }
 
-private fun populateEntityInfoEntity(entityInfoEntityMeta: MutableEntityModel<Resolved>) {
+private fun populateEntityInfoEntity(entityInfoEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(entityInfoEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string")
     newPrimitiveFieldMetaMeta(fields, "package", null, "string")
 }
 
-private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel<Resolved>) {
+private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel) {
     populateFieldTypeEnumeration(enumerationsMeta)
     populateMultiplicityEnumeration(enumerationsMeta)
 }
 
-fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel<Resolved>) {
+fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "field_type",
@@ -157,7 +156,7 @@ fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel<Resolve
         FieldType.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
 
-private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldModel<Resolved>) {
+private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "multiplicity",

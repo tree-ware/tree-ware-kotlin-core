@@ -4,13 +4,13 @@ import org.apache.logging.log4j.LogManager
 
 const val VALUE_KEY = "value"
 
-class ValueAndAuxStateMachine<Aux>(
+class ValueAndAuxStateMachine(
     private val isListElement: Boolean,
-    private val valueStateMachine: ValueDecodingStateMachine<Aux>,
-    auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?,
+    private val valueStateMachine: ValueDecodingStateMachine,
+    auxStateMachineFactory: () -> AuxDecodingStateMachine?,
     private val stack: DecodingStack
 ) : AbstractDecodingStateMachine(true) {
-    private val auxStateMachine: AuxDecodingStateMachine<Aux>? = auxStateMachineFactory()
+    private val auxStateMachine: AuxDecodingStateMachine? = auxStateMachineFactory()
     private val logger = LogManager.getLogger()
 
     override fun decodeKey(name: String): Boolean {
@@ -29,7 +29,7 @@ class ValueAndAuxStateMachine<Aux>(
     }
 
     override fun decodeObjectEnd(): Boolean {
-        auxStateMachine?.getAux()?.also { valueStateMachine.setAux(it) }
+        auxStateMachine?.also { valueStateMachine.setAux(it.auxType, it.getAux()) }
         if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()

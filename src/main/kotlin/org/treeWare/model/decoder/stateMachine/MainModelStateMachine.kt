@@ -2,17 +2,16 @@ package org.treeWare.model.decoder.stateMachine
 
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.core.Resolved
 import org.treeWare.model.decoder.ModelDecoderOptions
 
-class MainModelStateMachine<Aux>(
-    private val meta: MainModel<Resolved>,
+class MainModelStateMachine(
+    private val meta: MainModel,
     private val expectedModelType: String,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
-    private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>?
+    private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine?
 ) : AbstractDecodingStateMachine(true) {
-    var mainModel: MutableMainModel<Aux>? = null
+    var mainModel: MutableMainModel? = null
         private set
     val errors = mutableListOf<String>()
 
@@ -49,8 +48,8 @@ class MainModelStateMachine<Aux>(
 
     private fun decodeModel(
         modelType: String,
-        newMain: MutableMainModel<Aux>,
-        auxStateMachineFactory: () -> AuxDecodingStateMachine<Aux>?
+        newMain: MutableMainModel,
+        auxStateMachineFactory: () -> AuxDecodingStateMachine?
     ) {
         newMain.type = modelType
         val root = newMain.getOrNewRoot()

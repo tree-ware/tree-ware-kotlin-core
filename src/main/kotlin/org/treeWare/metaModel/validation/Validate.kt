@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager
 import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.core.Resolved
 
 /** Validates the specified meta-model.
  * Returns a list of errors. Returns an empty list if there are no errors.
@@ -15,7 +14,7 @@ import org.treeWare.model.core.Resolved
  * 3. Hasher and cipher instances are passed to password meta.
  */
 fun validate(
-    mainMeta: MutableMainModel<Resolved>,
+    mainMeta: MutableMainModel,
     hasher: Hasher?,
     cipher: Cipher?,
     logFullNames: Boolean = false

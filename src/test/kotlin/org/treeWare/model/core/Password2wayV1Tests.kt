@@ -82,17 +82,17 @@ class Password2wayV1Tests {
     }
 }
 
-private fun getPassword2wayModel(cipher: CipherV1?): MutablePassword2wayModel<Unit> {
+private fun getPassword2wayModel(cipher: CipherV1?): MutablePassword2wayModel {
     val resolved = Resolved("dummy/field")
     resolved.password2wayCipher = cipher
 
-    val dummyMainMeta = MutableMainModel<Resolved>(null)
+    val dummyMainMeta = MutableMainModel(null)
     val dummyRootMeta = MutableRootModel(null, dummyMainMeta)
     val dummyFieldParentMeta = MutableSingleFieldModel(null, dummyRootMeta)
     val dummyFieldMeta = MutableEntityModel(null, dummyFieldParentMeta)
-    dummyFieldMeta.aux = resolved
+    dummyFieldMeta.setAux(RESOLVED_AUX, resolved)
 
-    val dummyMain = MutableMainModel<Unit>(null)
+    val dummyMain = MutableMainModel(null)
     val dummyEntity = MutableRootModel(null, dummyMain)
     val dummyField = MutableSingleFieldModel(dummyFieldMeta, dummyEntity)
     return MutablePassword2wayModel(dummyField)

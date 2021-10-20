@@ -4,9 +4,9 @@ import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.LeaderModelCursor
 
-fun <LeaderAux> forEach(
-    leader: ElementModel<LeaderAux>,
-    visitor: Leader1Follower0ModelVisitor<LeaderAux, TraversalAction>
+fun forEach(
+    leader: ElementModel,
+    visitor: Leader1Follower0ModelVisitor<TraversalAction>
 ): TraversalAction {
     val leaderCursor = LeaderModelCursor(leader)
     var action = TraversalAction.CONTINUE
@@ -23,94 +23,94 @@ fun <LeaderAux> forEach(
     return action
 }
 
-fun <LeaderAux, Return> dispatchVisit(
-    leader: ElementModel<LeaderAux>,
-    visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
+fun <Return> dispatchVisit(
+    leader: ElementModel,
+    visitor: Leader1Follower0ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
     ModelElementType.MAIN -> {
-        visitor.visit(leader as MainModel<LeaderAux>)
+        visitor.visit(leader as MainModel)
     }
     ModelElementType.ROOT -> {
-        visitor.visit(leader as RootModel<LeaderAux>)
+        visitor.visit(leader as RootModel)
     }
     ModelElementType.ENTITY -> {
-        visitor.visit(leader as EntityModel<LeaderAux>)
+        visitor.visit(leader as EntityModel)
     }
     ModelElementType.SINGLE_FIELD -> {
-        visitor.visit(leader as SingleFieldModel<LeaderAux>)
+        visitor.visit(leader as SingleFieldModel)
     }
     ModelElementType.LIST_FIELD -> {
-        visitor.visit(leader as ListFieldModel<LeaderAux>)
+        visitor.visit(leader as ListFieldModel)
     }
     ModelElementType.SET_FIELD -> {
-        visitor.visit(leader as SetFieldModel<LeaderAux>)
+        visitor.visit(leader as SetFieldModel)
     }
     ModelElementType.PRIMITIVE -> {
-        visitor.visit(leader as PrimitiveModel<LeaderAux>)
+        visitor.visit(leader as PrimitiveModel)
     }
     ModelElementType.ALIAS -> {
-        visitor.visit(leader as AliasModel<LeaderAux>)
+        visitor.visit(leader as AliasModel)
     }
     ModelElementType.PASSWORD1WAY -> {
-        visitor.visit(leader as Password1wayModel<LeaderAux>)
+        visitor.visit(leader as Password1wayModel)
     }
     ModelElementType.PASSWORD2WAY -> {
-        visitor.visit(leader as Password2wayModel<LeaderAux>)
+        visitor.visit(leader as Password2wayModel)
     }
     ModelElementType.ENUMERATION -> {
-        visitor.visit(leader as EnumerationModel<LeaderAux>)
+        visitor.visit(leader as EnumerationModel)
     }
     ModelElementType.ASSOCIATION -> {
-        visitor.visit(leader as AssociationModel<LeaderAux>)
+        visitor.visit(leader as AssociationModel)
     }
     ModelElementType.ENTITY_KEYS -> {
-        visitor.visit(leader as EntityKeysModel<LeaderAux>)
+        visitor.visit(leader as EntityKeysModel)
     }
 }
 
-fun <LeaderAux, Return> dispatchLeave(
-    leader: ElementModel<LeaderAux>,
-    visitor: Leader1Follower0ModelVisitor<LeaderAux, Return>
+fun <Return> dispatchLeave(
+    leader: ElementModel,
+    visitor: Leader1Follower0ModelVisitor<Return>
 ) {
     when (leader.elementType) {
         ModelElementType.MAIN -> {
-            visitor.leave(leader as MainModel<LeaderAux>)
+            visitor.leave(leader as MainModel)
         }
         ModelElementType.ROOT -> {
-            visitor.leave(leader as RootModel<LeaderAux>)
+            visitor.leave(leader as RootModel)
         }
         ModelElementType.ENTITY -> {
-            visitor.leave(leader as EntityModel<LeaderAux>)
+            visitor.leave(leader as EntityModel)
         }
         ModelElementType.SINGLE_FIELD -> {
-            visitor.leave(leader as SingleFieldModel<LeaderAux>)
+            visitor.leave(leader as SingleFieldModel)
         }
         ModelElementType.LIST_FIELD -> {
-            visitor.leave(leader as ListFieldModel<LeaderAux>)
+            visitor.leave(leader as ListFieldModel)
         }
         ModelElementType.SET_FIELD -> {
-            visitor.leave(leader as SetFieldModel<LeaderAux>)
+            visitor.leave(leader as SetFieldModel)
         }
         ModelElementType.PRIMITIVE -> {
-            visitor.leave(leader as PrimitiveModel<LeaderAux>)
+            visitor.leave(leader as PrimitiveModel)
         }
         ModelElementType.ALIAS -> {
-            visitor.leave(leader as AliasModel<LeaderAux>)
+            visitor.leave(leader as AliasModel)
         }
         ModelElementType.PASSWORD1WAY -> {
-            visitor.leave(leader as Password1wayModel<LeaderAux>)
+            visitor.leave(leader as Password1wayModel)
         }
         ModelElementType.PASSWORD2WAY -> {
-            visitor.leave(leader as Password2wayModel<LeaderAux>)
+            visitor.leave(leader as Password2wayModel)
         }
         ModelElementType.ENUMERATION -> {
-            visitor.leave(leader as EnumerationModel<LeaderAux>)
+            visitor.leave(leader as EnumerationModel)
         }
         ModelElementType.ASSOCIATION -> {
-            visitor.leave(leader as AssociationModel<LeaderAux>)
+            visitor.leave(leader as AssociationModel)
         }
         ModelElementType.ENTITY_KEYS -> {
-            visitor.leave(leader as EntityKeysModel<LeaderAux>)
+            visitor.leave(leader as EntityKeysModel)
         }
     }
 }

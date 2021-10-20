@@ -5,15 +5,15 @@ import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.FollowerModelCursor
 import org.treeWare.model.cursor.LeaderModelCursor
 
-suspend fun <LeaderAux, Follower1Aux, Follower2Aux> forEach(
-    leader: ElementModel<LeaderAux>,
-    follower1: ElementModel<Follower1Aux>,
-    follower2: ElementModel<Follower2Aux>,
-    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, TraversalAction>
+suspend fun forEach(
+    leader: ElementModel,
+    follower1: ElementModel,
+    follower2: ElementModel,
+    visitor: Leader1Follower2ModelVisitor<TraversalAction>
 ): TraversalAction {
     val leaderCursor = LeaderModelCursor(leader)
-    val follower1Cursor = FollowerModelCursor<LeaderAux, Follower1Aux>(follower1)
-    val follower2Cursor = FollowerModelCursor<LeaderAux, Follower2Aux>(follower2)
+    val follower1Cursor = FollowerModelCursor(follower1)
+    val follower2Cursor = FollowerModelCursor(follower2)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
@@ -39,11 +39,11 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux> forEach(
     return action
 }
 
-suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
-    leader: ElementModel<LeaderAux>,
-    follower1: ElementModel<Follower1Aux>?,
-    follower2: ElementModel<Follower2Aux>?,
-    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Return>
+suspend fun <Return> dispatchVisit(
+    leader: ElementModel,
+    follower1: ElementModel?,
+    follower2: ElementModel?,
+    visitor: Leader1Follower2ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
     ModelElementType.MAIN -> {
         if (follower1 != null) assert(follower1.elementType == ModelElementType.MAIN)
@@ -52,9 +52,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
             (follower2 == null || follower2.elementType == ModelElementType.MAIN)
         ) visitor.visit(
-            leader as MainModel<LeaderAux>,
-            follower1 as MainModel<Follower1Aux>?,
-            follower2 as MainModel<Follower2Aux>?,
+            leader as MainModel,
+            follower1 as MainModel?,
+            follower2 as MainModel?,
         )
         else null
     }
@@ -65,9 +65,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.ROOT) &&
             (follower2 == null || follower2.elementType == ModelElementType.ROOT)
         ) visitor.visit(
-            leader as RootModel<LeaderAux>,
-            follower1 as RootModel<Follower1Aux>?,
-            follower2 as RootModel<Follower2Aux>?,
+            leader as RootModel,
+            follower1 as RootModel?,
+            follower2 as RootModel?,
         )
         else null
     }
@@ -78,9 +78,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.ENTITY) &&
             (follower2 == null || follower2.elementType == ModelElementType.ENTITY)
         ) visitor.visit(
-            leader as EntityModel<LeaderAux>,
-            follower1 as EntityModel<Follower1Aux>?,
-            follower2 as EntityModel<Follower2Aux>?,
+            leader as EntityModel,
+            follower1 as EntityModel?,
+            follower2 as EntityModel?,
         )
         else null
     }
@@ -91,9 +91,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.SINGLE_FIELD) &&
             (follower2 == null || follower2.elementType == ModelElementType.SINGLE_FIELD)
         ) visitor.visit(
-            leader as SingleFieldModel<LeaderAux>,
-            follower1 as SingleFieldModel<Follower1Aux>?,
-            follower2 as SingleFieldModel<Follower2Aux>?,
+            leader as SingleFieldModel,
+            follower1 as SingleFieldModel?,
+            follower2 as SingleFieldModel?,
         )
         else null
     }
@@ -104,9 +104,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.LIST_FIELD) &&
             (follower2 == null || follower2.elementType == ModelElementType.LIST_FIELD)
         ) visitor.visit(
-            leader as ListFieldModel<LeaderAux>,
-            follower1 as ListFieldModel<Follower1Aux>?,
-            follower2 as ListFieldModel<Follower2Aux>?,
+            leader as ListFieldModel,
+            follower1 as ListFieldModel?,
+            follower2 as ListFieldModel?,
         )
         else null
     }
@@ -117,9 +117,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.SET_FIELD) &&
             (follower2 == null || follower2.elementType == ModelElementType.SET_FIELD)
         ) visitor.visit(
-            leader as SetFieldModel<LeaderAux>,
-            follower1 as SetFieldModel<Follower1Aux>?,
-            follower2 as SetFieldModel<Follower2Aux>?,
+            leader as SetFieldModel,
+            follower1 as SetFieldModel?,
+            follower2 as SetFieldModel?,
         )
         else null
     }
@@ -130,9 +130,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.PRIMITIVE) &&
             (follower2 == null || follower2.elementType == ModelElementType.PRIMITIVE)
         ) visitor.visit(
-            leader as PrimitiveModel<LeaderAux>,
-            follower1 as PrimitiveModel<Follower1Aux>?,
-            follower2 as PrimitiveModel<Follower2Aux>?,
+            leader as PrimitiveModel,
+            follower1 as PrimitiveModel?,
+            follower2 as PrimitiveModel?,
         )
         else null
     }
@@ -143,9 +143,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.ALIAS) &&
             (follower2 == null || follower2.elementType == ModelElementType.ALIAS)
         ) visitor.visit(
-            leader as AliasModel<LeaderAux>,
-            follower1 as AliasModel<Follower1Aux>?,
-            follower2 as AliasModel<Follower2Aux>?,
+            leader as AliasModel,
+            follower1 as AliasModel?,
+            follower2 as AliasModel?,
         )
         else null
     }
@@ -156,9 +156,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.PASSWORD1WAY) &&
             (follower2 == null || follower2.elementType == ModelElementType.PASSWORD1WAY)
         ) visitor.visit(
-            leader as Password1wayModel<LeaderAux>,
-            follower1 as Password1wayModel<Follower1Aux>?,
-            follower2 as Password1wayModel<Follower2Aux>?,
+            leader as Password1wayModel,
+            follower1 as Password1wayModel?,
+            follower2 as Password1wayModel?,
         )
         else null
     }
@@ -169,9 +169,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.PASSWORD2WAY) &&
             (follower2 == null || follower2.elementType == ModelElementType.PASSWORD2WAY)
         ) visitor.visit(
-            leader as Password2wayModel<LeaderAux>,
-            follower1 as Password2wayModel<Follower1Aux>?,
-            follower2 as Password2wayModel<Follower2Aux>?,
+            leader as Password2wayModel,
+            follower1 as Password2wayModel?,
+            follower2 as Password2wayModel?,
         )
         else null
     }
@@ -182,9 +182,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.ENUMERATION) &&
             (follower2 == null || follower2.elementType == ModelElementType.ENUMERATION)
         ) visitor.visit(
-            leader as EnumerationModel<LeaderAux>,
-            follower1 as EnumerationModel<Follower1Aux>?,
-            follower2 as EnumerationModel<Follower2Aux>?,
+            leader as EnumerationModel,
+            follower1 as EnumerationModel?,
+            follower2 as EnumerationModel?,
         )
         else null
     }
@@ -195,9 +195,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.ASSOCIATION) &&
             (follower2 == null || follower2.elementType == ModelElementType.ASSOCIATION)
         ) visitor.visit(
-            leader as AssociationModel<LeaderAux>,
-            follower1 as AssociationModel<Follower1Aux>?,
-            follower2 as AssociationModel<Follower2Aux>?,
+            leader as AssociationModel,
+            follower1 as AssociationModel?,
+            follower2 as AssociationModel?,
         )
         else null
     }
@@ -208,19 +208,19 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchVisit(
             (follower1 == null || follower1.elementType == ModelElementType.ENTITY_KEYS) &&
             (follower2 == null || follower2.elementType == ModelElementType.ENTITY_KEYS)
         ) visitor.visit(
-            leader as EntityKeysModel<LeaderAux>,
-            follower1 as EntityKeysModel<Follower1Aux>?,
-            follower2 as EntityKeysModel<Follower2Aux>?,
+            leader as EntityKeysModel,
+            follower1 as EntityKeysModel?,
+            follower2 as EntityKeysModel?,
         )
         else null
     }
 }
 
-suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
-    leader: ElementModel<LeaderAux>,
-    follower1: ElementModel<Follower1Aux>?,
-    follower2: ElementModel<Follower2Aux>?,
-    visitor: Leader1Follower2ModelVisitor<LeaderAux, Follower1Aux, Follower2Aux, Return>
+suspend fun <Return> dispatchLeave(
+    leader: ElementModel,
+    follower1: ElementModel?,
+    follower2: ElementModel?,
+    visitor: Leader1Follower2ModelVisitor<Return>
 ) {
     when (leader.elementType) {
         ModelElementType.MAIN -> {
@@ -230,9 +230,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
                 (follower2 == null || follower2.elementType == ModelElementType.MAIN)
             ) visitor.leave(
-                leader as MainModel<LeaderAux>,
-                follower1 as MainModel<Follower1Aux>?,
-                follower2 as MainModel<Follower2Aux>?,
+                leader as MainModel,
+                follower1 as MainModel?,
+                follower2 as MainModel?,
             )
         }
         ModelElementType.ROOT -> {
@@ -242,9 +242,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.ROOT) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ROOT)
             ) visitor.leave(
-                leader as RootModel<LeaderAux>,
-                follower1 as RootModel<Follower1Aux>?,
-                follower2 as RootModel<Follower2Aux>?,
+                leader as RootModel,
+                follower1 as RootModel?,
+                follower2 as RootModel?,
             )
         }
         ModelElementType.ENTITY -> {
@@ -254,9 +254,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.ENTITY) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ENTITY)
             ) visitor.leave(
-                leader as EntityModel<LeaderAux>,
-                follower1 as EntityModel<Follower1Aux>?,
-                follower2 as EntityModel<Follower2Aux>?,
+                leader as EntityModel,
+                follower1 as EntityModel?,
+                follower2 as EntityModel?,
             )
         }
         ModelElementType.SINGLE_FIELD -> {
@@ -266,9 +266,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.SINGLE_FIELD) &&
                 (follower2 == null || follower2.elementType == ModelElementType.SINGLE_FIELD)
             ) visitor.leave(
-                leader as SingleFieldModel<LeaderAux>,
-                follower1 as SingleFieldModel<Follower1Aux>?,
-                follower2 as SingleFieldModel<Follower2Aux>?,
+                leader as SingleFieldModel,
+                follower1 as SingleFieldModel?,
+                follower2 as SingleFieldModel?,
             )
         }
         ModelElementType.LIST_FIELD -> {
@@ -278,9 +278,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.LIST_FIELD) &&
                 (follower2 == null || follower2.elementType == ModelElementType.LIST_FIELD)
             ) visitor.leave(
-                leader as ListFieldModel<LeaderAux>,
-                follower1 as ListFieldModel<Follower1Aux>?,
-                follower2 as ListFieldModel<Follower2Aux>?,
+                leader as ListFieldModel,
+                follower1 as ListFieldModel?,
+                follower2 as ListFieldModel?,
             )
         }
         ModelElementType.SET_FIELD -> {
@@ -290,9 +290,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.SET_FIELD) &&
                 (follower2 == null || follower2.elementType == ModelElementType.SET_FIELD)
             ) visitor.leave(
-                leader as SetFieldModel<LeaderAux>,
-                follower1 as SetFieldModel<Follower1Aux>?,
-                follower2 as SetFieldModel<Follower2Aux>?,
+                leader as SetFieldModel,
+                follower1 as SetFieldModel?,
+                follower2 as SetFieldModel?,
             )
         }
         ModelElementType.PRIMITIVE -> {
@@ -302,9 +302,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.PRIMITIVE) &&
                 (follower2 == null || follower2.elementType == ModelElementType.PRIMITIVE)
             ) visitor.leave(
-                leader as PrimitiveModel<LeaderAux>,
-                follower1 as PrimitiveModel<Follower1Aux>?,
-                follower2 as PrimitiveModel<Follower2Aux>?,
+                leader as PrimitiveModel,
+                follower1 as PrimitiveModel?,
+                follower2 as PrimitiveModel?,
             )
         }
         ModelElementType.ALIAS -> {
@@ -314,9 +314,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.ALIAS) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ALIAS)
             ) visitor.leave(
-                leader as AliasModel<LeaderAux>,
-                follower1 as AliasModel<Follower1Aux>?,
-                follower2 as AliasModel<Follower2Aux>?,
+                leader as AliasModel,
+                follower1 as AliasModel?,
+                follower2 as AliasModel?,
             )
         }
         ModelElementType.PASSWORD1WAY -> {
@@ -326,9 +326,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.PASSWORD1WAY) &&
                 (follower2 == null || follower2.elementType == ModelElementType.PASSWORD1WAY)
             ) visitor.leave(
-                leader as Password1wayModel<LeaderAux>,
-                follower1 as Password1wayModel<Follower1Aux>?,
-                follower2 as Password1wayModel<Follower2Aux>?,
+                leader as Password1wayModel,
+                follower1 as Password1wayModel?,
+                follower2 as Password1wayModel?,
             )
         }
         ModelElementType.PASSWORD2WAY -> {
@@ -338,9 +338,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.PASSWORD2WAY) &&
                 (follower2 == null || follower2.elementType == ModelElementType.PASSWORD2WAY)
             ) visitor.leave(
-                leader as Password2wayModel<LeaderAux>,
-                follower1 as Password2wayModel<Follower1Aux>?,
-                follower2 as Password2wayModel<Follower2Aux>?,
+                leader as Password2wayModel,
+                follower1 as Password2wayModel?,
+                follower2 as Password2wayModel?,
             )
         }
         ModelElementType.ENUMERATION -> {
@@ -350,9 +350,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.ENUMERATION) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ENUMERATION)
             ) visitor.leave(
-                leader as EnumerationModel<LeaderAux>,
-                follower1 as EnumerationModel<Follower1Aux>?,
-                follower2 as EnumerationModel<Follower2Aux>?,
+                leader as EnumerationModel,
+                follower1 as EnumerationModel?,
+                follower2 as EnumerationModel?,
             )
         }
         ModelElementType.ASSOCIATION -> {
@@ -362,9 +362,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.ASSOCIATION) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ASSOCIATION)
             ) visitor.leave(
-                leader as AssociationModel<LeaderAux>,
-                follower1 as AssociationModel<Follower1Aux>?,
-                follower2 as AssociationModel<Follower2Aux>?,
+                leader as AssociationModel,
+                follower1 as AssociationModel?,
+                follower2 as AssociationModel?,
             )
         }
         ModelElementType.ENTITY_KEYS -> {
@@ -374,9 +374,9 @@ suspend fun <LeaderAux, Follower1Aux, Follower2Aux, Return> dispatchLeave(
                 (follower1 == null || follower1.elementType == ModelElementType.ENTITY_KEYS) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ENTITY_KEYS)
             ) visitor.leave(
-                leader as EntityKeysModel<LeaderAux>,
-                follower1 as EntityKeysModel<Follower1Aux>?,
-                follower2 as EntityKeysModel<Follower2Aux>?,
+                leader as EntityKeysModel,
+                follower1 as EntityKeysModel?,
+                follower2 as EntityKeysModel?,
             )
         }
     }

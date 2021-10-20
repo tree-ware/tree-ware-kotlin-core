@@ -16,7 +16,7 @@ import java.io.StringWriter
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-fun <Aux> testRoundTrip(
+fun testRoundTrip(
     inputFilePath: String,
     outputFilePath: String? = null,
     auxEncoder: AuxEncoder? = null,
@@ -26,7 +26,7 @@ fun <Aux> testRoundTrip(
     expectedDecodeErrors: List<String> = listOf(),
     hasher: Hasher? = null,
     cipher: Cipher? = null,
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
 ) {
     val metaModel = newAddressBookMetaModel(hasher, cipher)
 
@@ -53,14 +53,14 @@ fun readFile(filePath: String): String {
     return text
 }
 
-fun <Aux> getMainModelFromJsonString(
-    meta: MainModel<Resolved>,
+fun getMainModelFromJsonString(
+    meta: MainModel,
     jsonString: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
-): MutableMainModel<Aux> = getMainModelFromJson(
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+): MutableMainModel = getMainModelFromJson(
     meta,
     StringReader(jsonString),
     options,
@@ -69,14 +69,14 @@ fun <Aux> getMainModelFromJsonString(
     auxStateMachineFactory
 )
 
-fun <Aux> getMainModelFromJsonFile(
-    meta: MainModel<Resolved>,
+fun getMainModelFromJsonFile(
+    meta: MainModel,
     jsonFilePath: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
-): MutableMainModel<Aux> = getMainModelFromJson(
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+): MutableMainModel = getMainModelFromJson(
     meta,
     getFileReader(jsonFilePath),
     options,
@@ -85,14 +85,14 @@ fun <Aux> getMainModelFromJsonFile(
     auxStateMachineFactory
 )
 
-fun <Aux> getMainModelFromJson(
-    meta: MainModel<Resolved>,
+fun getMainModelFromJson(
+    meta: MainModel,
     jsonReader: Reader,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine<Aux>? = { null }
-): MutableMainModel<Aux> {
+    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+): MutableMainModel {
     val (mainModel, decodeErrors) = decodeJson(
         jsonReader,
         meta,
@@ -108,8 +108,8 @@ fun <Aux> getMainModelFromJson(
 
 /** Encodes the model element to JSON and asserts that it matches the JSON in the file.
  */
-fun <Aux> assertMatchesJson(
-    element: ElementModel<Aux>,
+fun assertMatchesJson(
+    element: ElementModel,
     auxEncoder: AuxEncoder?,
     jsonFilePath: String,
     encodePasswords: EncodePasswords
