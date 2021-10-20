@@ -9,7 +9,7 @@ interface ElementModel {
     fun matches(that: ElementModel): Boolean
 }
 
-inline fun <reified Aux> ElementModel.getAux(auxType: String): Aux? = this.auxs?.let { it[auxType] as? Aux? }
+inline fun <reified Aux> ElementModel.getAux(auxName: String): Aux? = this.auxs?.let { it[auxName] as? Aux? }
 
 fun ElementModel.getMetaAux(): Resolved? = this.meta?.getAux<Resolved>(RESOLVED_AUX)
 

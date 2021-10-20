@@ -37,7 +37,7 @@ class DecoderMissingKeysTests {
             metaModel,
             "data",
             ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR)
-        ) { null }
+        )
         fileReader.close()
 
         val expectedDecodeErrors = listOf("Missing key fields: [id]")

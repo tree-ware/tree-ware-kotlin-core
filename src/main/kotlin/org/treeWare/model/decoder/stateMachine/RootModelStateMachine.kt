@@ -10,13 +10,13 @@ class RootModelStateMachine(
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : AbstractDecodingStateMachine(true) {
-    private val auxStateMachine = auxStateMachineFactory()
+    private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
 
-    private fun setAux(auxType: String, aux: Any?) {
+    private fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
-        root.setAux(auxType, aux)
+        root.setAux(auxName, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -25,7 +25,9 @@ class RootModelStateMachine(
 
     override fun decodeObjectEnd(): Boolean {
         // TODO(deepak-nulu): set aux when found rather than on the way out.
-        auxStateMachine?.also { setAux(it.auxType, it.getAux()) }
+        auxStateMachines.forEach { (auxName, auxStateMachine) ->
+            setAux(auxName, auxStateMachine.getAux())
+        }
         // Remove self from stack
         stack.pollFirst()
         return true
@@ -56,16 +58,28 @@ class RootModelStateMachine(
         val key = keyName ?: ""
         if (key == rootName) {
             val entityStateMachine =
-                BaseEntityStateMachine(false, null, { root }, stack, options, errors, auxStateMachineFactory)
+                BaseEntityStateMachine(
+                    false,
+                    null,
+                    { root },
+                    stack,
+                    options,
+                    errors,
+                    multiAuxDecodingStateMachineFactory
+                )
             stack.addFirst(entityStateMachine)
             return true
-        } else if (auxStateMachine != null) {
-            val fieldAndAuxNames = getFieldAndAuxNames(key)
-            if (fieldAndAuxNames?.fieldName == rootName) {
-                // TODO(deepak-nulu): also validate auxName.
-                stack.addFirst(auxStateMachine)
-                auxStateMachine.newAux()
-                return true
+        } else {
+            getFieldAndAuxNames(key)?.also { (fieldName, auxName) ->
+                if (fieldName == rootName && auxName != null) {
+                    val auxStateMachine = multiAuxDecodingStateMachineFactory.newAuxDecodingStateMachine(auxName, stack)
+                    if (auxStateMachine != null) {
+                        stack.addFirst(auxStateMachine)
+                        auxStateMachine.newAux()
+                        auxStateMachines[auxName] = auxStateMachine
+                        return true
+                    }
+                }
             }
         }
         stack.addFirst(SkipUnknownStateMachine(stack))

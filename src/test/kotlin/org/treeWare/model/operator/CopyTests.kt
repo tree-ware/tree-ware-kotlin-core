@@ -15,6 +15,6 @@ class CopyTests {
         val input = getMainModelFromJsonFile(metaModel, modelJsonFile)
         val clone = MutableMainModel(metaModel)
         copy(input, clone)
-        assertMatchesJson(clone, null, modelJsonFile, EncodePasswords.ALL)
+        assertMatchesJson(clone, modelJsonFile, EncodePasswords.ALL)
     }
 }

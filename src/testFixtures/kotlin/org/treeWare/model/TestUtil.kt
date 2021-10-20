@@ -4,10 +4,9 @@ import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.decodeJson
-import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachine
-import org.treeWare.model.decoder.stateMachine.DecodingStack
-import org.treeWare.model.encoder.AuxEncoder
+import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.encoder.EncodePasswords
+import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.encodeJson
 import java.io.InputStreamReader
 import java.io.Reader
@@ -19,14 +18,14 @@ import kotlin.test.assertTrue
 fun testRoundTrip(
     inputFilePath: String,
     outputFilePath: String? = null,
-    auxEncoder: AuxEncoder? = null,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
     hasher: Hasher? = null,
     cipher: Cipher? = null,
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ) {
     val metaModel = newAddressBookMetaModel(hasher, cipher)
 
@@ -37,9 +36,9 @@ fun testRoundTrip(
             options,
             expectedModelType,
             expectedDecodeErrors,
-            auxStateMachineFactory
+            multiAuxDecodingStateMachineFactory
         )
-    assertMatchesJson(model, auxEncoder, outputFilePath ?: inputFilePath, encodePasswords)
+    assertMatchesJson(model, outputFilePath ?: inputFilePath, encodePasswords, multiAuxEncoder)
 }
 
 fun getFileReader(filePath: String): Reader =
@@ -59,14 +58,14 @@ fun getMainModelFromJsonString(
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel = getMainModelFromJson(
     meta,
     StringReader(jsonString),
     options,
     expectedModelType,
     expectedDecodeErrors,
-    auxStateMachineFactory
+    multiAuxDecodingStateMachineFactory
 )
 
 fun getMainModelFromJsonFile(
@@ -75,14 +74,14 @@ fun getMainModelFromJsonFile(
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel = getMainModelFromJson(
     meta,
     getFileReader(jsonFilePath),
     options,
     expectedModelType,
     expectedDecodeErrors,
-    auxStateMachineFactory
+    multiAuxDecodingStateMachineFactory
 )
 
 fun getMainModelFromJson(
@@ -91,14 +90,14 @@ fun getMainModelFromJson(
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
-    auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine? = { null }
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel {
     val (mainModel, decodeErrors) = decodeJson(
         jsonReader,
         meta,
         expectedModelType,
         options,
-        auxStateMachineFactory
+        multiAuxDecodingStateMachineFactory
     )
     jsonReader.close()
     assertTrue(mainModel != null)
@@ -110,13 +109,13 @@ fun getMainModelFromJson(
  */
 fun assertMatchesJson(
     element: ElementModel,
-    auxEncoder: AuxEncoder?,
     jsonFilePath: String,
-    encodePasswords: EncodePasswords
+    encodePasswords: EncodePasswords,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
 ) {
     val jsonWriter = StringWriter()
     val isEncoded = try {
-        encodeJson(element, auxEncoder, jsonWriter, encodePasswords, true)
+        encodeJson(element, jsonWriter, multiAuxEncoder, encodePasswords, true)
     } catch (e: Throwable) {
         e.printStackTrace()
         println("Encoded so far:")

@@ -24,6 +24,6 @@ class UnionTests {
         val input1 = getMainModelFromJsonString(metaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(metaModel, jsonInput2)
         val output = union(listOf(input1, input2))
-        assertMatchesJson(output, null, expectedOutputJsonFile, EncodePasswords.ALL)
+        assertMatchesJson(output, expectedOutputJsonFile, EncodePasswords.ALL)
     }
 }

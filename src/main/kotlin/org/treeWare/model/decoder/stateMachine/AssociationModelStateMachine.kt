@@ -10,16 +10,16 @@ class AssociationModelStateMachine(
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
-    private var auxStateMachine: AuxDecodingStateMachine? = null
+    private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
     private var association: MutableAssociationModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(auxType: String, aux: Any?) {
+    override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
         assert(association != null)
-        association?.setAux(auxType, aux)
+        association?.setAux(auxName, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -33,9 +33,11 @@ class AssociationModelStateMachine(
             // Remove self from stack
             stack.pollFirst()
         } else {
-            auxStateMachine?.also { setAux(it.auxType, it.getAux()) }
-            // This state-machine instance gets reused in lists, so clear it.
-            auxStateMachine = null
+            auxStateMachines.forEach { (auxName, auxStateMachine) ->
+                setAux(auxName, auxStateMachine.getAux())
+            }
+            // This state-machine instance gets reused in lists, so clear the map.
+            auxStateMachines.clear()
         }
         return true
     }
@@ -76,11 +78,11 @@ class AssociationModelStateMachine(
         }
         val (fieldName, auxName) = fieldAndAuxNames
         if (auxName != null) {
-            val auxStateMachine = auxStateMachineFactory()
+            val auxStateMachine = multiAuxDecodingStateMachineFactory.newAuxDecodingStateMachine(auxName, stack)
             if (auxStateMachine != null) {
                 stack.addFirst(auxStateMachine)
                 auxStateMachine.newAux()
-                this.auxStateMachine = auxStateMachine
+                auxStateMachines[auxName] = auxStateMachine
             } else stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }

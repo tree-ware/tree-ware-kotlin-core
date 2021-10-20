@@ -9,7 +9,7 @@ class MainModelStateMachine(
     private val expectedModelType: String,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
-    private val auxStateMachineFactory: (stack: DecodingStack) -> AuxDecodingStateMachine?
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : AbstractDecodingStateMachine(true) {
     var mainModel: MutableMainModel? = null
         private set
@@ -42,17 +42,17 @@ class MainModelStateMachine(
 
         if (keyName != expectedModelType) return false
         if (mainModel == null) mainModel = MutableMainModel(meta)
-        mainModel?.also { decodeModel(expectedModelType, it) { auxStateMachineFactory(stack) } }
+        mainModel?.also { decodeModel(expectedModelType, it, multiAuxDecodingStateMachineFactory) }
         return true
     }
 
     private fun decodeModel(
         modelType: String,
         newMain: MutableMainModel,
-        auxStateMachineFactory: () -> AuxDecodingStateMachine?
+        multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
     ) {
         newMain.type = modelType
         val root = newMain.getOrNewRoot()
-        stack.addFirst(RootModelStateMachine(root, stack, options, errors, auxStateMachineFactory))
+        stack.addFirst(RootModelStateMachine(root, stack, options, errors, multiAuxDecodingStateMachineFactory))
     }
 }

@@ -14,7 +14,7 @@ class AddressBookMetaModelTests {
         ADDRESS_BOOK_META_MODEL_FILES.forEach { file ->
             println("Testing file: $file...")
             val metaModel = getMainModelFromJsonFile(metaMetaModel, file)
-            assertMatchesJson(metaModel, null, file, EncodePasswords.NONE)
+            assertMatchesJson(metaModel, file, EncodePasswords.NONE)
         }
     }
 }

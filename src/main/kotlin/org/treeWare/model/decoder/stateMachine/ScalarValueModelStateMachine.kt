@@ -12,10 +12,10 @@ class ScalarValueModelStateMachine(
     private var value: MutableScalarValueModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(auxType: String, aux: Any?) {
+    override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
         assert(value != null)
-        value?.setAux(auxType, aux)
+        value?.setAux(auxName, aux)
     }
 
     override fun decodeObjectStart(): Boolean {

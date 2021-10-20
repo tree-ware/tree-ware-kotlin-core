@@ -1,65 +1,89 @@
 {
-  "error": {
-    "address_book__error_": "Error at address_book level",
+  "multi_aux": {
+    "address_book__aux1_": "Aux1 at address_book level",
+    "address_book__aux2_": "Aux2 at address_book level",
     "address_book": {
-      "name__error_": "Error with name",
+      "name__aux1_": "Aux1 with name",
+      "name__aux2_": "Aux2 with name",
       "name": "Super Heroes",
-      "last_updated__error_": "Error in last_updated",
+      "last_updated__aux1_": "Aux1 in last_updated",
+      "last_updated__aux2_": "Aux2 in last_updated",
       "last_updated": "1587147731",
-      "settings__error_": "Error in settings",
+      "settings__aux1_": "Aux1 in settings",
+      "settings__aux2_": "Aux2 in settings",
       "settings": {
-        "last_name_first__error_": "last_name_first has an error",
+        "last_name_first__aux1_": "Aux1 for last_name_first",
+        "last_name_first__aux2_": "Aux2 for last_name_first",
         "last_name_first": true,
-        "encrypt_hero_name__error_": "Some error with encrypt_hero_name",
+        "encrypt_hero_name__aux1_": "Aux1 for encrypt_hero_name",
+        "encrypt_hero_name__aux2_": "Aux2 for encrypt_hero_name",
         "encrypt_hero_name": false,
-        "card_colors__error_": "Error at card_colors list level",
+        "card_colors__aux1_": "Aux1 at card_colors list level",
+        "card_colors__aux2_": "Aux2 at card_colors list level",
         "card_colors": [
           {
-            "error_": "Error with scalar element in list",
+            "aux1_": "Aux1 with scalar element in list",
+            "aux2_": "Aux2 with scalar element in list",
             "value": "orange"
           },
           {
-            "error_": "Error with list element green",
+            "aux1_": "Aux1 with list element green",
+            "aux2_": "Aux2 with list element green",
             "value": "green"
           },
           {
-            "error_": "Error in another scalar list element",
+            "aux1_": "Aux1 in another scalar list element",
+            "aux2_": "Aux2 in another scalar list element",
             "value": "blue"
           }
         ]
       },
-      "person__error_": "Error at person list level",
+      "person__aux1_": "Aux1 at person list level",
+      "person__aux2_": "Aux2 at person list level",
       "person": [
         {
-          "error_": "Error with composition element of list",
-          "id__error_": "Error in person id",
+          "aux1_": "Aux1 with composition element of list",
+          "aux2_": "Aux2 with composition element of list",
+          "id__aux1_": "Aux1 in person id",
+          "id__aux2_": "Aux2 in person id",
           "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-          "first_name__error_": "Error with person first_name",
+          "first_name__aux1_": "Aux1 with person first_name",
+          "first_name__aux2_": "Aux2 with person first_name",
           "first_name": "Clark",
-          "last_name__error_": "Person last_name has an error",
+          "last_name__aux1_": "Aux1 for person last_name",
+          "last_name__aux2_": "Aux2 for person last_name",
           "last_name": "Kent",
-          "hero_name__error_": "Something wrong with hero_name",
+          "hero_name__aux1_": "Something wrong with hero_name",
+          "hero_name__aux2_": "Something wrong with hero_name",
           "hero_name": "Superman",
-          "email__error_": "Error at list level for person email",
+          "email__aux1_": "Aux1 at list level for person email",
+          "email__aux2_": "Aux2 at list level for person email",
           "email": [
             {
-              "error_": "Error with string element in list",
+              "aux1_": "Aux1 with string element in list",
+              "aux2_": "Aux2 with string element in list",
               "value": "clark.kent@dailyplanet.com"
             },
             {
-              "error_": "Yet another error with a list string element",
+              "aux1_": "Yet another aux1 with a list string element",
+              "aux2_": "Yet another aux2 with a list string element",
               "value": "superman@dc.com"
             }
           ],
-          "relation__error_": "Error at relation composition list level",
+          "relation__aux1_": "Aux1 at relation composition list level",
+          "relation__aux2_": "Aux2 at relation composition list level",
           "relation": [
             {
-              "error_": "Some error with composition element of list",
-              "id__error_": "Error with id field",
+              "aux1_": "Some aux1 with composition element of list",
+              "aux2_": "Some aux2 with composition element of list",
+              "id__aux1_": "Aux1 with id field",
+              "id__aux2_": "Aux2 with id field",
               "id": "05ade278-4b44-43da-a0cc-14463854e397",
-              "relationship__error_": "Some error with relationship field",
+              "relationship__aux1_": "Some aux1 with relationship field",
+              "relationship__aux2_": "Some aux2 with relationship field",
               "relationship": "colleague",
-              "person__error_": "Error with person association",
+              "person__aux1_": "Aux1 with person association",
+              "person__aux2_": "Aux2 with person association",
               "person": {
                 "path_keys": [
                   {
@@ -69,40 +93,48 @@
               }
             }
           ],
-          "password__error_": "Error with password",
+          "password__aux1_": "Aux1 with password",
+          "password__aux2_": "Aux2 with password",
           "password": {
             "unhashed": "kryptonite"
           },
-          "previous_passwords__error_": "Errors with previous passwords",
+          "previous_passwords__aux1_": "Aux1 with previous passwords",
+          "previous_passwords__aux2_": "Aux2 with previous passwords",
           "previous_passwords": [
             {
-              "error_": "Error with unhashed password in a list",
+              "aux1_": "Aux1 with unhashed password in a list",
+              "aux2_": "Aux2 with unhashed password in a list",
               "unhashed": "hello123"
             },
             {
-              "error_": "Error with hashed password in a list",
+              "aux1_": "Aux1 with hashed password in a list",
+              "aux2_": "Aux2 with hashed password in a list",
               "hashed": "test-hashed-superman",
               "hash_version": 1
             }
           ],
-          "main_secret__error_": "Error with main secret",
+          "main_secret__aux1_": "Aux1 with main secret",
+          "main_secret__aux2_": "Aux2 with main secret",
           "main_secret": {
             "unencrypted": "Alien from Krypton"
           },
           "other_secrets": [
             {
-              "error_": "Error with unencrypted password in a list",
+              "aux1_": "Aux1 with unencrypted password in a list",
+              "aux2_": "Aux2 with unencrypted password in a list",
               "unencrypted": "secret1"
             },
             {
-              "error_": "Error with encrypted password in a list",
+              "aux1_": "Aux1 with encrypted password in a list",
+              "aux2_": "Aux2 with encrypted password in a list",
               "encrypted": "test-encrypted-secret2",
               "cipher_version": 1
             }
           ]
         },
         {
-          "error_": "Error with composition element but no errors in sub-tree",
+          "aux1_": "Aux1 with composition element but no aux1 in sub-tree",
+          "aux2_": "Aux2 with composition element but no aux2 in sub-tree",
           "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
           "first_name": "Lois",
           "last_name": "Lane",
@@ -152,21 +184,26 @@
           ]
         }
       ],
-      "city_info__error_": "Error with city info list",
+      "city_info__aux1_": "Aux1 with city info list",
+      "city_info__aux2_": "Aux2 with city info list",
       "city_info": [
         {
-          "city__error_": "Error with 1:1 composition key inside a list",
+          "city__aux1_": "Aux1 with 1:1 composition key inside a list",
+          "city__aux2_": "Aux2 with 1:1 composition key inside a list",
           "city": {
             "name": "New York City",
             "state": "New York",
             "country": "United States of America"
           },
-          "info__error_": "Error in info",
+          "info__aux1_": "Aux1 in info",
+          "info__aux2_": "Aux2 in info",
           "info": "One of the most populous and most densely populated major city in USA",
-          "related_city_info__error_": "Error in related city list",
+          "related_city_info__aux1_": "Aux1 in related city list",
+          "related_city_info__aux2_": "Aux2 in related city list",
           "related_city_info": [
             {
-              "error_": "Error with association element in list",
+              "aux1_": "Aux1 with association element in list",
+              "aux2_": "Aux2 with association element in list",
               "path_keys": [
                 {
                   "city": {
@@ -189,7 +226,8 @@
               ]
             },
             {
-              "error_": "Error with association element in list after an element without an error",
+              "aux1_": "Aux1 with association element in list after an element without an aux1",
+              "aux2_": "Aux2 with association element in list after an element without an aux2",
               "path_keys": [
                 {
                   "city": {

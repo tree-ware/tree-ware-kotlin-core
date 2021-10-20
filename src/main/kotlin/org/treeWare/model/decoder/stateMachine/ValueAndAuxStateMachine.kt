@@ -7,19 +7,27 @@ const val VALUE_KEY = "value"
 class ValueAndAuxStateMachine(
     private val isListElement: Boolean,
     private val valueStateMachine: ValueDecodingStateMachine,
-    auxStateMachineFactory: () -> AuxDecodingStateMachine?,
-    private val stack: DecodingStack
+    private val stack: DecodingStack,
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : AbstractDecodingStateMachine(true) {
-    private val auxStateMachine: AuxDecodingStateMachine? = auxStateMachineFactory()
+    private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
     private val logger = LogManager.getLogger()
 
     override fun decodeKey(name: String): Boolean {
-        setKeyState(name)
-        if (keyName == VALUE_KEY) stack.addFirst(valueStateMachine)
-        else auxStateMachine?.also {
-            stack.addFirst(it)
-            it.decodeKey(name)
-            auxStateMachine.newAux()
+        super.decodeKey(name)
+
+        val key = keyName ?: ""
+        if (key == VALUE_KEY) stack.addFirst(valueStateMachine)
+        else getFieldAndAuxNames(key)?.also { (_, auxName) ->
+            val auxStateMachine = auxName?.let {
+                multiAuxDecodingStateMachineFactory.newAuxDecodingStateMachine(it, stack)
+            }
+            if (auxStateMachine != null) {
+                stack.addFirst(auxStateMachine)
+                auxStateMachine.decodeKey(name)
+                auxStateMachine.newAux()
+                auxStateMachines[auxName] = auxStateMachine
+            }
         }
         return true
     }
@@ -29,7 +37,9 @@ class ValueAndAuxStateMachine(
     }
 
     override fun decodeObjectEnd(): Boolean {
-        auxStateMachine?.also { valueStateMachine.setAux(it.auxType, it.getAux()) }
+        auxStateMachines.forEach { (auxName, auxStateMachine) ->
+            valueStateMachine.setAux(auxName, auxStateMachine.getAux())
+        }
         if (!isListElement) {
             // Remove self from stack
             stack.pollFirst()

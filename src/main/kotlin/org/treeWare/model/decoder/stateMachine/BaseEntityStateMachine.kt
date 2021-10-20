@@ -14,18 +14,18 @@ class BaseEntityStateMachine(
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val auxStateMachineFactory: () -> AuxDecodingStateMachine?
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
-    private val auxStateMachineMap = HashMap<String, AuxDecodingStateMachine>()
+    private val auxStateMachinesMap = HashMap<String, LinkedHashMap<String, AuxDecodingStateMachine>>()
 
     private var base: MutableBaseEntityModel? = null
     private var entityMeta: EntityModel? = null
     private val logger = LogManager.getLogger()
 
-    override fun setAux(auxType: String, aux: Any?) {
+    override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
         assert(base != null)
-        base?.setAux(auxType, aux)
+        base?.setAux(auxName, aux)
     }
 
     override fun decodeObjectStart(): Boolean {
@@ -39,16 +39,16 @@ class BaseEntityStateMachine(
     override fun decodeObjectEnd(): Boolean {
         assert(base != null)
         // TODO(deepak-nulu): set aux when found rather than on the way out.
-        auxStateMachineMap.forEach { (fieldName, auxStateMachine) ->
-            auxStateMachine.also { state ->
-                state.getAux()?.also {
-                    if (fieldName.isEmpty()) setAux(state.auxType, it)
-                    else base?.getField(fieldName)?.setAux(state.auxType, it)
+        auxStateMachinesMap.forEach { (fieldName, auxStateMachines) ->
+            auxStateMachines.forEach { (auxName, auxStateMachine) ->
+                auxStateMachine.getAux()?.also {
+                    if (fieldName.isEmpty()) setAux(auxName, it)
+                    else base?.getField(fieldName)?.setAux(auxName, it)
                 }
             }
         }
         // This state-machine instance gets reused in lists, so clear the map.
-        auxStateMachineMap.clear()
+        auxStateMachinesMap.clear()
         return if (!isSetElement) {
             // Remove self from stack
             stack.pollFirst()
@@ -107,9 +107,10 @@ class BaseEntityStateMachine(
         }
         val (fieldName, auxName) = fieldAndAuxNames
         if (auxName != null) {
-            val auxStateMachine = auxStateMachineFactory()
+            val auxStateMachine = multiAuxDecodingStateMachineFactory.newAuxDecodingStateMachine(auxName, stack)
             if (auxStateMachine != null) {
-                auxStateMachineMap[fieldName] = auxStateMachine
+                val auxStateMachines = auxStateMachinesMap.getOrPut(fieldName) { LinkedHashMap() }
+                auxStateMachines[auxName] = auxStateMachine
                 stack.addFirst(auxStateMachine)
                 auxStateMachine.newAux()
             } else stack.addFirst(SkipUnknownStateMachine(stack))
@@ -171,7 +172,7 @@ class BaseEntityStateMachine(
                     value
                 },
                 stack,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
@@ -184,7 +185,7 @@ class BaseEntityStateMachine(
                     value
                 },
                 stack,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -203,7 +204,7 @@ class BaseEntityStateMachine(
                     value
                 },
                 stack,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
@@ -216,7 +217,7 @@ class BaseEntityStateMachine(
                     value
                 },
                 stack,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -237,7 +238,7 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
@@ -252,7 +253,7 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -270,7 +271,7 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                auxStateMachineFactory
+                multiAuxDecodingStateMachineFactory
             )
             addSetElementStateMachineToStack(setFieldModel, setElementStateMachine, isWrappedElements = false)
         } else {
@@ -287,7 +288,7 @@ class BaseEntityStateMachine(
                     stack,
                     options,
                     errors,
-                    auxStateMachineFactory
+                    multiAuxDecodingStateMachineFactory
                 )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -301,7 +302,7 @@ class BaseEntityStateMachine(
     ) {
         val elementStateMachine =
             if (!isWrappedElements) listElementStateMachine
-            else ValueAndAuxStateMachine(true, listElementStateMachine, auxStateMachineFactory, stack)
+            else ValueAndAuxStateMachine(true, listElementStateMachine, stack, multiAuxDecodingStateMachineFactory)
         val listStateMachine = CollectionFieldModelStateMachine(listFieldModel, elementStateMachine, stack)
         stack.addFirst(listStateMachine)
     }
@@ -313,7 +314,7 @@ class BaseEntityStateMachine(
     ) {
         val elementStateMachine =
             if (!isWrappedElements) setElementStateMachine
-            else ValueAndAuxStateMachine(true, setElementStateMachine, auxStateMachineFactory, stack)
+            else ValueAndAuxStateMachine(true, setElementStateMachine, stack, multiAuxDecodingStateMachineFactory)
         val setStateMachine = CollectionFieldModelStateMachine(setFieldModel, elementStateMachine, stack)
         stack.addFirst(setStateMachine)
     }
