@@ -1,0 +1,143 @@
+<templateSet group="tree-ware">
+  <template name="mmstart" value="{&#10;  &quot;data&quot;: {&#10;    &quot;meta_model&quot;: {&#10;$END$&#10;    }&#10;  }&#10;}" description="Start a meta-model definition" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmroot" value="&quot;root&quot;: {&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;entity&quot;: &quot;$ROOT_ENTITY$&quot;,&#10;  &quot;package&quot;: &quot;$PACKAGE$&quot;&#10;}," description="Define the meta-model root" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ROOT_ENTITY" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="PACKAGE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmpackage" value="      &quot;packages&quot;: [&#10;        {&#10;          &quot;name&quot;: &quot;$NAME$&quot;,&#10;          &quot;info&quot;: &quot;$INFO$&quot;,&#10;          &quot;enumerations&quot;: [$END$&#10;          ],&#10;          &quot;entities&quot;: [&#10;          ]&#10;        }&#10;      ]&#10;" description="Add a new package (assumes only 1 package per file)" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmenum" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;values&quot;: [&#10;    {&#10;      &quot;name&quot;: &quot;$VALUE$&quot;&#10;    },&#10;    $END$&#10;  ]&#10;},&#10;" description="Add a new enumeration" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmenumvalue" value="{&#10;  &quot;name&quot;: &quot;$VALUE$&quot;&#10;},&#10;" description="Add a new enumeration value" toReformat="false" toShortenFQNames="true">
+    <variable name="VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmentity" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;fields&quot;: [$END$&#10;  ]&#10;},&#10;" description="Add a new entity" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;$TYPE$&quot;&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TYPE" expression="enum(&quot;boolean&quot;, &quot;byte&quot;, &quot;short&quot;, &quot;int&quot;, &quot;long&quot;, &quot;float&quot;, &quot;double&quot;, &quot;string&quot;, &quot;uuid&quot;, &quot;blob&quot;, &quot;timestamp&quot;, &quot;alias&quot;, &quot;password1way&quot;, &quot;password2way&quot;)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmstring" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;string&quot;&#10;}," description="Add a string field" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmbool" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;boolean&quot;&#10;}," description="Add a boolean field" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmkey" value="&quot;is_key&quot;: true," description="Define this field as a key field" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmoptional" value="&quot;multiplicity&quot;: &quot;optional&quot;," description="Define this field as optional" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmlist" value="&quot;multiplicity&quot;: &quot;list&quot;," description="Define this field as a list" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmset" value="&quot;multiplicity&quot;: &quot;set&quot;," description="Define this field as a set" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmenumfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;enumeration&quot;,&#10;  &quot;enumeration&quot;: {&#10;    &quot;name&quot;: &quot;$ENUM_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENUM_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new enum field" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ENUM_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ENUM_PACKAGE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmcompo" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;composition&quot;,&#10;  &quot;composition&quot;: {&#10;    &quot;name&quot;: &quot;$ENTITY_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENTITY_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new composition field" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ENTITY_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ENTITY_PACKAGE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmassoc" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;association&quot;,&#10;  &quot;association&quot;: [&#10;    {&#10;      &quot;value&quot;: &quot;$PATH_VALUE$&quot;&#10;    },$END$&#10;  ]&#10;},&#10;" description="Add a new association field" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="PATH_VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+</templateSet>
