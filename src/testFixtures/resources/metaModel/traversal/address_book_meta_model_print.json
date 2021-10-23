@@ -1,0 +1,67 @@
+{
+  "meta_model": {
+    "root:address_book": {},
+    "package:address_book.main": {
+      "enumeration:address_book_color": [
+        "violet",
+        "indigo",
+        "blue",
+        "green",
+        "yellow",
+        "orange",
+        "red"
+      ],
+      "enumeration:address_book_relationship": [
+        "parent",
+        "child",
+        "spouse",
+        "sibling",
+        "family",
+        "friend",
+        "colleague"
+      ],
+      "entity:address_book_root": {
+        "field:name": {},
+        "field:last_updated": {},
+        "field:settings": {},
+        "field:person": {},
+        "field:city_info": {}
+      },
+      "entity:address_book_settings": {
+        "field:last_name_first": {},
+        "field:encrypt_hero_name": {},
+        "field:card_colors": {}
+      },
+      "entity:address_book_person": {
+        "field:id": {},
+        "field:first_name": {},
+        "field:last_name": {},
+        "field:hero_name": {},
+        "field:email": {},
+        "field:picture": {},
+        "field:relation": {},
+        "field:password": {},
+        "field:previous_passwords": {},
+        "field:main_secret": {},
+        "field:other_secrets": {}
+      },
+      "entity:address_book_relation": {
+        "field:id": {},
+        "field:relationship": {},
+        "field:person": {}
+      }
+    },
+    "package:address_book.city": {
+      "entity:address_book_city": {
+        "field:name": {},
+        "field:state": {},
+        "field:country": {}
+      },
+      "entity:address_book_city_info": {
+        "field:city": {},
+        "field:info": {},
+        "field:related_city_info": {}
+      }
+    }
+  }
+}
