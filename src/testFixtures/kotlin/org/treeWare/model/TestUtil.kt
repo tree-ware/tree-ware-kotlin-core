@@ -25,10 +25,9 @@ fun testRoundTrip(
     expectedDecodeErrors: List<String> = listOf(),
     hasher: Hasher? = null,
     cipher: Cipher? = null,
-    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    metaModel: MainModel = newAddressBookMetaModel(hasher, cipher)
 ) {
-    val metaModel = newAddressBookMetaModel(hasher, cipher)
-
     val model =
         getMainModelFromJsonFile(
             metaModel,
