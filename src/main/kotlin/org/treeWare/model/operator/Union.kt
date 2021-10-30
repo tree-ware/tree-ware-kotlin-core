@@ -20,6 +20,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
         unionMain = MutableMainModel(leaderMainList.last()?.meta)
+        visitAux(leaderMainList, unionMain)
         modelStack.addFirst(unionMain)
         return TraversalAction.CONTINUE
     }
@@ -31,6 +32,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
 
     override fun visitRoot(leaderRootList: List<RootModel?>): TraversalAction {
         val unionRoot = unionMain.getOrNewRoot()
+        visitAux(leaderRootList, unionRoot)
         modelStack.addFirst(unionRoot)
         return TraversalAction.CONTINUE
     }
@@ -42,6 +44,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val parent = modelStack.peekFirst()
         val unionEntity = getNewFieldValue(parent)
+        visitAux(leaderEntityList, unionEntity)
         modelStack.addFirst(unionEntity)
         return TraversalAction.CONTINUE
     }
@@ -80,6 +83,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val parent = modelStack.peekFirst()
         val unionPrimitive = getNewFieldValue(parent) as MutablePrimitiveModel
         unionPrimitive.copyValueFrom(lastPrimitive)
+        visitAux(leaderValueList, unionPrimitive)
         return TraversalAction.CONTINUE
     }
 
@@ -88,6 +92,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val parent = modelStack.peekFirst()
         val unionAlias = getNewFieldValue(parent) as MutableAliasModel
         unionAlias.copyValueFrom(lastAlias)
+        visitAux(leaderValueList, unionAlias)
         return TraversalAction.CONTINUE
     }
 
@@ -96,6 +101,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val parent = modelStack.peekFirst()
         val unionPassword = getNewFieldValue(parent) as MutablePassword1wayModel
         unionPassword.copyValueFrom(lastPassword)
+        visitAux(leaderValueList, unionPassword)
         return TraversalAction.CONTINUE
     }
 
@@ -104,6 +110,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val parent = modelStack.peekFirst()
         val unionPassword = getNewFieldValue(parent) as MutablePassword2wayModel
         unionPassword.copyValueFrom(lastPassword)
+        visitAux(leaderValueList, unionPassword)
         return TraversalAction.CONTINUE
     }
 
@@ -112,6 +119,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val parent = modelStack.peekFirst()
         val unionEnumeration = getNewFieldValue(parent) as MutableEnumerationModel
         unionEnumeration.copyValueFrom(lastEnumeration)
+        visitAux(leaderValueList, unionEnumeration)
         return TraversalAction.CONTINUE
     }
 
@@ -120,6 +128,7 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val parent = modelStack.peekFirst()
         val unionAssociation = getNewFieldValue(parent) as MutableAssociationModel
         copy(lastAssociation, unionAssociation)
+        visitAux(leaderValueList, unionAssociation)
         return TraversalAction.CONTINUE
     }
 
@@ -130,7 +139,14 @@ private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAc
         val lastLeaderFieldName = getFieldName(lastLeaderField)
         val parent = modelStack.peekFirst() as MutableBaseEntityModel
         val unionField = parent.getOrNewField(lastLeaderFieldName)
+        visitAux(leaderFieldList, unionField)
         modelStack.addFirst(unionField)
         return TraversalAction.CONTINUE
+    }
+
+    private fun visitAux(leaderElementList: List<ElementModel?>, unionElement: MutableElementModel) {
+        leaderElementList.forEach { leader ->
+            leader?.auxs?.forEach { (auxName, aux) -> unionElement.setAux(auxName, aux) }
+        }
     }
 }

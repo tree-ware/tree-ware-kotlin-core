@@ -5,6 +5,7 @@ import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.decodeJson
+import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.getFileReader
 import org.treeWare.model.getMainModelFromJsonFile
 import org.treeWare.model.operator.union
@@ -14,8 +15,19 @@ import kotlin.test.assertEquals
 
 private val metaMetaModel = newMainMetaMetaModel()
 
-fun newMetaModelFromFiles(filePaths: List<String>, hasher: Hasher?, cipher: Cipher?): MutableMainModel {
-    val metaModelParts = filePaths.map { getMainModelFromJsonFile(metaMetaModel, it) }
+fun newMetaModelFromFiles(
+    filePaths: List<String>,
+    hasher: Hasher?,
+    cipher: Cipher?,
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
+): MutableMainModel {
+    val metaModelParts = filePaths.map {
+        getMainModelFromJsonFile(
+            metaMetaModel,
+            it,
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
+        )
+    }
     val metaModel = union(metaModelParts)
     val errors = validate(metaModel, hasher, cipher)
     if (errors.isNotEmpty()) throw IllegalStateException("Address-book meta-model is not valid")

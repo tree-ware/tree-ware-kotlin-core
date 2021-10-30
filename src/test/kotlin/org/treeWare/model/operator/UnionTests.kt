@@ -2,7 +2,11 @@ package org.treeWare.model.operator
 
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.assertMatchesJson
+import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
+import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.EncodePasswords
+import org.treeWare.model.encoder.MultiAuxEncoder
+import org.treeWare.model.encoder.StringAuxEncoder
 import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.model.readFile
 import kotlin.test.Test
@@ -21,9 +25,30 @@ class UnionTests {
         assertNotEquals(jsonInput2, expectedJsonOutput)
 
         val metaModel = newAddressBookMetaModel(null, null)
-        val input1 = getMainModelFromJsonString(metaModel, jsonInput1)
-        val input2 = getMainModelFromJsonString(metaModel, jsonInput2)
+
+        val aux2 = "aux2"
+        val aux3 = "aux3"
+        val multiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(
+            aux2 to { StringAuxStateMachine(it) },
+            aux3 to { StringAuxStateMachine(it) }
+        )
+
+        val input1 = getMainModelFromJsonString(
+            metaModel,
+            jsonInput1,
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
+        )
+        val input2 = getMainModelFromJsonString(
+            metaModel,
+            jsonInput2,
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
+        )
         val output = union(listOf(input1, input2))
-        assertMatchesJson(output, expectedOutputJsonFile, EncodePasswords.ALL)
+        assertMatchesJson(
+            output, expectedOutputJsonFile, EncodePasswords.ALL, MultiAuxEncoder(
+                aux2 to StringAuxEncoder(),
+                aux3 to StringAuxEncoder()
+            )
+        )
     }
 }
