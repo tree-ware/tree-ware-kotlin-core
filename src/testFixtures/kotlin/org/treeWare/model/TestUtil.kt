@@ -99,8 +99,8 @@ fun getMainModelFromJson(
         multiAuxDecodingStateMachineFactory
     )
     jsonReader.close()
-    assertTrue(mainModel != null)
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
+    assertTrue(mainModel != null)
     return mainModel
 }
 
