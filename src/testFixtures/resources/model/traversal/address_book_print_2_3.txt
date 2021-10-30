@@ -13,7 +13,7 @@ Primitive: null, false
 List field: card_colors, card_colors
 Enumeration: yellow, orange
 Enumeration: orange, green
-Enumeration: blue, blue
+Enumeration: blue, null
 Set field: person, person
 Entity: address_book.main/address_book_person, address_book.main/address_book_person
 Single field: id, id
