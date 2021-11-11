@@ -10,7 +10,7 @@ private enum class NestingState {
 
 class JsonWireFormatEncoder(
     private val writer: Writer,
-    prettyPrint: Boolean = false,
+    private val prettyPrint: Boolean = false,
     indentSizeInSpaces: Int = 2
 ) : WireFormatEncoder {
     private val nesting = ArrayDeque<NestingState>()
@@ -24,14 +24,18 @@ class JsonWireFormatEncoder(
                 prettyPrinter.indent()
                 writer.write(prettyPrinter.currentIndent)
                 assert(name != null)
-                writer.write("\"${name ?: ""}\": $value")
+                writer.write("\"${name ?: ""}\":")
+                if (prettyPrint) writer.write(" ")
+                writer.write(value)
             }
             NestingState.OBJECT_ELEMENT -> {
                 writer.write(",")
                 writer.write(prettyPrinter.endOfLine)
                 writer.write(prettyPrinter.currentIndent)
                 assert(name != null)
-                writer.write("\"${name ?: ""}\": $value")
+                writer.write("\"${name ?: ""}\":")
+                if (prettyPrint) writer.write(" ")
+                writer.write(value)
             }
             NestingState.LIST_START -> {
                 writer.write(prettyPrinter.endOfLine)
