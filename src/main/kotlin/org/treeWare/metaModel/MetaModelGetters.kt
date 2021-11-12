@@ -47,7 +47,7 @@ fun hasOnlyPrimitiveKeyFields(entityMeta: EntityModel): Boolean {
     val fields = getFieldsMeta(entityMeta).values
     val keyFields = filterKeyFields(fields)
     val compositionKeyFields = filterCompositionKeyFields(keyFields)
-    return keyFields.isNotEmpty() && compositionKeyFields.isEmpty()
+    return keyFields.size == fields.size && compositionKeyFields.isEmpty()
 }
 
 fun filterKeyFields(fields: Collection<ElementModel>): List<EntityModel> =
