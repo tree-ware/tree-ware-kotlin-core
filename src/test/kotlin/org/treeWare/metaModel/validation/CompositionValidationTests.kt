@@ -180,6 +180,36 @@ class CompositionValidationTests {
     }
 
     @Test
+    fun `Composition key target entity must not have non-key fields`() {
+        val testPackageJson = """
+            | {
+            |   "name": "test.main",
+            |   "entities": [
+            |     {
+            |       "name": "test_entity",
+            |       "fields": [
+            |         {
+            |           "name": "test_field",
+            |           "type": "composition",
+            |           "composition": {
+            |             "name": "entity_with_primitive_keys_and_non_keys",
+            |             "package": "test.helper"
+            |           },
+            |           "is_key": true
+            |         }
+            |       ]
+            |     }
+            |   ]
+            | }
+        """.trimMargin()
+        val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
+        val expectedErrors = listOf(
+            "Composition key field /test.main/test_entity/test_field target entity does not have only primitive keys"
+        )
+        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
+    }
+
+    @Test
     fun `Composition key is valid if target entity has only primitive keys`() {
         val testPackageJson = """
             | {
@@ -320,7 +350,7 @@ private fun testHelperPackageJson() = """
     |       ]
     |     },
     |     {
-    |       "name": "entity_with_only_primitive_keys",
+    |       "name": "entity_with_primitive_keys_and_non_keys",
     |       "fields": [
     |         {
     |           "name": "key_string_field",
@@ -342,6 +372,21 @@ private fun testHelperPackageJson() = """
     |             "name": "entity_with_only_primitive_keys",
     |             "package": "test.helper"
     |           }
+    |         }
+    |       ]
+    |     },
+    |     {
+    |       "name": "entity_with_only_primitive_keys",
+    |       "fields": [
+    |         {
+    |           "name": "key_string_field",
+    |           "type": "string",
+    |           "is_key": true
+    |         },
+    |         {
+    |           "name": "key_boolean_field",
+    |           "type": "boolean",
+    |           "is_key": true
     |         }
     |       ]
     |     }
