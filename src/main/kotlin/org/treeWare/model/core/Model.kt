@@ -143,5 +143,5 @@ interface EntityKeysModel : BaseEntityModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENTITY_KEYS
 
-    override val parent: AssociationModel
+    override val parent: AssociationModel?
 }

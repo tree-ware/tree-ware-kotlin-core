@@ -424,7 +424,7 @@ class MutableAssociationModel(
 
 class MutableEntityKeysModel(
     meta: EntityModel?,
-    override val parent: AssociationModel
+    override val parent: AssociationModel?
 ) : MutableBaseEntityModel(meta), EntityKeysModel
 
 // Helpers
