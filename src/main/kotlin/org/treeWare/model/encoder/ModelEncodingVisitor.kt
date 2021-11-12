@@ -14,8 +14,6 @@ class ModelEncodingVisitor(
     private val multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     private val encodePasswords: EncodePasswords = EncodePasswords.NONE
 ) : Leader1Follower0ModelVisitor<TraversalAction> {
-    private var encodingPathKeys = false
-
     private fun encodeAuxs(name: String?, element: ElementModel) {
         element.auxs?.forEach { (auxName, aux) -> multiAuxEncoder.encode(name, auxName, aux, wireFormatEncoder) }
     }
@@ -220,7 +218,6 @@ class ModelEncodingVisitor(
         wireFormatEncoder.encodeObjectStart(fieldName)
         if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeListStart("path_keys")
-        encodingPathKeys = true
         leaderValue1.value.forEach { entityKeys ->
             // Traverse entityKeys with this visitor to encode it.
             forEach(entityKeys, this)
@@ -230,7 +227,6 @@ class ModelEncodingVisitor(
 
     override fun leave(leaderValue1: AssociationModel) {
         if (leaderValue1.value.isNotEmpty()) {
-            encodingPathKeys = false
             wireFormatEncoder.encodeListEnd()
             wireFormatEncoder.encodeObjectEnd()
         }
