@@ -80,11 +80,11 @@ abstract class MutableBaseEntityModel(
         return newField
     }
 
-    private fun getKeyFields(): List<MutableFieldModel> {
+    override fun getKeyFields(): List<FieldModel> {
         val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return listOf()
         val keyFieldsMeta = filterKeyFields(fieldsMeta.values)
         val missingKeys = mutableListOf<String>()
-        val keyFields = mutableListOf<MutableFieldModel>()
+        val keyFields = mutableListOf<FieldModel>()
         keyFieldsMeta.forEach { fieldMeta ->
             val keyFieldName = getMetaName(fieldMeta)
             val keyField = this.fields[keyFieldName]
@@ -94,12 +94,12 @@ abstract class MutableBaseEntityModel(
         return keyFields
     }
 
-    fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
+    override fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
         if (field.elementType == ModelElementType.SINGLE_FIELD) {
-            val singleField = field as MutableSingleFieldModel
+            val singleField = field as SingleFieldModel
             when (getFieldTypeMeta(singleField.meta)) {
-                FieldType.COMPOSITION -> (singleField.value as MutableBaseEntityModel).getKeyValues()
-                else -> listOf((singleField.value as MutablePrimitiveModel).value)
+                FieldType.COMPOSITION -> (singleField.value as BaseEntityModel).getKeyValues()
+                else -> listOf((singleField.value as PrimitiveModel).value)
             }
         } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.getMetaAux()?.fullName}")
     }
