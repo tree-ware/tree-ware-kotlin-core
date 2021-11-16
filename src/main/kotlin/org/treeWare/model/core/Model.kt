@@ -32,6 +32,9 @@ interface BaseEntityModel : ElementModel {
 
     fun getField(fieldName: String): FieldModel?
     fun getMatchingHashCode(): Int
+
+    fun getKeyFields(): List<FieldModel>
+    fun getKeyValues(): List<Any?>
 }
 
 interface RootModel : BaseEntityModel {
