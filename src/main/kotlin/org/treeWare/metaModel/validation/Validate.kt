@@ -20,6 +20,8 @@ fun validate(
     logFullNames: Boolean = false
 ): List<String> {
     val logger = LogManager.getLogger()
+
+    // TODO(cleanup): this function should return errors without logging it.
     fun logErrors(errors: List<String>) = errors.forEach { logger.error(it) }
 
     val structureErrors = validateStructure(mainMeta)
