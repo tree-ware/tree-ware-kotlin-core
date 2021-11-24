@@ -21,7 +21,7 @@ fun validateNames(mainMeta: MutableMainModel, logFullNames: Boolean): List<Strin
 
     if (logFullNames) {
         val logger = LogManager.getLogger()
-        state.fullNames.forEach { logger.debug("element fullName: $it") }
+        state.fullNames.forEach { logger.info("element fullName: $it") }
     }
     return state.errors
 }
