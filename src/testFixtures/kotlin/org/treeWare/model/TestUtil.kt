@@ -8,7 +8,7 @@ import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFacto
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.encodeJson
-import java.io.InputStreamReader
+import org.treeWare.util.getFileReader
 import java.io.Reader
 import java.io.StringReader
 import java.io.StringWriter
@@ -39,10 +39,6 @@ fun testRoundTrip(
         )
     assertMatchesJson(model, outputFilePath ?: inputFilePath, encodePasswords, multiAuxEncoder)
 }
-
-fun getFileReader(filePath: String): Reader =
-    ClassLoader.getSystemResourceAsStream(filePath)?.let { InputStreamReader(it) }
-        ?: throw IllegalArgumentException("File $filePath not found")
 
 fun readFile(filePath: String): String {
     val reader = getFileReader(filePath)

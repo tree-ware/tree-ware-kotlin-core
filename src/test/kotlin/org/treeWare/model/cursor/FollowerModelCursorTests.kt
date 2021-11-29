@@ -6,11 +6,11 @@ import org.treeWare.model.core.getMetaAux
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
-import org.treeWare.model.getFileReader
 import org.treeWare.model.getMainModelFromJsonFile
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchLeave
 import org.treeWare.model.traversal.dispatchVisit
+import org.treeWare.util.getFileReader
 import java.io.StringWriter
 import kotlin.test.*
 
