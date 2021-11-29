@@ -4,8 +4,8 @@ import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnMissingKeys
 import org.treeWare.model.decoder.decodeJson
-import org.treeWare.model.getFileReader
 import org.treeWare.model.testRoundTrip
+import org.treeWare.util.getFileReader
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
