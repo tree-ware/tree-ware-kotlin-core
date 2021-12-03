@@ -8,7 +8,7 @@ abstract class MutableElementModel : ElementModel {
     override val meta: ElementModel? = null
     override var auxs: LinkedHashMap<String, Any>? = null
 
-    fun setAux(auxName: String, aux: Any) {
+    override fun setAux(auxName: String, aux: Any) {
         if (auxs == null) auxs = LinkedHashMap()
         auxs?.also { it[auxName] = aux }
     }
