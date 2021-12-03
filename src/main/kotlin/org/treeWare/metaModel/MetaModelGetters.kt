@@ -13,11 +13,12 @@ fun getEnumerationsMeta(packageMeta: EntityModel): CollectionFieldModel? =
 fun getEnumerationValuesMeta(enumerationMeta: EntityModel): CollectionFieldModel =
     getCollectionField(enumerationMeta, "values")
 
-fun getEnumerationValues(enumerationMeta: EntityModel): List<String> =
-    getEnumerationValuesMeta(enumerationMeta).values.map {
-        val valueMeta = it as? EntityModel ?: throw IllegalStateException()
-        getMetaName(valueMeta)
-    }
+fun getEnumerationValueMeta(enumerationMeta: EntityModel, name: String): EntityModel? {
+    return getEnumerationValuesMeta(enumerationMeta).values.find { valueMeta ->
+        if (valueMeta !is EntityModel) false
+        else getMetaName(valueMeta) == name
+    } as? EntityModel
+}
 
 fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()

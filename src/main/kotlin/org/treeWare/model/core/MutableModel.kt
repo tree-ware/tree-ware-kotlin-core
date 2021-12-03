@@ -376,6 +376,7 @@ class MutablePassword2wayModel(
 class MutableEnumerationModel(
     parent: MutableFieldModel
 ) : MutableScalarValueModel(parent), EnumerationModel {
+    override var meta: EntityModel? = null
     override var value: String? = null
         internal set
 
@@ -389,7 +390,7 @@ class MutableEnumerationModel(
         return true
     }
 
-    override fun setValue(value: String): Boolean = setEnumerationValue(parent.meta, value) { this.value = it }
+    override fun setValue(value: String): Boolean = setEnumerationValue(this, value) { this.value = it }
 
     fun copyValueFrom(that: EnumerationModel) {
         this.value = that.value
@@ -511,16 +512,18 @@ fun setValue(fieldMeta: EntityModel?, value: Boolean, setter: ValueSetter): Bool
 typealias StringSetter = (String) -> Unit
 
 fun setEnumerationValue(
-    fieldMeta: EntityModel?,
+    enumerationModel: MutableEnumerationModel,
     value: String,
     setter: StringSetter
 ): Boolean {
+    val fieldMeta: EntityModel? = enumerationModel.parent.meta
     // fieldMeta is null when constructing the meta-meta-model.
     val enumerationValue = if (fieldMeta == null) value else {
         val resolvedEnumeration = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.enumerationMeta
             ?: throw IllegalStateException("Enumeration has not been resolved")
-        val enumerationValues = getEnumerationValues(resolvedEnumeration)
-        if (enumerationValues.contains(value)) value else return false
+        val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, value)
+        enumerationModel.meta = enumerationValueMeta
+        if (enumerationValueMeta != null) value else return false
     }
     setter(enumerationValue)
     return true
