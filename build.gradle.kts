@@ -4,15 +4,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "org.tree-ware"
 version = "1.0-SNAPSHOT"
 
-val kotlinCoroutinesVersion = "1.5.0"
-val kotlinBenchmarkVersion = "0.3.1"
-
 val bouncyCastleVersion = "1.69"
+val kotlinBenchmarkVersion = "0.3.1"
+val kotlinCoroutinesVersion = "1.5.0"
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
-
-val log4j2Version = "2.14.1"
-
+val log4j2Version = "2.16.0"
 val mockkVersion = "1.12.0"
 
 plugins {
