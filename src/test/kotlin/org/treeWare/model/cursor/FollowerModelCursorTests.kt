@@ -39,7 +39,7 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
 
     val model = getMainModelFromJsonFile(metaModel, inputFilePath)
 
-    val leaderCursor = LeaderModelCursor(model)
+    val leaderCursor = Leader1ModelCursor(model)
     val followerCursor = FollowerModelCursor(model)
 
     val action = TraversalAction.CONTINUE
@@ -62,7 +62,7 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
 
     assertNotSame(leaderModel, followerModel)
 
-    val leaderCursor = LeaderModelCursor(leaderModel)
+    val leaderCursor = Leader1ModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor(followerModel)
 
     val action = TraversalAction.CONTINUE
@@ -88,7 +88,7 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
     val leaderModel = getMainModelFromJsonFile(metaModel, leaderFilePath)
     val followerModel = getMainModelFromJsonFile(metaModel, wildcardFilePath)
 
-    val leaderCursor = LeaderModelCursor(leaderModel)
+    val leaderCursor = Leader1ModelCursor(leaderModel)
     val followerCursor = FollowerModelCursor(followerModel)
 
     val jsonWriter = StringWriter()

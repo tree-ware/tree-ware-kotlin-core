@@ -2,13 +2,13 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
-import org.treeWare.model.cursor.LeaderMutableModelCursor
+import org.treeWare.model.cursor.Leader1MutableModelCursor
 
 fun mutableForEach(
     leader: MutableElementModel,
     visitor: Leader1MutableModelVisitor<TraversalAction>
 ): TraversalAction {
-    val leaderCursor = LeaderMutableModelCursor(leader)
+    val leaderCursor = Leader1MutableModelCursor(leader)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
