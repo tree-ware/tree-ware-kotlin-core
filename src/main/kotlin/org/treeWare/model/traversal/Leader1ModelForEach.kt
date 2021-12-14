@@ -28,43 +28,43 @@ fun <Return> dispatchVisit(
     visitor: Leader1ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
     ModelElementType.MAIN -> {
-        visitor.visit(leader as MainModel)
+        visitor.visitMain(leader as MainModel)
     }
     ModelElementType.ROOT -> {
-        visitor.visit(leader as RootModel)
+        visitor.visitRoot(leader as RootModel)
     }
     ModelElementType.ENTITY -> {
-        visitor.visit(leader as EntityModel)
+        visitor.visitEntity(leader as EntityModel)
     }
     ModelElementType.SINGLE_FIELD -> {
-        visitor.visit(leader as SingleFieldModel)
+        visitor.visitSingleField(leader as SingleFieldModel)
     }
     ModelElementType.LIST_FIELD -> {
-        visitor.visit(leader as ListFieldModel)
+        visitor.visitListField(leader as ListFieldModel)
     }
     ModelElementType.SET_FIELD -> {
-        visitor.visit(leader as SetFieldModel)
+        visitor.visitSetField(leader as SetFieldModel)
     }
     ModelElementType.PRIMITIVE -> {
-        visitor.visit(leader as PrimitiveModel)
+        visitor.visitPrimitive(leader as PrimitiveModel)
     }
     ModelElementType.ALIAS -> {
-        visitor.visit(leader as AliasModel)
+        visitor.visitAlias(leader as AliasModel)
     }
     ModelElementType.PASSWORD1WAY -> {
-        visitor.visit(leader as Password1wayModel)
+        visitor.visitPassword1way(leader as Password1wayModel)
     }
     ModelElementType.PASSWORD2WAY -> {
-        visitor.visit(leader as Password2wayModel)
+        visitor.visitPassword2way(leader as Password2wayModel)
     }
     ModelElementType.ENUMERATION -> {
-        visitor.visit(leader as EnumerationModel)
+        visitor.visitEnumeration(leader as EnumerationModel)
     }
     ModelElementType.ASSOCIATION -> {
-        visitor.visit(leader as AssociationModel)
+        visitor.visitAssociation(leader as AssociationModel)
     }
     ModelElementType.ENTITY_KEYS -> {
-        visitor.visit(leader as EntityKeysModel)
+        visitor.visitEntityKeys(leader as EntityKeysModel)
     }
 }
 
@@ -74,43 +74,43 @@ fun <Return> dispatchLeave(
 ) {
     when (leader.elementType) {
         ModelElementType.MAIN -> {
-            visitor.leave(leader as MainModel)
+            visitor.leaveMain(leader as MainModel)
         }
         ModelElementType.ROOT -> {
-            visitor.leave(leader as RootModel)
+            visitor.leaveRoot(leader as RootModel)
         }
         ModelElementType.ENTITY -> {
-            visitor.leave(leader as EntityModel)
+            visitor.leaveEntity(leader as EntityModel)
         }
         ModelElementType.SINGLE_FIELD -> {
-            visitor.leave(leader as SingleFieldModel)
+            visitor.leaveSingleField(leader as SingleFieldModel)
         }
         ModelElementType.LIST_FIELD -> {
-            visitor.leave(leader as ListFieldModel)
+            visitor.leaveListField(leader as ListFieldModel)
         }
         ModelElementType.SET_FIELD -> {
-            visitor.leave(leader as SetFieldModel)
+            visitor.leaveSetField(leader as SetFieldModel)
         }
         ModelElementType.PRIMITIVE -> {
-            visitor.leave(leader as PrimitiveModel)
+            visitor.leavePrimitive(leader as PrimitiveModel)
         }
         ModelElementType.ALIAS -> {
-            visitor.leave(leader as AliasModel)
+            visitor.leaveAlias(leader as AliasModel)
         }
         ModelElementType.PASSWORD1WAY -> {
-            visitor.leave(leader as Password1wayModel)
+            visitor.leavePassword1way(leader as Password1wayModel)
         }
         ModelElementType.PASSWORD2WAY -> {
-            visitor.leave(leader as Password2wayModel)
+            visitor.leavePassword2way(leader as Password2wayModel)
         }
         ModelElementType.ENUMERATION -> {
-            visitor.leave(leader as EnumerationModel)
+            visitor.leaveEnumeration(leader as EnumerationModel)
         }
         ModelElementType.ASSOCIATION -> {
-            visitor.leave(leader as AssociationModel)
+            visitor.leaveAssociation(leader as AssociationModel)
         }
         ModelElementType.ENTITY_KEYS -> {
-            visitor.leave(leader as EntityKeysModel)
+            visitor.leaveEntityKeys(leader as EntityKeysModel)
         }
     }
 }

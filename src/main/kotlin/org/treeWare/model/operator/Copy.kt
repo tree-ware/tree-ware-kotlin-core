@@ -17,17 +17,17 @@ private class CopyVisitor(
 ) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
 
-    override fun visit(leaderMain1: MainModel): TraversalAction {
+    override fun visitMain(leaderMain1: MainModel): TraversalAction {
         assert(modelStack.isEmpty())
         modelStack.addFirst(to)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderMain1: MainModel) {
+    override fun leaveMain(leaderMain1: MainModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderRoot1: RootModel): TraversalAction {
+    override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
         val copyRoot = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst() as MutableMainModel
@@ -37,11 +37,11 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderRoot1: RootModel) {
+    override fun leaveRoot(leaderRoot1: RootModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderEntity1: EntityModel): TraversalAction {
+    override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val copyEntity = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -51,7 +51,7 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderEntity1: EntityModel) {
+    override fun leaveEntity(leaderEntity1: EntityModel) {
         val copyEntity = modelStack.pollFirst() as MutableEntityModel
         // NOTE: entities should be added to set-fields only after the entity
         // has key fields.
@@ -61,25 +61,25 @@ private class CopyVisitor(
         )
     }
 
-    override fun visit(leaderField1: SingleFieldModel): TraversalAction = visitField(leaderField1)
+    override fun visitSingleField(leaderField1: SingleFieldModel): TraversalAction = visitField(leaderField1)
 
-    override fun leave(leaderField1: SingleFieldModel) {
+    override fun leaveSingleField(leaderField1: SingleFieldModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderField1: ListFieldModel): TraversalAction = visitField(leaderField1)
+    override fun visitListField(leaderField1: ListFieldModel): TraversalAction = visitField(leaderField1)
 
-    override fun leave(leaderField1: ListFieldModel) {
+    override fun leaveListField(leaderField1: ListFieldModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderField1: SetFieldModel): TraversalAction = visitField(leaderField1)
+    override fun visitSetField(leaderField1: SetFieldModel): TraversalAction = visitField(leaderField1)
 
-    override fun leave(leaderField1: SetFieldModel) {
+    override fun leaveSetField(leaderField1: SetFieldModel) {
         modelStack.pollFirst()
     }
 
-    override fun visit(leaderValue1: PrimitiveModel): TraversalAction {
+    override fun visitPrimitive(leaderValue1: PrimitiveModel): TraversalAction {
         val copyPrimitive = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -89,7 +89,7 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: AliasModel): TraversalAction {
+    override fun visitAlias(leaderValue1: AliasModel): TraversalAction {
         val copyAlias = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -99,7 +99,7 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: Password1wayModel): TraversalAction {
+    override fun visitPassword1way(leaderValue1: Password1wayModel): TraversalAction {
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -109,7 +109,7 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: Password2wayModel): TraversalAction {
+    override fun visitPassword2way(leaderValue1: Password2wayModel): TraversalAction {
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -119,7 +119,7 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: EnumerationModel): TraversalAction {
+    override fun visitEnumeration(leaderValue1: EnumerationModel): TraversalAction {
         val copyEnumeration = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -129,7 +129,7 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderValue1: AssociationModel): TraversalAction {
+    override fun visitAssociation(leaderValue1: AssociationModel): TraversalAction {
         val copyAssociation = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.peekFirst()
@@ -144,14 +144,14 @@ private class CopyVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun visit(leaderEntityKeys1: EntityKeysModel): TraversalAction {
+    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): TraversalAction {
         assert(modelStack.isEmpty())
         val copyEntityKeys = to as MutableEntityKeysModel
         modelStack.addFirst(copyEntityKeys)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderEntityKeys1: EntityKeysModel) {
+    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {
         modelStack.pollFirst()
     }
 

@@ -212,27 +212,29 @@ private class EntityKeysLeaderState(
 private class LeaderStateFactoryVisitor(
     private val stateStack: LeaderStateStack
 ) : AbstractLeader1ModelVisitor<LeaderState?>(null) {
-    override fun visit(leaderMain1: MainModel) = MainLeaderState(leaderMain1, stateStack, this)
-    override fun visit(leaderRoot1: RootModel) = RootLeaderState(leaderRoot1, stateStack, this)
-    override fun visit(leaderEntity1: EntityModel) = EntityLeaderState(leaderEntity1, stateStack, this)
+    override fun visitMain(leaderMain1: MainModel) = MainLeaderState(leaderMain1, stateStack, this)
+    override fun visitRoot(leaderRoot1: RootModel) = RootLeaderState(leaderRoot1, stateStack, this)
+    override fun visitEntity(leaderEntity1: EntityModel) = EntityLeaderState(leaderEntity1, stateStack, this)
 
     // Fields
 
-    override fun visit(leaderField1: SingleFieldModel) = SingleFieldLeaderState(leaderField1, stateStack, this)
-    override fun visit(leaderField1: ListFieldModel) = ListFieldLeaderState(leaderField1, stateStack, this)
-    override fun visit(leaderField1: SetFieldModel) = SetFieldLeaderState(leaderField1, stateStack, this)
+    override fun visitSingleField(leaderField1: SingleFieldModel) =
+        SingleFieldLeaderState(leaderField1, stateStack, this)
+
+    override fun visitListField(leaderField1: ListFieldModel) = ListFieldLeaderState(leaderField1, stateStack, this)
+    override fun visitSetField(leaderField1: SetFieldModel) = SetFieldLeaderState(leaderField1, stateStack, this)
 
     // Values
 
-    override fun visit(leaderValue1: PrimitiveModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: AliasModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: Password1wayModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: Password2wayModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: EnumerationModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: AssociationModel) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visitPrimitive(leaderValue1: PrimitiveModel) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visitAlias(leaderValue1: AliasModel) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visitPassword1way(leaderValue1: Password1wayModel) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visitPassword2way(leaderValue1: Password2wayModel) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visitEnumeration(leaderValue1: EnumerationModel) = ScalarValueLeaderState(leaderValue1, stateStack)
+    override fun visitAssociation(leaderValue1: AssociationModel) = ScalarValueLeaderState(leaderValue1, stateStack)
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: EntityKeysModel) =
+    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel) =
         EntityKeysLeaderState(leaderEntityKeys1, stateStack, this)
 }

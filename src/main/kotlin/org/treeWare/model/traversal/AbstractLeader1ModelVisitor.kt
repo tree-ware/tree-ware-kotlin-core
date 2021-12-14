@@ -7,87 +7,87 @@ abstract class AbstractLeader1ModelVisitor<Return>(
 ) : Leader1ModelVisitor<Return> {
     // Abstract elements are not visited
 
-    override fun visit(leaderMain1: MainModel): Return {
+    override fun visitMain(leaderMain1: MainModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderMain1: MainModel) {}
+    override fun leaveMain(leaderMain1: MainModel) {}
 
-    override fun visit(leaderRoot1: RootModel): Return {
+    override fun visitRoot(leaderRoot1: RootModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderRoot1: RootModel) {}
+    override fun leaveRoot(leaderRoot1: RootModel) {}
 
-    override fun visit(leaderEntity1: EntityModel): Return {
+    override fun visitEntity(leaderEntity1: EntityModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderEntity1: EntityModel) {}
+    override fun leaveEntity(leaderEntity1: EntityModel) {}
 
     // Fields
 
-    override fun visit(leaderField1: SingleFieldModel): Return {
+    override fun visitSingleField(leaderField1: SingleFieldModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: SingleFieldModel) {}
+    override fun leaveSingleField(leaderField1: SingleFieldModel) {}
 
-    override fun visit(leaderField1: ListFieldModel): Return {
+    override fun visitListField(leaderField1: ListFieldModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: ListFieldModel) {}
+    override fun leaveListField(leaderField1: ListFieldModel) {}
 
-    override fun visit(leaderField1: SetFieldModel): Return {
+    override fun visitSetField(leaderField1: SetFieldModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: SetFieldModel) {}
+    override fun leaveSetField(leaderField1: SetFieldModel) {}
 
     // Values
 
-    override fun visit(leaderValue1: PrimitiveModel): Return {
+    override fun visitPrimitive(leaderValue1: PrimitiveModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: PrimitiveModel) {}
+    override fun leavePrimitive(leaderValue1: PrimitiveModel) {}
 
-    override fun visit(leaderValue1: AliasModel): Return {
+    override fun visitAlias(leaderValue1: AliasModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: AliasModel) {}
+    override fun leaveAlias(leaderValue1: AliasModel) {}
 
-    override fun visit(leaderValue1: Password1wayModel): Return {
+    override fun visitPassword1way(leaderValue1: Password1wayModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: Password1wayModel) {}
+    override fun leavePassword1way(leaderValue1: Password1wayModel) {}
 
-    override fun visit(leaderValue1: Password2wayModel): Return {
+    override fun visitPassword2way(leaderValue1: Password2wayModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: Password2wayModel) {}
+    override fun leavePassword2way(leaderValue1: Password2wayModel) {}
 
-    override fun visit(leaderValue1: EnumerationModel): Return {
+    override fun visitEnumeration(leaderValue1: EnumerationModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: EnumerationModel) {}
+    override fun leaveEnumeration(leaderValue1: EnumerationModel) {}
 
-    override fun visit(leaderValue1: AssociationModel): Return {
+    override fun visitAssociation(leaderValue1: AssociationModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: AssociationModel) {}
+    override fun leaveAssociation(leaderValue1: AssociationModel) {}
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: EntityKeysModel): Return {
+    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderEntityKeys1: EntityKeysModel) {}
+    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {}
 }

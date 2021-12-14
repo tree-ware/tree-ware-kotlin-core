@@ -7,87 +7,87 @@ abstract class AbstractLeader1MutableModelVisitor<Return>(
 ) : Leader1MutableModelVisitor<Return> {
     // Abstract elements are not visited
 
-    override fun visit(leaderMain1: MutableMainModel): Return {
+    override fun visitMutableMain(leaderMain1: MutableMainModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderMain1: MutableMainModel) {}
+    override fun leaveMutableMain(leaderMain1: MutableMainModel) {}
 
-    override fun visit(leaderRoot1: MutableRootModel): Return {
+    override fun visitMutableRoot(leaderRoot1: MutableRootModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderRoot1: MutableRootModel) {}
+    override fun leaveMutableRoot(leaderRoot1: MutableRootModel) {}
 
-    override fun visit(leaderEntity1: MutableEntityModel): Return {
+    override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderEntity1: MutableEntityModel) {}
+    override fun leaveMutableEntity(leaderEntity1: MutableEntityModel) {}
 
     // Fields
 
-    override fun visit(leaderField1: MutableSingleFieldModel): Return {
+    override fun visitMutableSingleField(leaderField1: MutableSingleFieldModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: MutableSingleFieldModel) {}
+    override fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel) {}
 
-    override fun visit(leaderField1: MutableListFieldModel): Return {
+    override fun visitMutableListField(leaderField1: MutableListFieldModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: MutableListFieldModel) {}
+    override fun leaveMutableListField(leaderField1: MutableListFieldModel) {}
 
-    override fun visit(leaderField1: MutableSetFieldModel): Return {
+    override fun visitMutableSetField(leaderField1: MutableSetFieldModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderField1: MutableSetFieldModel) {}
+    override fun leaveMutableSetField(leaderField1: MutableSetFieldModel) {}
 
     // Values
 
-    override fun visit(leaderValue1: MutablePrimitiveModel): Return {
+    override fun visitMutablePrimitive(leaderValue1: MutablePrimitiveModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: MutablePrimitiveModel) {}
+    override fun leaveMutablePrimitive(leaderValue1: MutablePrimitiveModel) {}
 
-    override fun visit(leaderValue1: MutableAliasModel): Return {
+    override fun visitMutableAlias(leaderValue1: MutableAliasModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: MutableAliasModel) {}
+    override fun leaveMutableAlias(leaderValue1: MutableAliasModel) {}
 
-    override fun visit(leaderValue1: MutablePassword1wayModel): Return {
+    override fun visitMutablePassword1way(leaderValue1: MutablePassword1wayModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: MutablePassword1wayModel) {}
+    override fun leaveMutablePassword1way(leaderValue1: MutablePassword1wayModel) {}
 
-    override fun visit(leaderValue1: MutablePassword2wayModel): Return {
+    override fun visitMutablePassword2way(leaderValue1: MutablePassword2wayModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: MutablePassword2wayModel) {}
+    override fun leaveMutablePassword2way(leaderValue1: MutablePassword2wayModel) {}
 
-    override fun visit(leaderValue1: MutableEnumerationModel): Return {
+    override fun visitMutableEnumeration(leaderValue1: MutableEnumerationModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: MutableEnumerationModel) {}
+    override fun leaveMutableEnumeration(leaderValue1: MutableEnumerationModel) {}
 
-    override fun visit(leaderValue1: MutableAssociationModel): Return {
+    override fun visitMutableAssociation(leaderValue1: MutableAssociationModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderValue1: MutableAssociationModel) {}
+    override fun leaveMutableAssociation(leaderValue1: MutableAssociationModel) {}
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: MutableEntityKeysModel): Return {
+    override fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel): Return {
         return defaultVisitReturn
     }
 
-    override fun leave(leaderEntityKeys1: MutableEntityKeysModel) {}
+    override fun leaveMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel) {}
 }

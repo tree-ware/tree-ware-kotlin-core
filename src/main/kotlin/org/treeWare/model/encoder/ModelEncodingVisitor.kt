@@ -18,18 +18,18 @@ class ModelEncodingVisitor(
         element.auxs?.forEach { (auxName, aux) -> multiAuxEncoder.encode(name, auxName, aux, wireFormatEncoder) }
     }
 
-    override fun visit(leaderMain1: MainModel): TraversalAction {
+    override fun visitMain(leaderMain1: MainModel): TraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
         wireFormatEncoder.encodeObjectStart(leaderMain1.type)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderMain1: MainModel) {
+    override fun leaveMain(leaderMain1: MainModel) {
         wireFormatEncoder.encodeObjectEnd()
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(leaderRoot1: RootModel): TraversalAction {
+    override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
         // The root model has a resolved meta-model which does not have the
         // name of the root. The name is in the unresolved meta-model which
         // can be accessed from the main meta-model.
@@ -41,11 +41,11 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderRoot1: RootModel) {
+    override fun leaveRoot(leaderRoot1: RootModel) {
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(leaderEntity1: EntityModel): TraversalAction {
+    override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)
         val isSetElement = leaderEntity1.parent.meta?.let { isSetFieldMeta(it) } ?: false
@@ -53,45 +53,45 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderEntity1: EntityModel) {
+    override fun leaveEntity(leaderEntity1: EntityModel) {
         wireFormatEncoder.encodeObjectEnd()
     }
 
     // Fields
 
-    override fun visit(leaderField1: SingleFieldModel): TraversalAction {
+    override fun visitSingleField(leaderField1: SingleFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
         encodeAuxs(fieldName, leaderField1)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderField1: SingleFieldModel) {}
+    override fun leaveSingleField(leaderField1: SingleFieldModel) {}
 
-    override fun visit(leaderField1: ListFieldModel): TraversalAction {
+    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
         encodeAuxs(fieldName, leaderField1)
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderField1: ListFieldModel) {
+    override fun leaveListField(leaderField1: ListFieldModel) {
         wireFormatEncoder.encodeListEnd()
     }
 
-    override fun visit(leaderField1: SetFieldModel): TraversalAction {
+    override fun visitSetField(leaderField1: SetFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
         encodeAuxs(fieldName, leaderField1)
         wireFormatEncoder.encodeListStart(fieldName)
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderField1: SetFieldModel) {
+    override fun leaveSetField(leaderField1: SetFieldModel) {
         wireFormatEncoder.encodeListEnd()
     }
 
     // Values
 
-    override fun visit(leaderValue1: PrimitiveModel): TraversalAction {
+    override fun visitPrimitive(leaderValue1: PrimitiveModel): TraversalAction {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
@@ -121,15 +121,15 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderValue1: PrimitiveModel) {
+    override fun leavePrimitive(leaderValue1: PrimitiveModel) {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(leaderValue1: AliasModel): TraversalAction = TraversalAction.CONTINUE
-    override fun leave(leaderValue1: AliasModel) {}
+    override fun visitAlias(leaderValue1: AliasModel): TraversalAction = TraversalAction.CONTINUE
+    override fun leaveAlias(leaderValue1: AliasModel) {}
 
-    override fun visit(leaderValue1: Password1wayModel): TraversalAction {
+    override fun visitPassword1way(leaderValue1: Password1wayModel): TraversalAction {
         when (encodePasswords) {
             EncodePasswords.NONE -> if (leaderValue1.auxs?.isEmpty() != false) return TraversalAction.CONTINUE
             EncodePasswords.HASHED_AND_ENCRYPTED ->
@@ -157,9 +157,9 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderValue1: Password1wayModel) {}
+    override fun leavePassword1way(leaderValue1: Password1wayModel) {}
 
-    override fun visit(leaderValue1: Password2wayModel): TraversalAction {
+    override fun visitPassword2way(leaderValue1: Password2wayModel): TraversalAction {
         when (encodePasswords) {
             EncodePasswords.NONE -> if (leaderValue1.auxs?.isEmpty() != false) return TraversalAction.CONTINUE
             EncodePasswords.HASHED_AND_ENCRYPTED ->
@@ -187,9 +187,9 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderValue1: Password2wayModel) {}
+    override fun leavePassword2way(leaderValue1: Password2wayModel) {}
 
-    override fun visit(leaderValue1: EnumerationModel): TraversalAction {
+    override fun visitEnumeration(leaderValue1: EnumerationModel): TraversalAction {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
@@ -201,12 +201,12 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderValue1: EnumerationModel) {
+    override fun leaveEnumeration(leaderValue1: EnumerationModel) {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         if (isListElement) wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visit(leaderValue1: AssociationModel): TraversalAction {
+    override fun visitAssociation(leaderValue1: AssociationModel): TraversalAction {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
@@ -225,7 +225,7 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderValue1: AssociationModel) {
+    override fun leaveAssociation(leaderValue1: AssociationModel) {
         if (leaderValue1.value.isNotEmpty()) {
             wireFormatEncoder.encodeListEnd()
             wireFormatEncoder.encodeObjectEnd()
@@ -234,12 +234,12 @@ class ModelEncodingVisitor(
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: EntityKeysModel): TraversalAction {
+    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): TraversalAction {
         wireFormatEncoder.encodeObjectStart(leaderEntityKeys1.meta?.let { getMetaName(it) })
         return TraversalAction.CONTINUE
     }
 
-    override fun leave(leaderEntityKeys1: EntityKeysModel) {
+    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {
         wireFormatEncoder.encodeObjectEnd()
     }
 }

@@ -215,42 +215,48 @@ private class EntityKeysLeaderMutableModelState(
 private class LeaderMutableModelStateFactoryVisitor(
     private val stateStack: LeaderMutableModelStateStack
 ) : AbstractLeader1MutableModelVisitor<LeaderMutableModelState?>(null) {
-    override fun visit(leaderMain1: MutableMainModel) = MainLeaderMutableModelState(leaderMain1, stateStack, this)
-    override fun visit(leaderRoot1: MutableRootModel) = RootLeaderMutableModelState(leaderRoot1, stateStack, this)
-    override fun visit(leaderEntity1: MutableEntityModel) =
+    override fun visitMutableMain(leaderMain1: MutableMainModel) =
+        MainLeaderMutableModelState(leaderMain1, stateStack, this)
+
+    override fun visitMutableRoot(leaderRoot1: MutableRootModel) =
+        RootLeaderMutableModelState(leaderRoot1, stateStack, this)
+
+    override fun visitMutableEntity(leaderEntity1: MutableEntityModel) =
         EntityLeaderMutableModelState(leaderEntity1, stateStack, this)
 
     // Fields
 
-    override fun visit(leaderField1: MutableSingleFieldModel) =
+    override fun visitMutableSingleField(leaderField1: MutableSingleFieldModel) =
         SingleFieldLeaderMutableModelState(leaderField1, stateStack, this)
 
-    override fun visit(leaderField1: MutableListFieldModel) =
+    override fun visitMutableListField(leaderField1: MutableListFieldModel) =
         ListFieldLeaderMutableModelState(leaderField1, stateStack, this)
 
-    override fun visit(leaderField1: MutableSetFieldModel) =
+    override fun visitMutableSetField(leaderField1: MutableSetFieldModel) =
         SetFieldLeaderMutableModelState(leaderField1, stateStack, this)
 
     // Values
 
-    override fun visit(leaderValue1: MutablePrimitiveModel) =
+    override fun visitMutablePrimitive(leaderValue1: MutablePrimitiveModel) =
         ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
 
-    override fun visit(leaderValue1: MutableAliasModel) = ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
-    override fun visit(leaderValue1: MutablePassword1wayModel) =
+    override fun visitMutableAlias(leaderValue1: MutableAliasModel) =
         ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
 
-    override fun visit(leaderValue1: MutablePassword2wayModel) =
+    override fun visitMutablePassword1way(leaderValue1: MutablePassword1wayModel) =
         ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
 
-    override fun visit(leaderValue1: MutableEnumerationModel) =
+    override fun visitMutablePassword2way(leaderValue1: MutablePassword2wayModel) =
         ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
 
-    override fun visit(leaderValue1: MutableAssociationModel) =
+    override fun visitMutableEnumeration(leaderValue1: MutableEnumerationModel) =
+        ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
+
+    override fun visitMutableAssociation(leaderValue1: MutableAssociationModel) =
         ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: MutableEntityKeysModel) =
+    override fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel) =
         EntityKeysLeaderMutableModelState(leaderEntityKeys1, stateStack, this)
 }
