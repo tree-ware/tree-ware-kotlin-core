@@ -2,9 +2,9 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 
-abstract class AbstractLeader1Follower0ModelVisitor<Return>(
+abstract class AbstractLeader1ModelVisitor<Return>(
     private val defaultVisitReturn: Return
-) : Leader1Follower0ModelVisitor<Return> {
+) : Leader1ModelVisitor<Return> {
     // Abstract elements are not visited
 
     override fun visit(leaderMain1: MainModel): Return {

@@ -6,7 +6,7 @@ import org.treeWare.model.cursor.LeaderModelCursor
 
 fun forEach(
     leader: ElementModel,
-    visitor: Leader1Follower0ModelVisitor<TraversalAction>
+    visitor: Leader1ModelVisitor<TraversalAction>
 ): TraversalAction {
     val leaderCursor = LeaderModelCursor(leader)
     var action = TraversalAction.CONTINUE
@@ -25,7 +25,7 @@ fun forEach(
 
 fun <Return> dispatchVisit(
     leader: ElementModel,
-    visitor: Leader1Follower0ModelVisitor<Return>
+    visitor: Leader1ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
     ModelElementType.MAIN -> {
         visitor.visit(leader as MainModel)
@@ -70,7 +70,7 @@ fun <Return> dispatchVisit(
 
 fun <Return> dispatchLeave(
     leader: ElementModel,
-    visitor: Leader1Follower0ModelVisitor<Return>
+    visitor: Leader1ModelVisitor<Return>
 ) {
     when (leader.elementType) {
         ModelElementType.MAIN -> {

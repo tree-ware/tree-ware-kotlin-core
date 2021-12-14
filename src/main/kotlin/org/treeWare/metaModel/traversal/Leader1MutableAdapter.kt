@@ -1,12 +1,12 @@
 package org.treeWare.metaModel.traversal
 
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.Leader1Follower0MutableModelVisitor
+import org.treeWare.model.traversal.Leader1MutableModelVisitor
 
-class Leader1Follower0MutableAdapter<Return>(
-    private val adaptee: Leader1Follower0MutableMetaModelVisitor<Return>,
+class Leader1MutableAdapter<Return>(
+    private val adaptee: Leader1MutableMetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
-) : Leader1Follower0MutableModelVisitor<Return> {
+) : Leader1MutableModelVisitor<Return> {
     override fun visit(leaderMain1: MutableMainModel): Return = adaptee.visitMainMeta(leaderMain1)
     override fun leave(leaderMain1: MutableMainModel) = adaptee.leaveMainMeta(leaderMain1)
 

@@ -1,7 +1,7 @@
 package org.treeWare.model.operator
 
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import java.util.*
@@ -14,7 +14,7 @@ fun copy(from: ElementModel, to: MutableElementModel) {
 
 private class CopyVisitor(
     private val to: MutableElementModel
-) : AbstractLeader1Follower0ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
 
     override fun visit(leaderMain1: MainModel): TraversalAction {

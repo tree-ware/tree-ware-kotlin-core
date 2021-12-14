@@ -1,7 +1,7 @@
 package org.treeWare.model.operator
 
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.AbstractLeaderManyFollower0ModelVisitor
+import org.treeWare.model.traversal.AbstractLeaderManyModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import java.util.*
@@ -12,7 +12,7 @@ fun union(inputs: List<MainModel>): MutableMainModel {
     return unionVisitor.unionMain
 }
 
-private class UnionVisitor : AbstractLeaderManyFollower0ModelVisitor<TraversalAction>(
+private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     TraversalAction.CONTINUE
 ) {
     val modelStack = ArrayDeque<MutableElementModel>()

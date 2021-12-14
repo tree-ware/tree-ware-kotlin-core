@@ -1,7 +1,7 @@
 package org.treeWare.model.cursor
 
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.AbstractLeader1Follower0MutableModelVisitor
+import org.treeWare.model.traversal.AbstractLeader1MutableModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchVisit
 import java.util.*
@@ -214,7 +214,7 @@ private class EntityKeysLeaderMutableModelState(
 
 private class LeaderMutableModelStateFactoryVisitor(
     private val stateStack: LeaderMutableModelStateStack
-) : AbstractLeader1Follower0MutableModelVisitor<LeaderMutableModelState?>(null) {
+) : AbstractLeader1MutableModelVisitor<LeaderMutableModelState?>(null) {
     override fun visit(leaderMain1: MutableMainModel) = MainLeaderMutableModelState(leaderMain1, stateStack, this)
     override fun visit(leaderRoot1: MutableRootModel) = RootLeaderMutableModelState(leaderRoot1, stateStack, this)
     override fun visit(leaderEntity1: MutableEntityModel) =

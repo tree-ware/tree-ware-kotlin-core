@@ -2,9 +2,9 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 
-abstract class AbstractLeaderManyFollower0ModelVisitor<Return>(
+abstract class AbstractLeaderManyModelVisitor<Return>(
     private val defaultVisitReturn: Return
-) : LeaderManyFollower0ModelVisitor<Return> {
+) : LeaderManyModelVisitor<Return> {
     override fun visitMain(leaderMainList: List<MainModel?>): Return {
         return defaultVisitReturn
     }

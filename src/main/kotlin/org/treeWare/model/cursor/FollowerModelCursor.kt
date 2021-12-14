@@ -2,7 +2,7 @@ package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.dispatchVisit
 import java.util.*
 
@@ -352,7 +352,7 @@ private class EntityKeysFollowerState(
 
 private class FollowerStateFactoryVisitor(
     private val stateStack: FollowerStateStack
-) : AbstractLeader1Follower0ModelVisitor<FollowerState?>(null) {
+) : AbstractLeader1ModelVisitor<FollowerState?>(null) {
     override fun visit(leaderMain1: MainModel) = MainFollowerState(leaderMain1, stateStack, this)
     override fun visit(leaderRoot1: RootModel) = RootFollowerState(leaderRoot1, stateStack, this)
     override fun visit(leaderEntity1: EntityModel) = EntityFollowerState(leaderEntity1, stateStack, this)

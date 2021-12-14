@@ -5,12 +5,12 @@ import org.treeWare.metaModel.isCompositionFieldMeta
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.ListFieldModel
 import org.treeWare.model.core.SingleFieldModel
-import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.dispatchVisit
 
 // IMPLEMENTATION: ./Get.md
 
-class CompositionTableFieldNameVisitor : AbstractLeader1Follower0ModelVisitor<List<String>>(listOf()) {
+class CompositionTableFieldNameVisitor : AbstractLeader1ModelVisitor<List<String>>(listOf()) {
     // Fields
 
     override fun visit(leaderField1: SingleFieldModel): List<String> =
