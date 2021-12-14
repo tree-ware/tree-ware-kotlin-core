@@ -27,20 +27,20 @@ class CompositionTableGetVisitor<MappingAux>(
         }
     }
 
-    override suspend fun visit(
+    override suspend fun visitMain(
         responseMain: MainModel,
         requestMain: MainModel?,
         mappingMain: MainModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveMain(
         responseMain: MainModel,
         requestMain: MainModel?,
         mappingMain: MainModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitRoot(
         responseRoot: RootModel,
         requestRoot: RootModel?,
         mappingRoot: RootModel?
@@ -60,7 +60,7 @@ class CompositionTableGetVisitor<MappingAux>(
         return TraversalAction.CONTINUE
     }
 
-    override suspend fun leave(
+    override suspend fun leaveRoot(
         responseRoot: RootModel,
         requestRoot: RootModel?,
         mappingRoot: RootModel?
@@ -68,13 +68,13 @@ class CompositionTableGetVisitor<MappingAux>(
         delegate.popPathEntity()
     }
 
-    override suspend fun visit(
+    override suspend fun visitEntity(
         responseEntity: EntityModel,
         requestEntity: EntityModel?,
         mappingEntity: EntityModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveEntity(
         responseEntity: EntityModel,
         requestEntity: EntityModel?,
         mappingEntity: EntityModel?
@@ -83,33 +83,33 @@ class CompositionTableGetVisitor<MappingAux>(
 
     // Fields
 
-    override suspend fun visit(
+    override suspend fun visitSingleField(
         responseField: SingleFieldModel,
         requestField: SingleFieldModel?,
         mappingField: SingleFieldModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveSingleField(
         responseField: SingleFieldModel,
         requestField: SingleFieldModel?,
         mappingField: SingleFieldModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitListField(
         responseField: ListFieldModel,
         requestField: ListFieldModel?,
         mappingField: ListFieldModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveListField(
         responseField: ListFieldModel,
         requestField: ListFieldModel?,
         mappingField: ListFieldModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitSetField(
         responseField: SetFieldModel,
         requestField: SetFieldModel?,
         mappingField: SetFieldModel?
@@ -119,7 +119,7 @@ class CompositionTableGetVisitor<MappingAux>(
         mappingField
     ) else TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveSetField(
         responseField: SetFieldModel,
         requestField: SetFieldModel?,
         mappingField: SetFieldModel?
@@ -153,78 +153,78 @@ class CompositionTableGetVisitor<MappingAux>(
 
     // Values
 
-    override suspend fun visit(
+    override suspend fun visitPrimitive(
         responseField: PrimitiveModel,
         requestField: PrimitiveModel?,
         mappingField: PrimitiveModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leavePrimitive(
         responseField: PrimitiveModel,
         requestField: PrimitiveModel?,
         mappingField: PrimitiveModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitAlias(
         responseField: AliasModel,
         requestField: AliasModel?,
         mappingField: AliasModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveAlias(
         responseField: AliasModel,
         requestField: AliasModel?,
         mappingField: AliasModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitPassword1way(
         leaderValue1: Password1wayModel,
         followerValue1: Password1wayModel?,
         followerValue2: Password1wayModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leavePassword1way(
         leaderValue1: Password1wayModel,
         followerValue1: Password1wayModel?,
         followerValue2: Password1wayModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitPassword2way(
         leaderValue1: Password2wayModel,
         followerValue1: Password2wayModel?,
         followerValue2: Password2wayModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leavePassword2way(
         leaderValue1: Password2wayModel,
         followerValue1: Password2wayModel?,
         followerValue2: Password2wayModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitEnumeration(
         responseField: EnumerationModel,
         requestField: EnumerationModel?,
         mappingField: EnumerationModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveEnumeration(
         responseField: EnumerationModel,
         requestField: EnumerationModel?,
         mappingField: EnumerationModel?
     ) {
     }
 
-    override suspend fun visit(
+    override suspend fun visitAssociation(
         responseField: AssociationModel,
         requestField: AssociationModel?,
         mappingField: AssociationModel?
     ) = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveAssociation(
         responseField: AssociationModel,
         requestField: AssociationModel?,
         mappingField: AssociationModel?
@@ -233,13 +233,13 @@ class CompositionTableGetVisitor<MappingAux>(
 
     // Sub-values
 
-    override suspend fun visit(
+    override suspend fun visitEntityKeys(
         leaderField1: EntityKeysModel,
         followerField1: EntityKeysModel?,
         followerField2: EntityKeysModel?
     ): TraversalAction = TraversalAction.CONTINUE
 
-    override suspend fun leave(
+    override suspend fun leaveEntityKeys(
         leaderField1: EntityKeysModel,
         followerField1: EntityKeysModel?,
         followerField2: EntityKeysModel?

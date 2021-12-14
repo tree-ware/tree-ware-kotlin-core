@@ -5,48 +5,48 @@ import org.treeWare.model.core.*
 interface Leader1MutableModelVisitor<Return> {
     // Abstract elements are not visited
 
-    fun visit(leaderMain1: MutableMainModel): Return
-    fun leave(leaderMain1: MutableMainModel)
+    fun visitMutableMain(leaderMain1: MutableMainModel): Return
+    fun leaveMutableMain(leaderMain1: MutableMainModel)
 
-    fun visit(leaderRoot1: MutableRootModel): Return
-    fun leave(leaderRoot1: MutableRootModel)
+    fun visitMutableRoot(leaderRoot1: MutableRootModel): Return
+    fun leaveMutableRoot(leaderRoot1: MutableRootModel)
 
-    fun visit(leaderEntity1: MutableEntityModel): Return
-    fun leave(leaderEntity1: MutableEntityModel)
+    fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return
+    fun leaveMutableEntity(leaderEntity1: MutableEntityModel)
 
     // Fields
 
-    fun visit(leaderField1: MutableSingleFieldModel): Return
-    fun leave(leaderField1: MutableSingleFieldModel)
+    fun visitMutableSingleField(leaderField1: MutableSingleFieldModel): Return
+    fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel)
 
-    fun visit(leaderField1: MutableListFieldModel): Return
-    fun leave(leaderField1: MutableListFieldModel)
+    fun visitMutableListField(leaderField1: MutableListFieldModel): Return
+    fun leaveMutableListField(leaderField1: MutableListFieldModel)
 
-    fun visit(leaderField1: MutableSetFieldModel): Return
-    fun leave(leaderField1: MutableSetFieldModel)
+    fun visitMutableSetField(leaderField1: MutableSetFieldModel): Return
+    fun leaveMutableSetField(leaderField1: MutableSetFieldModel)
 
     // Values
 
-    fun visit(leaderValue1: MutablePrimitiveModel): Return
-    fun leave(leaderValue1: MutablePrimitiveModel)
+    fun visitMutablePrimitive(leaderValue1: MutablePrimitiveModel): Return
+    fun leaveMutablePrimitive(leaderValue1: MutablePrimitiveModel)
 
-    fun visit(leaderValue1: MutableAliasModel): Return
-    fun leave(leaderValue1: MutableAliasModel)
+    fun visitMutableAlias(leaderValue1: MutableAliasModel): Return
+    fun leaveMutableAlias(leaderValue1: MutableAliasModel)
 
-    fun visit(leaderValue1: MutablePassword1wayModel): Return
-    fun leave(leaderValue1: MutablePassword1wayModel)
+    fun visitMutablePassword1way(leaderValue1: MutablePassword1wayModel): Return
+    fun leaveMutablePassword1way(leaderValue1: MutablePassword1wayModel)
 
-    fun visit(leaderValue1: MutablePassword2wayModel): Return
-    fun leave(leaderValue1: MutablePassword2wayModel)
+    fun visitMutablePassword2way(leaderValue1: MutablePassword2wayModel): Return
+    fun leaveMutablePassword2way(leaderValue1: MutablePassword2wayModel)
 
-    fun visit(leaderValue1: MutableEnumerationModel): Return
-    fun leave(leaderValue1: MutableEnumerationModel)
+    fun visitMutableEnumeration(leaderValue1: MutableEnumerationModel): Return
+    fun leaveMutableEnumeration(leaderValue1: MutableEnumerationModel)
 
-    fun visit(leaderValue1: MutableAssociationModel): Return
-    fun leave(leaderValue1: MutableAssociationModel)
+    fun visitMutableAssociation(leaderValue1: MutableAssociationModel): Return
+    fun leaveMutableAssociation(leaderValue1: MutableAssociationModel)
 
     // Sub-values
 
-    fun visit(leaderEntityKeys1: MutableEntityKeysModel): Return
-    fun leave(leaderEntityKeys1: MutableEntityKeysModel)
+    fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel): Return
+    fun leaveMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel)
 }

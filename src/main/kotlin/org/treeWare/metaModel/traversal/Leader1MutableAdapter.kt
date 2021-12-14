@@ -7,13 +7,13 @@ class Leader1MutableAdapter<Return>(
     private val adaptee: Leader1MutableMetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
 ) : Leader1MutableModelVisitor<Return> {
-    override fun visit(leaderMain1: MutableMainModel): Return = adaptee.visitMainMeta(leaderMain1)
-    override fun leave(leaderMain1: MutableMainModel) = adaptee.leaveMainMeta(leaderMain1)
+    override fun visitMutableMain(leaderMain1: MutableMainModel): Return = adaptee.visitMainMeta(leaderMain1)
+    override fun leaveMutableMain(leaderMain1: MutableMainModel) = adaptee.leaveMainMeta(leaderMain1)
 
-    override fun visit(leaderRoot1: MutableRootModel): Return = defaultVisitReturn
-    override fun leave(leaderRoot1: MutableRootModel) {}
+    override fun visitMutableRoot(leaderRoot1: MutableRootModel): Return = defaultVisitReturn
+    override fun leaveMutableRoot(leaderRoot1: MutableRootModel) {}
 
-    override fun visit(leaderEntity1: MutableEntityModel): Return {
+    override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return {
         return when (val metaMetaName = leaderEntity1.getMetaAux()?.fullName) {
             "/tree_ware_meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
             "/tree_ware_meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
@@ -27,7 +27,7 @@ class Leader1MutableAdapter<Return>(
         }
     }
 
-    override fun leave(leaderEntity1: MutableEntityModel) {
+    override fun leaveMutableEntity(leaderEntity1: MutableEntityModel) {
         return when (val metaMetaName = leaderEntity1.getMetaAux()?.fullName) {
             "/tree_ware_meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
             "/tree_ware_meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
@@ -43,24 +43,24 @@ class Leader1MutableAdapter<Return>(
 
     // Fields
 
-    override fun visit(leaderField1: MutableSingleFieldModel): Return = defaultVisitReturn
-    override fun leave(leaderField1: MutableSingleFieldModel) {}
+    override fun visitMutableSingleField(leaderField1: MutableSingleFieldModel): Return = defaultVisitReturn
+    override fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel) {}
 
-    override fun visit(leaderField1: MutableListFieldModel): Return {
+    override fun visitMutableListField(leaderField1: MutableListFieldModel): Return {
         return when (val metaMetaName = leaderField1.getMetaAux()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
 
-    override fun leave(leaderField1: MutableListFieldModel) {
+    override fun leaveMutableListField(leaderField1: MutableListFieldModel) {
         return when (val metaMetaName = leaderField1.getMetaAux()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> Unit
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
 
-    override fun visit(leaderField1: MutableSetFieldModel): Return {
+    override fun visitMutableSetField(leaderField1: MutableSetFieldModel): Return {
         return when (val metaMetaName = leaderField1.getMetaAux()?.fullName) {
             "/tree_ware_meta_model.main/meta_model/packages" -> defaultVisitReturn
             "/tree_ware_meta_model.main/package/enumerations" -> defaultVisitReturn
@@ -71,55 +71,55 @@ class Leader1MutableAdapter<Return>(
         }
     }
 
-    override fun leave(leaderField1: MutableSetFieldModel) {}
+    override fun leaveMutableSetField(leaderField1: MutableSetFieldModel) {}
 
     // Values
 
-    override fun visit(leaderValue1: MutablePrimitiveModel): Return = defaultVisitReturn
-    override fun leave(leaderValue1: MutablePrimitiveModel) {}
+    override fun visitMutablePrimitive(leaderValue1: MutablePrimitiveModel): Return = defaultVisitReturn
+    override fun leaveMutablePrimitive(leaderValue1: MutablePrimitiveModel) {}
 
-    override fun visit(leaderValue1: MutableAliasModel): Return {
+    override fun visitMutableAlias(leaderValue1: MutableAliasModel): Return {
         throw IllegalStateException("visit AliasModel")
     }
 
-    override fun leave(leaderValue1: MutableAliasModel) {
+    override fun leaveMutableAlias(leaderValue1: MutableAliasModel) {
         throw IllegalStateException("leave AliasModel")
     }
 
-    override fun visit(leaderValue1: MutablePassword1wayModel): Return {
+    override fun visitMutablePassword1way(leaderValue1: MutablePassword1wayModel): Return {
         throw IllegalStateException("visit Password1WayModel")
     }
 
-    override fun leave(leaderValue1: MutablePassword1wayModel) {
+    override fun leaveMutablePassword1way(leaderValue1: MutablePassword1wayModel) {
         throw IllegalStateException("leave Password1WayModel")
     }
 
-    override fun visit(leaderValue1: MutablePassword2wayModel): Return {
+    override fun visitMutablePassword2way(leaderValue1: MutablePassword2wayModel): Return {
         throw IllegalStateException("visit Password2WayModel")
     }
 
-    override fun leave(leaderValue1: MutablePassword2wayModel) {
+    override fun leaveMutablePassword2way(leaderValue1: MutablePassword2wayModel) {
         throw IllegalStateException("leave Password2WayModel")
     }
 
-    override fun visit(leaderValue1: MutableEnumerationModel): Return = defaultVisitReturn
-    override fun leave(leaderValue1: MutableEnumerationModel) {}
+    override fun visitMutableEnumeration(leaderValue1: MutableEnumerationModel): Return = defaultVisitReturn
+    override fun leaveMutableEnumeration(leaderValue1: MutableEnumerationModel) {}
 
-    override fun visit(leaderValue1: MutableAssociationModel): Return {
+    override fun visitMutableAssociation(leaderValue1: MutableAssociationModel): Return {
         throw IllegalStateException("visit AssociationModel")
     }
 
-    override fun leave(leaderValue1: MutableAssociationModel) {
+    override fun leaveMutableAssociation(leaderValue1: MutableAssociationModel) {
         throw IllegalStateException("leave AssociationModel")
     }
 
     // Sub-values
 
-    override fun visit(leaderEntityKeys1: MutableEntityKeysModel): Return {
+    override fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel): Return {
         throw IllegalStateException("visit EntityKeysModel")
     }
 
-    override fun leave(leaderEntityKeys1: MutableEntityKeysModel) {
+    override fun leaveMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel) {
         throw IllegalStateException("leave EntityKeysModel")
     }
 }

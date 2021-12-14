@@ -13,7 +13,7 @@ import org.treeWare.model.traversal.dispatchVisit
 class CompositionTableFieldNameVisitor : AbstractLeader1ModelVisitor<List<String>>(listOf()) {
     // Fields
 
-    override fun visit(leaderField1: SingleFieldModel): List<String> =
+    override fun visitSingleField(leaderField1: SingleFieldModel): List<String> =
         if (isCompositionFieldMeta(leaderField1.meta)) {
             // Recurse into the composition (but only fields that are not composition-lists).
             val entity1 = leaderField1.value as EntityModel
@@ -22,7 +22,7 @@ class CompositionTableFieldNameVisitor : AbstractLeader1ModelVisitor<List<String
             nested.map { "${getMetaName(leaderField1.meta)}/${it}" }
         } else listOf(getMetaName(leaderField1.meta))
 
-    override fun visit(leaderField1: ListFieldModel): List<String> =
+    override fun visitListField(leaderField1: ListFieldModel): List<String> =
         if (isCompositionFieldMeta(leaderField1.meta)) {
             // Composition list fields are not flattened, and so their field names
             // are not returned.

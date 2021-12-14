@@ -51,7 +51,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
             (follower2 == null || follower2.elementType == ModelElementType.MAIN)
-        ) visitor.visit(
+        ) visitor.visitMain(
             leader as MainModel,
             follower1 as MainModel?,
             follower2 as MainModel?,
@@ -64,7 +64,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.ROOT) &&
             (follower2 == null || follower2.elementType == ModelElementType.ROOT)
-        ) visitor.visit(
+        ) visitor.visitRoot(
             leader as RootModel,
             follower1 as RootModel?,
             follower2 as RootModel?,
@@ -77,7 +77,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.ENTITY) &&
             (follower2 == null || follower2.elementType == ModelElementType.ENTITY)
-        ) visitor.visit(
+        ) visitor.visitEntity(
             leader as EntityModel,
             follower1 as EntityModel?,
             follower2 as EntityModel?,
@@ -90,7 +90,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.SINGLE_FIELD) &&
             (follower2 == null || follower2.elementType == ModelElementType.SINGLE_FIELD)
-        ) visitor.visit(
+        ) visitor.visitSingleField(
             leader as SingleFieldModel,
             follower1 as SingleFieldModel?,
             follower2 as SingleFieldModel?,
@@ -103,7 +103,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.LIST_FIELD) &&
             (follower2 == null || follower2.elementType == ModelElementType.LIST_FIELD)
-        ) visitor.visit(
+        ) visitor.visitListField(
             leader as ListFieldModel,
             follower1 as ListFieldModel?,
             follower2 as ListFieldModel?,
@@ -116,7 +116,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.SET_FIELD) &&
             (follower2 == null || follower2.elementType == ModelElementType.SET_FIELD)
-        ) visitor.visit(
+        ) visitor.visitSetField(
             leader as SetFieldModel,
             follower1 as SetFieldModel?,
             follower2 as SetFieldModel?,
@@ -129,7 +129,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.PRIMITIVE) &&
             (follower2 == null || follower2.elementType == ModelElementType.PRIMITIVE)
-        ) visitor.visit(
+        ) visitor.visitPrimitive(
             leader as PrimitiveModel,
             follower1 as PrimitiveModel?,
             follower2 as PrimitiveModel?,
@@ -142,7 +142,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.ALIAS) &&
             (follower2 == null || follower2.elementType == ModelElementType.ALIAS)
-        ) visitor.visit(
+        ) visitor.visitAlias(
             leader as AliasModel,
             follower1 as AliasModel?,
             follower2 as AliasModel?,
@@ -155,7 +155,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.PASSWORD1WAY) &&
             (follower2 == null || follower2.elementType == ModelElementType.PASSWORD1WAY)
-        ) visitor.visit(
+        ) visitor.visitPassword1way(
             leader as Password1wayModel,
             follower1 as Password1wayModel?,
             follower2 as Password1wayModel?,
@@ -168,7 +168,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.PASSWORD2WAY) &&
             (follower2 == null || follower2.elementType == ModelElementType.PASSWORD2WAY)
-        ) visitor.visit(
+        ) visitor.visitPassword2way(
             leader as Password2wayModel,
             follower1 as Password2wayModel?,
             follower2 as Password2wayModel?,
@@ -181,7 +181,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.ENUMERATION) &&
             (follower2 == null || follower2.elementType == ModelElementType.ENUMERATION)
-        ) visitor.visit(
+        ) visitor.visitEnumeration(
             leader as EnumerationModel,
             follower1 as EnumerationModel?,
             follower2 as EnumerationModel?,
@@ -194,7 +194,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.ASSOCIATION) &&
             (follower2 == null || follower2.elementType == ModelElementType.ASSOCIATION)
-        ) visitor.visit(
+        ) visitor.visitAssociation(
             leader as AssociationModel,
             follower1 as AssociationModel?,
             follower2 as AssociationModel?,
@@ -207,7 +207,7 @@ suspend fun <Return> dispatchVisit(
         if (
             (follower1 == null || follower1.elementType == ModelElementType.ENTITY_KEYS) &&
             (follower2 == null || follower2.elementType == ModelElementType.ENTITY_KEYS)
-        ) visitor.visit(
+        ) visitor.visitEntityKeys(
             leader as EntityKeysModel,
             follower1 as EntityKeysModel?,
             follower2 as EntityKeysModel?,
@@ -229,7 +229,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
                 (follower2 == null || follower2.elementType == ModelElementType.MAIN)
-            ) visitor.leave(
+            ) visitor.leaveMain(
                 leader as MainModel,
                 follower1 as MainModel?,
                 follower2 as MainModel?,
@@ -241,7 +241,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.ROOT) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ROOT)
-            ) visitor.leave(
+            ) visitor.leaveRoot(
                 leader as RootModel,
                 follower1 as RootModel?,
                 follower2 as RootModel?,
@@ -253,7 +253,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.ENTITY) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ENTITY)
-            ) visitor.leave(
+            ) visitor.leaveEntity(
                 leader as EntityModel,
                 follower1 as EntityModel?,
                 follower2 as EntityModel?,
@@ -265,7 +265,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.SINGLE_FIELD) &&
                 (follower2 == null || follower2.elementType == ModelElementType.SINGLE_FIELD)
-            ) visitor.leave(
+            ) visitor.leaveSingleField(
                 leader as SingleFieldModel,
                 follower1 as SingleFieldModel?,
                 follower2 as SingleFieldModel?,
@@ -277,7 +277,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.LIST_FIELD) &&
                 (follower2 == null || follower2.elementType == ModelElementType.LIST_FIELD)
-            ) visitor.leave(
+            ) visitor.leaveListField(
                 leader as ListFieldModel,
                 follower1 as ListFieldModel?,
                 follower2 as ListFieldModel?,
@@ -289,7 +289,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.SET_FIELD) &&
                 (follower2 == null || follower2.elementType == ModelElementType.SET_FIELD)
-            ) visitor.leave(
+            ) visitor.leaveSetField(
                 leader as SetFieldModel,
                 follower1 as SetFieldModel?,
                 follower2 as SetFieldModel?,
@@ -301,7 +301,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.PRIMITIVE) &&
                 (follower2 == null || follower2.elementType == ModelElementType.PRIMITIVE)
-            ) visitor.leave(
+            ) visitor.leavePrimitive(
                 leader as PrimitiveModel,
                 follower1 as PrimitiveModel?,
                 follower2 as PrimitiveModel?,
@@ -313,7 +313,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.ALIAS) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ALIAS)
-            ) visitor.leave(
+            ) visitor.leaveAlias(
                 leader as AliasModel,
                 follower1 as AliasModel?,
                 follower2 as AliasModel?,
@@ -325,7 +325,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.PASSWORD1WAY) &&
                 (follower2 == null || follower2.elementType == ModelElementType.PASSWORD1WAY)
-            ) visitor.leave(
+            ) visitor.leavePassword1way(
                 leader as Password1wayModel,
                 follower1 as Password1wayModel?,
                 follower2 as Password1wayModel?,
@@ -337,7 +337,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.PASSWORD2WAY) &&
                 (follower2 == null || follower2.elementType == ModelElementType.PASSWORD2WAY)
-            ) visitor.leave(
+            ) visitor.leavePassword2way(
                 leader as Password2wayModel,
                 follower1 as Password2wayModel?,
                 follower2 as Password2wayModel?,
@@ -349,7 +349,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.ENUMERATION) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ENUMERATION)
-            ) visitor.leave(
+            ) visitor.leaveEnumeration(
                 leader as EnumerationModel,
                 follower1 as EnumerationModel?,
                 follower2 as EnumerationModel?,
@@ -361,7 +361,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.ASSOCIATION) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ASSOCIATION)
-            ) visitor.leave(
+            ) visitor.leaveAssociation(
                 leader as AssociationModel,
                 follower1 as AssociationModel?,
                 follower2 as AssociationModel?,
@@ -373,7 +373,7 @@ suspend fun <Return> dispatchLeave(
             if (
                 (follower1 == null || follower1.elementType == ModelElementType.ENTITY_KEYS) &&
                 (follower2 == null || follower2.elementType == ModelElementType.ENTITY_KEYS)
-            ) visitor.leave(
+            ) visitor.leaveEntityKeys(
                 leader as EntityKeysModel,
                 follower1 as EntityKeysModel?,
                 follower2 as EntityKeysModel?,

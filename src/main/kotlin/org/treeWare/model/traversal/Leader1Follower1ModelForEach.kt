@@ -37,7 +37,7 @@ fun <Return> dispatchVisit(
 ): Return? = when (leader.elementType) {
     ModelElementType.MAIN -> {
         if (follower != null) assert(follower.elementType == ModelElementType.MAIN)
-        if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.visitMain(
             leader as MainModel,
             follower as MainModel?
         )
@@ -45,7 +45,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.ROOT -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
-        if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.visitRoot(
             leader as RootModel,
             follower as RootModel?
         )
@@ -53,7 +53,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.ENTITY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
-        if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.visitEntity(
             leader as EntityModel,
             follower as EntityModel?
         )
@@ -61,7 +61,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.SINGLE_FIELD -> {
         if (follower != null) assert(follower.elementType == ModelElementType.SINGLE_FIELD)
-        if (follower == null || follower.elementType == ModelElementType.SINGLE_FIELD) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.SINGLE_FIELD) visitor.visitSingleField(
             leader as SingleFieldModel,
             follower as SingleFieldModel?
         )
@@ -69,7 +69,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.LIST_FIELD -> {
         if (follower != null) assert(follower.elementType == ModelElementType.LIST_FIELD)
-        if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.visitListField(
             leader as ListFieldModel,
             follower as ListFieldModel?
         )
@@ -77,7 +77,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.SET_FIELD -> {
         if (follower != null) assert(follower.elementType == ModelElementType.SET_FIELD)
-        if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.visitSetField(
             leader as SetFieldModel,
             follower as SetFieldModel?
         )
@@ -85,7 +85,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.PRIMITIVE -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE)
-        if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.visitPrimitive(
             leader as PrimitiveModel,
             follower as PrimitiveModel?
         )
@@ -93,7 +93,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.ALIAS -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ALIAS)
-        if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.visitAlias(
             leader as AliasModel,
             follower as AliasModel?
         )
@@ -101,7 +101,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.PASSWORD1WAY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD1WAY)
-        if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.visitPassword1way(
             leader as Password1wayModel,
             follower as Password1wayModel?
         )
@@ -109,7 +109,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.PASSWORD2WAY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD2WAY)
-        if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.visitPassword2way(
             leader as Password2wayModel,
             follower as Password2wayModel?
         )
@@ -117,7 +117,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.ENUMERATION -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION)
-        if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.visitEnumeration(
             leader as EnumerationModel,
             follower as EnumerationModel?
         )
@@ -125,7 +125,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.ASSOCIATION -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION)
-        if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.visitAssociation(
             leader as AssociationModel,
             follower as AssociationModel?
         )
@@ -133,7 +133,7 @@ fun <Return> dispatchVisit(
     }
     ModelElementType.ENTITY_KEYS -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENTITY_KEYS)
-        if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.visit(
+        if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.visitEntityKeys(
             leader as EntityKeysModel,
             follower as EntityKeysModel?
         )
@@ -149,91 +149,91 @@ fun <Return> dispatchLeave(
     when (leader.elementType) {
         ModelElementType.MAIN -> {
             if (follower != null) assert(follower.elementType == ModelElementType.MAIN)
-            if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.leaveMain(
                 leader as MainModel,
                 follower as MainModel?
             )
         }
         ModelElementType.ROOT -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
-            if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.leaveRoot(
                 leader as RootModel,
                 follower as RootModel?
             )
         }
         ModelElementType.ENTITY -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
-            if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.leaveEntity(
                 leader as EntityModel,
                 follower as EntityModel?
             )
         }
         ModelElementType.SINGLE_FIELD -> {
             if (follower != null) assert(follower.elementType == ModelElementType.SINGLE_FIELD)
-            if (follower == null || follower.elementType == ModelElementType.SINGLE_FIELD) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.SINGLE_FIELD) visitor.leaveSingleField(
                 leader as SingleFieldModel,
                 follower as SingleFieldModel?
             )
         }
         ModelElementType.LIST_FIELD -> {
             if (follower != null) assert(follower.elementType == ModelElementType.LIST_FIELD)
-            if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.LIST_FIELD) visitor.leaveListField(
                 leader as ListFieldModel,
                 follower as ListFieldModel?
             )
         }
         ModelElementType.SET_FIELD -> {
             if (follower != null) assert(follower.elementType == ModelElementType.SET_FIELD)
-            if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.SET_FIELD) visitor.leaveSetField(
                 leader as SetFieldModel,
                 follower as SetFieldModel?
             )
         }
         ModelElementType.PRIMITIVE -> {
             if (follower != null) assert(follower.elementType == ModelElementType.PRIMITIVE)
-            if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.PRIMITIVE) visitor.leavePrimitive(
                 leader as PrimitiveModel,
                 follower as PrimitiveModel?
             )
         }
         ModelElementType.ALIAS -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ALIAS)
-            if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.ALIAS) visitor.leaveAlias(
                 leader as AliasModel,
                 follower as AliasModel?
             )
         }
         ModelElementType.PASSWORD1WAY -> {
             if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD1WAY)
-            if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.PASSWORD1WAY) visitor.leavePassword1way(
                 leader as Password1wayModel,
                 follower as Password1wayModel?
             )
         }
         ModelElementType.PASSWORD2WAY -> {
             if (follower != null) assert(follower.elementType == ModelElementType.PASSWORD2WAY)
-            if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.PASSWORD2WAY) visitor.leavePassword2way(
                 leader as Password2wayModel,
                 follower as Password2wayModel?
             )
         }
         ModelElementType.ENUMERATION -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ENUMERATION)
-            if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.ENUMERATION) visitor.leaveEnumeration(
                 leader as EnumerationModel,
                 follower as EnumerationModel?
             )
         }
         ModelElementType.ASSOCIATION -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ASSOCIATION)
-            if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.leaveAssociation(
                 leader as AssociationModel,
                 follower as AssociationModel?
             )
         }
         ModelElementType.ENTITY_KEYS -> {
             if (follower != null) assert(follower.elementType == ModelElementType.ENTITY_KEYS)
-            if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.leave(
+            if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.leaveEntityKeys(
                 leader as EntityKeysModel,
                 follower as EntityKeysModel?
             )
