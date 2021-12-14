@@ -13,7 +13,7 @@ class FollowerModelCursor(private val initial: ElementModel) {
 
     val element: ElementModel? get() = stateStack.peekFirst()?.element
 
-    fun follow(move: LeaderModelCursorMove): FollowerModelCursorMove? = when {
+    fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove? = when {
         isAtStart -> {
             isAtStart = false
             val initialState =
@@ -41,7 +41,7 @@ private abstract class FollowerState(
 ) {
     abstract val visitCursorMove: FollowerModelCursorMove
 
-    open fun follow(move: LeaderModelCursorMove): FollowerModelCursorMove? {
+    open fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove? {
         throw IllegalStateException("Unknown move $move in state $this")
     }
 }
@@ -50,7 +50,7 @@ private class NullFollowerState(
     override val visitCursorMove: FollowerModelCursorMove,
     stateStack: FollowerStateStack
 ) : FollowerState(null, stateStack) {
-    override fun follow(move: LeaderModelCursorMove): FollowerModelCursorMove {
+    override fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove {
         if (move.direction == CursorMoveDirection.VISIT) stateStack.addFirst(this) else stateStack.pollFirst()
         return FollowerModelCursorMove(move.direction, null)
     }
@@ -63,7 +63,7 @@ private class MainFollowerState(
 ) : FollowerState(main, stateStack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, main)
 
-    override fun follow(move: LeaderModelCursorMove) = when {
+    override fun follow(move: Leader1ModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.MAIN -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, main)
@@ -83,7 +83,7 @@ private abstract class BaseEntityFollowerState(
     stack: FollowerStateStack,
     private val stateFactoryVisitor: FollowerStateFactoryVisitor
 ) : FollowerState(baseEntity, stack) {
-    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
+    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
         CursorMoveDirection.VISIT -> when (move.element.elementType) {
             ModelElementType.SINGLE_FIELD -> visitField(
                 move.element as SingleFieldModel,
@@ -122,7 +122,7 @@ private class RootFollowerState(
 ) : BaseEntityFollowerState(root, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, root)
 
-    override fun follow(move: LeaderModelCursorMove) = when {
+    override fun follow(move: Leader1ModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ROOT -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, root)
@@ -138,7 +138,7 @@ private class EntityFollowerState(
 ) : BaseEntityFollowerState(entity, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, entity)
 
-    override fun follow(move: LeaderModelCursorMove) = when {
+    override fun follow(move: Leader1ModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ENTITY -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, entity)
@@ -156,7 +156,7 @@ private class SingleFieldFollowerState(
 ) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
-    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
+    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.SINGLE_FIELD -> {
                 stateStack.pollFirst()
@@ -206,7 +206,7 @@ private class ListFieldFollowerState(
 ) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
-    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
+    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.LIST_FIELD -> {
                 stateStack.pollFirst()
@@ -259,7 +259,7 @@ private class SetFieldFollowerState(
 ) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
-    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
+    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.SET_FIELD -> {
                 stateStack.pollFirst()
@@ -313,7 +313,7 @@ private class ScalarValueFollowerState(
 ) : FollowerState(value, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, value)
 
-    override fun follow(move: LeaderModelCursorMove) = when (move.direction) {
+    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.PRIMITIVE,
             ModelElementType.ALIAS,
@@ -339,7 +339,7 @@ private class EntityKeysFollowerState(
 ) : BaseEntityFollowerState(entityKeys, stateStack, stateFactoryVisitor) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, entityKeys)
 
-    override fun follow(move: LeaderModelCursorMove) = when {
+    override fun follow(move: Leader1ModelCursorMove) = when {
         move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ENTITY_KEYS -> {
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, entityKeys)

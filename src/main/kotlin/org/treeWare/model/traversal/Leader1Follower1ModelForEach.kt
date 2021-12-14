@@ -3,14 +3,14 @@ package org.treeWare.model.traversal
 import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.FollowerModelCursor
-import org.treeWare.model.cursor.LeaderModelCursor
+import org.treeWare.model.cursor.Leader1ModelCursor
 
 fun forEach(
     leader: ElementModel,
     follower: ElementModel,
     visitor: Leader1Follower1ModelVisitor<TraversalAction>
 ): TraversalAction {
-    val leaderCursor = LeaderModelCursor(leader)
+    val leaderCursor = Leader1ModelCursor(leader)
     val followerCursor = FollowerModelCursor(follower)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
