@@ -9,9 +9,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class LeaderManyFollower0ForEachTests {
+class LeaderManyForEachTests {
     @Test
-    fun `LeaderManyFollower0ForEach must visit and leave all elements of all leaders`() = runBlocking {
+    fun `LeaderManyForEach must visit and leave all elements of all leaders`() = runBlocking {
         // Ensure inputs are different so that the test is not trivial.
         val jsonAddressBook2 = readFile("model/address_book_2.json")
         val jsonAddressBook3 = readFile("model/address_book_3.json")
@@ -22,7 +22,7 @@ class LeaderManyFollower0ForEachTests {
         val addressBook3 = getMainModelFromJsonString(metaModel, jsonAddressBook3)
 
         val writer = StringWriter()
-        val printVisitor = LeaderManyFollower0PrintVisitor(writer)
+        val printVisitor = LeaderManyPrintVisitor(writer)
         forEach(listOf(addressBook2, addressBook3), printVisitor)
 
         val expected = readFile("model/traversal/address_book_print_2_3.txt")

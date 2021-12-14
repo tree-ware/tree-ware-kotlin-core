@@ -2,7 +2,7 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 
-interface Leader1Follower0MutableModelVisitor<Return> {
+interface Leader1MutableModelVisitor<Return> {
     // Abstract elements are not visited
 
     fun visit(leaderMain1: MutableMainModel): Return

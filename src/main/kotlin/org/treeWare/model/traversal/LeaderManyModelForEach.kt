@@ -6,7 +6,7 @@ import org.treeWare.model.cursor.LeaderManyModelCursor
 
 fun forEach(
     leaders: List<ElementModel>,
-    visitor: LeaderManyFollower0ModelVisitor<TraversalAction>
+    visitor: LeaderManyModelVisitor<TraversalAction>
 ): TraversalAction {
     val mainMeta = leaders[0].meta ?: throw IllegalArgumentException("Leader does not have meta-model")
     if (!leaders.all { it.meta === mainMeta }) throw IllegalArgumentException("Leaders do not have identical meta-models")
@@ -30,7 +30,7 @@ fun forEach(
 fun <Return> dispatchVisit(
     elementType: ModelElementType,
     leaders: List<ElementModel?>,
-    visitor: LeaderManyFollower0ModelVisitor<Return>
+    visitor: LeaderManyModelVisitor<Return>
 ): Return? = when (elementType) {
     ModelElementType.MAIN -> visitor.visitMain(leaders as List<MainModel?>)
     ModelElementType.ROOT -> visitor.visitRoot(leaders as List<RootModel?>)
@@ -50,7 +50,7 @@ fun <Return> dispatchVisit(
 fun <Return> dispatchLeave(
     elementType: ModelElementType,
     leaders: List<ElementModel?>,
-    visitor: LeaderManyFollower0ModelVisitor<Return>
+    visitor: LeaderManyModelVisitor<Return>
 ) = when (elementType) {
     ModelElementType.MAIN -> visitor.leaveMain(leaders as List<MainModel?>)
     ModelElementType.ROOT -> visitor.leaveRoot(leaders as List<RootModel?>)

@@ -39,4 +39,4 @@ fun getEntityKeysModel(): EntityKeysModel {
     return MutableEntityKeysModel(null, dummyParent)
 }
 
-class Visitor : AbstractLeader1Follower0ModelVisitor<TraversalAction>(TraversalAction.ABORT_TREE)
+class Visitor : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.ABORT_TREE)

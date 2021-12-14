@@ -5,8 +5,8 @@ import org.treeWare.model.core.*
 import java.io.Writer
 import java.util.*
 
-class LeaderManyFollower0PrintVisitor(private val writer: Writer) :
-    AbstractLeaderManyFollower0ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+class LeaderManyPrintVisitor(private val writer: Writer) :
+    AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     private fun print(key: String, values: List<String?> = listOf("TODO")) {
         writer.write(key)
         writer.write(": ")

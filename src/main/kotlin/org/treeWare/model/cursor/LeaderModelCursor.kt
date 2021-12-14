@@ -1,7 +1,7 @@
 package org.treeWare.model.cursor
 
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.AbstractLeader1Follower0ModelVisitor
+import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchVisit
 import java.util.*
@@ -211,7 +211,7 @@ private class EntityKeysLeaderState(
 
 private class LeaderStateFactoryVisitor(
     private val stateStack: LeaderStateStack
-) : AbstractLeader1Follower0ModelVisitor<LeaderState?>(null) {
+) : AbstractLeader1ModelVisitor<LeaderState?>(null) {
     override fun visit(leaderMain1: MainModel) = MainLeaderState(leaderMain1, stateStack, this)
     override fun visit(leaderRoot1: RootModel) = RootLeaderState(leaderRoot1, stateStack, this)
     override fun visit(leaderEntity1: EntityModel) = EntityLeaderState(leaderEntity1, stateStack, this)

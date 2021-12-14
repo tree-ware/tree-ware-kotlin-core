@@ -2,7 +2,7 @@ package org.treeWare.model.encoder
 
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
-import org.treeWare.model.traversal.Leader1Follower0ModelVisitor
+import org.treeWare.model.traversal.Leader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import java.util.*
@@ -13,7 +13,7 @@ class ModelEncodingVisitor(
     private val wireFormatEncoder: WireFormatEncoder,
     private val multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     private val encodePasswords: EncodePasswords = EncodePasswords.NONE
-) : Leader1Follower0ModelVisitor<TraversalAction> {
+) : Leader1ModelVisitor<TraversalAction> {
     private fun encodeAuxs(name: String?, element: ElementModel) {
         element.auxs?.forEach { (auxName, aux) -> multiAuxEncoder.encode(name, auxName, aux, wireFormatEncoder) }
     }

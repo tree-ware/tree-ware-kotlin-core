@@ -7,9 +7,9 @@ import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.traversal.TraversalAction
 import java.io.Writer
 
-class Leader1Follower0MetaModelPrintVisitor(
+class Leader1MetaModelPrintVisitor(
     writer: Writer
-) : Leader1Follower0MetaModelVisitor<TraversalAction> {
+) : Leader1MetaModelVisitor<TraversalAction> {
     private val jsonEncoder = JsonWireFormatEncoder(writer, true)
 
     private fun startObject(prefix: String, namedMeta: EntityModel? = null) {
