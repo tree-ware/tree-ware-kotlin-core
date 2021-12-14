@@ -29,14 +29,14 @@ class DispatchBenchmarks {
     }
 }
 
-fun getMainModel(): MainModel<Unit> {
+fun getMainModel(): MainModel {
     return MutableMainModel(newMainMetaMeta())
 }
 
-fun getEntityKeysModel(): EntityKeysModel<Unit> {
+fun getEntityKeysModel(): EntityKeysModel {
     val dummyParent =
-        MutableAssociationModel<Unit>(MutableSingleFieldModel(null, MutableRootModel(null, MutableMainModel(null))))
+        MutableAssociationModel(MutableSingleFieldModel(null, MutableRootModel(null, MutableMainModel(null))))
     return MutableEntityKeysModel(null, dummyParent)
 }
 
-class Visitor : AbstractLeader1Follower0ModelVisitor<Unit, TraversalAction>(TraversalAction.ABORT_TREE)
+class Visitor : AbstractLeader1Follower0ModelVisitor<TraversalAction>(TraversalAction.ABORT_TREE)

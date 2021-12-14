@@ -143,7 +143,7 @@ class ModelEncodingVisitor(
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        if (isListElement) encodeAuxs(null, leaderValue1)
         leaderValue1.unhashed?.also {
             if (encodePasswords == EncodePasswords.ALL) wireFormatEncoder.encodeStringField("unhashed", it)
         }
@@ -173,7 +173,7 @@ class ModelEncodingVisitor(
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        if (isListElement) encodeAuxs(null, leaderValue1)
         leaderValue1.unencrypted?.also {
             if (encodePasswords == EncodePasswords.ALL) wireFormatEncoder.encodeStringField("unencrypted", it)
         }
@@ -216,7 +216,7 @@ class ModelEncodingVisitor(
             return TraversalAction.CONTINUE
         }
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        if (isListElement) encodeAuxs(null, leaderValue1)
         wireFormatEncoder.encodeListStart("path_keys")
         leaderValue1.value.forEach { entityKeys ->
             // Traverse entityKeys with this visitor to encode it.

@@ -11,7 +11,7 @@ class LeaderManyModelCursor(private val initialList: List<ElementModel>) {
 
     fun next(previousAction: TraversalAction): LeaderManyModelCursorMove? = when {
         previousAction == TraversalAction.ABORT_SUB_TREE -> {
-            // Remove current state from the stack to abort its sub-tree.
+            // Remove current state from the stack to abort its subtree.
             val currentState = stateStack.pollFirst()
             currentState.leaveCursorMove
         }
@@ -60,7 +60,7 @@ private class MainLeaderManyState(
 
     init {
         val actionList = listOf {
-            val rootList = (leaders.elements as List<MainModel?>).map { it?.root }
+            val rootList = (leaders.elements).map { (it as MainModel?)?.root }
             val rootLeaders = Leaders(rootList)
             val rootState = newLeaderManyState(rootLeaders, stateStack)
             stateStack.addFirst(rootState)
@@ -116,7 +116,7 @@ private class SingleFieldLeaderManyState(
 
     init {
         val actionList = listOf {
-            val valueList = (leaders.elements as List<SingleFieldModel?>).map { it?.value }
+            val valueList = (leaders.elements).map { (it as SingleFieldModel?)?.value }
             val valueLeaders = Leaders(valueList)
             val valueState = newLeaderManyState(valueLeaders, stateStack)
             stateStack.addFirst(valueState)
@@ -134,11 +134,11 @@ private class ListFieldLeaderManyState(
 
     init {
         // Traverse list elements at each index together.
-        val lists = leaders.elements as List<ListFieldModel?>
-        val maxSize = lists.maxOf { it?.values?.size ?: 0 }
+        val lists = leaders.elements
+        val maxSize = lists.maxOf { (it as ListFieldModel?)?.values?.size ?: 0 }
         actionIterator = IteratorAdapter({ (0 until maxSize).iterator() }) { index ->
             {
-                val indexElements = lists.map { it?.values?.getOrNull(index) }
+                val indexElements = lists.map { (it as ListFieldModel?)?.values?.getOrNull(index) }
                 val indexState = newLeaderManyState(Leaders(indexElements), stateStack)
                 stateStack.addFirst(indexState)
                 indexState.visitCursorMove
