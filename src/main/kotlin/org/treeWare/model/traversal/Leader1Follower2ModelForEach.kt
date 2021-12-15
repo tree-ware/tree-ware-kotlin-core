@@ -5,7 +5,7 @@ import org.treeWare.model.cursor.CursorMoveDirection
 import org.treeWare.model.cursor.FollowerModelCursor
 import org.treeWare.model.cursor.Leader1ModelCursor
 
-suspend fun forEach(
+fun forEach(
     leader: ElementModel,
     follower1: ElementModel,
     follower2: ElementModel,
@@ -39,7 +39,7 @@ suspend fun forEach(
     return action
 }
 
-suspend fun <Return> dispatchVisit(
+fun <Return> dispatchVisit(
     leader: ElementModel,
     follower1: ElementModel?,
     follower2: ElementModel?,
@@ -216,7 +216,7 @@ suspend fun <Return> dispatchVisit(
     }
 }
 
-suspend fun <Return> dispatchLeave(
+fun <Return> dispatchLeave(
     leader: ElementModel,
     follower1: ElementModel?,
     follower2: ElementModel?,

@@ -39,6 +39,9 @@ dependencies {
     implementation("javax.json:javax.json-api:$jsonVersion")
     implementation("org.glassfish:javax.json:$jsonVersion")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
+
     implementation("org.apache.logging.log4j:log4j-api:$log4j2Version")
     implementation("org.apache.logging.log4j:log4j-core:$log4j2Version")
 
@@ -46,8 +49,6 @@ dependencies {
     testImplementation(kotlin("test"))
 
     testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
