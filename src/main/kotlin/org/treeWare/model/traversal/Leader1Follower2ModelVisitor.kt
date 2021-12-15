@@ -5,37 +5,37 @@ import org.treeWare.model.core.*
 interface Leader1Follower2ModelVisitor<Return> {
     // Abstract elements are not visited
 
-    suspend fun visitMain(
+    fun visitMain(
         leaderMain1: MainModel,
         followerMain1: MainModel?,
         followerMain2: MainModel?
     ): Return
 
-    suspend fun leaveMain(
+    fun leaveMain(
         leaderMain1: MainModel,
         followerMain1: MainModel?,
         followerMain2: MainModel?
     )
 
-    suspend fun visitRoot(
+    fun visitRoot(
         leaderRoot1: RootModel,
         followerRoot1: RootModel?,
         followerRoot2: RootModel?
     ): Return
 
-    suspend fun leaveRoot(
+    fun leaveRoot(
         leaderRoot1: RootModel,
         followerRoot1: RootModel?,
         followerRoot2: RootModel?
     )
 
-    suspend fun visitEntity(
+    fun visitEntity(
         leaderEntity1: EntityModel,
         followerEntity1: EntityModel?,
         followerEntity2: EntityModel?
     ): Return
 
-    suspend fun leaveEntity(
+    fun leaveEntity(
         leaderEntity1: EntityModel,
         followerEntity1: EntityModel?,
         followerEntity2: EntityModel?
@@ -43,37 +43,37 @@ interface Leader1Follower2ModelVisitor<Return> {
 
     // Fields
 
-    suspend fun visitSingleField(
+    fun visitSingleField(
         leaderField1: SingleFieldModel,
         followerField1: SingleFieldModel?,
         followerField2: SingleFieldModel?
     ): Return
 
-    suspend fun leaveSingleField(
+    fun leaveSingleField(
         leaderField1: SingleFieldModel,
         followerField1: SingleFieldModel?,
         followerField2: SingleFieldModel?
     )
 
-    suspend fun visitListField(
+    fun visitListField(
         leaderField1: ListFieldModel,
         followerField1: ListFieldModel?,
         followerField2: ListFieldModel?
     ): Return
 
-    suspend fun leaveListField(
+    fun leaveListField(
         leaderField1: ListFieldModel,
         followerField1: ListFieldModel?,
         followerField2: ListFieldModel?
     )
 
-    suspend fun visitSetField(
+    fun visitSetField(
         leaderField1: SetFieldModel,
         followerField1: SetFieldModel?,
         followerField2: SetFieldModel?
     ): Return
 
-    suspend fun leaveSetField(
+    fun leaveSetField(
         leaderField1: SetFieldModel,
         followerField1: SetFieldModel?,
         followerField2: SetFieldModel?
@@ -81,73 +81,73 @@ interface Leader1Follower2ModelVisitor<Return> {
 
     // Values
 
-    suspend fun visitPrimitive(
+    fun visitPrimitive(
         leaderValue1: PrimitiveModel,
         followerValue1: PrimitiveModel?,
         followerValue2: PrimitiveModel?
     ): Return
 
-    suspend fun leavePrimitive(
+    fun leavePrimitive(
         leaderValue1: PrimitiveModel,
         followerValue1: PrimitiveModel?,
         followerValue2: PrimitiveModel?
     )
 
-    suspend fun visitAlias(
+    fun visitAlias(
         leaderValue1: AliasModel,
         followerValue1: AliasModel?,
         followerValue2: AliasModel?
     ): Return
 
-    suspend fun leaveAlias(
+    fun leaveAlias(
         leaderValue1: AliasModel,
         followerValue1: AliasModel?,
         followerValue2: AliasModel?
     )
 
-    suspend fun visitPassword1way(
+    fun visitPassword1way(
         leaderValue1: Password1wayModel,
         followerValue1: Password1wayModel?,
         followerValue2: Password1wayModel?
     ): Return
 
-    suspend fun leavePassword1way(
+    fun leavePassword1way(
         leaderValue1: Password1wayModel,
         followerValue1: Password1wayModel?,
         followerValue2: Password1wayModel?
     )
 
-    suspend fun visitPassword2way(
+    fun visitPassword2way(
         leaderValue1: Password2wayModel,
         followerValue1: Password2wayModel?,
         followerValue2: Password2wayModel?
     ): Return
 
-    suspend fun leavePassword2way(
+    fun leavePassword2way(
         leaderValue1: Password2wayModel,
         followerValue1: Password2wayModel?,
         followerValue2: Password2wayModel?
     )
 
-    suspend fun visitEnumeration(
+    fun visitEnumeration(
         leaderValue1: EnumerationModel,
         followerValue1: EnumerationModel?,
         followerValue2: EnumerationModel?
     ): Return
 
-    suspend fun leaveEnumeration(
+    fun leaveEnumeration(
         leaderValue1: EnumerationModel,
         followerValue1: EnumerationModel?,
         followerValue2: EnumerationModel?
     )
 
-    suspend fun visitAssociation(
+    fun visitAssociation(
         leaderValue1: AssociationModel,
         followerValue1: AssociationModel?,
         followerValue2: AssociationModel?
     ): Return
 
-    suspend fun leaveAssociation(
+    fun leaveAssociation(
         leaderValue1: AssociationModel,
         followerValue1: AssociationModel?,
         followerValue2: AssociationModel?
@@ -155,13 +155,13 @@ interface Leader1Follower2ModelVisitor<Return> {
 
     // Sub-values
 
-    suspend fun visitEntityKeys(
+    fun visitEntityKeys(
         leaderEntityKeys1: EntityKeysModel,
         followerEntityKeys1: EntityKeysModel?,
         followerEntityKeys2: EntityKeysModel?
     ): Return
 
-    suspend fun leaveEntityKeys(
+    fun leaveEntityKeys(
         leaderEntityKeys1: EntityKeysModel,
         followerEntityKeys1: EntityKeysModel?,
         followerEntityKeys2: EntityKeysModel?
