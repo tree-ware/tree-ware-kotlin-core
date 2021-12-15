@@ -14,7 +14,7 @@ class Leader1Adapter<Return>(
     override fun leaveRoot(leaderRoot1: RootModel) {}
 
     override fun visitEntity(leaderEntity1: EntityModel): Return {
-        return when (val metaMetaName = leaderEntity1.getMetaAux()?.fullName) {
+        return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
             "/tree_ware_meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
             "/tree_ware_meta_model.main/enumeration" -> adaptee.visitEnumerationMeta(leaderEntity1)
@@ -28,7 +28,7 @@ class Leader1Adapter<Return>(
     }
 
     override fun leaveEntity(leaderEntity1: EntityModel) {
-        return when (val metaMetaName = leaderEntity1.getMetaAux()?.fullName) {
+        return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
             "/tree_ware_meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
             "/tree_ware_meta_model.main/enumeration" -> adaptee.leaveEnumerationMeta(leaderEntity1)
@@ -47,21 +47,21 @@ class Leader1Adapter<Return>(
     override fun leaveSingleField(leaderField1: SingleFieldModel) {}
 
     override fun visitListField(leaderField1: ListFieldModel): Return {
-        return when (val metaMetaName = leaderField1.getMetaAux()?.fullName) {
+        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
 
     override fun leaveListField(leaderField1: ListFieldModel) {
-        return when (val metaMetaName = leaderField1.getMetaAux()?.fullName) {
+        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> Unit
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
 
     override fun visitSetField(leaderField1: SetFieldModel): Return {
-        return when (val metaMetaName = leaderField1.getMetaAux()?.fullName) {
+        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/meta_model/packages" -> defaultVisitReturn
             "/tree_ware_meta_model.main/package/enumerations" -> defaultVisitReturn
             "/tree_ware_meta_model.main/enumeration/values" -> defaultVisitReturn

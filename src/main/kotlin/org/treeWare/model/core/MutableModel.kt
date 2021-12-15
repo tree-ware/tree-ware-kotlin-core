@@ -101,7 +101,7 @@ abstract class MutableBaseEntityModel(
                 FieldType.COMPOSITION -> (singleField.value as BaseEntityModel).getKeyValues()
                 else -> listOf((singleField.value as PrimitiveModel).value)
             }
-        } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.getMetaAux()?.fullName}")
+        } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.getMetaResolved()?.fullName}")
     }
 }
 
@@ -284,7 +284,7 @@ class MutablePassword1wayModel(
     }
 
     fun setUnhashed(unhashed: String): Boolean {
-        val hasher = parent.getMetaAux()?.password1wayHasher
+        val hasher = parent.getMetaResolved()?.password1wayHasher
         if (hasher != null) {
             this.unhashed = null
             this.hashed = hasher.hash(unhashed)
@@ -306,7 +306,7 @@ class MutablePassword1wayModel(
     }
 
     fun verify(thatUnhashed: String): Boolean {
-        val hasher = parent.getMetaAux()?.password1wayHasher ?: return false
+        val hasher = parent.getMetaResolved()?.password1wayHasher ?: return false
         if (this.hashVersion != hasher.hashVersion) return false
         return this.hashed?.let { hasher.verify(thatUnhashed, it) } ?: false
     }
@@ -339,7 +339,7 @@ class MutablePassword2wayModel(
     }
 
     fun setUnencrypted(unencrypted: String): Boolean {
-        val cipher = parent.getMetaAux()?.password2wayCipher
+        val cipher = parent.getMetaResolved()?.password2wayCipher
         if (cipher != null) {
             this.unencrypted = null
             this.encrypted = cipher.encrypt(unencrypted)
@@ -361,7 +361,7 @@ class MutablePassword2wayModel(
     }
 
     fun decrypt(): String? {
-        val cipher = parent.getMetaAux()?.password2wayCipher ?: return unencrypted
+        val cipher = parent.getMetaResolved()?.password2wayCipher ?: return unencrypted
         if (this.cipherVersion != cipher.cipherVersion) return null
         return this.encrypted?.let { cipher.decrypt(it) }
     }
@@ -415,7 +415,7 @@ class MutableAssociationModel(
     }
 
     fun newValue(): List<MutableEntityKeysModel> {
-        val keyEntityMetaList = parent.getMetaAux()?.associationMeta?.keyEntityMetaList ?: listOf()
+        val keyEntityMetaList = parent.getMetaResolved()?.associationMeta?.keyEntityMetaList ?: listOf()
         value = keyEntityMetaList.map { MutableEntityKeysModel(it, this) }
         return value
     }

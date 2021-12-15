@@ -12,7 +12,7 @@ interface ElementModel {
 
 inline fun <reified Aux> ElementModel.getAux(auxName: String): Aux? = this.auxs?.let { it[auxName] as? Aux? }
 
-fun ElementModel.getMetaAux(): Resolved? = this.meta?.getAux<Resolved>(RESOLVED_AUX)
+fun ElementModel.getMetaResolved(): Resolved? = this.meta?.getAux<Resolved>(RESOLVED_AUX)
 
 /** The entire model (from the root entity). */
 interface MainModel : ElementModel {

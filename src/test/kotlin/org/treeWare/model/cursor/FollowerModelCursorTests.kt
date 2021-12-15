@@ -2,7 +2,7 @@ package org.treeWare.model.cursor
 
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.ElementModel
-import org.treeWare.model.core.getMetaAux
+import org.treeWare.model.core.getMetaResolved
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
@@ -119,4 +119,4 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
 }
 
 // TODO(deepak-nulu): return model path instead of meta-model path
-private fun getPath(element: ElementModel?): String? = element?.getMetaAux()?.fullName
+private fun getPath(element: ElementModel?): String? = element?.getMetaResolved()?.fullName

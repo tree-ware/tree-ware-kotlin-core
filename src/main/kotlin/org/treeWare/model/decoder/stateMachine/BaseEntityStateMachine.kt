@@ -58,7 +58,7 @@ class BaseEntityStateMachine(
                 if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
                     val existing = parentSetField?.getValueMatching(it)
                     if (existing != null) {
-                        errors.add("Entity with duplicate keys: ${existing.getMetaAux()?.fullName}: ${it.getKeyValues()}")
+                        errors.add("Entity with duplicate keys: ${existing.getMetaResolved()?.fullName}: ${it.getKeyValues()}")
                         return@let true
                     }
                 }
