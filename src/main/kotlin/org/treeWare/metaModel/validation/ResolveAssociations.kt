@@ -49,7 +49,7 @@ private fun resolveField(fieldElementMeta: ElementModel, rootMeta: EntityModel):
 }
 
 private fun resolveAssociationField(fieldMeta: EntityModel, rootMeta: EntityModel): List<String> {
-    val fieldFullName = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.fullName ?: ""
+    val fieldFullName = getMetaModelResolved(fieldMeta)?.fullName ?: ""
     val associationInfoMeta = getAssociationInfoMeta(fieldMeta)
     if (associationInfoMeta.values.size < 2) return listOf("Association field $fieldFullName has an insufficient path")
 
@@ -74,7 +74,7 @@ private fun resolveAssociationField(fieldMeta: EntityModel, rootMeta: EntityMode
         nextEntityMetaResult.errors
     }
     if (isListFieldMeta(fieldMeta) && keyEntityMetaList.isEmpty()) return listOf("Association list field $fieldFullName path does not have keys")
-    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
+    val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in association field $fieldFullName")
     resolved.associationMeta =
         entityMeta?.let { ResolvedAssociationMeta(it, pathEntityMetaList, keyPathElementList, keyEntityMetaList) }
@@ -94,7 +94,7 @@ private fun getFirstEntityMeta(
         null,
         listOf("Association field $fieldFullName has an invalid path root")
     )
-    val firstEntityMeta = rootMeta.getAux<Resolved>(RESOLVED_AUX)?.compositionMeta ?: return NextEntityMetaResult(
+    val firstEntityMeta = getMetaModelResolved(rootMeta)?.compositionMeta ?: return NextEntityMetaResult(
         null,
         listOf("Root has not been resolved")
     )
@@ -116,7 +116,7 @@ private fun getNextEntityMeta(
         null,
         listOf("Association field $fieldFullName path element $pathElement is not an entity")
     )
-    val nextEntityMeta = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.compositionMeta ?: return NextEntityMetaResult(
+    val nextEntityMeta = getMetaModelResolved(fieldMeta)?.compositionMeta ?: return NextEntityMetaResult(
         null,
         listOf("Association field $fieldFullName path element $pathElement has not been resolved")
     )

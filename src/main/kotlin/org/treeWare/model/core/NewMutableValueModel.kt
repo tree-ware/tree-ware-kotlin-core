@@ -13,7 +13,7 @@ fun newMutableValueModel(
         FieldType.PASSWORD2WAY -> MutablePassword2wayModel(parent)
         FieldType.ENUMERATION -> MutableEnumerationModel(parent)
         FieldType.ASSOCIATION -> MutableAssociationModel(parent)
-        FieldType.COMPOSITION -> MutableEntityModel(fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.compositionMeta, parent)
+        FieldType.COMPOSITION -> MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent)
         else -> MutablePrimitiveModel(parent)
     }
 }

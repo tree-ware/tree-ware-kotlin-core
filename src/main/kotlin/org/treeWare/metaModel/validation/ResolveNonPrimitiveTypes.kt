@@ -28,8 +28,7 @@ private fun resolveRoot(mainMeta: MainModel, nonPrimitiveTypes: NonPrimitiveType
     val entityName = getSingleString(rootMeta, "entity")
     val targetFullName = "/$packageName/$entityName"
     val targetEntity = nonPrimitiveTypes.entities[targetFullName] ?: return listOf("Root entity cannot be resolved")
-    val resolved =
-        rootMeta.getAux<Resolved>(RESOLVED_AUX) ?: throw IllegalStateException("Resolved aux is missing in root")
+    val resolved = getMetaModelResolved(rootMeta) ?: throw IllegalStateException("Resolved aux is missing in root")
     resolved.compositionMeta = targetEntity
     return listOf()
 }
@@ -101,14 +100,14 @@ private fun resolveField(
 }
 
 fun resolvePassword1wayField(fieldMeta: EntityModel, hasher: Hasher?): List<String> {
-    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
+    val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in password1way field")
     resolved.password1wayHasher = hasher
     return listOf()
 }
 
 fun resolvePassword2wayField(fieldMeta: EntityModel, cipher: Cipher?): List<String> {
-    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
+    val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in password2way field")
     resolved.password2wayCipher = cipher
     return listOf()
@@ -124,7 +123,7 @@ private fun resolveEnumerationField(
     val targetFullName = "/$packageName/$enumerationName"
     val targetEnumeration = nonPrimitiveTypes.enumerations[targetFullName]
         ?: return listOf("Enumeration $targetFullName cannot be resolved")
-    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
+    val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in enumeration field targeting $targetFullName")
     resolved.enumerationMeta = targetEnumeration
     return listOf()
@@ -140,7 +139,7 @@ private fun resolveCompositionField(
     val targetFullName = "/$packageName/$entityName"
     val targetEntity = nonPrimitiveTypes.entities[targetFullName]
         ?: return listOf("Entity $targetFullName cannot be resolved")
-    val resolved = fieldMeta.getAux<Resolved>(RESOLVED_AUX)
+    val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
     resolved.compositionMeta = targetEntity
     val errors = mutableListOf<String>()
