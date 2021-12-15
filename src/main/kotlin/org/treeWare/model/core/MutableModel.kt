@@ -35,7 +35,7 @@ class MutableMainModel(override val meta: MainModel?) :
     fun getOrNewRoot(): MutableRootModel {
         if (_root == null) {
             val rootMeta = meta?.let { getRootMeta(it) }
-            val resolvedRootMeta = rootMeta?.getAux<Resolved>(RESOLVED_AUX)?.compositionMeta
+            val resolvedRootMeta = getMetaModelResolved(rootMeta)?.compositionMeta
             _root = MutableRootModel(resolvedRootMeta, this)
         }
         return root
@@ -519,7 +519,7 @@ fun setEnumerationValue(
     val fieldMeta: EntityModel? = enumerationModel.parent.meta
     // fieldMeta is null when constructing the meta-meta-model.
     val enumerationValue = if (fieldMeta == null) value else {
-        val resolvedEnumeration = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.enumerationMeta
+        val resolvedEnumeration = getMetaModelResolved(fieldMeta)?.enumerationMeta
             ?: throw IllegalStateException("Enumeration has not been resolved")
         val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, value)
         enumerationModel.meta = enumerationValueMeta

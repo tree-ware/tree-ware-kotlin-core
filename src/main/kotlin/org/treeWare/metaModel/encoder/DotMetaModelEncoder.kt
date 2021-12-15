@@ -1,7 +1,10 @@
 package org.treeWare.metaModel.encoder
 
 import org.treeWare.metaModel.*
-import org.treeWare.model.core.*
+import org.treeWare.model.core.ElementModel
+import org.treeWare.model.core.EntityModel
+import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.getMetaModelResolved
 import java.io.Writer
 
 fun encodeDot(mainMeta: MainModel, writer: Writer) {
@@ -19,7 +22,7 @@ private fun encodePackages(mainMeta: MainModel, dotWriter: DotWriter) {
 
 private fun encodePackage(packageElementMeta: ElementModel, dotWriter: DotWriter) {
     val packageMeta = packageElementMeta as EntityModel
-    val fullName = packageMeta.getAux<Resolved>(RESOLVED_AUX)?.fullName
+    val fullName = getMetaModelResolved(packageMeta)?.fullName
     val name = getMetaName(packageMeta)
 
     dotWriter.nodesWriteLine("""subgraph "cluster_${fullName}" {""")
@@ -43,7 +46,7 @@ private fun encodeEnumerations(packageMeta: EntityModel, dotWriter: DotWriter) {
 
 private fun encodeEnumeration(enumerationElementMeta: ElementModel, dotWriter: DotWriter) {
     val enumerationMeta = enumerationElementMeta as EntityModel
-    val fullName = enumerationMeta.getAux<Resolved>(RESOLVED_AUX)?.fullName
+    val fullName = getMetaModelResolved(enumerationMeta)?.fullName
     val name = getMetaName(enumerationMeta)
 
     dotWriter.nodesWriteLine(""""$fullName" [label=<""")
@@ -78,7 +81,7 @@ private fun encodeEntities(packageMeta: EntityModel, dotWriter: DotWriter) {
 
 private fun encodeEntity(entityElementMeta: ElementModel, dotWriter: DotWriter) {
     val entityMeta = entityElementMeta as EntityModel
-    val fullName = entityMeta.getAux<Resolved>(RESOLVED_AUX)?.fullName
+    val fullName = getMetaModelResolved(entityMeta)?.fullName
     val name = getMetaName(entityMeta)
 
     dotWriter.nodesWriteLine(""""$fullName" [label=<""")
@@ -111,29 +114,29 @@ private fun encodeField(fieldElementMeta: ElementModel, dotWriter: DotWriter) {
 }
 
 private fun encodeEnumerationField(fieldMeta: EntityModel, dotWriter: DotWriter) {
-    val type = getMetaName(fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.enumerationMeta)
+    val type = getMetaName(getMetaModelResolved(fieldMeta)?.enumerationMeta)
     encodeFieldRow(fieldMeta, type, dotWriter)
 }
 
 private fun encodeAssociationField(fieldMeta: EntityModel, dotWriter: DotWriter) {
-    val resolvedEntity = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.associationMeta?.target
+    val resolvedEntity = getMetaModelResolved(fieldMeta)?.associationMeta?.target
     val type = getMetaName(resolvedEntity)
     encodeFieldRow(fieldMeta, type, dotWriter)
 
-    val entityFullName = fieldMeta.parent.parent.getAux<Resolved>(RESOLVED_AUX)?.fullName
-    val fullName = resolvedEntity?.getAux<Resolved>(RESOLVED_AUX)?.fullName
+    val entityFullName = getMetaModelResolved(fieldMeta.parent.parent)?.fullName
+    val fullName = getMetaModelResolved(resolvedEntity)?.fullName
     val name = getMetaName(fieldMeta)
 
     dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0 [style="dashed" color=sienna]""")
 }
 
 private fun encodeCompositionField(fieldMeta: EntityModel, dotWriter: DotWriter) {
-    val resolvedEntity = fieldMeta.getAux<Resolved>(RESOLVED_AUX)?.compositionMeta
+    val resolvedEntity = getMetaModelResolved(fieldMeta)?.compositionMeta
     val type = getMetaName(resolvedEntity)
     encodeFieldRow(fieldMeta, type, dotWriter)
 
-    val entityFullName = fieldMeta.parent.parent.getAux<Resolved>(RESOLVED_AUX)?.fullName
-    val fullName = resolvedEntity?.getAux<Resolved>(RESOLVED_AUX)?.fullName
+    val entityFullName = getMetaModelResolved(fieldMeta.parent.parent)?.fullName
+    val fullName = getMetaModelResolved(resolvedEntity)?.fullName
     val name = getMetaName(fieldMeta)
 
     dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0 [dir=both arrowtail=diamond color=orangered]""")
