@@ -1,8 +1,7 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.treeWare.metaModel.getMetaName
-import org.treeWare.metaModel.getRootMeta
 import org.treeWare.model.core.MutableRootModel
+import org.treeWare.model.core.getRootName
 import org.treeWare.model.decoder.ModelDecoderOptions
 
 class RootModelStateMachine(
@@ -48,8 +47,7 @@ class RootModelStateMachine(
     override fun decodeKey(name: String): Boolean {
         super.decodeKey(name)
 
-        val mainMeta = root.parent.meta
-        val rootName = mainMeta?.let { getMetaName(getRootMeta(mainMeta)) }
+        val rootName = getRootName(root)
 
         val key = keyName ?: ""
         if (key == rootName) {

@@ -1,6 +1,9 @@
 package org.treeWare.model.core
 
 import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.getRootMetaName
+
+fun getRootName(rootModel: RootModel): String? = rootModel.parent.meta?.let { getRootMetaName(it) }
 
 fun getSingleEntity(meta: BaseEntityModel, fieldName: String): EntityModel {
     val singleField = getSingleField(meta, fieldName)

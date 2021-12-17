@@ -11,7 +11,7 @@ class MetaModelDocs {
     fun `Generate address-book meta-model docs`() {
         val metaModel = newAddressBookMetaModel(null, null)
 
-        val metaModelName = getMetaName(getRootMeta(metaModel))
+        val metaModelName = getRootMetaName(metaModel)
         val fileName = "${metaModelName}_meta_model"
         val fileWriter = File("${fileName}.dot").bufferedWriter()
         encodeDot(metaModel, fileWriter)
