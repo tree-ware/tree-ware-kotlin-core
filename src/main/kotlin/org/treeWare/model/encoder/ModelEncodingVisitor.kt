@@ -30,8 +30,7 @@ class ModelEncodingVisitor(
     }
 
     override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
-        val mainMeta = leaderRoot1.parent.meta
-        val rootName = mainMeta?.let { getMetaName(getRootMeta(mainMeta)) }
+        val rootName = getRootName(leaderRoot1)
         encodeAuxs(rootName, leaderRoot1)
         wireFormatEncoder.encodeObjectStart(rootName)
         return TraversalAction.CONTINUE

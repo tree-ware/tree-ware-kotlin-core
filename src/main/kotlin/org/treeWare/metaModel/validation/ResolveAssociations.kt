@@ -86,7 +86,7 @@ private fun getFirstEntityMeta(
     fieldFullName: String
 ): NextEntityMetaResult {
     // First path element must match root.
-    val rootName = getMetaName(getRootMeta(mainMeta))
+    val rootName = getRootMetaName(mainMeta)
     if (pathElement != rootName) return NextEntityMetaResult(
         null,
         listOf("Association field $fieldFullName has an invalid path root")

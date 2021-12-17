@@ -2,6 +2,8 @@ package org.treeWare.metaModel
 
 import org.treeWare.model.core.*
 
+fun getRootMetaName(mainMeta: MainModel): String = getMetaName(getRootMeta(mainMeta))
+
 fun getRootMeta(mainMeta: MainModel): EntityModel = getSingleEntity(mainMeta.root, "root")
 
 fun getPackagesMeta(mainMeta: MainModel): CollectionFieldModel =
