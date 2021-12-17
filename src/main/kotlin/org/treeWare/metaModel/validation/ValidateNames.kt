@@ -16,6 +16,7 @@ private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
 fun validateNames(mainMeta: MutableMainModel, logFullNames: Boolean): List<String> {
     val state = State()
 
+    mainMeta.setAux(RESOLVED_AUX, Resolved("/"))
     validateRootName(mainMeta, state)
     validatePackagesNames(mainMeta, state)
 

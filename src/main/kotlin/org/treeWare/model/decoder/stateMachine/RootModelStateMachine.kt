@@ -48,12 +48,8 @@ class RootModelStateMachine(
     override fun decodeKey(name: String): Boolean {
         super.decodeKey(name)
 
-        // The root model has a resolved meta-model which does not have the
-        // name of the root. The name is in the unresolved meta-model which
-        // can be accessed from the main meta-model.
         val mainMeta = root.parent.meta
-        val unresolvedRootMeta = mainMeta?.let { getRootMeta(mainMeta) }
-        val rootName = unresolvedRootMeta?.let { getMetaName(unresolvedRootMeta) }
+        val rootName = mainMeta?.let { getMetaName(getRootMeta(mainMeta)) }
 
         val key = keyName ?: ""
         if (key == rootName) {

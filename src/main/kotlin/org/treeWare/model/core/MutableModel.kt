@@ -33,11 +33,10 @@ class MutableMainModel(override val meta: MainModel?) :
     override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
 
     fun getOrNewRoot(): MutableRootModel {
-        if (_root == null) {
-            val rootMeta = meta?.let { getRootMeta(it) }
-            val resolvedRootMeta = getMetaModelResolved(rootMeta)?.compositionMeta
-            _root = MutableRootModel(resolvedRootMeta, this)
-        }
+        // NOTE: main composes the root entity like a field composes an entity.
+        // So the resolved root entity is stored in the Resolved aux of mainMeta like
+        // a resolved entity is stored in the Resolved aux of its parent fieldMeta.
+        if (_root == null) _root = MutableRootModel(getMetaModelResolved(meta)?.compositionMeta, this)
         return root
     }
 }
