@@ -10,45 +10,42 @@ import org.treeWare.model.core.*
  * Side effects:
  * 1. Association fields are resolved.
  */
-fun resolveAssociations(mainMeta: MainModel): List<String> {
-    val rootMeta = getRootMeta(mainMeta)
-    return resolvePackages(mainMeta, rootMeta)
-}
+fun resolveAssociations(mainMeta: MainModel): List<String> = resolvePackages(mainMeta)
 
-private fun resolvePackages(mainMeta: MainModel, rootMeta: EntityModel): List<String> {
+private fun resolvePackages(mainMeta: MainModel): List<String> {
     val packagesMeta = getPackagesMeta(mainMeta)
-    return packagesMeta.values.flatMap { resolvePackage(it, rootMeta) }
+    return packagesMeta.values.flatMap { resolvePackage(it, mainMeta) }
 }
 
-private fun resolvePackage(packageElementMeta: ElementModel, rootMeta: EntityModel): List<String> {
+private fun resolvePackage(packageElementMeta: ElementModel, mainMeta: MainModel): List<String> {
     val packageMeta = packageElementMeta as EntityModel
-    return resolveEntities(packageMeta, rootMeta)
+    return resolveEntities(packageMeta, mainMeta)
 }
 
-private fun resolveEntities(packageMeta: EntityModel, rootMeta: EntityModel): List<String> {
+private fun resolveEntities(packageMeta: EntityModel, mainMeta: MainModel): List<String> {
     val entitiesMeta = getEntitiesMeta(packageMeta)
-    return entitiesMeta?.values?.flatMap { resolveEntity(it, rootMeta) } ?: listOf()
+    return entitiesMeta?.values?.flatMap { resolveEntity(it, mainMeta) } ?: listOf()
 }
 
-private fun resolveEntity(entityElementMeta: ElementModel, rootMeta: EntityModel): List<String> {
+private fun resolveEntity(entityElementMeta: ElementModel, mainMeta: MainModel): List<String> {
     val entityMeta = entityElementMeta as EntityModel
-    return resolveFields(entityMeta, rootMeta)
+    return resolveFields(entityMeta, mainMeta)
 }
 
-private fun resolveFields(entityMeta: EntityModel, rootMeta: EntityModel): List<String> {
+private fun resolveFields(entityMeta: EntityModel, mainMeta: MainModel): List<String> {
     val fieldsMeta = getFieldsMeta(entityMeta)
-    return fieldsMeta.values.flatMap { resolveField(it, rootMeta) }
+    return fieldsMeta.values.flatMap { resolveField(it, mainMeta) }
 }
 
-private fun resolveField(fieldElementMeta: ElementModel, rootMeta: EntityModel): List<String> {
+private fun resolveField(fieldElementMeta: ElementModel, mainMeta: MainModel): List<String> {
     val fieldMeta = fieldElementMeta as EntityModel
     return when (getFieldTypeMeta(fieldMeta)) {
-        FieldType.ASSOCIATION -> resolveAssociationField(fieldMeta, rootMeta)
+        FieldType.ASSOCIATION -> resolveAssociationField(fieldMeta, mainMeta)
         else -> listOf()
     }
 }
 
-private fun resolveAssociationField(fieldMeta: EntityModel, rootMeta: EntityModel): List<String> {
+private fun resolveAssociationField(fieldMeta: EntityModel, mainMeta: MainModel): List<String> {
     val fieldFullName = getMetaModelResolved(fieldMeta)?.fullName ?: ""
     val associationInfoMeta = getAssociationInfoMeta(fieldMeta)
     if (associationInfoMeta.values.size < 2) return listOf("Association field $fieldFullName has an insufficient path")
@@ -61,7 +58,7 @@ private fun resolveAssociationField(fieldMeta: EntityModel, rootMeta: EntityMode
     val pathElements = getListStrings(associationInfoMeta)
     val errors = pathElements.flatMap { pathElement ->
         val nextEntityMetaResult = entityMeta?.let { getNextEntityMeta(pathElement, it, fieldFullName) }
-            ?: getFirstEntityMeta(pathElement, rootMeta, fieldFullName)
+            ?: getFirstEntityMeta(pathElement, mainMeta, fieldFullName)
         if (nextEntityMetaResult.entityMeta == null) return nextEntityMetaResult.errors
         entityMeta = nextEntityMetaResult.entityMeta
         entityMeta?.also {
@@ -85,16 +82,16 @@ private class NextEntityMetaResult(val entityMeta: EntityModel?, val errors: Lis
 
 private fun getFirstEntityMeta(
     pathElement: String,
-    rootMeta: EntityModel,
+    mainMeta: MainModel,
     fieldFullName: String
 ): NextEntityMetaResult {
     // First path element must match root.
-    val rootName = getMetaName(rootMeta)
+    val rootName = getMetaName(getRootMeta(mainMeta))
     if (pathElement != rootName) return NextEntityMetaResult(
         null,
         listOf("Association field $fieldFullName has an invalid path root")
     )
-    val firstEntityMeta = getMetaModelResolved(rootMeta)?.compositionMeta ?: return NextEntityMetaResult(
+    val firstEntityMeta = getMetaModelResolved(mainMeta)?.compositionMeta ?: return NextEntityMetaResult(
         null,
         listOf("Root has not been resolved")
     )

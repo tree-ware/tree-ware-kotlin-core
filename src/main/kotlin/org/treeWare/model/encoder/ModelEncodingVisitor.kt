@@ -30,14 +30,10 @@ class ModelEncodingVisitor(
     }
 
     override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
-        // The root model has a resolved meta-model which does not have the
-        // name of the root. The name is in the unresolved meta-model which
-        // can be accessed from the main meta-model.
         val mainMeta = leaderRoot1.parent.meta
-        val unresolvedRootMeta = mainMeta?.let { getRootMeta(mainMeta) }
-        val name = unresolvedRootMeta?.let { getMetaName(unresolvedRootMeta) }
-        encodeAuxs(name, leaderRoot1)
-        wireFormatEncoder.encodeObjectStart(name)
+        val rootName = mainMeta?.let { getMetaName(getRootMeta(mainMeta)) }
+        encodeAuxs(rootName, leaderRoot1)
+        wireFormatEncoder.encodeObjectStart(rootName)
         return TraversalAction.CONTINUE
     }
 
