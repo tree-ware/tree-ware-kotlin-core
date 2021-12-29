@@ -30,7 +30,6 @@ fun newMetaModel(
         val (decodedMetaModel, decodeErrors) = decodeJson(
             reader,
             metaMetaModel,
-            "data",
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
         if (decodedMetaModel == null || decodeErrors.isNotEmpty()) {

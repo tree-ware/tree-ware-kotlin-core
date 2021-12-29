@@ -11,13 +11,11 @@ class PackageValidationTests {
     fun `Packages list must be specified`() {
         val metaModelJson = """
             | {
-            |   "data": {
-            |     "meta_model": {
-            |       "root": {
-            |         "name": "root",
-            |         "entity": "entity1",
-            |         "package": "test.common"
-            |       }
+            |   "meta_model": {
+            |     "root": {
+            |       "name": "root",
+            |       "entity": "entity1",
+            |       "package": "test.common"
             |     }
             |   }
             | }
@@ -30,15 +28,13 @@ class PackageValidationTests {
     fun `Packages list must not be empty`() {
         val metaModelJson = """
             | {
-            |   "data": {
-            |     "meta_model": {
-            |       "root": {
-            |         "name": "root",
-            |         "entity": "entity1",
-            |         "package": "test.common"
-            |       },
-            |       "packages": []
-            |     }
+            |   "meta_model": {
+            |     "root": {
+            |       "name": "root",
+            |       "entity": "entity1",
+            |       "package": "test.common"
+            |     },
+            |     "packages": []
             |   }
             | }
         """.trimMargin()
@@ -50,19 +46,17 @@ class PackageValidationTests {
     fun `Package must have a name`() {
         val metaModelJson = """
             | {
-            |   "data": {
-            |     "meta_model": {
-            |       "root": {
-            |         "name": "root",
-            |         "entity": "entity1",
-            |         "package": "test.common"
-            |       },
-            |       "packages": [
-            |         {},
-            |         {"name": "package1"},
-            |         {}
-            |       ]
-            |     }
+            |   "meta_model": {
+            |     "root": {
+            |       "name": "root",
+            |       "entity": "entity1",
+            |       "package": "test.common"
+            |     },
+            |     "packages": [
+            |       {},
+            |       {"name": "package1"},
+            |       {}
+            |     ]
             |   }
             | }
         """.trimMargin()

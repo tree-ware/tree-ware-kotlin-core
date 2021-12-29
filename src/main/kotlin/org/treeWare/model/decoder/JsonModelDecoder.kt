@@ -8,12 +8,10 @@ import java.io.Reader
 fun decodeJson(
     reader: Reader,
     meta: MainModel,
-    expectedModelType: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): ModelDecoderResult {
-    val decodingStateMachine =
-        ModelDecodingStateMachine(meta, expectedModelType, options, multiAuxDecodingStateMachineFactory)
+    val decodingStateMachine = ModelDecodingStateMachine(meta, options, multiAuxDecodingStateMachineFactory)
     val wireFormatDecoder = JsonWireFormatDecoder()
     val decoded = wireFormatDecoder.decode(reader, decodingStateMachine)
     val mainModel = if (decoded) decodingStateMachine.mainModel else null

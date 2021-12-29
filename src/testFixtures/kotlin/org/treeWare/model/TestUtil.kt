@@ -21,7 +21,6 @@ fun testRoundTrip(
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
     hasher: Hasher? = null,
     cipher: Cipher? = null,
@@ -33,7 +32,6 @@ fun testRoundTrip(
             metaModel,
             inputFilePath,
             options,
-            expectedModelType,
             expectedDecodeErrors,
             multiAuxDecodingStateMachineFactory
         )
@@ -51,14 +49,12 @@ fun getMainModelFromJsonString(
     meta: MainModel,
     jsonString: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel = getMainModelFromJson(
     meta,
     StringReader(jsonString),
     options,
-    expectedModelType,
     expectedDecodeErrors,
     multiAuxDecodingStateMachineFactory
 )
@@ -67,14 +63,12 @@ fun getMainModelFromJsonFile(
     meta: MainModel,
     jsonFilePath: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel = getMainModelFromJson(
     meta,
     getFileReader(jsonFilePath),
     options,
-    expectedModelType,
     expectedDecodeErrors,
     multiAuxDecodingStateMachineFactory
 )
@@ -83,14 +77,12 @@ fun getMainModelFromJson(
     meta: MainModel,
     jsonReader: Reader,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedModelType: String = "data",
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel {
     val (mainModel, decodeErrors) = decodeJson(
         jsonReader,
         meta,
-        expectedModelType,
         options,
         multiAuxDecodingStateMachineFactory
     )

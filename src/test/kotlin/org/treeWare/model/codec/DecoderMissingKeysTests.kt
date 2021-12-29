@@ -35,7 +35,6 @@ class DecoderMissingKeysTests {
         val (mainModel, decodeErrors) = decodeJson(
             fileReader,
             metaModel,
-            "data",
             ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR)
         )
         fileReader.close()
