@@ -1,7 +1,5 @@
 {
-  "data": {
-    "address_book": {
-      "settings": {}
-    }
+  "address_book": {
+    "settings": {}
   }
 }

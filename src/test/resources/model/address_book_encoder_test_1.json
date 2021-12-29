@@ -1,36 +1,34 @@
 {
-  "data": {
-    "address_book": {
-      "name": "Encoder Test 1",
-      "last_updated": "1587147731",
-      "settings": {
-        "last_name_first": true,
-        "encrypt_hero_name": false,
-        "card_colors": [
-          {
-            "value": "orange"
-          },
-          {
-            "value": "green"
-          },
-          {
-            "value": "blue"
-          }
-        ]
-      },
-      "person": [
+  "address_book": {
+    "name": "Encoder Test 1",
+    "last_updated": "1587147731",
+    "settings": {
+      "last_name_first": true,
+      "encrypt_hero_name": false,
+      "card_colors": [
         {
-          "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-          "first_name": "Clark",
-          "last_name": "Kent",
-          "hero_name": "Superman"
+          "value": "orange"
         },
         {
-          "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-          "first_name": "Lois",
-          "last_name": "Lane"
+          "value": "green"
+        },
+        {
+          "value": "blue"
         }
       ]
-    }
+    },
+    "person": [
+      {
+        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+        "first_name": "Clark",
+        "last_name": "Kent",
+        "hero_name": "Superman"
+      },
+      {
+        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+        "first_name": "Lois",
+        "last_name": "Lane"
+      }
+    ]
   }
 }

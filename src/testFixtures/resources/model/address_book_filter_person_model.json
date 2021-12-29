@@ -1,7 +1,5 @@
 {
-  "data": {
-    "address_book": {
-      "person": []
-    }
+  "address_book": {
+    "person": []
   }
 }

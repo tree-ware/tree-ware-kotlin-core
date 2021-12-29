@@ -20,12 +20,10 @@ class ModelEncodingVisitor(
 
     override fun visitMain(leaderMain1: MainModel): TraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
-        wireFormatEncoder.encodeObjectStart(leaderMain1.type)
         return TraversalAction.CONTINUE
     }
 
     override fun leaveMain(leaderMain1: MainModel) {
-        wireFormatEncoder.encodeObjectEnd()
         wireFormatEncoder.encodeObjectEnd()
     }
 

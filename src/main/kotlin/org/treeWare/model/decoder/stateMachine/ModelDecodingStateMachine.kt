@@ -12,13 +12,15 @@ typealias DecodingStack = ArrayDeque<DecodingStateMachine>
 /** Main state-machine for decoding a model. */
 class ModelDecodingStateMachine(
     meta: MainModel,
-    expectedModelType: String,
     options: ModelDecoderOptions,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : DecodingStateMachine {
+    val mainModel = MutableMainModel(meta)
+    val errors = mutableListOf<String>()
+
     private val stack = DecodingStack()
-    private val mainModelStateMachine =
-        MainModelStateMachine(meta, expectedModelType, stack, options, multiAuxDecodingStateMachineFactory)
+    private val rootModelStateMachine =
+        RootModelStateMachine(mainModel.getOrNewRoot(), stack, options, errors, multiAuxDecodingStateMachineFactory)
     private val logger = LogManager.getLogger()
 
     init {
@@ -27,11 +29,8 @@ class ModelDecodingStateMachine(
 
     private fun reinitialize() {
         stack.clear()
-        stack.addFirst(mainModelStateMachine)
+        stack.addFirst(rootModelStateMachine)
     }
-
-    val mainModel: MutableMainModel? get() = mainModelStateMachine.mainModel
-    val errors: List<String> = mainModelStateMachine.errors
 
     private fun getTopStateMachine(): DecodingStateMachine? {
         val top = stack.peekFirst()

@@ -24,7 +24,6 @@ class GetTests {
             getMainModelFromJsonFile(
                 metaModel,
                 "model/address_book_mapping_model.json",
-                expectedModelType = "mapping",
                 multiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(
                     auxName to { StringAuxStateMachine(it) }
                 )

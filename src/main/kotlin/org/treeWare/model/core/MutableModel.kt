@@ -18,9 +18,6 @@ class MutableMainModel(override val meta: MainModel?) :
     MutableElementModel(), MainModel {
     override val parent: ElementModel? = null
 
-    override var type = "data"
-        internal set
-
     override val auxTypes = mutableListOf<String>()
 
     override var root: MutableRootModel

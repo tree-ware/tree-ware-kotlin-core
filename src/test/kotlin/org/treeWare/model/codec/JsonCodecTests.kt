@@ -21,7 +21,6 @@ class JsonCodecTests {
             "model/address_book_error_all_model.json",
             multiAuxEncoder = MultiAuxEncoder(auxName to StringAuxEncoder()),
             encodePasswords = EncodePasswords.ALL,
-            expectedModelType = "error",
             multiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(
                 auxName to { StringAuxStateMachine(it) }
             )
@@ -39,7 +38,6 @@ class JsonCodecTests {
                 auxType2 to StringAuxEncoder()
             ),
             encodePasswords = EncodePasswords.ALL,
-            expectedModelType = "multi_aux",
             multiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(
                 auxType1 to { StringAuxStateMachine(it) },
                 auxType2 to { StringAuxStateMachine(it) }

@@ -21,7 +21,6 @@ interface MainModel : ElementModel {
 
     override val meta: MainModel?
 
-    val type: String
     val auxTypes: List<String>
     val root: RootModel
 }

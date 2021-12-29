@@ -42,16 +42,14 @@ class MainModelStateMachine(
 
         if (keyName != expectedModelType) return false
         if (mainModel == null) mainModel = MutableMainModel(meta)
-        mainModel?.also { decodeModel(expectedModelType, it, multiAuxDecodingStateMachineFactory) }
+        mainModel?.also { decodeModel(it, multiAuxDecodingStateMachineFactory) }
         return true
     }
 
     private fun decodeModel(
-        modelType: String,
         newMain: MutableMainModel,
         multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
     ) {
-        newMain.type = modelType
         val root = newMain.getOrNewRoot()
         stack.addFirst(RootModelStateMachine(root, stack, options, errors, multiAuxDecodingStateMachineFactory))
     }
