@@ -5,6 +5,8 @@ import org.treeWare.metaModel.getRootMetaName
 
 fun getRootName(rootModel: RootModel): String? = rootModel.parent.meta?.let { getRootMetaName(it) }
 
+fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent.meta?.let { getMetaName(it) }
+
 fun getSingleEntity(entityModel: BaseEntityModel, fieldName: String): EntityModel {
     val singleField = getSingleField(entityModel, fieldName)
     return singleField.value as? EntityModel ?: throw IllegalStateException()
