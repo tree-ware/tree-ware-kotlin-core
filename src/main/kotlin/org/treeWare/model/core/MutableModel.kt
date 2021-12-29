@@ -462,35 +462,43 @@ fun setValue(fieldMeta: EntityModel?, value: BigDecimal, setter: ValueSetter): B
             try {
                 setter(value.toByte())
                 true
-            } catch (e: java.lang.NumberFormatException) {
+            } catch (e: NumberFormatException) {
                 false
             }
         FieldType.SHORT ->
             try {
                 setter(value.toShort())
                 true
-            } catch (e: java.lang.NumberFormatException) {
+            } catch (e: NumberFormatException) {
                 false
             }
         FieldType.INT ->
             try {
                 setter(value.toInt())
                 true
-            } catch (e: java.lang.NumberFormatException) {
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.LONG,
+        FieldType.TIMESTAMP ->
+            try {
+                setter(value.toLong())
+                true
+            } catch (e: NumberFormatException) {
                 false
             }
         FieldType.FLOAT ->
             try {
                 setter(value.toFloat())
                 true
-            } catch (e: java.lang.NumberFormatException) {
+            } catch (e: NumberFormatException) {
                 false
             }
         FieldType.DOUBLE ->
             try {
                 setter(value.toDouble())
                 true
-            } catch (e: java.lang.NumberFormatException) {
+            } catch (e: NumberFormatException) {
                 false
             }
         else -> false
