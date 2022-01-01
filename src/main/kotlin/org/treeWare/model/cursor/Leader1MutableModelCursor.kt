@@ -70,8 +70,8 @@ private class MainLeaderMutableModelState(
 
     init {
         val actionList = listOf<LeaderMutableModelStateAction> {
-            val rootState =
-                dispatchVisit(main.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+            val rootState = main.value?.let { dispatchVisit(it, stateFactoryVisitor) }
+                ?: throw IllegalStateException("null root state")
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         }

@@ -19,8 +19,11 @@ fun getMultiplicityJson(multiplicity: String?): String =
 val testMetaModelCommonRootJson = """
     | "root": {
     |   "name": "root",
-    |   "entity": "entity1",
-    |   "package": "test.common"
+    |   "type": "composition",
+    |   "composition": {
+    |     "name": "entity1",
+    |     "package": "test.common"
+    |   }
     | }
 """.trimMargin()
 

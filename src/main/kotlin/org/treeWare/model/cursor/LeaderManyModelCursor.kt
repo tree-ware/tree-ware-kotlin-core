@@ -60,7 +60,7 @@ private class MainLeaderManyState(
 
     init {
         val actionList = listOf {
-            val rootList = (leaders.elements).map { (it as MainModel?)?.root }
+            val rootList = (leaders.elements).map { (it as MainModel?)?.value }
             val rootLeaders = Leaders(rootList)
             val rootState = newLeaderManyState(rootLeaders, stateStack)
             stateStack.addFirst(rootState)

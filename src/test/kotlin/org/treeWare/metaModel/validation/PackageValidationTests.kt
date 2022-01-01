@@ -14,8 +14,11 @@ class PackageValidationTests {
             |   "meta_model": {
             |     "root": {
             |       "name": "root",
-            |       "entity": "entity1",
-            |       "package": "test.common"
+            |       "type": "composition",
+            |       "composition": {
+            |         "name": "entity1",
+            |         "package": "test.common"
+            |       }
             |     }
             |   }
             | }
@@ -31,14 +34,17 @@ class PackageValidationTests {
             |   "meta_model": {
             |     "root": {
             |       "name": "root",
-            |       "entity": "entity1",
-            |       "package": "test.common"
+            |       "type": "composition",
+            |       "composition": {
+            |         "name": "entity1",
+            |         "package": "test.common"
+            |       }
             |     },
             |     "packages": []
             |   }
             | }
         """.trimMargin()
-        val expectedErrors = listOf("Root entity cannot be resolved")
+        val expectedErrors = listOf("Entity /test.common/entity1 cannot be resolved")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -49,8 +55,11 @@ class PackageValidationTests {
             |   "meta_model": {
             |     "root": {
             |       "name": "root",
-            |       "entity": "entity1",
-            |       "package": "test.common"
+            |       "type": "composition",
+            |       "composition": {
+            |         "name": "entity1",
+            |         "package": "test.common"
+            |       }
             |     },
             |     "packages": [
             |       {},
@@ -64,7 +73,7 @@ class PackageValidationTests {
             "Missing key fields: [name]",
             "Missing key fields: [name]"
         )
-        val expectedErrors = listOf("Root entity cannot be resolved")
+        val expectedErrors = listOf("Entity /test.common/entity1 cannot be resolved")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 

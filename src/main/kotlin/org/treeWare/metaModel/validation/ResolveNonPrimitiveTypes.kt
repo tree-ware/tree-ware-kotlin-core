@@ -18,22 +18,13 @@ fun resolveNonPrimitiveTypes(
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> =
     listOf(
-        resolveMain(mainMeta, nonPrimitiveTypes),
+        resolveRoot(mainMeta, nonPrimitiveTypes),
         resolvePackages(mainMeta, hasher, cipher, nonPrimitiveTypes)
     ).flatten()
 
-// NOTE: main composes the root entity like a field composes an entity.
-// So the resolved root entity is stored in the Resolved aux of mainMeta like
-// a resolved entity is stored in the Resolved aux of its parent fieldMeta.
-private fun resolveMain(mainMeta: MainModel, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+private fun resolveRoot(mainMeta: MainModel, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
     val rootMeta = getRootMeta(mainMeta)
-    val packageName = getSingleString(rootMeta, "package")
-    val entityName = getSingleString(rootMeta, "entity")
-    val targetFullName = "/$packageName/$entityName"
-    val targetEntity = nonPrimitiveTypes.entities[targetFullName] ?: return listOf("Root entity cannot be resolved")
-    val resolved = getMetaModelResolved(mainMeta) ?: throw IllegalStateException("Resolved aux is missing in main")
-    resolved.compositionMeta = targetEntity
-    return listOf()
+    return resolveCompositionField(rootMeta, nonPrimitiveTypes)
 }
 
 private fun resolvePackages(

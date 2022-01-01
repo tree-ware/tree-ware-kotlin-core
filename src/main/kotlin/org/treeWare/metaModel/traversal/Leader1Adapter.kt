@@ -15,6 +15,7 @@ class Leader1Adapter<Return>(
 
     override fun visitEntity(leaderEntity1: EntityModel): Return {
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
+            "/tree_ware_meta_model.main/meta_model" -> defaultVisitReturn
             "/tree_ware_meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
             "/tree_ware_meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
             "/tree_ware_meta_model.main/enumeration" -> adaptee.visitEnumerationMeta(leaderEntity1)
@@ -29,6 +30,7 @@ class Leader1Adapter<Return>(
 
     override fun leaveEntity(leaderEntity1: EntityModel) {
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
+            "/tree_ware_meta_model.main/meta_model" -> Unit
             "/tree_ware_meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
             "/tree_ware_meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
             "/tree_ware_meta_model.main/enumeration" -> adaptee.leaveEnumerationMeta(leaderEntity1)

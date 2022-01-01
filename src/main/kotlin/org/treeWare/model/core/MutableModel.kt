@@ -14,28 +14,20 @@ abstract class MutableElementModel : ElementModel {
     }
 }
 
-class MutableMainModel(override val meta: MainModel?) :
-    MutableElementModel(), MainModel {
-    override val parent: ElementModel? = null
+class MutableMainModel(override val mainMeta: MainModel?) :
+    MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null), MainModel {
+    override val parent: MutableBaseEntityModel? = null
 
-    override val auxTypes = mutableListOf<String>()
-
-    override var root: MutableRootModel
-        get() = _root ?: throw IllegalStateException("Root has not been set")
-        internal set(value) {
-            _root = value
+    override var value: MutableElementModel? = null
+    override var root: MutableEntityModel
+        get() = value as? MutableEntityModel ?: throw IllegalStateException("Root has not been set")
+        set(value) {
+            this.value = value
         }
-    private var _root: MutableRootModel? = null
 
     override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
 
-    fun getOrNewRoot(): MutableRootModel {
-        // NOTE: main composes the root entity like a field composes an entity.
-        // So the resolved root entity is stored in the Resolved aux of mainMeta like
-        // a resolved entity is stored in the Resolved aux of its parent fieldMeta.
-        if (_root == null) _root = MutableRootModel(getMetaModelResolved(meta)?.compositionMeta, this)
-        return root
-    }
+    fun getOrNewRoot(): MutableEntityModel = getOrNewValue() as MutableEntityModel
 }
 
 abstract class MutableBaseEntityModel(
@@ -115,12 +107,12 @@ class MutableEntityModel(
 
 abstract class MutableFieldModel(
     override val meta: EntityModel?,
-    override val parent: MutableBaseEntityModel
+    override val parent: MutableBaseEntityModel?
 ) : MutableElementModel(), FieldModel
 
-class MutableSingleFieldModel(
+open class MutableSingleFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel
+    parent: MutableBaseEntityModel?
 ) : MutableFieldModel(meta, parent), SingleFieldModel {
     override var value: MutableElementModel? = null
         internal set

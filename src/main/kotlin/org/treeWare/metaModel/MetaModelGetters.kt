@@ -38,7 +38,7 @@ fun getFieldMeta(entityMeta: EntityModel, fieldName: String): EntityModel {
     return fields.values.find { entity ->
         if (entity !is EntityModel) false
         else getSingleString(entity, "name") == fieldName
-    } as? EntityModel ?: throw IllegalStateException()
+    } as? EntityModel ?: throw IllegalStateException("Field $fieldName not found in entity ${getMetaName(entityMeta)}")
 }
 
 fun hasKeyFields(entityMeta: EntityModel): Boolean = getFieldsMeta(entityMeta).values.any { fieldElement ->

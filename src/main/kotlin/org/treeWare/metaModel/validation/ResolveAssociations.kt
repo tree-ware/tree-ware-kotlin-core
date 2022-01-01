@@ -91,7 +91,7 @@ private fun getFirstEntityMeta(
         null,
         listOf("Association field $fieldFullName has an invalid path root")
     )
-    val firstEntityMeta = getMetaModelResolved(mainMeta)?.compositionMeta ?: return NextEntityMetaResult(
+    val firstEntityMeta = getMetaModelResolved(getRootMeta(mainMeta))?.compositionMeta ?: return NextEntityMetaResult(
         null,
         listOf("Root has not been resolved")
     )

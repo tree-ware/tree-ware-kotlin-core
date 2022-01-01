@@ -20,8 +20,11 @@ class RootValidationTests {
         val rootJson = """
             | "root": {
             |   "name": "invalid.root-name",
-            |   "entity": "entity1",
-            |   "package": "test.common"
+            |   "type": "composition",
+            |   "composition": {
+            |     "name": "entity1",
+            |     "package": "test.common"
+            |   }
             | }
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(rootJson, testMetaModelCommonPackageJson)
@@ -34,12 +37,15 @@ class RootValidationTests {
         val rootJson = """
             | "root": {
             |   "name": "root",
-            |   "entity": "non_existent_entity",
-            |   "package": "non.existent.package"
+            |   "type": "composition",
+            |   "composition": {
+            |     "name": "non_existent_entity",
+            |     "package": "non.existent.package"
+            |   }
             | }
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(rootJson, testMetaModelCommonPackageJson)
-        val expectedErrors = listOf("Root entity cannot be resolved")
+        val expectedErrors = listOf("Entity /non.existent.package/non_existent_entity cannot be resolved")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
