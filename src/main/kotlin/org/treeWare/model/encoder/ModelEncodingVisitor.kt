@@ -20,6 +20,8 @@ class ModelEncodingVisitor(
 
     override fun visitMain(leaderMain1: MainModel): TraversalAction {
         wireFormatEncoder.encodeObjectStart(null)
+        val mainName = getMainName(leaderMain1)
+        encodeAuxs(mainName, leaderMain1)
         return TraversalAction.CONTINUE
     }
 
@@ -28,14 +30,10 @@ class ModelEncodingVisitor(
     }
 
     override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
-        val rootName = getRootName(leaderRoot1)
-        encodeAuxs(rootName, leaderRoot1)
-        wireFormatEncoder.encodeObjectStart(rootName)
         return TraversalAction.CONTINUE
     }
 
     override fun leaveRoot(leaderRoot1: RootModel) {
-        wireFormatEncoder.encodeObjectEnd()
     }
 
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {

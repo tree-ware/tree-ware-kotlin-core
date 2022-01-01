@@ -19,7 +19,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     lateinit var unionMain: MutableMainModel
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        unionMain = MutableMainModel(leaderMainList.last()?.meta)
+        unionMain = MutableMainModel(leaderMainList.last()?.mainMeta)
         visitAux(leaderMainList, unionMain)
         modelStack.addFirst(unionMain)
         return TraversalAction.CONTINUE

@@ -24,7 +24,7 @@ class CompositionValidationTests {
             | }
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
-        val expectedErrors = listOf("Package 1 entity 0 field 0 entity info is missing")
+        val expectedErrors = listOf("Package 1 entity 0 field 0 composition info is missing")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -49,8 +49,8 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Package 1 entity 0 field 0 entity info name is missing",
-            "Package 1 entity 0 field 0 entity info package is missing"
+            "Package 1 entity 0 field 0 composition info name is missing",
+            "Package 1 entity 0 field 0 composition info package is missing"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -299,8 +299,11 @@ class CompositionValidationTests {
 private fun testHelperRootJson() = """
     | "root": {
     |   "name": "root",
-    |   "entity": "entity_with_no_keys",
-    |   "package": "test.helper"
+    |   "type": "composition",
+    |   "composition": {
+    |     "name": "entity_with_no_keys",
+    |     "package": "test.helper"
+    |   }
     | }
 """.trimMargin()
 

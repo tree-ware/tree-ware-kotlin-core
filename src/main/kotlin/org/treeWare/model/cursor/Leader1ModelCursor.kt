@@ -67,8 +67,8 @@ private class MainLeaderState(
 
     init {
         val actionList = listOf<LeaderStateAction> {
-            val rootState =
-                dispatchVisit(main.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+            val rootState = main.value?.let { dispatchVisit(it, stateFactoryVisitor) }
+                ?: throw IllegalStateException("null root state")
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         }

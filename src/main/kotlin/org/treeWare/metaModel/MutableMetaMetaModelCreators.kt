@@ -6,15 +6,17 @@ import org.treeWare.model.core.*
 
 fun newMainMetaMeta(): MutableMainModel {
     val mainMeta = MutableMainModel(null)
-    mainMeta.root = MutableRootModel(null, mainMeta)
+    mainMeta.root = MutableEntityModel(null, mainMeta)
     return mainMeta
 }
 
 fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String, packageName: String) {
     val root = newCompositionSingleField(mainMeta.root, "root")
     newStringSingleField(root, "name", name)
-    newStringSingleField(root, "entity", entityName)
-    newStringSingleField(root, "package", packageName)
+    newEnumerationSingleField(root, "type", "composition")
+    val composition = newCompositionSingleField(root, "composition")
+    newStringSingleField(composition, "name", entityName)
+    newStringSingleField(composition, "package", packageName)
 }
 
 fun newPackagesMetaMeta(mainMeta: MutableMainModel): MutableListFieldModel =

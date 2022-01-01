@@ -15,14 +15,12 @@ inline fun <reified Aux> ElementModel.getAux(auxName: String): Aux? = this.auxs?
 fun ElementModel.getMetaResolved(): Resolved? = this.meta?.getAux<Resolved>(RESOLVED_AUX)
 
 /** The entire model (from the root entity). */
-interface MainModel : ElementModel {
+interface MainModel : SingleFieldModel {
     override val elementType: ModelElementType
         get() = ModelElementType.MAIN
 
-    override val meta: MainModel?
-
-    val auxTypes: List<String>
-    val root: RootModel
+    val mainMeta: MainModel?
+    val root: EntityModel // Synonym for SingleFieldModel.value
 }
 
 interface BaseEntityModel : ElementModel {
@@ -55,7 +53,7 @@ interface EntityModel : BaseEntityModel {
 
 interface FieldModel : ElementModel {
     override val meta: EntityModel?
-    override val parent: BaseEntityModel
+    override val parent: BaseEntityModel?
 }
 
 interface SingleFieldModel : FieldModel {

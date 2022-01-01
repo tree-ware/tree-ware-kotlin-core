@@ -1,5 +1,5 @@
 Main: address_book, address_book
-Root: address_book_root, address_book_root
+Entity: address_book.main/address_book_root, address_book.main/address_book_root
 Single field: name, name
 Primitive: Super Heroes, Super Heroes
 Single field: last_updated, last_updated

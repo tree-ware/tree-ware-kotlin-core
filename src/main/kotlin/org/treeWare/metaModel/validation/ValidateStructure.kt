@@ -19,9 +19,16 @@ private fun validateRoot(mainMeta: MainModel): List<String> {
     val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root is missing")
     return listOf(
         validateSingleStringField(rootMeta, "name", "Root"),
-        validateSingleStringField(rootMeta, "entity", "Root"),
-        validateSingleStringField(rootMeta, "package", "Root"),
+        validateRootType(rootMeta),
+        validateEntityInfo(rootMeta, "Root")
     ).flatten()
+}
+
+private fun validateRootType(rootMeta: EntityModel): List<String> {
+    val fieldTypeMeta = runCatching { getFieldTypeMeta(rootMeta) }.getOrNull()
+        ?: return listOf("Root type is missing")
+    return if (fieldTypeMeta == FieldType.COMPOSITION) emptyList()
+    else listOf("""Root type must be "composition"""")
 }
 
 private fun validatePackages(mainMeta: MainModel): List<String> {
@@ -173,7 +180,7 @@ private fun validateAssociationInfo(fieldMeta: EntityModel, fieldId: String): Li
 }
 
 private fun validateEntityInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
-    val infoId = "$fieldId entity info"
+    val infoId = "$fieldId composition info"
     val entityInfoMeta = runCatching { getEntityInfoMeta(fieldMeta) }.getOrNull()
         ?: return listOf("$infoId is missing")
     return listOf(

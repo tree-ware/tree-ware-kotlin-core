@@ -86,8 +86,8 @@ private fun populateRootEntity(rootEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(rootEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string")
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
-    newPrimitiveFieldMetaMeta(fields, "entity", null, "string")
-    newPrimitiveFieldMetaMeta(fields, "package", null, "string")
+    newEnumerationFieldMetaMeta(fields, "type", null, "field_type", META_MODEL_MAIN_PACKAGE, "optional")
+    newCompositionFieldMetaMeta(fields, "composition", null, "composition_info", META_MODEL_MAIN_PACKAGE, "required")
 }
 
 private fun populatePackageEntity(packageEntityMeta: MutableEntityModel) {

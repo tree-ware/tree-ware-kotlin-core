@@ -21,7 +21,7 @@ class LeaderManyPrintVisitor(private val writer: Writer) :
     }
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        val rootNames = leaderMainList.map { main -> main?.meta?.let { getRootMeta(it) }?.let { getMetaName(it) } }
+        val rootNames = leaderMainList.map { main -> main?.meta?.let { getMetaName(it) } }
         print("Main", rootNames)
         return TraversalAction.CONTINUE
     }

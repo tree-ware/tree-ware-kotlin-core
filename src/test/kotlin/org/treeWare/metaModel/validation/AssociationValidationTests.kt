@@ -317,8 +317,11 @@ class AssociationValidationTests {
 private fun testHelperRootJson() = """
     | "root": {
     |   "name": "root",
-    |   "entity": "entity1",
-    |   "package": "test.helper"
+    |   "type": "composition",
+    |   "composition": {
+    |     "name": "entity1",
+    |     "package": "test.helper"
+    |   }
     | }
 """.trimMargin()
 

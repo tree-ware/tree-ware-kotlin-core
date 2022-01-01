@@ -68,9 +68,9 @@ private class MainFollowerState(
             stateStack.pollFirst()
             FollowerModelCursorMove(CursorMoveDirection.LEAVE, main)
         }
-        move.direction == CursorMoveDirection.VISIT && move.element.elementType == ModelElementType.ROOT -> {
-            val rootState =
-                dispatchVisit(main.root, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+        move.direction == CursorMoveDirection.VISIT && move.element.elementType == ModelElementType.ENTITY -> {
+            val rootState = main.value?.let { dispatchVisit(it, stateFactoryVisitor) }
+                ?: throw IllegalStateException("null root state")
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         }
