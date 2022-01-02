@@ -30,9 +30,6 @@ fun <Return> dispatchVisit(
     ModelElementType.MAIN -> {
         visitor.visitMain(leader as MainModel)
     }
-    ModelElementType.ROOT -> {
-        visitor.visitRoot(leader as RootModel)
-    }
     ModelElementType.ENTITY -> {
         visitor.visitEntity(leader as EntityModel)
     }
@@ -75,9 +72,6 @@ fun <Return> dispatchLeave(
     when (leader.elementType) {
         ModelElementType.MAIN -> {
             visitor.leaveMain(leader as MainModel)
-        }
-        ModelElementType.ROOT -> {
-            visitor.leaveRoot(leader as RootModel)
         }
         ModelElementType.ENTITY -> {
             visitor.leaveEntity(leader as EntityModel)

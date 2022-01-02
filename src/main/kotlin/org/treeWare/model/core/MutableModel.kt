@@ -93,11 +93,6 @@ abstract class MutableBaseEntityModel(
     }
 }
 
-class MutableRootModel(
-    meta: EntityModel?,
-    override val parent: MutableMainModel
-) : MutableBaseEntityModel(meta), RootModel
-
 class MutableEntityModel(
     meta: EntityModel?,
     override val parent: MutableFieldModel

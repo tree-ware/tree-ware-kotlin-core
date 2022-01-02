@@ -8,9 +8,6 @@ interface LeaderManyModelVisitor<Return> {
     fun visitMain(leaderMainList: List<MainModel?>): Return
     fun leaveMain(leaderMainList: List<MainModel?>)
 
-    fun visitRoot(leaderRootList: List<RootModel?>): Return
-    fun leaveRoot(leaderRootList: List<RootModel?>)
-
     fun visitEntity(leaderEntityList: List<EntityModel?>): Return
     fun leaveEntity(leaderEntityList: List<EntityModel?>)
 

@@ -29,13 +29,6 @@ class ModelEncodingVisitor(
         wireFormatEncoder.encodeObjectEnd()
     }
 
-    override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveRoot(leaderRoot1: RootModel) {
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)

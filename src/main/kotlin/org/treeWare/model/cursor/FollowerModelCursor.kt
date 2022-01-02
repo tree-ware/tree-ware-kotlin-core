@@ -115,22 +115,6 @@ private abstract class BaseEntityFollowerState(
     }
 }
 
-private class RootFollowerState(
-    private val root: RootModel,
-    stateStack: FollowerStateStack,
-    stateFactoryVisitor: FollowerStateFactoryVisitor
-) : BaseEntityFollowerState(root, stateStack, stateFactoryVisitor) {
-    override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, root)
-
-    override fun follow(move: Leader1ModelCursorMove) = when {
-        move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ROOT -> {
-            stateStack.pollFirst()
-            FollowerModelCursorMove(CursorMoveDirection.LEAVE, root)
-        }
-        else -> super.follow(move)
-    }
-}
-
 private class EntityFollowerState(
     private val entity: EntityModel,
     stateStack: FollowerStateStack,
@@ -354,7 +338,6 @@ private class FollowerStateFactoryVisitor(
     private val stateStack: FollowerStateStack
 ) : AbstractLeader1ModelVisitor<FollowerState?>(null) {
     override fun visitMain(leaderMain1: MainModel) = MainFollowerState(leaderMain1, stateStack, this)
-    override fun visitRoot(leaderRoot1: RootModel) = RootFollowerState(leaderRoot1, stateStack, this)
     override fun visitEntity(leaderEntity1: EntityModel) = EntityFollowerState(leaderEntity1, stateStack, this)
 
     // Fields

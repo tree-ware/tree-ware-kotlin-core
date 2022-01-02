@@ -100,9 +100,6 @@ private abstract class BaseEntityLeaderManyState(
     }
 }
 
-private class RootLeaderManyState(leaders: Leaders, stateStack: LeaderManyStateStack) :
-    BaseEntityLeaderManyState(leaders, stateStack)
-
 private class EntityLeaderManyState(leaders: Leaders, stateStack: LeaderManyStateStack) :
     BaseEntityLeaderManyState(leaders, stateStack)
 
@@ -212,7 +209,6 @@ private fun newLeaderManyState(
     stateStack: LeaderManyStateStack
 ): LeaderManyState = when (leaders.elementType) {
     ModelElementType.MAIN -> MainLeaderManyState(leaders, stateStack)
-    ModelElementType.ROOT -> RootLeaderManyState(leaders, stateStack)
     ModelElementType.ENTITY -> EntityLeaderManyState(leaders, stateStack)
     ModelElementType.SINGLE_FIELD -> SingleFieldLeaderManyState(leaders, stateStack)
     ModelElementType.LIST_FIELD -> ListFieldLeaderManyState(leaders, stateStack)

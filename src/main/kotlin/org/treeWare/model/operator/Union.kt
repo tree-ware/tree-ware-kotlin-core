@@ -30,17 +30,6 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
         assert(modelStack.isEmpty())
     }
 
-    override fun visitRoot(leaderRootList: List<RootModel?>): TraversalAction {
-        val unionRoot = unionMain.getOrNewRoot()
-        visitAux(leaderRootList, unionRoot)
-        modelStack.addFirst(unionRoot)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveRoot(leaderRootList: List<RootModel?>) {
-        modelStack.pollFirst()
-    }
-
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val parent = modelStack.peekFirst()
         val unionEntity = getNewFieldValue(parent)

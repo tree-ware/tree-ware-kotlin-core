@@ -8,9 +8,6 @@ interface Leader1MutableModelVisitor<Return> {
     fun visitMutableMain(leaderMain1: MutableMainModel): Return
     fun leaveMutableMain(leaderMain1: MutableMainModel)
 
-    fun visitMutableRoot(leaderRoot1: MutableRootModel): Return
-    fun leaveMutableRoot(leaderRoot1: MutableRootModel)
-
     fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return
     fun leaveMutableEntity(leaderEntity1: MutableEntityModel)
 

@@ -27,20 +27,6 @@ private class CopyVisitor(
         modelStack.pollFirst()
     }
 
-    override fun visitRoot(leaderRoot1: RootModel): TraversalAction {
-        val copyRoot = if (modelStack.isEmpty()) to
-        else {
-            val copyParent = modelStack.peekFirst() as MutableMainModel
-            copyParent.getOrNewRoot()
-        }
-        modelStack.addFirst(copyRoot)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveRoot(leaderRoot1: RootModel) {
-        modelStack.pollFirst()
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val copyEntity = if (modelStack.isEmpty()) to
         else {

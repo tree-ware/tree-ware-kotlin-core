@@ -17,18 +17,6 @@ interface Leader1Follower2ModelVisitor<Return> {
         followerMain2: MainModel?
     )
 
-    fun visitRoot(
-        leaderRoot1: RootModel,
-        followerRoot1: RootModel?,
-        followerRoot2: RootModel?
-    ): Return
-
-    fun leaveRoot(
-        leaderRoot1: RootModel,
-        followerRoot1: RootModel?,
-        followerRoot2: RootModel?
-    )
-
     fun visitEntity(
         leaderEntity1: EntityModel,
         followerEntity1: EntityModel?,

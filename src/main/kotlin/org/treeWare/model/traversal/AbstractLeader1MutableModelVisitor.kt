@@ -13,12 +13,6 @@ abstract class AbstractLeader1MutableModelVisitor<Return>(
 
     override fun leaveMutableMain(leaderMain1: MutableMainModel) {}
 
-    override fun visitMutableRoot(leaderRoot1: MutableRootModel): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveMutableRoot(leaderRoot1: MutableRootModel) {}
-
     override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return {
         return defaultVisitReturn
     }
