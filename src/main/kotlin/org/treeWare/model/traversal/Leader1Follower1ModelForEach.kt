@@ -43,14 +43,6 @@ fun <Return> dispatchVisit(
         )
         else null
     }
-    ModelElementType.ROOT -> {
-        if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
-        if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.visitRoot(
-            leader as RootModel,
-            follower as RootModel?
-        )
-        else null
-    }
     ModelElementType.ENTITY -> {
         if (follower != null) assert(follower.elementType == ModelElementType.ENTITY)
         if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.visitEntity(
@@ -152,13 +144,6 @@ fun <Return> dispatchLeave(
             if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.leaveMain(
                 leader as MainModel,
                 follower as MainModel?
-            )
-        }
-        ModelElementType.ROOT -> {
-            if (follower != null) assert(follower.elementType == ModelElementType.ROOT)
-            if (follower == null || follower.elementType == ModelElementType.ROOT) visitor.leaveRoot(
-                leader as RootModel,
-                follower as RootModel?
             )
         }
         ModelElementType.ENTITY -> {

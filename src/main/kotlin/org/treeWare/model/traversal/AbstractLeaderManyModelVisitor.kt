@@ -11,12 +11,6 @@ abstract class AbstractLeaderManyModelVisitor<Return>(
 
     override fun leaveMain(leaderMainList: List<MainModel?>) {}
 
-    override fun visitRoot(leaderRootList: List<RootModel?>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveRoot(leaderRootList: List<RootModel?>) {}
-
     override fun visitEntity(leaderEntityList: List<EntityModel?>): Return {
         return defaultVisitReturn
     }

@@ -10,9 +10,6 @@ class Leader1MutableAdapter<Return>(
     override fun visitMutableMain(leaderMain1: MutableMainModel): Return = adaptee.visitMainMeta(leaderMain1)
     override fun leaveMutableMain(leaderMain1: MutableMainModel) = adaptee.leaveMainMeta(leaderMain1)
 
-    override fun visitMutableRoot(leaderRoot1: MutableRootModel): Return = defaultVisitReturn
-    override fun leaveMutableRoot(leaderRoot1: MutableRootModel) {}
-
     override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return {
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/meta_model" -> defaultVisitReturn

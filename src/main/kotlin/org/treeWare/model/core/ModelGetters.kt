@@ -4,8 +4,6 @@ import org.treeWare.metaModel.getMetaName
 
 fun getMainName(mainModel: MainModel): String? = mainModel.meta?.let { getMetaName(it) }
 
-fun getRootName(rootModel: RootModel): String? = getMainName(rootModel.parent)
-
 fun isRootEntity(entityModel: EntityModel): Boolean = entityModel.parent.elementType == ModelElementType.MAIN
 
 fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent.meta?.let { getMetaName(it) }

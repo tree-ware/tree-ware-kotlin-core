@@ -41,33 +41,35 @@ class CompositionTableGetVisitor<MappingAux>(
     ) {
     }
 
-    override fun visitRoot(
-        responseRoot: RootModel,
-        requestRoot: RootModel?,
-        mappingRoot: RootModel?
-    ): TraversalAction {
-        if (requestRoot == null) return TraversalAction.ABORT_SUB_TREE
-
-        val mappingAux = mappingRoot?.getAux<Any>("mapping") as MappingAux?
-        assert(mappingAux != null)
-        if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
-
-        delegate.pushPathEntity(responseRoot)
-        val (compositionListFields, fields) = requestRoot.fields.values.partition { isCompositionSetField(it) }
-        val mutableResponseRoot = responseRoot as MutableRootModel
-        val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
-        runBlocking { delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux) }
-        cloneCompositionListFields(compositionListFields, mutableResponseRoot)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveRoot(
-        responseRoot: RootModel,
-        requestRoot: RootModel?,
-        mappingRoot: RootModel?
-    ) {
-        delegate.popPathEntity()
-    }
+// TODO(deepak-nulu): move this to visitEntity()
+//
+//    override fun visitRoot(
+//        responseRoot: RootModel,
+//        requestRoot: RootModel?,
+//        mappingRoot: RootModel?
+//    ): TraversalAction {
+//        if (requestRoot == null) return TraversalAction.ABORT_SUB_TREE
+//
+//        val mappingAux = mappingRoot?.getAux<Any>("mapping") as MappingAux?
+//        assert(mappingAux != null)
+//        if (mappingAux == null) return TraversalAction.ABORT_SUB_TREE
+//
+//        delegate.pushPathEntity(responseRoot)
+//        val (compositionListFields, fields) = requestRoot.fields.values.partition { isCompositionSetField(it) }
+//        val mutableResponseRoot = responseRoot as MutableRootModel
+//        val fieldNames = fields.flatMap { dispatchVisit(it, fieldNameVisitor) ?: listOf() }
+//        runBlocking { delegate.fetchRoot(mutableResponseRoot, fieldNames, mappingAux) }
+//        cloneCompositionListFields(compositionListFields, mutableResponseRoot)
+//        return TraversalAction.CONTINUE
+//    }
+//
+//    override fun leaveRoot(
+//        responseRoot: RootModel,
+//        requestRoot: RootModel?,
+//        mappingRoot: RootModel?
+//    ) {
+//        delegate.popPathEntity()
+//    }
 
     override fun visitEntity(
         responseEntity: EntityModel,

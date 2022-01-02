@@ -35,13 +35,6 @@ interface BaseEntityModel : ElementModel {
     fun getKeyValues(): List<Any?>
 }
 
-interface RootModel : BaseEntityModel {
-    override val elementType: ModelElementType
-        get() = ModelElementType.ROOT
-
-    override val parent: MainModel
-}
-
 interface EntityModel : BaseEntityModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENTITY

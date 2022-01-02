@@ -33,7 +33,6 @@ fun <Return> dispatchVisit(
     visitor: LeaderManyModelVisitor<Return>
 ): Return? = when (elementType) {
     ModelElementType.MAIN -> visitor.visitMain(leaders as List<MainModel?>)
-    ModelElementType.ROOT -> visitor.visitRoot(leaders as List<RootModel?>)
     ModelElementType.ENTITY -> visitor.visitEntity(leaders as List<EntityModel?>)
     ModelElementType.SINGLE_FIELD -> visitor.visitSingleField(leaders as List<SingleFieldModel?>)
     ModelElementType.LIST_FIELD -> visitor.visitListField(leaders as List<ListFieldModel?>)
@@ -53,7 +52,6 @@ fun <Return> dispatchLeave(
     visitor: LeaderManyModelVisitor<Return>
 ) = when (elementType) {
     ModelElementType.MAIN -> visitor.leaveMain(leaders as List<MainModel?>)
-    ModelElementType.ROOT -> visitor.leaveRoot(leaders as List<RootModel?>)
     ModelElementType.ENTITY -> visitor.leaveEntity(leaders as List<EntityModel?>)
     ModelElementType.SINGLE_FIELD -> visitor.leaveSingleField(leaders as List<SingleFieldModel?>)
     ModelElementType.LIST_FIELD -> visitor.leaveListField(leaders as List<ListFieldModel?>)

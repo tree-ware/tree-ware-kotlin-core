@@ -43,7 +43,7 @@ class GetTests {
                 "root_mapping"
             )
         } answers {
-            val root = arg<MutableRootModel>(0)
+            val root = arg<MutableEntityModel>(0)
             val nameField = root.getOrNewField("name") as MutableSingleFieldModel
             (nameField.getOrNewValue() as MutablePrimitiveModel).setValue("Super Heroes")
             val lastUpdatedField = root.getOrNewField("last_updated") as MutableSingleFieldModel

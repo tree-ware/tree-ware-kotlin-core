@@ -95,15 +95,6 @@ private abstract class BaseEntityLeaderState(
     }
 }
 
-private class RootLeaderState(
-    root: RootModel,
-    stack: LeaderStateStack,
-    stateFactoryVisitor: LeaderStateFactoryVisitor
-) : BaseEntityLeaderState(root, stack, stateFactoryVisitor) {
-    override val visitCursorMove = Leader1ModelCursorMove(CursorMoveDirection.VISIT, root)
-    override val leaveCursorMove = Leader1ModelCursorMove(CursorMoveDirection.LEAVE, root)
-}
-
 private class EntityLeaderState(
     entity: EntityModel,
     stack: LeaderStateStack,
@@ -213,7 +204,6 @@ private class LeaderStateFactoryVisitor(
     private val stateStack: LeaderStateStack
 ) : AbstractLeader1ModelVisitor<LeaderState?>(null) {
     override fun visitMain(leaderMain1: MainModel) = MainLeaderState(leaderMain1, stateStack, this)
-    override fun visitRoot(leaderRoot1: RootModel) = RootLeaderState(leaderRoot1, stateStack, this)
     override fun visitEntity(leaderEntity1: EntityModel) = EntityLeaderState(leaderEntity1, stateStack, this)
 
     // Fields

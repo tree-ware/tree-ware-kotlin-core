@@ -8,9 +8,6 @@ interface Leader1Follower1ModelVisitor<Return> {
     fun visitMain(leaderMain1: MainModel, followerModel1: MainModel?): Return
     fun leaveMain(leaderMain1: MainModel, followerModel1: MainModel?)
 
-    fun visitRoot(leaderRoot1: RootModel, followerRoot1: RootModel?): Return
-    fun leaveRoot(leaderRoot1: RootModel, followerRoot1: RootModel?)
-
     fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): Return
     fun leaveEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?)
 

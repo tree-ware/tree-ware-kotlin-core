@@ -1,7 +1,7 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.treeWare.metaModel.getRootMetaName
 import org.treeWare.model.core.MutableMainModel
+import org.treeWare.model.core.getMainName
 import org.treeWare.model.decoder.ModelDecoderOptions
 
 class MainModelStateMachine(
@@ -63,8 +63,8 @@ class MainModelStateMachine(
             } else stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
-        val rootName = mainModel.mainMeta?.let { getRootMetaName(it) }
-        if (fieldName != rootName) {
+        val mainName = getMainName(mainModel)
+        if (fieldName != mainName) {
             stack.addFirst(SkipUnknownStateMachine(stack))
             return true
         }
