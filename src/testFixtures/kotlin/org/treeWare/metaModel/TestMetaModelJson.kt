@@ -71,7 +71,7 @@ val testMetaModelCommonPackageJson = """
     |       "fields": [
     |         {
     |           "name": "int_field",
-    |           "type": "int",
+    |           "type": "int32",
     |           "is_key": true
     |         }
     |       ]

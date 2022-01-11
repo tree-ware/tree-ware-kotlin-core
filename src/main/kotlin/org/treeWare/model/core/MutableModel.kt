@@ -416,7 +416,44 @@ class MutableEntityKeysModel(
 typealias ValueSetter = (Any) -> Unit
 
 fun setValue(fieldMeta: EntityModel?, value: String, setter: ValueSetter): Boolean {
+    // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
+    // are encoded as strings.
     return when (getFieldTypeMeta(fieldMeta)) {
+        FieldType.UINT64 ->
+            try {
+                setter(value.toULong())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.INT64 ->
+            try {
+                setter(value.toLong())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.BIG_INTEGER ->
+            try {
+                setter(value.toBigInteger())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.BIG_DECIMAL ->
+            try {
+                setter(value.toBigDecimal())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.TIMESTAMP ->
+            try {
+                setter(value.toLong())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
         FieldType.STRING,
         FieldType.UUID -> {
             setter(value)
@@ -427,44 +464,62 @@ fun setValue(fieldMeta: EntityModel?, value: String, setter: ValueSetter): Boole
             setter(blob)
             true
         }
-        // 64-bit integers are encoded as strings because JavaScript integers are only 53-bits
-        FieldType.LONG,
-        FieldType.TIMESTAMP ->
-            try {
-                setter(value.toLong())
-                true
-            } catch (e: NumberFormatException) {
-                false
-            }
         else -> false
     }
 }
 
 fun setValue(fieldMeta: EntityModel?, value: BigDecimal, setter: ValueSetter): Boolean {
     return when (getFieldTypeMeta(fieldMeta)) {
-        FieldType.BYTE ->
+        FieldType.UINT8 ->
+            try {
+                setter(value.toShort().toUByte())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.UINT16 ->
+            try {
+                setter(value.toInt().toUShort())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.UINT32 ->
+            try {
+                setter(value.toLong().toUInt())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.UINT64 ->
+            try {
+                setter(value.toString().toULong())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.INT8 ->
             try {
                 setter(value.toByte())
                 true
             } catch (e: NumberFormatException) {
                 false
             }
-        FieldType.SHORT ->
+        FieldType.INT16 ->
             try {
                 setter(value.toShort())
                 true
             } catch (e: NumberFormatException) {
                 false
             }
-        FieldType.INT ->
+        FieldType.INT32 ->
             try {
                 setter(value.toInt())
                 true
             } catch (e: NumberFormatException) {
                 false
             }
-        FieldType.LONG,
-        FieldType.TIMESTAMP ->
+        FieldType.INT64 ->
             try {
                 setter(value.toLong())
                 true
@@ -481,6 +536,27 @@ fun setValue(fieldMeta: EntityModel?, value: BigDecimal, setter: ValueSetter): B
         FieldType.DOUBLE ->
             try {
                 setter(value.toDouble())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.BIG_INTEGER ->
+            try {
+                setter(value.toBigInteger())
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.BIG_DECIMAL ->
+            try {
+                setter(value)
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        FieldType.TIMESTAMP ->
+            try {
+                setter(value.toLong())
                 true
             } catch (e: NumberFormatException) {
                 false
