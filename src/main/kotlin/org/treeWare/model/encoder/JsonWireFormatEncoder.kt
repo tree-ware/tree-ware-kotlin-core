@@ -136,7 +136,7 @@ class JsonWireFormatEncoder(
         elementEncoded()
     }
 
-    override fun <T : Number> encodeNumericField(name: String, value: T) {
+    override fun <T> encodeNumericField(name: String, value: T) {
         encodeNameValue(name, value.toString())
         elementEncoded()
     }

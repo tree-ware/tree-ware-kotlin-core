@@ -86,16 +86,23 @@ class ModelEncodingVisitor(
             wireFormatEncoder.encodeNullField(fieldName)
             return TraversalAction.CONTINUE
         }
+        // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
+        // are encoded as strings.
         when (leaderValue1.parent.meta?.let { getFieldTypeMeta(it) }) {
             FieldType.BOOLEAN -> wireFormatEncoder.encodeBooleanField(fieldName, value as Boolean)
-            FieldType.BYTE -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
-            FieldType.SHORT -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
-            FieldType.INT -> wireFormatEncoder.encodeNumericField(fieldName, value as Int)
+            FieldType.UINT8 -> wireFormatEncoder.encodeNumericField(fieldName, value as UByte)
+            FieldType.UINT16 -> wireFormatEncoder.encodeNumericField(fieldName, value as UShort)
+            FieldType.UINT32 -> wireFormatEncoder.encodeNumericField(fieldName, value as UInt)
+            FieldType.UINT64 -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
+            FieldType.INT8 -> wireFormatEncoder.encodeNumericField(fieldName, value as Byte)
+            FieldType.INT16 -> wireFormatEncoder.encodeNumericField(fieldName, value as Short)
+            FieldType.INT32 -> wireFormatEncoder.encodeNumericField(fieldName, value as Int)
+            FieldType.INT64 -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
             FieldType.FLOAT -> wireFormatEncoder.encodeNumericField(fieldName, value as Float)
             FieldType.DOUBLE -> wireFormatEncoder.encodeNumericField(fieldName, value as Double)
-            // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
-            // are encoded as strings.
-            FieldType.LONG, FieldType.TIMESTAMP -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
+            FieldType.BIG_INTEGER -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
+            FieldType.BIG_DECIMAL -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
+            FieldType.TIMESTAMP -> wireFormatEncoder.encodeStringField(fieldName, value.toString())
             FieldType.BLOB -> wireFormatEncoder.encodeStringField(
                 fieldName,
                 Base64.getEncoder().encodeToString(value as ByteArray)

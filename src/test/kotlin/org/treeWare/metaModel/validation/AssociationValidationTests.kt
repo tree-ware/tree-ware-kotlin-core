@@ -370,7 +370,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "int_field",
-    |           "type": "int",
+    |           "type": "int32",
     |           "is_key": true
     |         }
     |       ]
