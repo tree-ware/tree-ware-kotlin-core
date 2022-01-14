@@ -19,10 +19,19 @@ fun getSingleString(entityModel: BaseEntityModel, fieldName: String): String {
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
+fun getOptionalSingleString(entityModel: BaseEntityModel, fieldName: String): String? {
+    val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
+    return primitive.value as? String ?: throw IllegalStateException()
+}
+
 fun getOptionalSingleBoolean(entityModel: BaseEntityModel, fieldName: String): Boolean? {
-    val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
-    val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()
+    val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
     return primitive.value as? Boolean ?: throw IllegalStateException()
+}
+
+fun getOptionalSingleUint32(entityModel: BaseEntityModel, fieldName: String): UInt? {
+    val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
+    return primitive.value as? UInt ?: throw IllegalStateException()
 }
 
 fun getSingleEnumeration(entityModel: BaseEntityModel, fieldName: String): String {
@@ -42,6 +51,11 @@ fun getSingleField(entityModel: BaseEntityModel, fieldName: String): SingleField
 
 fun getOptionalSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel? =
     entityModel.getField(fieldName) as? SingleFieldModel?
+
+fun getOptionalSinglePrimitive(entityModel: BaseEntityModel, fieldName: String): PrimitiveModel? {
+    val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
+    return singleField.value as? PrimitiveModel ?: throw IllegalStateException()
+}
 
 fun getListField(entityModel: BaseEntityModel, fieldName: String): ListFieldModel =
     entityModel.getField(fieldName) as? ListFieldModel ?: throw IllegalStateException()
