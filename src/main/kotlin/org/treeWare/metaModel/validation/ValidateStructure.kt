@@ -144,7 +144,8 @@ private fun validateField(
         validateSingleStringField(fieldMeta, "name", fieldId),
         validateFieldType(fieldMeta, fieldId),
         validateFieldMultiplicity(fieldMeta, fieldId),
-        validateFieldIsKey(fieldMeta, fieldId)
+        validateFieldIsKey(fieldMeta, fieldId),
+        validateConstraints(fieldMeta, fieldId)
     ).flatten()
 }
 
@@ -215,6 +216,18 @@ private fun validateFieldIsKey(fieldMeta: EntityModel, fieldId: String): List<St
         FieldType.ASSOCIATION -> errors.add("$fieldId is an association field and they cannot be keys")
         else -> Unit
     }
+    return errors
+}
+
+private fun validateConstraints(fieldMeta: EntityModel, fieldId: String): List<String> {
+    val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull() ?: return emptyList()
+    val errors = mutableListOf<String>()
+    val minSize = getMinSizeConstraint(fieldMeta)
+    if (minSize != null && fieldTypeMeta != FieldType.STRING) errors.add("$fieldId cannot have min_size string constraint")
+    val maxSize = getMaxSizeConstraint(fieldMeta)
+    if (maxSize != null && fieldTypeMeta != FieldType.STRING) errors.add("$fieldId cannot have max_size string constraint")
+    val regex = getRegexConstraint(fieldMeta)
+    if (regex != null && fieldTypeMeta != FieldType.STRING) errors.add("$fieldId cannot have regex string constraint")
     return errors
 }
 

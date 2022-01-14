@@ -95,3 +95,11 @@ fun isKeyFieldMeta(fieldMeta: EntityModel?): Boolean = fieldMeta?.let {
 
 fun isCompositionFieldMeta(fieldMeta: EntityModel?): Boolean =
     getFieldTypeMeta(fieldMeta) == FieldType.COMPOSITION
+
+// Constraints
+
+fun getMinSizeConstraint(fieldMeta: EntityModel): UInt? = getOptionalSingleUint32(fieldMeta, "min_size")
+
+fun getMaxSizeConstraint(fieldMeta: EntityModel): UInt? = getOptionalSingleUint32(fieldMeta, "max_size")
+
+fun getRegexConstraint(fieldMeta: EntityModel): String? = getOptionalSingleString(fieldMeta, "regex")

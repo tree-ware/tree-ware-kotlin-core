@@ -134,7 +134,10 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     newCompositionFieldMetaMeta(fields, "composition", null, "composition_info", META_MODEL_MAIN_PACKAGE, "optional")
     newPrimitiveFieldMetaMeta(fields, "is_key", null, "boolean", "optional")
     newEnumerationFieldMetaMeta(fields, "multiplicity", null, "multiplicity", META_MODEL_MAIN_PACKAGE, "optional")
-
+    // Constraints
+    newPrimitiveFieldMetaMeta(fields, "min_size", "Minimum string length", "uint32", "optional")
+    newPrimitiveFieldMetaMeta(fields, "max_size", "Maximum string length", "uint32", "optional")
+    newPrimitiveFieldMetaMeta(fields, "regex", "Regular expression that strings must match", "string", "optional")
 }
 
 private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEntityModel) {
