@@ -6,19 +6,18 @@ parent: User Docs
 ---
 
 # Field Types
-
-{: .no_toc }
+{:.no_toc}
 
 ---
-
 <details open markdown="block">
   <summary>
-    Table of contents
+    Table of Contents
   </summary>
   {: .text-delta }
 1. TOC
 {: toc }
 </details>
+---
 
 # Types, Constraints, Aliases
 
@@ -121,7 +120,8 @@ Only certain types of primitive fields support constraints. They are covered in 
 
 ### Signed Integers
 
-Signed integer fields (`int8`, `int16`, `int32`, `int64`) support the following constraints:
+Signed integer fields (`int8`, `int16`, `int32`
+, `int64`) [do not yet](https://github.com/tree-ware/tree-ware-kotlin-core/issues/93) support the following constraints:
 
 | Constraint | Values                        | Default | Description                                                 |
 |------------|-------------------------------|---------|-------------------------------------------------------------|
@@ -131,10 +131,11 @@ Signed integer fields (`int8`, `int16`, `int32`, `int64`) support the following 
 
 String fields support the following constraints:
 
-| Constraint | Values           | Default       | Description                               |
-|------------|------------------|---------------|-------------------------------------------|
-| `length`   | unsigned integer | No constraint | Maximum string length                     |
-| `regex`    | string           | No constraint | Regular expression that values must match |
+| Constraint | Values           | Default       | Description                                |
+|------------|------------------|---------------|--------------------------------------------|
+| `min_size` | unsigned integer | No constraint | Minimum string length                      |
+| `max_size` | unsigned integer | No constraint | Maximum string length                      |
+| `regex`    | string           | No constraint | Regular expression that strings must match |
 
 ### Passwords
 
