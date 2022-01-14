@@ -21,8 +21,7 @@ parent: User Docs
 
 # Introduction
 
-Role Based Access Control (RBAC) controls user access to a model. A role specifies permissions for nodes in the model
-tree, and when assigned to a user, the user can access the model according to the permissions in that role.
+Role Based Access Control (RBAC) controls user access to a model.
 
 # Roles
 
@@ -33,7 +32,7 @@ When multiple roles are assigned to a user, the union of the roles determines us
 
 # Permissions
 
-A permission permits a user to do something with the model node to which the permission is assigned. The following
+A permission permits a user to do something with the model node to which the permission is attached. The following
 permissions are supported in tree-ware:
 
 * `create`: permit the user to create a model node.
@@ -41,7 +40,7 @@ permissions are supported in tree-ware:
 * `update`: permit the user to update a model node.
 * `delete`: permit the user to delete a model node.
 * `crud`: the above 4 permissions combined.
-* `grant`: permit a user to grant access to a model node to other users.
+* `grant`: permit the user to grant access to a model node to other users.
     * This permission is needed to create a role with that model node or to add that model node to a role.
     * This permission is needed to assign such a role to another user.
 * `revoke`: permit the user to revoke access to a model node from other users.
@@ -51,8 +50,8 @@ permissions are supported in tree-ware:
 
 # TODO
 
-* Should roles be part of the model or a separate entity stored separately from the model?
-    * The UI needs to list roles, and assign roles to users. So it would be better for roles to be a part of the model
+* Should roles be part of the model or stored separately from the model?
+    * The UI needs to list roles, and assign roles to users, so it would be better for roles to be a part of the model
         * This will require the ability for a model to have multiple aux types in the same model
         * This will require the ability to store aux data in the DB
 * Examples
