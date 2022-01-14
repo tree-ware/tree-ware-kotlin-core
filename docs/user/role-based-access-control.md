@@ -6,19 +6,18 @@ parent: User Docs
 ---
 
 # Role Based Access Control
-
 {: .no_toc }
 
 ---
-
 <details open markdown="block">
   <summary>
-    Table of contents
+    Table of Contents
   </summary>
   {: .text-delta }
 1. TOC
 {: toc }
 </details>
+---
 
 # Introduction
 
