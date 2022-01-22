@@ -1,23 +1,11 @@
 ---
-layout: default
 title: Role Based Access Control
+layout: titled
 nav_order: 10
 parent: User Docs
 ---
 
-# Role Based Access Control
-{: .no_toc }
-
----
-<details open markdown="block">
-  <summary>
-    Table of Contents
-  </summary>
-  {: .text-delta }
-1. TOC
-{: toc }
-</details>
----
+{% include toc.md %}
 
 # Introduction
 

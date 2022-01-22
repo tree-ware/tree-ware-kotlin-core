@@ -1,23 +1,11 @@
 ---
-layout: default
 title: Field Types
+layout: titled
 nav_order: 1
 parent: User Docs
 ---
 
-# Field Types
-{:.no_toc}
-
----
-<details open markdown="block">
-  <summary>
-    Table of Contents
-  </summary>
-  {: .text-delta }
-1. TOC
-{: toc }
-</details>
----
+{% include toc.md %}
 
 # Types, Constraints, Aliases
 
