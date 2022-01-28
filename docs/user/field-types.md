@@ -1,8 +1,8 @@
 ---
-title: Field Types
-layout: titled
-nav_order: 1
-parent: User Docs
+title: "Field Types"
+layout: "titled"
+nav_order: "b"
+parent: "User Docs"
 ---
 
 {% include toc.md %}
