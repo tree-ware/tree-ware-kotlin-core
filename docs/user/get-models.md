@@ -28,7 +28,9 @@ parent: "User Docs"
     * This is supported for all ancestors specified in the `list_by_` aux data of the entity in the meta-model.
     * There are 3 options for how to specify this kind of request:
         * A flat request with entity names from the meta-model and corresponding ancestor paths.
-            * This is a new format that will not allow a mix of this and regular queries.
+            * This is a new format. Need to figure out how to have a mix of this and regular queries.
+            * This format is useful for template/parametric RBAC roles as well. Trees can be specified in many ways, so
+              this approach is not going against the grain of tree-ware.
         * Full model hierarchy with entities between the desired ancestor and leaf marked as "ignore" in aux data.
             * This is more verbose, but since it is a tree, it can contain a mix of this and regular queries.
         * A partial model hierarchy that does not require the intermediate entities to be specified.
