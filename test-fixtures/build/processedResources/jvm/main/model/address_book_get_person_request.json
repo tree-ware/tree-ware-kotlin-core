@@ -1,0 +1,18 @@
+{
+  "address_book": {
+    "name": null,
+    "last_updated": null,
+    "settings": {
+      "last_name_first": null,
+      "card_colors": []
+    },
+    "person": [
+      {
+        "id": null,
+        "first_name": null,
+        "email": [],
+        "relation": []
+      }
+    ]
+  }
+}
