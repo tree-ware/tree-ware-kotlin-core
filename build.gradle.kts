@@ -3,7 +3,7 @@ version = "1.0-SNAPSHOT"
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
-val kotlinCoroutinesVersion = "1.5.0"
+val kotlinxCoroutinesVersion = "1.6.0"
 val loggingVersion = "1.1.1"
 val mockkVersion = "1.12.0"
 
@@ -28,7 +28,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 implementation("org.lighthousegames:logging:$loggingVersion")
             }
         }
