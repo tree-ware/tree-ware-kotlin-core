@@ -1,6 +1,6 @@
 package org.treeWare.metaModel
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.Cipher
@@ -32,7 +32,7 @@ fun newMetaModel(
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
         if (decodedMetaModel == null || decodeErrors.isNotEmpty()) {
-            val logger = KmLog()
+            val logger = logging()
             decodeErrors.forEach { logger.error { it } }
             throw IllegalArgumentException("Unable to decode meta-model file $file")
         }
@@ -44,7 +44,7 @@ fun newMetaModel(
     metaModelAuxPlugins.forEach { plugin ->
         val pluginErrors = plugin.validate(metaModel)
         if (pluginErrors.isNotEmpty()) {
-            val logger = KmLog()
+            val logger = logging()
             pluginErrors.forEach { logger.error { it } }
             throw IllegalArgumentException("Meta-model has plugin validation errors")
         }

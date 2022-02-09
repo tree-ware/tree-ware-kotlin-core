@@ -1,6 +1,6 @@
 package org.treeWare.metaModel.validation
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 
@@ -21,7 +21,7 @@ fun validateNames(mainMeta: MutableMainModel, logFullNames: Boolean): List<Strin
     validatePackagesNames(mainMeta, state)
 
     if (logFullNames) {
-        val logger = KmLog()
+        val logger = logging()
         state.fullNames.forEach { logger.info { "element fullName: $it" } }
     }
     return state.errors

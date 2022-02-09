@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.util.assertInDevMode
 
 const val VALUE_KEY = "value"
@@ -12,7 +12,7 @@ class ValueAndAuxStateMachine(
     private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
 ) : AbstractDecodingStateMachine(true) {
     private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
-    private val logger = KmLog()
+    private val logger = logging()
 
     override fun decodeKey(name: String): Boolean {
         super.decodeKey(name)

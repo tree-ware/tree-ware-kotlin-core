@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.ModelDecoderOptions
@@ -19,7 +19,7 @@ class ModelDecodingStateMachine(
     private val stack = DecodingStack()
     private val mainModelStateMachine =
         MainModelStateMachine(mainModel, stack, options, errors, multiAuxDecodingStateMachineFactory)
-    private val logger = KmLog()
+    private val logger = logging()
 
     init {
         reinitialize()

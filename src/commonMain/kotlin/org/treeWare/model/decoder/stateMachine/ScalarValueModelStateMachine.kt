@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.model.core.MutableScalarValueModel
 import org.treeWare.util.assertInDevMode
 
@@ -10,7 +10,7 @@ class ScalarValueModelStateMachine(
     private val stack: DecodingStack
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
     private var value: MutableScalarValueModel? = null
-    private val logger = KmLog()
+    private val logger = logging()
 
     override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return

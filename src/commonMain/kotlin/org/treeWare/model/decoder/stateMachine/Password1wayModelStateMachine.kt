@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.model.core.MutablePassword1wayModel
 import org.treeWare.util.assertInDevMode
 
@@ -12,7 +12,7 @@ class Password1wayModelStateMachine(
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
     private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
     private var password1way: MutablePassword1wayModel? = null
-    private val logger = KmLog()
+    private val logger = logging()
 
     override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return

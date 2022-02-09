@@ -1,6 +1,6 @@
 package org.treeWare.metaModel.validation
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
@@ -19,7 +19,7 @@ fun validate(
     cipher: Cipher?,
     logFullNames: Boolean = false
 ): List<String> {
-    val logger = KmLog()
+    val logger = logging()
 
     // TODO(cleanup): this function should return errors without logging it.
     fun logErrors(errors: List<String>) = errors.forEach { logger.error { it } }

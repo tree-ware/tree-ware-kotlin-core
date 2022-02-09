@@ -29,7 +29,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-                implementation("org.lighthousegames:logging:$loggingVersion")
+                api("org.lighthousegames:logging:$loggingVersion")
             }
         }
         val commonTest by getting {

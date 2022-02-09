@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
@@ -21,7 +21,7 @@ class BaseEntityStateMachine(
 
     private var base: MutableBaseEntityModel? = null
     private var entityMeta: EntityModel? = null
-    private val logger = KmLog()
+    private val logger = logging()
 
     override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return

@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder.stateMachine
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.model.core.MutableAssociationModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.util.assertInDevMode
@@ -15,7 +15,7 @@ class AssociationModelStateMachine(
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
     private val auxStateMachines = LinkedHashMap<String, AuxDecodingStateMachine>()
     private var association: MutableAssociationModel? = null
-    private val logger = KmLog()
+    private val logger = logging()
 
     override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return

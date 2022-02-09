@@ -1,6 +1,6 @@
 package org.treeWare.model.decoder
 
-import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.treeWare.model.decoder.stateMachine.DecodingStateMachine
 import java.io.Reader
 import javax.json.Json
@@ -30,5 +30,5 @@ class JsonWireFormatDecoder : WireFormatDecoder {
         return success
     }
 
-    private val logger = KmLog()
+    private val logger = logging()
 }
