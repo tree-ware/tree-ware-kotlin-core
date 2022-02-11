@@ -6,8 +6,6 @@ import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
 import kotlin.test.Test
 
-private val addressBookMetaModel = newAddressBookMetaModel(null, null)
-
 class JsonEncoderTests {
     @Test
     fun `JSON encoding must be correct`() {
@@ -18,6 +16,8 @@ class JsonEncoderTests {
 }
 
 private fun newAddressBook1(): MainModel {
+    val addressBookMetaModel = newAddressBookMetaModel(null, null).metaModel
+        ?: throw IllegalStateException("Meta-model has validation errors")
     val main = MutableMainModel(addressBookMetaModel)
     val root = main.getOrNewRoot()
     setStringSingleField(root, "name", "Encoder Test 1")

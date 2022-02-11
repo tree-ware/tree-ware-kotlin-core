@@ -18,6 +18,7 @@ class EnumerationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "enumeration"
             |         }
             |       ]
@@ -42,6 +43,7 @@ class EnumerationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "enumeration",
             |           "enumeration": {}
             |         }
@@ -70,6 +72,7 @@ class EnumerationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "enumeration",
             |           "enumeration": {
             |             "name": "undefined_enumeration",
@@ -98,6 +101,7 @@ class EnumerationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "enumeration",
             |           "enumeration": {
             |             "name": "enumeration1",

@@ -16,6 +16,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association"
             |         }
             |       ]
@@ -39,6 +40,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": []
             |         }
@@ -63,6 +65,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -91,6 +94,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -122,6 +126,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -154,6 +159,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -189,6 +195,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -223,6 +230,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -255,6 +263,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -289,6 +298,7 @@ class AssociationValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "association",
             |           "association": [
             |             {
@@ -334,6 +344,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "entity1_composition_field1",
+    |           "number": 1,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity2",
@@ -342,6 +353,7 @@ private fun testHelperPackageJson() = """
     |         },
     |         {
     |           "name": "entity1_composition_field2",
+    |           "number": 2,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity3",
@@ -356,6 +368,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "entity2_composition_field",
+    |           "number": 1,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity3",
@@ -370,6 +383,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "int_field",
+    |           "number": 1,
     |           "type": "int32",
     |           "is_key": true
     |         }

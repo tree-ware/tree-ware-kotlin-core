@@ -65,7 +65,9 @@ private fun filterCompositionKeyFields(fields: List<ElementModel>): List<Element
         fieldMeta?.let { isKeyFieldMeta(it) && isCompositionFieldMeta(it) } ?: false
     }
 
-fun getMetaName(meta: BaseEntityModel?): String = meta?.let { getSingleString(meta, "name") } ?: ""
+fun getMetaName(meta: BaseEntityModel?): String = meta?.let { getSingleString(it, "name") } ?: ""
+
+fun getMetaNumber(meta: BaseEntityModel?): UInt? = meta?.let { getOptionalSingleUint32(it, "number") }
 
 fun getFieldTypeMeta(fieldMeta: EntityModel?): FieldType? = fieldMeta?.let {
     FieldType.valueOf(getSingleEnumeration(fieldMeta, "type").uppercase())

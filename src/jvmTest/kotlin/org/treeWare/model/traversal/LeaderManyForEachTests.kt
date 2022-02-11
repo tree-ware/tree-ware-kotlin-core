@@ -17,7 +17,8 @@ class LeaderManyForEachTests {
         val jsonAddressBook3 = readFile("model/address_book_3.json")
         assertNotEquals(jsonAddressBook2, jsonAddressBook3)
 
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
         val addressBook2 = getMainModelFromJsonString(metaModel, jsonAddressBook2)
         val addressBook3 = getMainModelFromJsonString(metaModel, jsonAddressBook3)
 

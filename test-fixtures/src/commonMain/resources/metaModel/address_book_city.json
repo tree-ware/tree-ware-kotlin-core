@@ -10,18 +10,21 @@
             "fields": [
               {
                 "name": "name",
+                "number": 1,
                 "info": "City name",
                 "type": "string",
                 "is_key": true
               },
               {
                 "name": "state",
+                "number": 2,
                 "info": "Name of the state in which the city is",
                 "type": "string",
                 "is_key": true
               },
               {
                 "name": "country",
+                "number": 3,
                 "info": "Name of the country in which the city is",
                 "type": "string",
                 "is_key": true
@@ -33,6 +36,7 @@
             "fields": [
               {
                 "name": "city",
+                "number": 1,
                 "type": "composition",
                 "composition": {
                   "name": "address_book_city",
@@ -42,11 +46,13 @@
               },
               {
                 "name": "info",
+                "number": 2,
                 "info": "Information about the city",
                 "type": "string"
               },
               {
                 "name": "related_city_info",
+                "number": 3,
                 "type": "association",
                 "association": [
                   {

@@ -18,7 +18,8 @@ class GetTests {
     @Test
     @Ignore // TODO(deepak-nulu): fix CompositionTableGetVisitor and un-ignore this test
     fun `get() returns the requested data`() = runBlocking {
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
 
         val request = getMainModelFromJsonFile(metaModel, "model/address_book_get_person_request.json")
         val auxName = "mapping"

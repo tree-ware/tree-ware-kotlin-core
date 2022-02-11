@@ -62,11 +62,13 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |       "fields": [
         |         {
         |           "name": "primitive_field",
+        |           "number": 1,
         |           "type": "string"
         |           $multiplicityJson
         |         },
         |         {
         |           "name": "enumeration_field",
+        |           "number": 2,
         |           "type": "enumeration",
         |           "enumeration": {
         |             "name": "enumeration1",
@@ -76,6 +78,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |         },
         |         {
         |           "name": "association_field",
+        |           "number": 3,
         |           "type": "association",
         |           "association": [
         |             {
@@ -89,6 +92,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |         },
         |         {
         |           "name": "composition_field",
+        |           "number": 4,
         |           "type": "composition",
         |           "composition": {
         |             "name": "entity3",

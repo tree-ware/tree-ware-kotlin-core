@@ -3,6 +3,7 @@
     "root:address_book": {},
     "package:address_book.main": {
       "enumeration:address_book_color": [
+        "white",
         "violet",
         "indigo",
         "blue",
@@ -12,6 +13,7 @@
         "red"
       ],
       "enumeration:address_book_relationship": [
+        "unknown",
         "parent",
         "child",
         "spouse",

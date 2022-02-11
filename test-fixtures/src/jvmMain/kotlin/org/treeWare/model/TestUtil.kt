@@ -25,7 +25,8 @@ fun testRoundTrip(
     hasher: Hasher? = null,
     cipher: Cipher? = null,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
-    metaModel: MainModel = newAddressBookMetaModel(hasher, cipher)
+    metaModel: MainModel = newAddressBookMetaModel(hasher, cipher).metaModel
+        ?: throw IllegalStateException("Meta-model has validation errors")
 ) {
     val model =
         getMainModelFromJsonFile(

@@ -16,6 +16,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition"
             |         }
             |       ]
@@ -39,6 +40,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {}
             |         }
@@ -66,6 +68,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "undefined_entity",
@@ -93,6 +96,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_no_keys",
@@ -120,6 +124,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_no_keys",
@@ -150,6 +155,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field_1",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_composition_key",
@@ -159,6 +165,7 @@ class CompositionValidationTests {
             |         },
             |         {
             |           "name": "test_field_2",
+            |           "number": 2,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_primitive_and_composition_keys",
@@ -190,6 +197,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_primitive_keys_and_non_keys",
@@ -220,6 +228,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_only_primitive_keys",
@@ -248,6 +257,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_no_keys",
@@ -278,6 +288,7 @@ class CompositionValidationTests {
             |       "fields": [
             |         {
             |           "name": "test_field",
+            |           "number": 1,
             |           "type": "composition",
             |           "composition": {
             |             "name": "entity_with_primitive_and_composition_keys",
@@ -316,6 +327,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "boolean_field",
+    |           "number": 1,
     |           "type": "boolean"
     |         }
     |       ]
@@ -325,6 +337,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "composition_field",
+    |           "number": 1,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity_with_only_primitive_keys",
@@ -338,11 +351,13 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "boolean_field",
+    |           "number": 1,
     |           "type": "boolean",
     |           "is_key": true
     |         },
     |         {
     |           "name": "composition_field",
+    |           "number": 2,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity_with_only_primitive_keys",
@@ -357,19 +372,23 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "key_string_field",
+    |           "number": 1,
     |           "type": "string",
     |           "is_key": true
     |         },
     |         {
     |           "name": "non_key_string_field",
+    |           "number": 2,
     |           "type": "string"
     |         },
     |         {
     |           "name": "non_key_boolean_field",
+    |           "number": 3,
     |           "type": "boolean"
     |         },
     |         {
     |           "name": "non_key_composition_field",
+    |           "number": 4,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity_with_only_primitive_keys",
@@ -383,11 +402,13 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "key_string_field",
+    |           "number": 1,
     |           "type": "string",
     |           "is_key": true
     |         },
     |         {
     |           "name": "key_boolean_field",
+    |           "number": 2,
     |           "type": "boolean",
     |           "is_key": true
     |         }

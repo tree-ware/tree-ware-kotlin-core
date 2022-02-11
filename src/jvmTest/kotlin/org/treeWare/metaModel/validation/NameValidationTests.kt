@@ -49,11 +49,13 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "dots.not_allowed_for.primitive_fields",
+    |           "number": 1,
     |           "type": "string",
     |           "is_key": true
     |         },
     |         {
     |           "name": "hyphens-not-allowed-for-primitive-fields",
+    |           "number": 2,
     |           "type": "string"
     |         }
     |       ]
@@ -63,6 +65,7 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "dots.not_allowed_for.association_fields",
+    |           "number": 1,
     |           "type": "association",
     |           "association": [
     |             {
@@ -75,6 +78,7 @@ private fun testHelperPackageJson() = """
     |         },
     |         {
     |           "name": "hyphens-not-allowed-for-association-fields",
+    |           "number": 2,
     |           "type": "association",
     |           "association": [
     |             {
@@ -92,10 +96,12 @@ private fun testHelperPackageJson() = """
     |       "fields": [
     |         {
     |           "name": "duplicate_field_name_1",
+    |           "number": 1,
     |           "type": "string"
     |         },
     |         {
     |           "name": "duplicate_field_name_1",
+    |           "number": 2,
     |           "type": "association",
     |           "association": [
     |             {
@@ -108,6 +114,7 @@ private fun testHelperPackageJson() = """
     |         },
     |         {
     |           "name": "duplicate_field_name_2",
+    |           "number": 3,
     |           "type": "composition",
     |           "composition": {
     |             "name": "dots.not_allowed_for.entities",
@@ -116,6 +123,7 @@ private fun testHelperPackageJson() = """
     |         },
     |         {
     |           "name": "duplicate_field_name_2",
+    |           "number": 4,
     |           "type": "composition",
     |           "composition": {
     |             "name": "hyphens-not-allowed-for-entities",
@@ -130,10 +138,12 @@ private fun testHelperPackageJson() = """
     |       "name": "dots.not_allowed_for.enumerations",
     |       "values": [
     |         {
-    |           "name": "value1"
+    |           "name": "value1",
+    |           "number": 0
     |         },
     |         {
-    |           "name": "value2"
+    |           "name": "value2",
+    |           "number": 1
     |         }
     |       ]
     |     },
@@ -141,10 +151,12 @@ private fun testHelperPackageJson() = """
     |       "name": "hyphens-not-allowed-for-enumerations",
     |       "values": [
     |         {
-    |           "name": "value1"
+    |           "name": "value1",
+    |           "number": 0
     |         },
     |         {
-    |           "name": "value2"
+    |           "name": "value2",
+    |           "number": 1
     |         }
     |       ]
     |     },
@@ -152,10 +164,12 @@ private fun testHelperPackageJson() = """
     |       "name": "duplicate_enumeration_name",
     |       "values": [
     |         {
-    |           "name": "value1"
+    |           "name": "value1",
+    |           "number": 0
     |         },
     |         {
-    |           "name": "value2"
+    |           "name": "value2",
+    |           "number": 1
     |         }
     |       ]
     |     },
@@ -163,10 +177,12 @@ private fun testHelperPackageJson() = """
     |       "name": "duplicate_enumeration_name",
     |       "values": [
     |         {
-    |           "name": "value1"
+    |           "name": "value1",
+    |           "number": 0
     |         },
     |         {
-    |           "name": "value2"
+    |           "name": "value2",
+    |           "number": 1
     |         }
     |       ]
     |     },
@@ -174,16 +190,20 @@ private fun testHelperPackageJson() = """
     |       "name": "enumeration_with_duplicate_values",
     |       "values": [
     |         {
-    |           "name": "value1"
+    |           "name": "value1",
+    |           "number": 0
     |         },
     |         {
-    |           "name": "duplicate_value"
+    |           "name": "duplicate_value",
+    |           "number": 1
     |         },
     |         {
-    |           "name": "value2"
+    |           "name": "value2",
+    |           "number": 2
     |         },
     |         {
-    |           "name": "duplicate_value"
+    |           "name": "duplicate_value",
+    |           "number": 3
     |         }
     |       ]
     |     }
