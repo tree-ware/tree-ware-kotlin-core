@@ -9,7 +9,8 @@ import kotlin.test.assertEquals
 class Leader1MetaModelTests {
     @Test
     fun `Traverse address-book meta-model with adapter`() {
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
 
         val writer = StringWriter()
         val printVisitor = Leader1MetaModelPrintVisitor(writer)

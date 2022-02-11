@@ -31,7 +31,8 @@ class DecoderMissingKeysTests {
     @Test
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
         val fileReader = getFileReader("model/address_book_missing_keys.json")
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
         val (mainModel, decodeErrors) = decodeJson(
             fileReader,
             metaModel,

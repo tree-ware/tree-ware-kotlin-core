@@ -9,7 +9,8 @@ import kotlin.test.Test
 class MetaModelDocs {
     @Test
     fun `Generate address-book meta-model docs`() {
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
 
         val mainMetaName = getMainMetaName(metaModel)
         val fileName = "${mainMetaName}_meta_model"

@@ -1,5 +1,5 @@
 ---
-title: "Field Types"
+title: "Fields"
 layout: "titled"
 nav_order: "b"
 parent: "User Docs"
@@ -27,8 +27,8 @@ The example above of constrained-strings is a case where there are too many comb
 where there will not be too many combinations. For example, the number type. In many programming languages, whether the
 number has a decimal value or not is part of the type (`int` vs. `float`), the number of bits used to represent the
 number is part of the type name (`int8` vs. `int32`, `float` vs. `double`), whether the values are signed or not is part
-of the type (`unit` vs `int`)
-. [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/proto?csw=1#scalar)
+of the type (`unit` vs `int`).
+[Protocol Buffers](https://developers.google.com/protocol-buffers/docs/proto?csw=1#scalar)
 go even further with two signed types (`int32` vs. `sint32`) with `sint32` optimized for storing negative numbers. At
 the opposite end of the spectrum, there are programming languages and encoding formats (JSON) that have only a single
 number type for all types of numbers.
@@ -38,6 +38,15 @@ number type with constraints defined separately. With option 2, pre-defined alia
 Since [aliases are not yet supported](https://github.com/tree-ware/tree-ware-kotlin-core/issues/85), and since aliases
 are more verbose than pre-defined types, tree-ware chooses option 1, but with constraints for more esoteric types like
 `sint32` in proto buffers.
+
+# Names and Numbers
+
+Every field must have a name and a number. They must be unique within an entity (but can be repeated across entities).
+The name is used in text formats (like JSON) and the number is used in binary formats (like Google protobufs or custom
+tree-ware binary formats). Tree-ware field numbers follow Google protobuf
+[field number constraints](https://developers.google.com/protocol-buffers/docs/proto3#assigning_field_numbers):
+
+* Field numbers must be within one of the following open intervals: (0, 19000), (19999, 2^29)
 
 # Multiplicity
 
@@ -194,6 +203,14 @@ The following is an example meta-model definition for an enumeration field:
   }
 }
 ```
+
+Each enumeration-value must have a name and a number. They must be unique within an enumeration (but can be repeated
+across enumerations). The name is used in text formats (like JSON) and the number is used in binary formats (like Google
+protobufs or custom tree-ware binary formats). Tree-ware enumeration-value numbers follow Google protobuf
+[enumeration-value number constraints](https://developers.google.com/protocol-buffers/docs/proto3#enum):
+
+* First enumeration value number MUST be 0
+* Other enumeration value numbers can be any valid 32-bit unsigned-integer value
 
 # Compositions
 

@@ -17,7 +17,8 @@ fun validate(
     mainMeta: MutableMainModel,
     hasher: Hasher?,
     cipher: Cipher?,
-    logFullNames: Boolean = false
+    logFullNames: Boolean = false,
+    mandatoryFieldNumbers: Boolean = true
 ): List<String> {
     val logger = logging()
 
@@ -32,6 +33,7 @@ fun validate(
 
     // Set full-names for named elements in the packages.
     val nameErrors = validateNames(mainMeta, logFullNames)
+    val numberErrors = if (mandatoryFieldNumbers) validateNumbers(mainMeta) else emptyList()
 
     // Get non-primitive field values to help resolve non-primitive fields.
     // NOTE: because of "forward-references", this has to be collected from all
@@ -43,7 +45,7 @@ fun validate(
     val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, nonPrimitiveTypes)
     val associationErrors = resolveAssociations(mainMeta)
 
-    val allErrors = listOf(nameErrors, nonPrimitiveErrors, associationErrors).flatten()
+    val allErrors = listOf(nameErrors, numberErrors, nonPrimitiveErrors, associationErrors).flatten()
     logErrors(allErrors)
     return allErrors
 }

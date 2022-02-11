@@ -67,12 +67,14 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |       "fields": [
         |         {
         |           "name": "primitive_field",
+        |           "number": 1,
         |           "type": "string",
         |           "is_key": true
         |           $multiplicityJson
         |         },
         |         {
         |           "name": "enumeration_field",
+        |           "number": 2,
         |           "type": "enumeration",
         |           "enumeration": {
         |             "name": "enumeration1",
@@ -83,6 +85,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |         },
         |         {
         |           "name": "composition_field",
+        |           "number": 3,
         |           "type": "composition",
         |           "composition": {
         |             "name": "entity3",
@@ -111,12 +114,14 @@ private fun getNonCompositionListMetaModelJson(): String {
         |       "fields": [
         |         {
         |           "name": "primitive_field",
+        |           "number": 1,
         |           "type": "string",
         |           "is_key": true
         |           $multiplicityJson
         |         },
         |         {
         |           "name": "enumeration_field",
+        |           "number": 2,
         |           "type": "enumeration",
         |           "enumeration": {
         |             "name": "enumeration1",
@@ -145,6 +150,7 @@ private fun getCompositionSetMetaModelJson(): String {
         |       "fields": [
         |         {
         |           "name": "composition_field",
+        |           "number": 1,
         |           "type": "composition",
         |           "composition": {
         |             "name": "entity3",
@@ -171,11 +177,13 @@ private fun getPasswordsMetaModelJson(isKey: Boolean): String {
         |       "fields": [
         |         {
         |           "name": "password1way_field",
+        |           "number": 1,
         |           "type": "password1way",
         |           "is_key": $isKey
         |         },
         |         {
         |           "name": "password2way_field",
+        |           "number": 2,
         |           "type": "password2way",
         |           "is_key": $isKey
         |         }

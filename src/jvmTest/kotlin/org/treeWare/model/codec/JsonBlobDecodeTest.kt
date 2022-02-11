@@ -12,7 +12,8 @@ import kotlin.test.assertTrue
 class JsonBlobDecodeTest {
     @Test
     fun `JSON decoder decodes blob values`() {
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
 
         val model = getMainModelFromJsonFile(metaModel, "model/address_book_1.json")
         val persons = model.root.fields["person"] as MutableSetFieldModel

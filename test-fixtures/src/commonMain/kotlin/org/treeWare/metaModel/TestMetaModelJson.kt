@@ -36,10 +36,12 @@ val testMetaModelCommonPackageJson = """
     |       "fields": [
     |         {
     |           "name": "string_field",
+    |           "number": 1,
     |           "type": "string"
     |         },
     |         {
     |           "name": "entity1_composition_field",
+    |           "number": 2,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity2",
@@ -53,11 +55,13 @@ val testMetaModelCommonPackageJson = """
     |       "fields": [
     |         {
     |           "name": "boolean_field",
+    |           "number": 1,
     |           "type": "boolean",
     |           "is_key": true
     |         },
     |         {
     |           "name": "entity2_composition_field",
+    |           "number": 2,
     |           "type": "composition",
     |           "composition": {
     |             "name": "entity3",
@@ -71,6 +75,7 @@ val testMetaModelCommonPackageJson = """
     |       "fields": [
     |         {
     |           "name": "int_field",
+    |           "number": 1,
     |           "type": "int32",
     |           "is_key": true
     |         }
@@ -82,13 +87,16 @@ val testMetaModelCommonPackageJson = """
     |       "name": "enumeration1",
     |       "values": [
     |         {
-    |           "name": "value1"
+    |           "name": "value1",
+    |           "number": 0
     |         },
     |         {
-    |           "name": "value2"
+    |           "name": "value2",
+    |           "number": 1
     |         },
     |         {
-    |           "name": "value3"
+    |           "name": "value3",
+    |           "number": 2
     |         }
     |       ]
     |     }

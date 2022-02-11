@@ -24,7 +24,8 @@ class UnionTests {
         assertNotEquals(jsonInput1, expectedJsonOutput)
         assertNotEquals(jsonInput2, expectedJsonOutput)
 
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
 
         val aux2 = "aux2"
         val aux3 = "aux3"

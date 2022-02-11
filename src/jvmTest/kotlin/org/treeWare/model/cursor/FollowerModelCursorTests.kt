@@ -35,7 +35,8 @@ class FollowerModelCursorTests {
 }
 
 private fun testFollowerSameModelInstance(inputFilePath: String) {
-    val metaModel = newAddressBookMetaModel(null, null)
+    val metaModel = newAddressBookMetaModel(null, null).metaModel
+        ?: throw IllegalStateException("Meta-model has validation errors")
 
     val model = getMainModelFromJsonFile(metaModel, inputFilePath)
 
@@ -54,7 +55,8 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
 }
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String) {
-    val metaModel = newAddressBookMetaModel(null, null)
+    val metaModel = newAddressBookMetaModel(null, null).metaModel
+        ?: throw IllegalStateException("Meta-model has validation errors")
 
     // Create different instances of the model from the same JSON input file.
     val leaderModel = getMainModelFromJsonFile(metaModel, inputFilePath)
@@ -83,7 +85,8 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
  * the original JSON file (leaderFilePath).
  */
 private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
-    val metaModel = newAddressBookMetaModel(null, null)
+    val metaModel = newAddressBookMetaModel(null, null).metaModel
+        ?: throw IllegalStateException("Meta-model has validation errors")
 
     val leaderModel = getMainModelFromJsonFile(metaModel, leaderFilePath)
     val followerModel = getMainModelFromJsonFile(metaModel, wildcardFilePath)

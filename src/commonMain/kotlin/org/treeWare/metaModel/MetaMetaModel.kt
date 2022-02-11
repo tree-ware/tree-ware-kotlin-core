@@ -38,7 +38,7 @@ private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 fun newMainMetaMetaModel(): MutableMainModel {
     val mainMeta = newMainMetaMeta()
     populateMain(mainMeta)
-    val errors = validate(mainMeta, null, null)
+    val errors = validate(mainMeta, null, null, mandatoryFieldNumbers = false)
     if (errors.isNotEmpty()) throw IllegalStateException("Meta-meta-model is not valid")
     return mainMeta
 }
@@ -114,6 +114,7 @@ private fun populateEnumerationEntity(enumerationEntityMeta: MutableEntityModel)
 private fun populateEnumerationValueEntity(enumerationValueEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(enumerationValueEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
+    newPrimitiveFieldMetaMeta(fields, "number", null, "uint32", "optional")
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
 }
 
@@ -127,6 +128,7 @@ private fun populateEntityEntity(entityEntityMeta: MutableEntityModel) {
 private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(fieldEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
+    newPrimitiveFieldMetaMeta(fields, "number", null, "uint32", "optional")
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newEnumerationFieldMetaMeta(fields, "type", null, "field_type", META_MODEL_MAIN_PACKAGE)
     newCompositionFieldMetaMeta(fields, "enumeration", null, "enumeration_info", META_MODEL_MAIN_PACKAGE, "optional")

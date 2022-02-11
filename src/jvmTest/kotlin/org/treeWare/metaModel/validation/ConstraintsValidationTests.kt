@@ -68,6 +68,7 @@ private fun getMetaModelJson(fieldType: String, constraintName: String, constrai
         |      "fields": [
         |        {
         |          "name": "field1",
+        |          "number": 1,
         |          "type": "$fieldType",
         |          "$constraintName": $constraintValue
         |        }

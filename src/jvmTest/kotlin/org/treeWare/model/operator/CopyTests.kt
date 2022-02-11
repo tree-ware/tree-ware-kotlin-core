@@ -11,7 +11,8 @@ class CopyTests {
     @Test
     fun `Copy operator must copy all elements of its input`() {
         val modelJsonFile = "model/address_book_1.json"
-        val metaModel = newAddressBookMetaModel(null, null)
+        val metaModel = newAddressBookMetaModel(null, null).metaModel
+            ?: throw IllegalStateException("Meta-model has validation errors")
         val input = getMainModelFromJsonFile(metaModel, modelJsonFile)
         val clone = MutableMainModel(metaModel)
         copy(input, clone)

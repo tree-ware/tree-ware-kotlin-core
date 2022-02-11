@@ -10,6 +10,7 @@ import java.io.Writer
 fun encodeDot(mainMeta: MainModel, writer: Writer) {
     val dotWriter = DotWriter()
     dotWriter.nodesIndent()
+    // TODO(deepak-nulu): rewrite with `forEach()` and `AbstractLeader1MetaModelVisitor`
     encodePackages(mainMeta, dotWriter)
     dotWriter.nodesUnindent()
     dotWriter.writeAll(writer)
@@ -41,7 +42,6 @@ private fun encodePackage(packageElementMeta: ElementModel, dotWriter: DotWriter
 private fun encodeEnumerations(packageMeta: EntityModel, dotWriter: DotWriter) {
     val enumerationsMeta = getEnumerationsMeta(packageMeta)
     enumerationsMeta?.values?.forEach { encodeEnumeration(it, dotWriter) }
-
 }
 
 private fun encodeEnumeration(enumerationElementMeta: ElementModel, dotWriter: DotWriter) {
@@ -53,7 +53,7 @@ private fun encodeEnumeration(enumerationElementMeta: ElementModel, dotWriter: D
     dotWriter.nodesIndent()
     dotWriter.nodesWriteLine("""<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">""")
     dotWriter.nodesIndent()
-    dotWriter.nodesWriteLine("""<TR><TD ALIGN="LEFT" PORT="0" BGCOLOR="khaki1"><B>$name (enum)  </B></TD></TR>""")
+    dotWriter.nodesWriteLine("""<TR><TD ALIGN="LEFT" PORT="0" COLSPAN="2" BGCOLOR="khaki1"><B>$name (enum)  </B></TD></TR>""")
 
     encodeEnumerationValues(enumerationMeta, dotWriter)
 
@@ -70,8 +70,9 @@ private fun encodeEnumerationValues(enumerationMeta: EntityModel, dotWriter: Dot
 
 private fun encodeEnumerationValue(enumerationValueElementMeta: ElementModel, dotWriter: DotWriter) {
     val enumerationValueMeta = enumerationValueElementMeta as EntityModel
+    val number = getMetaNumber(enumerationValueMeta)
     val name = getMetaName(enumerationValueMeta)
-    dotWriter.nodesWriteLine("""<TR><TD ALIGN="LEFT">$name</TD></TR>""")
+    dotWriter.nodesWriteLine("""<TR><TD ALIGN="RIGHT">$number</TD><TD ALIGN="LEFT">$name</TD></TR>""")
 }
 
 private fun encodeEntities(packageMeta: EntityModel, dotWriter: DotWriter) {
@@ -88,7 +89,7 @@ private fun encodeEntity(entityElementMeta: ElementModel, dotWriter: DotWriter) 
     dotWriter.nodesIndent()
     dotWriter.nodesWriteLine("""<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">""")
     dotWriter.nodesIndent()
-    dotWriter.nodesWriteLine("""<TR><TD ALIGN="LEFT" PORT="0" COLSPAN="4" BGCOLOR="cadetblue1"><B>$name (entity)</B></TD></TR>""")
+    dotWriter.nodesWriteLine("""<TR><TD ALIGN="LEFT" PORT="0" COLSPAN="5" BGCOLOR="cadetblue1"><B>$name (entity)</B></TD></TR>""")
 
     encodeFields(entityMeta, dotWriter)
 
@@ -143,6 +144,7 @@ private fun encodeCompositionField(fieldMeta: EntityModel, dotWriter: DotWriter)
 }
 
 private fun encodeFieldRow(fieldMeta: EntityModel, type: String, dotWriter: DotWriter) {
+    val number = getMetaNumber(fieldMeta)
     val name = getMetaName(fieldMeta)
     val multiplicity = getMultiplicityMeta(fieldMeta).name.lowercase()
     val keyIcon = if (isKeyFieldMeta(fieldMeta)) "key" else ""
@@ -150,6 +152,7 @@ private fun encodeFieldRow(fieldMeta: EntityModel, type: String, dotWriter: DotW
     dotWriter.nodesWriteLine("<TR>")
     dotWriter.nodesIndent()
     dotWriter.nodesWriteLine("""<TD ALIGN="LEFT">$keyIcon</TD>""")
+    dotWriter.nodesWriteLine("""<TD ALIGN="RIGHT">$number</TD>""")
     dotWriter.nodesWriteLine("""<TD ALIGN="LEFT">$name</TD>""")
     dotWriter.nodesWriteLine("""<TD ALIGN="LEFT">$type</TD>""")
     dotWriter.nodesWriteLine("""<TD ALIGN="LEFT" PORT="$name">$multiplicity</TD>""")
