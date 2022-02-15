@@ -5,9 +5,9 @@ import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchVisit
 
-class Leader1ModelCursor(private val initial: ElementModel) {
+class Leader1ModelCursor(private val initial: ElementModel, traverseAssociations: Boolean) {
     private val stateStack = LeaderStateStack()
-    private val stateFactoryVisitor = LeaderStateFactoryVisitor(stateStack)
+    private val stateFactoryVisitor = LeaderStateFactoryVisitor(traverseAssociations, stateStack)
     private var isAtStart = true
 
     val element: ElementModel? get() = if (stateStack.isEmpty()) null else stateStack.first().element
@@ -120,7 +120,7 @@ private class SingleFieldLeaderState(
             if (value == null) listOf()
             else listOf<LeaderStateAction>({
                 val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null single-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
             })
@@ -141,7 +141,7 @@ private class ListFieldLeaderState(
         actionIterator = IteratorAdapter({ field.values.iterator() }) { value ->
             {
                 val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null field state")
+                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null list-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
             }
@@ -162,7 +162,7 @@ private class SetFieldLeaderState(
         actionIterator = IteratorAdapter({ field.values.iterator() }) { value ->
             {
                 val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null field state")
+                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null set-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
             }
@@ -186,20 +186,31 @@ private class ScalarValueLeaderState(
     }
 }
 
-// Sub-values
-
-private class EntityKeysLeaderState(
-    entityKeys: EntityKeysModel,
+private class AssociationLeaderState(
+    association: AssociationModel,
+    traverseAssociations: Boolean,
     stack: LeaderStateStack,
     stateFactoryVisitor: LeaderStateFactoryVisitor
-) : BaseEntityLeaderState(entityKeys, stack, stateFactoryVisitor) {
-    override val visitCursorMove = Leader1ModelCursorMove(CursorMoveDirection.VISIT, entityKeys)
-    override val leaveCursorMove = Leader1ModelCursorMove(CursorMoveDirection.LEAVE, entityKeys)
+) : LeaderState(association, stack) {
+    override val visitCursorMove = Leader1ModelCursorMove(CursorMoveDirection.VISIT, association)
+    override val leaveCursorMove = Leader1ModelCursorMove(CursorMoveDirection.LEAVE, association)
+    override val actionIterator: Iterator<LeaderStateAction>
+
+    init {
+        val actionList = if (traverseAssociations) listOf<LeaderStateAction>({
+            val valueState = dispatchVisit(association.value, stateFactoryVisitor)
+                ?: throw IllegalStateException("null association state")
+            stateStack.addFirst(valueState)
+            valueState.visitCursorMove
+        }) else emptyList()
+        actionIterator = actionList.iterator()
+    }
 }
 
 // State factory visitor
 
 private class LeaderStateFactoryVisitor(
+    private val traverseAssociations: Boolean,
     private val stateStack: LeaderStateStack
 ) : AbstractLeader1ModelVisitor<LeaderState?>(null) {
     override fun visitMain(leaderMain1: MainModel) = MainLeaderState(leaderMain1, stateStack, this)
@@ -220,10 +231,6 @@ private class LeaderStateFactoryVisitor(
     override fun visitPassword1way(leaderValue1: Password1wayModel) = ScalarValueLeaderState(leaderValue1, stateStack)
     override fun visitPassword2way(leaderValue1: Password2wayModel) = ScalarValueLeaderState(leaderValue1, stateStack)
     override fun visitEnumeration(leaderValue1: EnumerationModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-    override fun visitAssociation(leaderValue1: AssociationModel) = ScalarValueLeaderState(leaderValue1, stateStack)
-
-    // Sub-values
-
-    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel) =
-        EntityKeysLeaderState(leaderEntityKeys1, stateStack, this)
+    override fun visitAssociation(leaderValue1: AssociationModel) =
+        AssociationLeaderState(leaderValue1, traverseAssociations, stateStack, this)
 }

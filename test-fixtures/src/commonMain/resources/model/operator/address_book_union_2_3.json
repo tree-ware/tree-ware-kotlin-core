@@ -71,7 +71,7 @@
             "id": "05ade278-4b44-43da-a0cc-14463854e397",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
                 }
@@ -113,7 +113,20 @@
             "encrypted": "test-encrypted-secret2",
             "cipher_version": 1
           }
-        ]
+        ],
+        "group__aux2_": "Aux2 for Clark's group",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        }
       },
       {
         "aux3_": "Aux3 with composition element but no aux3 in sub-tree",
@@ -131,7 +144,7 @@
             "id": "16634916-8f83-4376-ad42-37038e108a0b",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -164,7 +177,19 @@
             "encrypted": "test-encrypted-secret2",
             "cipher_version": 1
           }
-        ]
+        ],
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        }
       }
     ],
     "city_info__aux2_": "Aux2 with city info list",
@@ -187,7 +212,7 @@
           {
             "aux2_": "Aux2 with association 1 in list",
             "aux3_": "Aux3 with association 1 in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Albany",
@@ -199,7 +224,7 @@
           },
           {
             "aux3_": "Aux3 with association 2 in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Princeton",
@@ -220,7 +245,7 @@
         "info": "Capital of New York state",
         "related_city_info": [
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "New York City",
@@ -248,6 +273,24 @@
         },
         "info": "Home of Princeton University",
         "related_city_info": []
+      }
+    ],
+    "groups__aux2_": "Aux2 for groups",
+    "groups__aux3_": "Aux3 for groups",
+    "groups": [
+      {
+        "aux2_": "Aux2 for DC group",
+        "aux3_": "Aux3 for DC group",
+        "name": "DC",
+        "sub_groups": [
+          {
+            "aux3_": "Aux3 for Superman sub-group",
+            "name": "Superman"
+          }
+        ]
+      },
+      {
+        "name": "Marvel"
       }
     ]
   }

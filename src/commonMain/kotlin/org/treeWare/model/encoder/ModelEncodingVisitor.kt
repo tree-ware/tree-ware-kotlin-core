@@ -4,7 +4,6 @@ import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 import org.treeWare.model.traversal.Leader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
-import org.treeWare.model.traversal.forEach
 import org.treeWare.util.encodeBase64
 
 const val VALUE_KEY = "value"
@@ -32,8 +31,8 @@ class ModelEncodingVisitor(
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)
-        val isSetElement = leaderEntity1.parent.meta?.let { isSetFieldMeta(it) } ?: false
-        if (isSetElement) encodeAuxs(null, leaderEntity1)
+        val isCollectionElement = leaderEntity1.parent.meta?.let { isCollectionFieldMeta(it) } ?: false
+        if (isCollectionElement) encodeAuxs(null, leaderEntity1)
         return TraversalAction.CONTINUE
     }
 
@@ -46,6 +45,7 @@ class ModelEncodingVisitor(
     override fun visitSingleField(leaderField1: SingleFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
         encodeAuxs(fieldName, leaderField1)
+        if (leaderField1.value == null) wireFormatEncoder.encodeNullField(fieldName)
         return TraversalAction.CONTINUE
     }
 
@@ -82,10 +82,6 @@ class ModelEncodingVisitor(
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
         encodeAuxs(auxFieldName, leaderValue1)
         val value = leaderValue1.value
-        if (value == null) {
-            wireFormatEncoder.encodeNullField(fieldName)
-            return TraversalAction.CONTINUE
-        }
         // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
         // are encoded as strings.
         when (leaderValue1.parent.meta?.let { getFieldTypeMeta(it) }) {
@@ -184,8 +180,7 @@ class ModelEncodingVisitor(
         if (isListElement) wireFormatEncoder.encodeObjectStart(null)
         encodeAuxs(auxFieldName, leaderValue1)
         val value = leaderValue1.value
-        if (value == null) wireFormatEncoder.encodeNullField(fieldName)
-        else wireFormatEncoder.encodeStringField(fieldName, value)
+        wireFormatEncoder.encodeStringField(fieldName, value)
         return TraversalAction.CONTINUE
     }
 
@@ -196,38 +191,10 @@ class ModelEncodingVisitor(
 
     override fun visitAssociation(leaderValue1: AssociationModel): TraversalAction {
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
-        val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
-        if (leaderValue1.value.isEmpty()) {
-            wireFormatEncoder.encodeNullField(fieldName)
-            return TraversalAction.CONTINUE
-        }
-        wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) encodeAuxs(null, leaderValue1)
-        wireFormatEncoder.encodeListStart("path_keys")
-        leaderValue1.value.forEach { entityKeys ->
-            // Traverse entityKeys with this visitor to encode it.
-            forEach(entityKeys, this)
-        }
         return TraversalAction.CONTINUE
     }
 
-    override fun leaveAssociation(leaderValue1: AssociationModel) {
-        if (leaderValue1.value.isNotEmpty()) {
-            wireFormatEncoder.encodeListEnd()
-            wireFormatEncoder.encodeObjectEnd()
-        }
-    }
-
-    // Sub-values
-
-    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): TraversalAction {
-        wireFormatEncoder.encodeObjectStart(leaderEntityKeys1.meta?.let { getMetaName(it) })
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {
-        wireFormatEncoder.encodeObjectEnd()
-    }
+    override fun leaveAssociation(leaderValue1: AssociationModel) {}
 }

@@ -27,6 +27,22 @@
         }
       ]
     },
+    "groups__error_": "Error with groups",
+    "groups": [
+      {
+        "error_": "Error with DC group",
+        "name": "DC",
+        "sub_groups": [
+          {
+            "error_": "Error with Superman sub-group",
+            "name": "Superman"
+          }
+        ]
+      },
+      {
+        "name": "Marvel"
+      }
+    ],
     "person__error_": "Error at person list level",
     "person": [
       {
@@ -39,6 +55,19 @@
         "last_name": "Kent",
         "hero_name__error_": "Something wrong with hero_name",
         "hero_name": "Superman",
+        "group__error_": "Error with Clark's group",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        },
         "email__error_": "Error at list level for person email",
         "email": [
           {
@@ -60,7 +89,7 @@
             "relationship": "colleague",
             "person__error_": "Error with person association",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
                 }
@@ -105,6 +134,19 @@
         "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
         "first_name": "Lois",
         "last_name": "Lane",
+        "group__error_": "Error with Lois' group",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        },
         "email": [
           {
             "value": "lois.lane@dailyplanet.com"
@@ -115,7 +157,7 @@
             "id": "16634916-8f83-4376-ad42-37038e108a0b",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -166,7 +208,7 @@
         "related_city_info": [
           {
             "error_": "Error with association element in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Albany",
@@ -177,7 +219,7 @@
             ]
           },
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Princeton",
@@ -189,7 +231,7 @@
           },
           {
             "error_": "Error with association element in list after an element without an error",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "San Francisco",
@@ -210,7 +252,7 @@
         },
         "related_city_info": [
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "New York City",

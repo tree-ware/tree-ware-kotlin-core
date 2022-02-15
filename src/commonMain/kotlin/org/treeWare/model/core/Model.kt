@@ -20,7 +20,7 @@ interface MainModel : SingleFieldModel {
         get() = ModelElementType.MAIN
 
     val mainMeta: MainModel?
-    val root: EntityModel // Synonym for SingleFieldModel.value
+    val root: EntityModel // Same as SingleFieldModel.value but different type
 }
 
 interface BaseEntityModel : ElementModel {
@@ -82,7 +82,7 @@ interface PrimitiveModel : ElementModel {
         get() = ModelElementType.PRIMITIVE
 
     override val parent: FieldModel
-    val value: Any?
+    val value: Any
 }
 
 interface AliasModel : ElementModel {
@@ -90,7 +90,7 @@ interface AliasModel : ElementModel {
         get() = ModelElementType.ALIAS
 
     override val parent: FieldModel
-    val value: Any?
+    val value: Any
 }
 
 interface Password1wayModel : ElementModel {
@@ -120,7 +120,7 @@ interface EnumerationModel : ElementModel {
         get() = ModelElementType.ENUMERATION
 
     override val parent: FieldModel
-    val value: String?
+    val value: String
 }
 
 interface AssociationModel : ElementModel {
@@ -128,14 +128,5 @@ interface AssociationModel : ElementModel {
         get() = ModelElementType.ASSOCIATION
 
     override val parent: FieldModel
-    val value: List<EntityKeysModel>
-}
-
-// Sub-values
-
-interface EntityKeysModel : BaseEntityModel {
-    override val elementType: ModelElementType
-        get() = ModelElementType.ENTITY_KEYS
-
-    override val parent: AssociationModel?
+    val value: EntityModel
 }

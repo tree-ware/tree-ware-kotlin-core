@@ -41,9 +41,4 @@ interface Leader1MutableModelVisitor<Return> {
 
     fun visitMutableAssociation(leaderValue1: MutableAssociationModel): Return
     fun leaveMutableAssociation(leaderValue1: MutableAssociationModel)
-
-    // Sub-values
-
-    fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel): Return
-    fun leaveMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel)
 }

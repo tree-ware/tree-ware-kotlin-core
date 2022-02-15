@@ -7,4 +7,4 @@ import org.treeWare.model.traversal.forEach
 fun metaModelForEach(
     leaderMeta: ElementModel,
     visitor: Leader1MetaModelVisitor<TraversalAction>
-): TraversalAction = forEach(leaderMeta, Leader1Adapter(visitor, TraversalAction.CONTINUE))
+): TraversalAction = forEach(leaderMeta, Leader1Adapter(visitor, TraversalAction.CONTINUE), false)

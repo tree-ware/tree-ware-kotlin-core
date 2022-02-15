@@ -9,7 +9,7 @@ import org.treeWare.util.assertInDevMode
 fun copy(from: ElementModel, to: MutableElementModel) {
     if (from.elementType != to.elementType) throw IllegalArgumentException("Types of from and to are different: ${from.elementType}, ${to.elementType}")
     val copyVisitor = CopyVisitor(to)
-    forEach(from, copyVisitor)
+    forEach(from, copyVisitor, true)
 }
 
 private class CopyVisitor(
@@ -31,7 +31,7 @@ private class CopyVisitor(
         val copyEntity = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         }
         modelStack.addFirst(copyEntity)
         return TraversalAction.CONTINUE
@@ -69,7 +69,7 @@ private class CopyVisitor(
         val copyPrimitive = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         } as MutablePrimitiveModel
         copyPrimitive.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -79,7 +79,7 @@ private class CopyVisitor(
         val copyAlias = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         } as MutableAliasModel
         copyAlias.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -89,7 +89,7 @@ private class CopyVisitor(
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         } as MutablePassword1wayModel
         copyPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -99,7 +99,7 @@ private class CopyVisitor(
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         } as MutablePassword2wayModel
         copyPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -109,7 +109,7 @@ private class CopyVisitor(
         val copyEnumeration = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         } as MutableEnumerationModel
         copyEnumeration.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -119,25 +119,13 @@ private class CopyVisitor(
         val copyAssociation = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            getNewFieldValue(copyParent)
+            newChildValue(copyParent)
         } as MutableAssociationModel
-        // NOTE: forEach() does not traverse the association's entity-keys.
-        // So they have to be explicitly copied by this method.
-        copyAssociation.newValue()
-        leaderValue1.value.zip(copyAssociation.value).forEach { (leaderEntityKeys, copyEntityKeys) ->
-            copy(leaderEntityKeys, copyEntityKeys)
-        }
+        modelStack.addFirst(copyAssociation)
         return TraversalAction.CONTINUE
     }
 
-    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): TraversalAction {
-        assertInDevMode(modelStack.isEmpty())
-        val copyEntityKeys = to as MutableEntityKeysModel
-        modelStack.addFirst(copyEntityKeys)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {
+    override fun leaveAssociation(leaderValue1: AssociationModel) {
         modelStack.removeFirst()
     }
 

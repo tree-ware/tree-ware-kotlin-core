@@ -20,7 +20,7 @@ private fun validateRoot(mainMeta: MainModel): List<String> {
     return listOf(
         validateSingleStringField(rootMeta, "name", "Root"),
         validateRootType(rootMeta),
-        validateEntityInfo(rootMeta, "Root")
+        validateEntityInfo(rootMeta, "Root", "composition")
     ).flatten()
 }
 
@@ -156,8 +156,8 @@ private fun validateFieldType(fieldMeta: EntityModel, fieldId: String): List<Str
         listOf("$fieldId has an invalid field type: ${fieldTypeMeta.name.lowercase()}")
     } else when (fieldTypeMeta) {
         FieldType.ENUMERATION -> validateEnumerationInfo(fieldMeta, fieldId)
-        FieldType.ASSOCIATION -> validateAssociationInfo(fieldMeta, fieldId)
-        FieldType.COMPOSITION -> validateEntityInfo(fieldMeta, fieldId)
+        FieldType.ASSOCIATION -> validateEntityInfo(fieldMeta, fieldId, "association")
+        FieldType.COMPOSITION -> validateEntityInfo(fieldMeta, fieldId, "composition")
         else -> listOf()
     }
 }
@@ -172,17 +172,9 @@ private fun validateEnumerationInfo(fieldMeta: EntityModel, fieldId: String): Li
     ).flatten()
 }
 
-private fun validateAssociationInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
-    val infoId = "$fieldId association info"
-    val associationInfoMeta = runCatching { getAssociationInfoMeta(fieldMeta) }.getOrNull()
-        ?: return listOf("$infoId is missing")
-    return if (associationInfoMeta.values.isEmpty()) listOf("$infoId is empty")
-    else listOf()
-}
-
-private fun validateEntityInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
-    val infoId = "$fieldId composition info"
-    val entityInfoMeta = runCatching { getEntityInfoMeta(fieldMeta) }.getOrNull()
+private fun validateEntityInfo(fieldMeta: EntityModel, fieldId: String, entityInfoFor: String): List<String> {
+    val infoId = "$fieldId $entityInfoFor info"
+    val entityInfoMeta = runCatching { getEntityInfoMeta(fieldMeta, entityInfoFor) }.getOrNull()
         ?: return listOf("$infoId is missing")
     return listOf(
         validateSingleStringField(entityInfoMeta, "name", infoId),

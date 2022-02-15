@@ -19,7 +19,7 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/enumeration_value" -> adaptee.visitEnumerationValueMeta(leaderEntity1)
             "/tree_ware_meta_model.main/entity" -> adaptee.visitEntityMeta(leaderEntity1)
             "/tree_ware_meta_model.main/field" -> adaptee.visitFieldMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/composition_info" -> defaultVisitReturn
+            "/tree_ware_meta_model.main/entity_info" -> defaultVisitReturn
             "/tree_ware_meta_model.main/enumeration_info" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
@@ -34,7 +34,7 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/enumeration_value" -> adaptee.leaveEnumerationValueMeta(leaderEntity1)
             "/tree_ware_meta_model.main/entity" -> adaptee.leaveEntityMeta(leaderEntity1)
             "/tree_ware_meta_model.main/field" -> adaptee.leaveFieldMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/composition_info" -> Unit
+            "/tree_ware_meta_model.main/entity_info" -> Unit
             "/tree_ware_meta_model.main/enumeration_info" -> Unit
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
@@ -110,15 +110,5 @@ class Leader1Adapter<Return>(
 
     override fun leaveAssociation(leaderValue1: AssociationModel) {
         throw IllegalStateException("leave AssociationModel")
-    }
-
-    // Sub-values
-
-    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): Return {
-        throw IllegalStateException("visit EntityKeysModel")
-    }
-
-    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {
-        throw IllegalStateException("leave EntityKeysModel")
     }
 }

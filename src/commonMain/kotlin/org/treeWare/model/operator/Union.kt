@@ -8,7 +8,7 @@ import org.treeWare.util.assertInDevMode
 
 fun union(inputs: List<MainModel>): MutableMainModel {
     val unionVisitor = UnionVisitor()
-    forEach(inputs, unionVisitor)
+    forEach(inputs, unionVisitor, false)
     return unionVisitor.unionMain
 }
 
@@ -32,7 +32,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val parent = modelStack.first()
-        val unionEntity = getNewFieldValue(parent)
+        val unionEntity = newChildValue(parent)
         visitAux(leaderEntityList, unionEntity)
         modelStack.addFirst(unionEntity)
         return TraversalAction.CONTINUE
@@ -70,7 +70,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     override fun visitPrimitive(leaderValueList: List<PrimitiveModel?>): TraversalAction {
         val lastPrimitive = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionPrimitive = getNewFieldValue(parent) as MutablePrimitiveModel
+        val unionPrimitive = newChildValue(parent) as MutablePrimitiveModel
         unionPrimitive.copyValueFrom(lastPrimitive)
         visitAux(leaderValueList, unionPrimitive)
         return TraversalAction.CONTINUE
@@ -79,7 +79,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     override fun visitAlias(leaderValueList: List<AliasModel?>): TraversalAction {
         val lastAlias = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionAlias = getNewFieldValue(parent) as MutableAliasModel
+        val unionAlias = newChildValue(parent) as MutableAliasModel
         unionAlias.copyValueFrom(lastAlias)
         visitAux(leaderValueList, unionAlias)
         return TraversalAction.CONTINUE
@@ -88,7 +88,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     override fun visitPassword1way(leaderValueList: List<Password1wayModel?>): TraversalAction {
         val lastPassword = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionPassword = getNewFieldValue(parent) as MutablePassword1wayModel
+        val unionPassword = newChildValue(parent) as MutablePassword1wayModel
         unionPassword.copyValueFrom(lastPassword)
         visitAux(leaderValueList, unionPassword)
         return TraversalAction.CONTINUE
@@ -97,7 +97,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     override fun visitPassword2way(leaderValueList: List<Password2wayModel?>): TraversalAction {
         val lastPassword = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionPassword = getNewFieldValue(parent) as MutablePassword2wayModel
+        val unionPassword = newChildValue(parent) as MutablePassword2wayModel
         unionPassword.copyValueFrom(lastPassword)
         visitAux(leaderValueList, unionPassword)
         return TraversalAction.CONTINUE
@@ -106,7 +106,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     override fun visitEnumeration(leaderValueList: List<EnumerationModel?>): TraversalAction {
         val lastEnumeration = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionEnumeration = getNewFieldValue(parent) as MutableEnumerationModel
+        val unionEnumeration = newChildValue(parent) as MutableEnumerationModel
         unionEnumeration.copyValueFrom(lastEnumeration)
         visitAux(leaderValueList, unionEnumeration)
         return TraversalAction.CONTINUE
@@ -115,7 +115,7 @@ private class UnionVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
     override fun visitAssociation(leaderValueList: List<AssociationModel?>): TraversalAction {
         val lastAssociation = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionAssociation = getNewFieldValue(parent) as MutableAssociationModel
+        val unionAssociation = newChildValue(parent) as MutableAssociationModel
         copy(lastAssociation, unionAssociation)
         visitAux(leaderValueList, unionAssociation)
         return TraversalAction.CONTINUE

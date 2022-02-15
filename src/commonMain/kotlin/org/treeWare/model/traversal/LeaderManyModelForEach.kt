@@ -6,11 +6,12 @@ import org.treeWare.model.cursor.LeaderManyModelCursor
 
 fun forEach(
     leaders: List<ElementModel>,
-    visitor: LeaderManyModelVisitor<TraversalAction>
+    visitor: LeaderManyModelVisitor<TraversalAction>,
+    traverseAssociations: Boolean
 ): TraversalAction {
     val mainMeta = leaders[0].meta ?: throw IllegalArgumentException("Leader does not have meta-model")
     if (!leaders.all { it.meta === mainMeta }) throw IllegalArgumentException("Leaders do not have identical meta-models")
-    val leaderCursor = LeaderManyModelCursor(leaders)
+    val leaderCursor = LeaderManyModelCursor(leaders, traverseAssociations)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
@@ -43,7 +44,6 @@ fun <Return> dispatchVisit(
     ModelElementType.PASSWORD2WAY -> visitor.visitPassword2way(leaders as List<Password2wayModel?>)
     ModelElementType.ENUMERATION -> visitor.visitEnumeration(leaders as List<EnumerationModel?>)
     ModelElementType.ASSOCIATION -> visitor.visitAssociation(leaders as List<AssociationModel?>)
-    else -> throw UnsupportedOperationException("Dispatching to unsupported model element type: $elementType")
 }
 
 fun <Return> dispatchLeave(
@@ -62,5 +62,4 @@ fun <Return> dispatchLeave(
     ModelElementType.PASSWORD2WAY -> visitor.leavePassword2way(leaders as List<Password2wayModel?>)
     ModelElementType.ENUMERATION -> visitor.leaveEnumeration(leaders as List<EnumerationModel?>)
     ModelElementType.ASSOCIATION -> visitor.leaveAssociation(leaders as List<AssociationModel?>)
-    else -> throw UnsupportedOperationException("Dispatching to unsupported model element type: $elementType")
 }

@@ -233,19 +233,4 @@ class CompositionTableGetVisitor<MappingAux>(
         mappingField: AssociationModel?
     ) {
     }
-
-    // Sub-values
-
-    override fun visitEntityKeys(
-        leaderField1: EntityKeysModel,
-        followerField1: EntityKeysModel?,
-        followerField2: EntityKeysModel?
-    ): TraversalAction = TraversalAction.CONTINUE
-
-    override fun leaveEntityKeys(
-        leaderField1: EntityKeysModel,
-        followerField1: EntityKeysModel?,
-        followerField2: EntityKeysModel?
-    ) {
-    }
 }

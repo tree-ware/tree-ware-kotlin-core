@@ -22,7 +22,6 @@ class Password2wayModelStateMachine(
 
     override fun decodeObjectStart(): Boolean {
         password2way = passwordFactory()
-        assertInDevMode(password2way != null)
         return true
     }
 

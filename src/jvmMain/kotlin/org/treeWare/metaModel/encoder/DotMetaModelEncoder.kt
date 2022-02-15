@@ -120,7 +120,7 @@ private fun encodeEnumerationField(fieldMeta: EntityModel, dotWriter: DotWriter)
 }
 
 private fun encodeAssociationField(fieldMeta: EntityModel, dotWriter: DotWriter) {
-    val resolvedEntity = getMetaModelResolved(fieldMeta)?.associationMeta?.target
+    val resolvedEntity = getMetaModelResolved(fieldMeta)?.associationMeta?.targetEntityMeta
     val type = getMetaName(resolvedEntity)
     encodeFieldRow(fieldMeta, type, dotWriter)
 

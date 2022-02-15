@@ -27,7 +27,8 @@
         "field:last_updated": {},
         "field:settings": {},
         "field:person": {},
-        "field:city_info": {}
+        "field:city_info": {},
+        "field:groups": {}
       },
       "entity:address_book_settings": {
         "field:last_name_first": {},
@@ -45,7 +46,12 @@
         "field:password": {},
         "field:previous_passwords": {},
         "field:main_secret": {},
-        "field:other_secrets": {}
+        "field:other_secrets": {},
+        "field:group": {}
+      },
+      "entity:group": {
+        "field:name": {},
+        "field:sub_groups": {}
       },
       "entity:address_book_relation": {
         "field:id": {},

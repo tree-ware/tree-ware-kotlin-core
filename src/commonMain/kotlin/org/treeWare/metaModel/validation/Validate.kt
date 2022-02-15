@@ -1,6 +1,5 @@
 package org.treeWare.metaModel.validation
 
-import org.lighthousegames.logging.logging
 import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
@@ -20,16 +19,8 @@ fun validate(
     logFullNames: Boolean = false,
     mandatoryFieldNumbers: Boolean = true
 ): List<String> {
-    val logger = logging()
-
-    // TODO(cleanup): this function should return errors without logging it.
-    fun logErrors(errors: List<String>) = errors.forEach { logger.error { it } }
-
     val structureErrors = validateStructure(mainMeta)
-    if (structureErrors.isNotEmpty()) {
-        logErrors(structureErrors)
-        return structureErrors
-    }
+    if (structureErrors.isNotEmpty()) return structureErrors
 
     // Set full-names for named elements in the packages.
     val nameErrors = validateNames(mainMeta, logFullNames)
@@ -39,13 +30,7 @@ fun validate(
     // NOTE: because of "forward-references", this has to be collected from all
     // packages before non-primitive fields can be resolved.
     val nonPrimitiveTypes = getNonPrimitiveTypes(mainMeta)
-
-    // Resolve non-primitive field types.
-    // Associations can be resolved only after compositions are resolved.
     val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, nonPrimitiveTypes)
-    val associationErrors = resolveAssociations(mainMeta)
 
-    val allErrors = listOf(nameErrors, numberErrors, nonPrimitiveErrors, associationErrors).flatten()
-    logErrors(allErrors)
-    return allErrors
+    return listOf(nameErrors, numberErrors, nonPrimitiveErrors).flatten()
 }

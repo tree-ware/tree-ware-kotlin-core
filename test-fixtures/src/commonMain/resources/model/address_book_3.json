@@ -23,6 +23,19 @@
         }
       ]
     },
+    "groups__aux3_": "Aux3 for groups",
+    "groups": [
+      {
+        "aux3_": "Aux3 for DC group",
+        "name": "DC",
+        "sub_groups": [
+          {
+            "aux3_": "Aux3 for Superman sub-group",
+            "name": "Superman"
+          }
+        ]
+      }
+    ],
     "person__aux3_": "Aux3 at person list level",
     "person": [
       {
@@ -71,6 +84,18 @@
         "first_name": "Lois",
         "last_name": "Lane",
         "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        },
         "email": [
           {
             "value": "lois.lane@dailyplanet.com"
@@ -90,7 +115,7 @@
             "id": "16634916-8f83-4376-ad42-37038e108a0b",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -133,7 +158,7 @@
         "related_city_info": [
           {
             "aux3_": "Aux3 with association 1 in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Albany",
@@ -145,7 +170,7 @@
           },
           {
             "aux3_": "Aux3 with association 2 in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Princeton",

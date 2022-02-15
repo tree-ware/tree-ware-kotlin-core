@@ -76,12 +76,4 @@ abstract class AbstractLeader1MutableModelVisitor<Return>(
     }
 
     override fun leaveMutableAssociation(leaderValue1: MutableAssociationModel) {}
-
-    // Sub-values
-
-    override fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel) {}
 }

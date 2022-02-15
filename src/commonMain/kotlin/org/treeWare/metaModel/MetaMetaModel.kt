@@ -78,7 +78,7 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
     populateFieldEntity(fieldEntityMeta)
     val enumerationInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "enumeration_info")
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
-    val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "composition_info")
+    val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")
     populateEntityInfoEntity(entityInfoEntityMeta)
 }
 
@@ -93,7 +93,7 @@ private fun populateRootEntity(rootEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "name", null, "string")
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newEnumerationFieldMetaMeta(fields, "type", null, "field_type", META_MODEL_MAIN_PACKAGE, "optional")
-    newCompositionFieldMetaMeta(fields, "composition", null, "composition_info", META_MODEL_MAIN_PACKAGE, "required")
+    newCompositionFieldMetaMeta(fields, "composition", null, "entity_info", META_MODEL_MAIN_PACKAGE, "required")
 }
 
 private fun populatePackageEntity(packageEntityMeta: MutableEntityModel) {
@@ -132,8 +132,8 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newEnumerationFieldMetaMeta(fields, "type", null, "field_type", META_MODEL_MAIN_PACKAGE)
     newCompositionFieldMetaMeta(fields, "enumeration", null, "enumeration_info", META_MODEL_MAIN_PACKAGE, "optional")
-    newPrimitiveFieldMetaMeta(fields, "association", null, "string", "list")
-    newCompositionFieldMetaMeta(fields, "composition", null, "composition_info", META_MODEL_MAIN_PACKAGE, "optional")
+    newCompositionFieldMetaMeta(fields, "association", null, "entity_info", META_MODEL_MAIN_PACKAGE, "optional")
+    newCompositionFieldMetaMeta(fields, "composition", null, "entity_info", META_MODEL_MAIN_PACKAGE, "optional")
     newPrimitiveFieldMetaMeta(fields, "is_key", null, "boolean", "optional")
     newEnumerationFieldMetaMeta(fields, "multiplicity", null, "multiplicity", META_MODEL_MAIN_PACKAGE, "optional")
     // Constraints

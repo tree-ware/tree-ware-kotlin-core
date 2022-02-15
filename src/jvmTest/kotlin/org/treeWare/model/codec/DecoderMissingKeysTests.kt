@@ -14,11 +14,11 @@ class DecoderMissingKeysTests {
     @Test
     fun `OnMissingKeys SKIP_WITH_ERRORS must skip and report errors for all missing keys`() {
         val expectedDecodeErrors = listOf(
-            "Missing key fields: [id]",
-            "Missing key fields: [id]",
-            "Missing key fields: [city]",
-            "Missing key fields: [name, state, country]",
-            "Missing key fields: [state, country]"
+            "Missing key fields [id] in instance of /address_book.main/address_book_relation",
+            "Missing key fields [id] in instance of /address_book.main/address_book_person",
+            "Missing key fields [city] in instance of /address_book.city/address_book_city_info",
+            "Missing key fields [name, state, country] in instance of /address_book.city/address_book_city",
+            "Missing key fields [state, country] in instance of /address_book.city/address_book_city",
         )
         testRoundTrip(
             "model/address_book_missing_keys.json",
@@ -40,7 +40,8 @@ class DecoderMissingKeysTests {
         )
         fileReader.close()
 
-        val expectedDecodeErrors = listOf("Missing key fields: [id]")
+        val expectedDecodeErrors =
+            listOf("Missing key fields [id] in instance of /address_book.main/address_book_relation")
         assertNull(mainModel)
         assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     }

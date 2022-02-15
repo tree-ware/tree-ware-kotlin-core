@@ -45,14 +45,21 @@ private abstract class FollowerState(
     }
 }
 
+private val visitNullCursorMover = FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
+private val leaveNullCursorMover = FollowerModelCursorMove(CursorMoveDirection.LEAVE, null)
+
 private class NullFollowerState(
     override val visitCursorMove: FollowerModelCursorMove,
     stateStack: FollowerStateStack
 ) : FollowerState(null, stateStack) {
-    override fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove {
-        if (move.direction == CursorMoveDirection.VISIT) stateStack.addFirst(this) else stateStack.removeFirst()
-        return FollowerModelCursorMove(move.direction, null)
-    }
+    override fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove =
+        if (move.direction == CursorMoveDirection.VISIT) {
+            stateStack.addFirst(this)
+            visitNullCursorMover
+        } else {
+            stateStack.removeFirst()
+            leaveNullCursorMover
+        }
 }
 
 private class MainFollowerState(
@@ -147,37 +154,15 @@ private class SingleFieldFollowerState(
             }
             else -> super.follow(move)
         }
-        CursorMoveDirection.VISIT -> when (move.element.elementType) {
-            ModelElementType.PRIMITIVE,
-            ModelElementType.ALIAS,
-            ModelElementType.PASSWORD1WAY,
-            ModelElementType.PASSWORD2WAY,
-            ModelElementType.ENUMERATION,
-            ModelElementType.ASSOCIATION -> {
-                val followerValue = field.value
-                val elementState =
-                    if (followerValue == null) NullFollowerState(
-                        FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                        stateStack
-                    )
-                    else dispatchVisit(followerValue, stateFactoryVisitor)
-                        ?: throw IllegalStateException("null element state")
-                stateStack.addFirst(elementState)
-                elementState.visitCursorMove
-            }
-            ModelElementType.ENTITY -> {
-                val followerEntity = field.value
-                val elementState =
-                    if (followerEntity == null) NullFollowerState(
-                        FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                        stateStack
-                    )
-                    else dispatchVisit(followerEntity, stateFactoryVisitor)
-                        ?: throw IllegalStateException("null element state")
-                stateStack.addFirst(elementState)
-                elementState.visitCursorMove
-            }
-            else -> super.follow(move)
+        CursorMoveDirection.VISIT -> {
+            val followerValue = field.value
+            val elementState = if (followerValue == null) NullFollowerState(
+                FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
+                stateStack
+            ) else dispatchVisit(followerValue, stateFactoryVisitor)
+                ?: throw IllegalStateException("null single-field state")
+            stateStack.addFirst(elementState)
+            elementState.visitCursorMove
         }
     }
 }
@@ -188,8 +173,9 @@ private class ListFieldFollowerState(
     private val stateFactoryVisitor: FollowerStateFactoryVisitor
 ) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
+    private var listIndex = -1
 
-    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
+    override fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove? = when (move.direction) {
         CursorMoveDirection.LEAVE -> when (move.element.elementType) {
             ModelElementType.LIST_FIELD -> {
                 stateStack.removeFirst()
@@ -197,40 +183,17 @@ private class ListFieldFollowerState(
             }
             else -> super.follow(move)
         }
-        CursorMoveDirection.VISIT -> when (move.element.elementType) {
-            ModelElementType.PRIMITIVE,
-            ModelElementType.ALIAS,
-            ModelElementType.PASSWORD1WAY,
-            ModelElementType.PASSWORD2WAY,
-            ModelElementType.ENUMERATION,
-            ModelElementType.ASSOCIATION -> {
-                val leaderValue =
-                    move.element as? ElementModel ?: throw IllegalStateException("expected list field value")
-                val followerValue: ElementModel? = field.getValueMatching(leaderValue)
-                val elementState =
-                    if (followerValue == null) NullFollowerState(
-                        FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                        stateStack
-                    )
-                    else dispatchVisit(followerValue, stateFactoryVisitor)
-                        ?: throw IllegalStateException("null element state")
-                stateStack.addFirst(elementState)
-                elementState.visitCursorMove
-            }
-            ModelElementType.ENTITY -> {
-                val leaderEntity = move.element
-                val followerEntity = field.getValueMatching(leaderEntity)
-                val elementState =
-                    if (followerEntity == null) NullFollowerState(
-                        FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                        stateStack
-                    )
-                    else dispatchVisit(followerEntity, stateFactoryVisitor)
-                        ?: throw IllegalStateException("null element state")
-                stateStack.addFirst(elementState)
-                elementState.visitCursorMove
-            }
-            else -> super.follow(move)
+        CursorMoveDirection.VISIT -> {
+            // Follow list elements by index.
+            ++listIndex
+            val followerValue: ElementModel? = field.values.getOrNull(listIndex)
+            val elementState = if (followerValue == null) NullFollowerState(
+                FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
+                stateStack
+            ) else dispatchVisit(followerValue, stateFactoryVisitor)
+                ?: throw IllegalStateException("null list-field state")
+            stateStack.addFirst(elementState)
+            elementState.visitCursorMove
         }
     }
 }
@@ -250,40 +213,17 @@ private class SetFieldFollowerState(
             }
             else -> super.follow(move)
         }
-        CursorMoveDirection.VISIT -> when (move.element.elementType) {
-            ModelElementType.PRIMITIVE,
-            ModelElementType.ALIAS,
-            ModelElementType.PASSWORD1WAY,
-            ModelElementType.PASSWORD2WAY,
-            ModelElementType.ENUMERATION,
-            ModelElementType.ASSOCIATION -> {
-                val leaderValue =
-                    move.element as? ElementModel ?: throw IllegalStateException("expected set field value")
-                val followerValue: ElementModel? = field.getValueMatching(leaderValue)
-                val elementState =
-                    if (followerValue == null) NullFollowerState(
-                        FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                        stateStack
-                    )
-                    else dispatchVisit(followerValue, stateFactoryVisitor)
-                        ?: throw IllegalStateException("null element state")
-                stateStack.addFirst(elementState)
-                elementState.visitCursorMove
-            }
-            ModelElementType.ENTITY -> {
-                val leaderEntity = move.element
-                val followerEntity = field.getValueMatching(leaderEntity)
-                val elementState =
-                    if (followerEntity == null) NullFollowerState(
-                        FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                        stateStack
-                    )
-                    else dispatchVisit(followerEntity, stateFactoryVisitor)
-                        ?: throw IllegalStateException("null element state")
-                stateStack.addFirst(elementState)
-                elementState.visitCursorMove
-            }
-            else -> super.follow(move)
+        CursorMoveDirection.VISIT -> {
+            val leaderValue = move.element
+            // Follow set elements by matching.
+            val followerValue: ElementModel? = field.getValueMatching(leaderValue)
+            val elementState = if (followerValue == null) NullFollowerState(
+                FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
+                stateStack
+            ) else dispatchVisit(followerValue, stateFactoryVisitor)
+                ?: throw IllegalStateException("null set-field state")
+            stateStack.addFirst(elementState)
+            elementState.visitCursorMove
         }
     }
 }
@@ -313,21 +253,31 @@ private class ScalarValueFollowerState(
     }
 }
 
-// Sub-values
+private class AssociationFollowerState(
+    private val association: AssociationModel,
+    stack: FollowerStateStack,
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+) : FollowerState(association, stack) {
+    override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, association)
 
-private class EntityKeysFollowerState(
-    private val entityKeys: EntityKeysModel,
-    stateStack: FollowerStateStack,
-    stateFactoryVisitor: FollowerStateFactoryVisitor
-) : BaseEntityFollowerState(entityKeys, stateStack, stateFactoryVisitor) {
-    override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, entityKeys)
-
-    override fun follow(move: Leader1ModelCursorMove) = when {
-        move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.ENTITY_KEYS -> {
-            stateStack.removeFirst()
-            FollowerModelCursorMove(CursorMoveDirection.LEAVE, entityKeys)
+    override fun follow(move: Leader1ModelCursorMove) = when (move.direction) {
+        CursorMoveDirection.LEAVE -> when (move.element.elementType) {
+            ModelElementType.ASSOCIATION -> {
+                stateStack.removeFirst()
+                FollowerModelCursorMove(CursorMoveDirection.LEAVE, association)
+            }
+            else -> super.follow(move)
         }
-        else -> super.follow(move)
+        CursorMoveDirection.VISIT -> when (move.element.elementType) {
+            ModelElementType.ENTITY -> {
+                val followerEntity = association.value
+                val elementState = dispatchVisit(followerEntity, stateFactoryVisitor)
+                    ?: throw IllegalStateException("null association state")
+                stateStack.addFirst(elementState)
+                elementState.visitCursorMove
+            }
+            else -> super.follow(move)
+        }
     }
 }
 
@@ -361,10 +311,6 @@ private class FollowerStateFactoryVisitor(
         ScalarValueFollowerState(leaderValue1, stateStack)
 
     override fun visitEnumeration(leaderValue1: EnumerationModel) = ScalarValueFollowerState(leaderValue1, stateStack)
-    override fun visitAssociation(leaderValue1: AssociationModel) = ScalarValueFollowerState(leaderValue1, stateStack)
-
-    // Sub-values
-
-    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel) =
-        EntityKeysFollowerState(leaderEntityKeys1, stateStack, this)
+    override fun visitAssociation(leaderValue1: AssociationModel) =
+        AssociationFollowerState(leaderValue1, stateStack, this)
 }

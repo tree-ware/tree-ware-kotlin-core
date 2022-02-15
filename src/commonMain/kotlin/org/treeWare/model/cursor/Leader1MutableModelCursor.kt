@@ -5,9 +5,9 @@ import org.treeWare.model.traversal.AbstractLeader1MutableModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchVisit
 
-class Leader1MutableModelCursor(private val initial: MutableElementModel) {
+class Leader1MutableModelCursor(private val initial: MutableElementModel, traverseAssociations: Boolean) {
     private val stateStack = LeaderMutableModelStateStack()
-    private val stateFactoryVisitor = LeaderMutableModelStateFactoryVisitor(stateStack)
+    private val stateFactoryVisitor = LeaderMutableModelStateFactoryVisitor(traverseAssociations, stateStack)
     private var isAtStart = true
 
     val element: MutableElementModel? get() = if (stateStack.isEmpty()) null else stateStack.first().element
@@ -123,7 +123,7 @@ private class SingleFieldLeaderMutableModelState(
             if (value == null) listOf()
             else listOf<LeaderMutableModelStateAction>({
                 val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null root state")
+                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null single-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
             })
@@ -144,7 +144,7 @@ private class ListFieldLeaderMutableModelState(
         actionIterator = IteratorAdapter({ field.values.iterator() }) { value ->
             {
                 val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null field state")
+                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null list-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
             }
@@ -165,7 +165,7 @@ private class SetFieldLeaderMutableModelState(
         actionIterator = IteratorAdapter({ field.values.iterator() }) { value ->
             {
                 val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null field state")
+                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null set-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
             }
@@ -189,20 +189,31 @@ private class ScalarValueLeaderMutableModelState(
     }
 }
 
-// Sub-values
-
-private class EntityKeysLeaderMutableModelState(
-    entityKeys: MutableEntityKeysModel,
+private class AssociationLeaderMutableModelState(
+    association: MutableAssociationModel,
+    traverseAssociations: Boolean,
     stack: LeaderMutableModelStateStack,
     stateFactoryVisitor: LeaderMutableModelStateFactoryVisitor
-) : BaseEntityLeaderMutableModelState(entityKeys, stack, stateFactoryVisitor) {
-    override val visitCursorMove = Leader1MutableModelCursorMove(CursorMoveDirection.VISIT, entityKeys)
-    override val leaveCursorMove = Leader1MutableModelCursorMove(CursorMoveDirection.LEAVE, entityKeys)
+) : LeaderMutableModelState(association, stack) {
+    override val visitCursorMove = Leader1MutableModelCursorMove(CursorMoveDirection.VISIT, association)
+    override val leaveCursorMove = Leader1MutableModelCursorMove(CursorMoveDirection.LEAVE, association)
+    override val actionIterator: Iterator<LeaderMutableModelStateAction>
+
+    init {
+        val actionList = if (traverseAssociations) listOf<LeaderMutableModelStateAction>({
+            val valueState = dispatchVisit(association.value, stateFactoryVisitor)
+                ?: throw IllegalStateException("null association state")
+            stateStack.addFirst(valueState)
+            valueState.visitCursorMove
+        }) else emptyList()
+        actionIterator = actionList.iterator()
+    }
 }
 
 // State factory visitor
 
 private class LeaderMutableModelStateFactoryVisitor(
+    private val traverseAssociations: Boolean,
     private val stateStack: LeaderMutableModelStateStack
 ) : AbstractLeader1MutableModelVisitor<LeaderMutableModelState?>(null) {
     override fun visitMutableMain(leaderMain1: MutableMainModel) =
@@ -240,10 +251,5 @@ private class LeaderMutableModelStateFactoryVisitor(
         ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
 
     override fun visitMutableAssociation(leaderValue1: MutableAssociationModel) =
-        ScalarValueLeaderMutableModelState(leaderValue1, stateStack)
-
-    // Sub-values
-
-    override fun visitMutableEntityKeys(leaderEntityKeys1: MutableEntityKeysModel) =
-        EntityKeysLeaderMutableModelState(leaderEntityKeys1, stateStack, this)
+        AssociationLeaderMutableModelState(leaderValue1, traverseAssociations, stateStack, this)
 }

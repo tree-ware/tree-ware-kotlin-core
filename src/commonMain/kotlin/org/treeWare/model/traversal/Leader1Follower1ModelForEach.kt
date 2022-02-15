@@ -9,9 +9,10 @@ import org.treeWare.util.assertInDevMode
 fun forEach(
     leader: ElementModel,
     follower: ElementModel,
-    visitor: Leader1Follower1ModelVisitor<TraversalAction>
+    visitor: Leader1Follower1ModelVisitor<TraversalAction>,
+    traverseAssociations: Boolean
 ): TraversalAction {
-    val leaderCursor = Leader1ModelCursor(leader)
+    val leaderCursor = Leader1ModelCursor(leader, traverseAssociations)
     val followerCursor = FollowerModelCursor(follower)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
@@ -124,14 +125,6 @@ fun <Return> dispatchVisit(
         )
         else null
     }
-    ModelElementType.ENTITY_KEYS -> {
-        if (follower != null) assertInDevMode(follower.elementType == ModelElementType.ENTITY_KEYS)
-        if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.visitEntityKeys(
-            leader as EntityKeysModel,
-            follower as EntityKeysModel?
-        )
-        else null
-    }
 }
 
 fun <Return> dispatchLeave(
@@ -215,13 +208,6 @@ fun <Return> dispatchLeave(
             if (follower == null || follower.elementType == ModelElementType.ASSOCIATION) visitor.leaveAssociation(
                 leader as AssociationModel,
                 follower as AssociationModel?
-            )
-        }
-        ModelElementType.ENTITY_KEYS -> {
-            if (follower != null) assertInDevMode(follower.elementType == ModelElementType.ENTITY_KEYS)
-            if (follower == null || follower.elementType == ModelElementType.ENTITY_KEYS) visitor.leaveEntityKeys(
-                leader as EntityKeysModel,
-                follower as EntityKeysModel?
             )
         }
     }

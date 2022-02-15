@@ -6,9 +6,10 @@ import org.treeWare.model.cursor.Leader1MutableModelCursor
 
 fun mutableForEach(
     leader: MutableElementModel,
-    visitor: Leader1MutableModelVisitor<TraversalAction>
+    visitor: Leader1MutableModelVisitor<TraversalAction>,
+    traverseAssociations: Boolean
 ): TraversalAction {
-    val leaderCursor = Leader1MutableModelCursor(leader)
+    val leaderCursor = Leader1MutableModelCursor(leader, traverseAssociations)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break
@@ -38,7 +39,6 @@ fun <Return> dispatchVisit(
     ModelElementType.PASSWORD2WAY -> visitor.visitMutablePassword2way(leader as MutablePassword2wayModel)
     ModelElementType.ENUMERATION -> visitor.visitMutableEnumeration(leader as MutableEnumerationModel)
     ModelElementType.ASSOCIATION -> visitor.visitMutableAssociation(leader as MutableAssociationModel)
-    ModelElementType.ENTITY_KEYS -> visitor.visitMutableEntityKeys(leader as MutableEntityKeysModel)
 }
 
 fun <Return> dispatchLeave(
@@ -56,5 +56,4 @@ fun <Return> dispatchLeave(
     ModelElementType.PASSWORD2WAY -> visitor.leaveMutablePassword2way(leader as MutablePassword2wayModel)
     ModelElementType.ENUMERATION -> visitor.leaveMutableEnumeration(leader as MutableEnumerationModel)
     ModelElementType.ASSOCIATION -> visitor.leaveMutableAssociation(leader as MutableAssociationModel)
-    ModelElementType.ENTITY_KEYS -> visitor.leaveMutableEntityKeys(leader as MutableEntityKeysModel)
 }

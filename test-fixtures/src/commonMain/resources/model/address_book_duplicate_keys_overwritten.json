@@ -39,7 +39,7 @@
             "id": "16634916-8f83-4376-ad42-37038e108a0b",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -67,7 +67,7 @@
         },
         "related_city_info": [
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "New York City",

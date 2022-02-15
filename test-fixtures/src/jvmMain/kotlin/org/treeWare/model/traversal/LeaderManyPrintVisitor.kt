@@ -1,29 +1,41 @@
 package org.treeWare.model.traversal
 
-import org.treeWare.metaModel.*
+import org.treeWare.metaModel.FieldType
+import org.treeWare.metaModel.getFieldTypeMeta
+import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.getPackageName
 import org.treeWare.model.core.*
+import org.treeWare.model.encoder.PrettyPrintHelper
 import java.io.Writer
 import java.util.*
 
-class LeaderManyPrintVisitor(private val writer: Writer) :
-    AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+class LeaderManyPrintVisitor(
+    private val writer: Writer
+) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+    private val prettyPrinter = PrettyPrintHelper(true)
+
     private fun print(key: String, values: List<String?> = listOf("TODO")) {
+        writer.write(prettyPrinter.currentIndent)
         writer.write(key)
         writer.write(": ")
         writer.write(values.joinToString(", "))
-        writer.write("\n")
+        writer.write(prettyPrinter.endOfLine)
     }
 
-    private fun printFieldNames(key: String, leaderFieldList: List<FieldModel?>): TraversalAction {
+    private fun printFieldNames(key: String, leaderFieldList: List<FieldModel?>) {
         val fieldNames = leaderFieldList.map { field -> field?.meta?.let { getMetaName(it) } }
         print(key, fieldNames)
-        return TraversalAction.CONTINUE
     }
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
         val mainNames = leaderMainList.map { main -> main?.meta?.let { getMetaName(it) } }
         print("Main", mainNames)
+        prettyPrinter.indent()
         return TraversalAction.CONTINUE
+    }
+
+    override fun leaveMain(leaderMainList: List<MainModel?>) {
+        prettyPrinter.unindent()
     }
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
@@ -35,17 +47,43 @@ class LeaderManyPrintVisitor(private val writer: Writer) :
             }
         }
         print("Entity", entityNames)
+        prettyPrinter.indent()
         return TraversalAction.CONTINUE
     }
 
-    override fun visitSingleField(leaderFieldList: List<SingleFieldModel?>): TraversalAction =
+    override fun leaveEntity(leaderEntityList: List<EntityModel?>) {
+        prettyPrinter.unindent()
+    }
+
+    override fun visitSingleField(leaderFieldList: List<SingleFieldModel?>): TraversalAction {
         printFieldNames("Single field", leaderFieldList)
+        prettyPrinter.indent()
+        return TraversalAction.CONTINUE
+    }
 
-    override fun visitListField(leaderFieldList: List<ListFieldModel?>): TraversalAction =
+    override fun leaveSingleField(leaderFieldList: List<SingleFieldModel?>) {
+        prettyPrinter.unindent()
+    }
+
+    override fun visitListField(leaderFieldList: List<ListFieldModel?>): TraversalAction {
         printFieldNames("List field", leaderFieldList)
+        prettyPrinter.indent()
+        return TraversalAction.CONTINUE
+    }
 
-    override fun visitSetField(leaderFieldList: List<SetFieldModel?>): TraversalAction =
+    override fun leaveListField(leaderFieldList: List<ListFieldModel?>) {
+        prettyPrinter.unindent()
+    }
+
+    override fun visitSetField(leaderFieldList: List<SetFieldModel?>): TraversalAction {
         printFieldNames("Set field", leaderFieldList)
+        prettyPrinter.indent()
+        return TraversalAction.CONTINUE
+    }
+
+    override fun leaveSetField(leaderFieldList: List<SetFieldModel?>) {
+        prettyPrinter.unindent()
+    }
 
     override fun visitPrimitive(leaderValueList: List<PrimitiveModel?>): TraversalAction {
         val values = leaderValueList.map { valueElement ->
@@ -83,12 +121,12 @@ class LeaderManyPrintVisitor(private val writer: Writer) :
     }
 
     override fun visitAssociation(leaderValueList: List<AssociationModel?>): TraversalAction {
-        val values = leaderValueList.map { association ->
-            association?.parent?.meta?.let { associationMeta -> getAssociationInfoMeta(associationMeta) }?.values?.map {
-                (it as PrimitiveModel).value
-            }?.toString()
-        }
-        print("Association", values)
+        print("Association", listOf("..."))
+        prettyPrinter.indent()
         return TraversalAction.CONTINUE
+    }
+
+    override fun leaveAssociation(leaderValueList: List<AssociationModel?>) {
+        prettyPrinter.unindent()
     }
 }

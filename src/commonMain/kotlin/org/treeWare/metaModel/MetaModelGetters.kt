@@ -76,14 +76,16 @@ fun getFieldTypeMeta(fieldMeta: EntityModel?): FieldType? = fieldMeta?.let {
 fun getEnumerationInfoMeta(fieldMeta: EntityModel): EntityModel =
     getSingleEntity(fieldMeta, "enumeration")
 
-fun getAssociationInfoMeta(fieldMeta: EntityModel): ListFieldModel =
-    getListField(fieldMeta, "association")
-
-fun getEntityInfoMeta(fieldMeta: EntityModel): EntityModel =
-    getSingleEntity(fieldMeta, "composition")
+fun getEntityInfoMeta(fieldMeta: EntityModel, entityInfoFor: String): EntityModel =
+    getSingleEntity(fieldMeta, entityInfoFor)
 
 fun getMultiplicityMeta(fieldMeta: EntityModel): Multiplicity =
     Multiplicity.valueOf((getOptionalSingleEnumeration(fieldMeta, "multiplicity") ?: "required").uppercase())
+
+fun isCollectionFieldMeta(fieldMeta: EntityModel?): Boolean = fieldMeta?.let {
+    val multiplicity = getMultiplicityMeta(fieldMeta)
+    multiplicity == Multiplicity.LIST || multiplicity == Multiplicity.SET
+} ?: false
 
 fun isListFieldMeta(fieldMeta: EntityModel?): Boolean =
     fieldMeta?.let { getMultiplicityMeta(fieldMeta) == Multiplicity.LIST } ?: false

@@ -140,18 +140,4 @@ interface Leader1Follower2ModelVisitor<Return> {
         followerValue1: AssociationModel?,
         followerValue2: AssociationModel?
     )
-
-    // Sub-values
-
-    fun visitEntityKeys(
-        leaderEntityKeys1: EntityKeysModel,
-        followerEntityKeys1: EntityKeysModel?,
-        followerEntityKeys2: EntityKeysModel?
-    ): Return
-
-    fun leaveEntityKeys(
-        leaderEntityKeys1: EntityKeysModel,
-        followerEntityKeys1: EntityKeysModel?,
-        followerEntityKeys2: EntityKeysModel?
-    )
 }

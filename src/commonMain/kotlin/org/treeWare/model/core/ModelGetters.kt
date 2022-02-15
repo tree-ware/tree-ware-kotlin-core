@@ -37,13 +37,13 @@ fun getOptionalSingleUint32(entityModel: BaseEntityModel, fieldName: String): UI
 fun getSingleEnumeration(entityModel: BaseEntityModel, fieldName: String): String {
     val singleField = getSingleField(entityModel, fieldName)
     val enumeration = singleField.value as? EnumerationModel ?: throw IllegalStateException()
-    return enumeration.value ?: throw IllegalStateException()
+    return enumeration.value
 }
 
 fun getOptionalSingleEnumeration(entityModel: BaseEntityModel, fieldName: String): String? {
     val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
     val enumeration = singleField.value as? EnumerationModel ?: throw IllegalStateException()
-    return enumeration.value ?: throw IllegalStateException()
+    return enumeration.value
 }
 
 fun getSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel =
@@ -57,18 +57,8 @@ fun getOptionalSinglePrimitive(entityModel: BaseEntityModel, fieldName: String):
     return singleField.value as? PrimitiveModel ?: throw IllegalStateException()
 }
 
-fun getListField(entityModel: BaseEntityModel, fieldName: String): ListFieldModel =
-    entityModel.getField(fieldName) as? ListFieldModel ?: throw IllegalStateException()
-
 fun getCollectionField(entityModel: BaseEntityModel, fieldName: String): CollectionFieldModel =
     entityModel.getField(fieldName) as? CollectionFieldModel ?: throw IllegalStateException()
 
 fun getFieldName(fieldModel: FieldModel): String =
     fieldModel.meta?.let { getMetaName(it) } ?: throw IllegalStateException()
-
-fun getListStrings(listFieldModel: ListFieldModel): List<String> {
-    val firstElement = listFieldModel.values.firstOrNull() ?: return listOf()
-    val firstPrimitive = firstElement as? PrimitiveModel ?: throw IllegalStateException()
-    firstPrimitive.value as? String ?: throw IllegalStateException()
-    return listFieldModel.values.map { (it as PrimitiveModel).value as String }
-}

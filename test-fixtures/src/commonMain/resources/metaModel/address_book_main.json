@@ -124,6 +124,16 @@
                   "package": "address_book.city"
                 },
                 "multiplicity": "set"
+              },
+              {
+                "name": "groups",
+                "number": 6,
+                "type": "composition",
+                "composition": {
+                  "name": "group",
+                  "package": "address_book.main"
+                },
+                "multiplicity": "set"
               }
             ]
           },
@@ -224,6 +234,37 @@
                 "number": 11,
                 "type": "password2way",
                 "multiplicity": "list"
+              },
+              {
+                "name": "group",
+                "number": 12,
+                "type": "association",
+                "association": {
+                  "name": "group",
+                  "package": "address_book.main"
+                }
+              }
+            ]
+          },
+          {
+            "name": "group",
+            "info": "",
+            "fields": [
+              {
+                "name": "name",
+                "number": 1,
+                "type": "string",
+                "is_key": true
+              },
+              {
+                "name": "sub_groups",
+                "number": 2,
+                "type": "composition",
+                "composition": {
+                  "name": "group",
+                  "package": "address_book.main"
+                },
+                "multiplicity": "set"
               }
             ]
           },
@@ -249,14 +290,10 @@
                 "name": "person",
                 "number": 3,
                 "type": "association",
-                "association": [
-                  {
-                    "value": "address_book"
-                  },
-                  {
-                    "value": "person"
-                  }
-                ]
+                "association": {
+                  "name": "address_book_person",
+                  "package": "address_book.main"
+                }
               }
             ]
           }

@@ -10,9 +10,10 @@ fun forEach(
     leader: ElementModel,
     follower1: ElementModel,
     follower2: ElementModel,
-    visitor: Leader1Follower2ModelVisitor<TraversalAction>
+    visitor: Leader1Follower2ModelVisitor<TraversalAction>,
+    traverseAssociations: Boolean
 ): TraversalAction {
-    val leaderCursor = Leader1ModelCursor(leader)
+    val leaderCursor = Leader1ModelCursor(leader, traverseAssociations)
     val follower1Cursor = FollowerModelCursor(follower1)
     val follower2Cursor = FollowerModelCursor(follower2)
     var action = TraversalAction.CONTINUE
@@ -189,19 +190,6 @@ fun <Return> dispatchVisit(
         )
         else null
     }
-    ModelElementType.ENTITY_KEYS -> {
-        if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.ENTITY_KEYS)
-        if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.ENTITY_KEYS)
-        if (
-            (follower1 == null || follower1.elementType == ModelElementType.ENTITY_KEYS) &&
-            (follower2 == null || follower2.elementType == ModelElementType.ENTITY_KEYS)
-        ) visitor.visitEntityKeys(
-            leader as EntityKeysModel,
-            follower1 as EntityKeysModel?,
-            follower2 as EntityKeysModel?,
-        )
-        else null
-    }
 }
 
 fun <Return> dispatchLeave(
@@ -341,18 +329,6 @@ fun <Return> dispatchLeave(
                 leader as AssociationModel,
                 follower1 as AssociationModel?,
                 follower2 as AssociationModel?,
-            )
-        }
-        ModelElementType.ENTITY_KEYS -> {
-            if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.ENTITY_KEYS)
-            if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.ENTITY_KEYS)
-            if (
-                (follower1 == null || follower1.elementType == ModelElementType.ENTITY_KEYS) &&
-                (follower2 == null || follower2.elementType == ModelElementType.ENTITY_KEYS)
-            ) visitor.leaveEntityKeys(
-                leader as EntityKeysModel,
-                follower1 as EntityKeysModel?,
-                follower2 as EntityKeysModel?,
             )
         }
     }
