@@ -37,6 +37,25 @@
         }
       ]
     },
+    "groups__aux1_": "Aux1 for groups",
+    "groups__aux2_": "Aux2 for groups",
+    "groups": [
+      {
+        "aux1_": "Aux1 for DC grouop",
+        "aux2_": "Aux2 for DC grouop",
+        "name": "DC",
+        "sub_groups": [
+          {
+            "aux1_": "Aux1 for Superman sub-group",
+            "aux2_": "Aux2 for Superman sub-group",
+            "name": "Superman"
+          }
+        ]
+      },
+      {
+        "name": "Marvel"
+      }
+    ],
     "person__aux1_": "Aux1 at person list level",
     "person__aux2_": "Aux2 at person list level",
     "person": [
@@ -55,6 +74,20 @@
         "hero_name__aux1_": "Something wrong with hero_name",
         "hero_name__aux2_": "Something wrong with hero_name",
         "hero_name": "Superman",
+        "group__aux1_": "Aux1 for Clark's group",
+        "group__aux2_": "Aux2 for Clark's group",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        },
         "email__aux1_": "Aux1 at list level for person email",
         "email__aux2_": "Aux2 at list level for person email",
         "email": [
@@ -84,7 +117,7 @@
             "person__aux1_": "Aux1 with person association",
             "person__aux2_": "Aux2 with person association",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
                 }
@@ -137,6 +170,18 @@
         "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
         "first_name": "Lois",
         "last_name": "Lane",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        },
         "email": [
           {
             "value": "lois.lane@dailyplanet.com"
@@ -147,7 +192,7 @@
             "id": "16634916-8f83-4376-ad42-37038e108a0b",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -203,7 +248,7 @@
           {
             "aux1_": "Aux1 with association element in list",
             "aux2_": "Aux2 with association element in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Albany",
@@ -214,7 +259,7 @@
             ]
           },
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Princeton",
@@ -227,7 +272,7 @@
           {
             "aux1_": "Aux1 with association element in list after an element without an aux1",
             "aux2_": "Aux2 with association element in list after an element without an aux2",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "San Francisco",
@@ -248,7 +293,7 @@
         },
         "related_city_info": [
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "New York City",

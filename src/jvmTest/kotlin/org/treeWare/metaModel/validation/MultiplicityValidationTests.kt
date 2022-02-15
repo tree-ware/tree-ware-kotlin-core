@@ -80,14 +80,10 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "name": "association_field",
         |           "number": 3,
         |           "type": "association",
-        |           "association": [
-        |             {
-        |               "value": "root"
-        |             },
-        |             {
-        |               "value": "entity1_composition_field"
-        |             }
-        |           ]
+        |           "association": {
+        |             "name": "entity2",
+        |             "package": "test.common"
+        |           }
         |           $multiplicityJson
         |         },
         |         {

@@ -36,18 +36,6 @@
         "first_name": "Clark",
         "last_name": "Kent",
         "hero_name": "Superman",
-        "group": {
-          "groups": [
-            {
-              "name": "DC",
-              "sub_groups": [
-                {
-                  "name": "Superman"
-                }
-              ]
-            }
-          ]
-        },
         "email": [
           {
             "value": "clark.kent@dailyplanet.com"
@@ -60,14 +48,7 @@
         "relation": [
           {
             "id": "05ade278-4b44-43da-a0cc-14463854e397",
-            "relationship": "colleague",
-            "person": {
-              "person": [
-                {
-                  "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
-                }
-              ]
-            }
+            "relationship": "colleague"
           }
         ],
         "password": {
@@ -99,18 +80,6 @@
         "first_name": "Lois",
         "last_name": "Lane",
         "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-        "group": {
-          "groups": [
-            {
-              "name": "DC",
-              "sub_groups": [
-                {
-                  "name": "Superman"
-                }
-              ]
-            }
-          ]
-        },
         "email": [
           {
             "value": "lois.lane@dailyplanet.com"
@@ -120,14 +89,7 @@
         "relation": [
           {
             "id": "16634916-8f83-4376-ad42-37038e108a0b",
-            "relationship": "colleague",
-            "person": {
-              "person": [
-                {
-                  "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
-                }
-              ]
-            }
+            "relationship": "colleague"
           }
         ],
         "password": {
@@ -166,30 +128,7 @@
           "country": "United States of America"
         },
         "info": "One of the most populous and most densely populated major city in USA",
-        "related_city_info": [
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Albany",
-                  "state": "New York",
-                  "country": "United States of America"
-                }
-              }
-            ]
-          },
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Princeton",
-                  "state": "New Jersey",
-                  "country": "United States of America"
-                }
-              }
-            ]
-          }
-        ]
+        "related_city_info": []
       },
       {
         "info": "Capital of New York state",
@@ -198,19 +137,7 @@
           "state": "New York",
           "country": "United States of America"
         },
-        "related_city_info": [
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "New York City",
-                  "state": "New York",
-                  "country": "United States of America"
-                }
-              }
-            ]
-          }
-        ]
+        "related_city_info": []
       },
       {
         "info": "Home of Princeton University",

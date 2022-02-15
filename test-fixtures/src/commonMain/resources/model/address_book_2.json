@@ -25,12 +25,35 @@
         }
       ]
     },
+    "groups__aux2_": "Aux2 for groups",
+    "groups": [
+      {
+        "aux2_": "Aux2 for DC group",
+        "name": "DC"
+      },
+      {
+        "name": "Marvel"
+      }
+    ],
     "person__aux2_": "Aux2 at person list level",
     "person": [
       {
         "aux2_": "Aux2 with composition element of list",
         "id__aux2_": "Aux2 in person id",
         "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+        "group__aux2_": "Aux2 for Clark's group",
+        "group": {
+          "groups": [
+            {
+              "name": "DC",
+              "sub_groups": [
+                {
+                  "name": "Superman"
+                }
+              ]
+            }
+          ]
+        },
         "email__aux2_": "Aux2 at list level for person email",
         "email": [
           {
@@ -68,7 +91,7 @@
             "id": "05ade278-4b44-43da-a0cc-14463854e397",
             "relationship": "colleague",
             "person": {
-              "path_keys": [
+              "person": [
                 {
                   "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
                 }
@@ -93,7 +116,7 @@
         "related_city_info": [
           {
             "aux2_": "Aux2 with association 1 in list",
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "Princeton",
@@ -114,7 +137,7 @@
         },
         "related_city_info": [
           {
-            "path_keys": [
+            "city_info": [
               {
                 "city": {
                   "name": "New York City",

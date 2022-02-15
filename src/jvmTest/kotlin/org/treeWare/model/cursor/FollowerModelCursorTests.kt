@@ -16,31 +16,52 @@ import kotlin.test.*
 
 class FollowerModelCursorTests {
     @Test
-    fun `Follower-cursor on same data-model follows leader-cursor`() {
-        testFollowerSameModelInstance("model/address_book_1.json")
+    fun `Follower-cursor on same data-model follows leader-cursor without association traversal`() {
+        testFollowerSameModelInstance("model/address_book_1.json", false)
     }
 
     @Test
-    fun `Follower-cursor on different data-model follows leader-cursor`() {
-        testFollowerDifferentModelInstances("model/address_book_1.json")
+    fun `Follower-cursor on same data-model follows leader-cursor with association traversal`() {
+        testFollowerSameModelInstance("model/address_book_1.json", true)
     }
 
     @Test
-    fun `Follower-cursor on wildcard model follows leader-cursor`() {
+    fun `Follower-cursor on different data-model follows leader-cursor without association traversal`() {
+        testFollowerDifferentModelInstances("model/address_book_1.json", false)
+    }
+
+    @Test
+    fun `Follower-cursor on different data-model follows leader-cursor with association traversal`() {
+        testFollowerDifferentModelInstances("model/address_book_1.json", true)
+    }
+
+    @Test
+    fun `Follower-cursor on wildcard model follows leader-cursor without association traversal`() {
         testFollowerWildcardModelInstance(
             "model/address_book_1.json",
-            "model/address_book_filter_all_model.json"
+            "model/address_book_filter_all_model.json",
+            false,
+            "model/address_book_1_no_associations.json"
+        )
+    }
+
+    @Test
+    fun `Follower-cursor on wildcard model follows leader-cursor with association traversal`() {
+        testFollowerWildcardModelInstance(
+            "model/address_book_1.json",
+            "model/address_book_filter_all_model.json",
+            true
         )
     }
 }
 
-private fun testFollowerSameModelInstance(inputFilePath: String) {
+private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssociations: Boolean) {
     val metaModel = newAddressBookMetaModel(null, null).metaModel
         ?: throw IllegalStateException("Meta-model has validation errors")
 
     val model = getMainModelFromJsonFile(metaModel, inputFilePath)
 
-    val leaderCursor = Leader1ModelCursor(model)
+    val leaderCursor = Leader1ModelCursor(model, traverseAssociations)
     val followerCursor = FollowerModelCursor(model)
 
     val action = TraversalAction.CONTINUE
@@ -54,7 +75,7 @@ private fun testFollowerSameModelInstance(inputFilePath: String) {
     }
 }
 
-private fun testFollowerDifferentModelInstances(inputFilePath: String) {
+private fun testFollowerDifferentModelInstances(inputFilePath: String, traverseAssociations: Boolean) {
     val metaModel = newAddressBookMetaModel(null, null).metaModel
         ?: throw IllegalStateException("Meta-model has validation errors")
 
@@ -64,7 +85,7 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
 
     assertNotSame(leaderModel, followerModel)
 
-    val leaderCursor = Leader1ModelCursor(leaderModel)
+    val leaderCursor = Leader1ModelCursor(leaderModel, traverseAssociations)
     val followerCursor = FollowerModelCursor(followerModel)
 
     val action = TraversalAction.CONTINUE
@@ -84,14 +105,19 @@ private fun testFollowerDifferentModelInstances(inputFilePath: String) {
  * To verify this, JSON is generated from the leader cursor and compared against
  * the original JSON file (leaderFilePath).
  */
-private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFilePath: String) {
+private fun testFollowerWildcardModelInstance(
+    leaderFilePath: String,
+    wildcardFilePath: String,
+    traverseAssociations: Boolean,
+    expectedFilePath: String? = null
+) {
     val metaModel = newAddressBookMetaModel(null, null).metaModel
         ?: throw IllegalStateException("Meta-model has validation errors")
 
     val leaderModel = getMainModelFromJsonFile(metaModel, leaderFilePath)
     val followerModel = getMainModelFromJsonFile(metaModel, wildcardFilePath)
 
-    val leaderCursor = Leader1ModelCursor(leaderModel)
+    val leaderCursor = Leader1ModelCursor(leaderModel, traverseAssociations)
     val followerCursor = FollowerModelCursor(followerModel)
 
     val jsonWriter = StringWriter()
@@ -114,9 +140,9 @@ private fun testFollowerWildcardModelInstance(leaderFilePath: String, wildcardFi
         }
     }
 
-    val fileReader = getFileReader(leaderFilePath)
-    val expected = fileReader.readText()
-    fileReader.close()
+    val expectedFileReader = getFileReader(expectedFilePath ?: leaderFilePath)
+    val expected = expectedFileReader.readText()
+    expectedFileReader.close()
     val actual = jsonWriter.toString()
     assertEquals(expected, actual)
 }

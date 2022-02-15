@@ -35,7 +35,7 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmenumvalue" value="{&#10;  &quot;name&quot;: &quot;$VALUE$&quot;&#10;},&#10;" description="Add a new enumeration value" toReformat="false" toShortenFQNames="true">
+  <template name="mmenumvalue" value="{&#10;  &quot;name&quot;: &quot;$VALUE$&quot;,&#10;  &quot;number&quot;: $NUMBER$&#10;},&#10;" description="Add a new enumeration value" toReformat="false" toShortenFQNames="true">
     <variable name="VALUE" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
@@ -52,7 +52,7 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;$TYPE$&quot;&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;$TYPE$&quot;&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="TYPE" expression="enum(&quot;boolean&quot;, &quot;byte&quot;, &quot;short&quot;, &quot;int&quot;, &quot;long&quot;, &quot;float&quot;, &quot;double&quot;, &quot;string&quot;, &quot;uuid&quot;, &quot;blob&quot;, &quot;timestamp&quot;, &quot;alias&quot;, &quot;password1way&quot;, &quot;password2way&quot;)" defaultValue="" alwaysStopAt="true" />

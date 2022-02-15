@@ -8,11 +8,14 @@ import org.treeWare.util.toBigInteger
 
 abstract class MutableElementModel : ElementModel {
     override val meta: ElementModel? = null
-    override var auxs: LinkedHashMap<String, Any>? = null
+    private var auxsInternal: LinkedHashMap<String, Any>? = null
+
+    override val auxs: Map<String, Any>?
+        get() = auxsInternal
 
     override fun setAux(auxName: String, aux: Any) {
-        if (auxs == null) auxs = LinkedHashMap()
-        auxs?.also { it[auxName] = aux }
+        if (auxsInternal == null) auxsInternal = LinkedHashMap()
+        auxsInternal?.also { it[auxName] = aux }
     }
 }
 
@@ -41,7 +44,6 @@ abstract class MutableBaseEntityModel(
     override fun matches(that: ElementModel): Boolean {
         if (that !is BaseEntityModel) return false
         val thisKeyFields = getKeyFields()
-        if (thisKeyFields.isEmpty()) throw MissingKeysException("No key fields")
         return thisKeyFields.all { thisKeyField ->
             val thatKeyField = that.getField(getMetaName(thisKeyField.meta)) ?: return false
             thisKeyField.matches(thatKeyField)
@@ -68,7 +70,7 @@ abstract class MutableBaseEntityModel(
     }
 
     override fun getKeyFields(): List<FieldModel> {
-        val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return listOf()
+        val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return emptyList()
         val keyFieldsMeta = filterKeyFields(fieldsMeta.values)
         val missingKeys = mutableListOf<String>()
         val keyFields = mutableListOf<FieldModel>()
@@ -77,7 +79,12 @@ abstract class MutableBaseEntityModel(
             val keyField = this.fields[keyFieldName]
             if (keyField == null) missingKeys.add(keyFieldName) else keyFields.add(keyField)
         }
-        if (missingKeys.isNotEmpty()) throw MissingKeysException("Missing key fields: $missingKeys")
+        if (missingKeys.isNotEmpty()) {
+            val entityMetaName = getMetaModelResolved(this.meta)?.fullName ?: getMetaName(this.meta)
+            throw MissingKeysException(
+                "Missing key fields $missingKeys in instance of $entityMetaName"
+            )
+        }
         return keyFields
     }
 
@@ -138,6 +145,8 @@ abstract class MutableCollectionFieldModel(
     parent: MutableBaseEntityModel
 ) : MutableFieldModel(meta, parent), CollectionFieldModel {
     abstract override val values: MutableCollection<MutableElementModel>
+
+    abstract fun addValue(value: MutableElementModel)
 }
 
 class MutableListFieldModel(
@@ -157,7 +166,7 @@ class MutableListFieldModel(
         return newValue
     }
 
-    fun addValue(value: MutableElementModel) {
+    override fun addValue(value: MutableElementModel) {
         values.add(value)
     }
 }
@@ -179,7 +188,7 @@ class MutableSetFieldModel(
      */
     fun getNewValue(): MutableElementModel = newMutableValueModel(meta, this)
 
-    fun addValue(value: MutableElementModel) {
+    override fun addValue(value: MutableElementModel) {
         linkedHashMap[newElementModelId(value)] = value
     }
 }
@@ -195,19 +204,12 @@ abstract class MutableScalarValueModel(
 }
 
 class MutablePrimitiveModel(
-    parent: MutableFieldModel
+    parent: MutableFieldModel,
+    override var value: Any
 ) : MutableScalarValueModel(parent), PrimitiveModel {
-    override var value: Any? = null
-        internal set
-
     override fun matches(that: ElementModel): Boolean {
         if (that !is PrimitiveModel) return false
         return this.value == that.value
-    }
-
-    override fun setNullValue(): Boolean {
-        this.value = null
-        return true
     }
 
     override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
@@ -219,19 +221,12 @@ class MutablePrimitiveModel(
 }
 
 class MutableAliasModel(
-    parent: MutableFieldModel
+    parent: MutableFieldModel,
+    override var value: Any
 ) : MutableScalarValueModel(parent), AliasModel {
-    override var value: Any? = null
-        internal set
-
     override fun matches(that: ElementModel): Boolean {
         if (that !is AliasModel) return false
         return this.value == that.value
-    }
-
-    override fun setNullValue(): Boolean {
-        this.value = null
-        return true
     }
 
     override fun setValue(value: String): Boolean = setValue(parent.meta, value) { this.value = it }
@@ -353,20 +348,14 @@ class MutablePassword2wayModel(
 }
 
 class MutableEnumerationModel(
-    parent: MutableFieldModel
+    parent: MutableFieldModel,
+    override var value: String
 ) : MutableScalarValueModel(parent), EnumerationModel {
     override var meta: EntityModel? = null
-    override var value: String? = null
-        internal set
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is EnumerationModel) return false
         return this.value == that.value
-    }
-
-    override fun setNullValue(): Boolean {
-        this.value = null
-        return true
     }
 
     override fun setValue(value: String): Boolean = setEnumerationValue(this, value) { this.value = it }
@@ -377,35 +366,26 @@ class MutableEnumerationModel(
 }
 
 class MutableAssociationModel(
-    override val parent: MutableFieldModel
+    override val parent: MutableFieldModel,
+    valueMeta: EntityModel?
 ) : MutableElementModel(), AssociationModel {
-    override var value: List<MutableEntityKeysModel> = listOf()
-        internal set
+    // NOTE: entities need to have a non-null parent that is a field. So this association cannot be used as the parent
+    // of the `value` entity below. Instead, the parent field of this association instance is used as the parent. This
+    // actually works out well since the `value` entity is equivalent to a direct child of the field (the only reason
+    // it is not that way in the code is because the direct child needs to have ASSOCIATION as the `elementType`).
+    override val value: MutableEntityModel = MutableEntityModel(valueMeta, parent)
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is AssociationModel) return false
-        if (this.value.size != that.value.size) return false
-        return this.value.zip(that.value).all { (a, b) -> a.matches(b) }
+        TODO("Requires an equals() model operator")
     }
 
-    fun setNullValue(): Boolean {
-        this.value = listOf()
-        return true
-    }
-
-    fun newValue(): List<MutableEntityKeysModel> {
-        val keyEntityMetaList = parent.getMetaResolved()?.associationMeta?.keyEntityMetaList ?: listOf()
-        value = keyEntityMetaList.map { MutableEntityKeysModel(it, this) }
-        return value
-    }
+    // NOTE: instead of wrapping the association value to store aux data, the aux data is store in the root entity of
+    // the association value. This reduces the amount of nesting in the encoding. The aux getter and setter are
+    // overridden to make this possible.
+    override val auxs: Map<String, Any>? get() = value.auxs
+    override fun setAux(auxName: String, aux: Any) = value.setAux(auxName, aux)
 }
-
-// Sub-values
-
-class MutableEntityKeysModel(
-    meta: EntityModel?,
-    override val parent: AssociationModel?
-) : MutableBaseEntityModel(meta), EntityKeysModel
 
 // Helpers
 

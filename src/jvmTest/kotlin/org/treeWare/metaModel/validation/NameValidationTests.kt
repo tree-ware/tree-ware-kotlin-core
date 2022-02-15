@@ -67,27 +67,19 @@ private fun testHelperPackageJson() = """
     |           "name": "dots.not_allowed_for.association_fields",
     |           "number": 1,
     |           "type": "association",
-    |           "association": [
-    |             {
-    |               "value": "root"
-    |             },
-    |             {
-    |               "value": "duplicate_field_name_2"
-    |             }
-    |           ]
+    |           "association": {
+    |             "name": "dots.not_allowed_for.entities",
+    |             "package": "hyphens-not-allowed-for-packages"
+    |           }
     |         },
     |         {
     |           "name": "hyphens-not-allowed-for-association-fields",
     |           "number": 2,
     |           "type": "association",
-    |           "association": [
-    |             {
-    |               "value": "root"
-    |             },
-    |             {
-    |               "value": "duplicate_field_name_2"
-    |             }
-    |           ]
+    |           "association": {
+    |             "name": "dots.not_allowed_for.entities",
+    |             "package": "hyphens-not-allowed-for-packages"
+    |           }
     |         }
     |       ]
     |     },
@@ -103,14 +95,10 @@ private fun testHelperPackageJson() = """
     |           "name": "duplicate_field_name_1",
     |           "number": 2,
     |           "type": "association",
-    |           "association": [
-    |             {
-    |               "value": "root"
-    |             },
-    |             {
-    |               "value": "duplicate_field_name_2"
-    |             }
-    |           ]
+    |           "association": {
+    |             "name": "dots.not_allowed_for.entities",
+    |             "package": "hyphens-not-allowed-for-packages"
+    |           }
     |         },
     |         {
     |           "name": "duplicate_field_name_2",

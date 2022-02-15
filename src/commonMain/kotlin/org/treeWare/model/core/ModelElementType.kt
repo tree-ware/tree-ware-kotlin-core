@@ -11,6 +11,5 @@ enum class ModelElementType {
     PASSWORD1WAY,
     PASSWORD2WAY,
     ENUMERATION,
-    ASSOCIATION,
-    ENTITY_KEYS
+    ASSOCIATION
 }

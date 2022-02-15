@@ -4,7 +4,7 @@ import org.treeWare.metaModel.getFieldNames
 import org.treeWare.model.core.*
 import org.treeWare.model.traversal.TraversalAction
 
-class LeaderManyModelCursor(private val initialList: List<ElementModel>) {
+class LeaderManyModelCursor(private val initialList: List<ElementModel>, private val traverseAssociations: Boolean) {
     private val stateStack = LeaderManyStateStack()
     private var isAtStart = true
 
@@ -17,7 +17,7 @@ class LeaderManyModelCursor(private val initialList: List<ElementModel>) {
         isAtStart -> {
             isAtStart = false
             val initialLeaders = Leaders(initialList)
-            val initialState = newLeaderManyState(initialLeaders, stateStack)
+            val initialState = newLeaderManyState(initialLeaders, traverseAssociations, stateStack)
             stateStack.addFirst(initialState)
             initialState.visitCursorMove
         }
@@ -53,6 +53,7 @@ private abstract class LeaderManyState(leaders: Leaders, val stateStack: LeaderM
 
 private class MainLeaderManyState(
     leaders: Leaders,
+    traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ) : LeaderManyState(leaders, stateStack) {
     override val actionIterator: Iterator<LeaderManyStateAction>
@@ -61,7 +62,7 @@ private class MainLeaderManyState(
         val actionList = listOf({
             val rootList = (leaders.elements).map { (it as MainModel?)?.value }
             val rootLeaders = Leaders(rootList)
-            val rootState = newLeaderManyState(rootLeaders, stateStack)
+            val rootState = newLeaderManyState(rootLeaders, traverseAssociations, stateStack)
             stateStack.addFirst(rootState)
             rootState.visitCursorMove
         })
@@ -71,6 +72,7 @@ private class MainLeaderManyState(
 
 private abstract class BaseEntityLeaderManyState(
     leaders: Leaders,
+    traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ) : LeaderManyState(leaders, stateStack) {
     final override val actionIterator: Iterator<LeaderManyStateAction>
@@ -91,7 +93,7 @@ private abstract class BaseEntityLeaderManyState(
         // TODO(performance): use a custom iterator to avoid above pre-computation (hasNext() is not trivial).
         actionIterator = IteratorAdapter({ fieldLeadersList.iterator() }) { fieldLeaders ->
             {
-                val fieldState = newLeaderManyState(fieldLeaders, stateStack)
+                val fieldState = newLeaderManyState(fieldLeaders, traverseAssociations, stateStack)
                 stateStack.addFirst(fieldState)
                 fieldState.visitCursorMove
             }
@@ -99,13 +101,14 @@ private abstract class BaseEntityLeaderManyState(
     }
 }
 
-private class EntityLeaderManyState(leaders: Leaders, stateStack: LeaderManyStateStack) :
-    BaseEntityLeaderManyState(leaders, stateStack)
+private class EntityLeaderManyState(leaders: Leaders, traverseAssociations: Boolean, stateStack: LeaderManyStateStack) :
+    BaseEntityLeaderManyState(leaders, traverseAssociations, stateStack)
 
 // Fields
 
 private class SingleFieldLeaderManyState(
     leaders: Leaders,
+    traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ) : LeaderManyState(leaders, stateStack) {
     override val actionIterator: Iterator<LeaderManyStateAction>
@@ -114,7 +117,7 @@ private class SingleFieldLeaderManyState(
         val actionList = listOf({
             val valueList = (leaders.elements).map { (it as SingleFieldModel?)?.value }
             val valueLeaders = Leaders(valueList)
-            val valueState = newLeaderManyState(valueLeaders, stateStack)
+            val valueState = newLeaderManyState(valueLeaders, traverseAssociations, stateStack)
             stateStack.addFirst(valueState)
             valueState.visitCursorMove
         })
@@ -124,6 +127,7 @@ private class SingleFieldLeaderManyState(
 
 private class ListFieldLeaderManyState(
     leaders: Leaders,
+    traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ) : LeaderManyState(leaders, stateStack) {
     override val actionIterator: Iterator<LeaderManyStateAction>
@@ -135,7 +139,7 @@ private class ListFieldLeaderManyState(
         actionIterator = IteratorAdapter({ (0 until maxSize).iterator() }) { index ->
             {
                 val indexElements = lists.map { (it as ListFieldModel?)?.values?.getOrNull(index) }
-                val indexState = newLeaderManyState(Leaders(indexElements), stateStack)
+                val indexState = newLeaderManyState(Leaders(indexElements), traverseAssociations, stateStack)
                 stateStack.addFirst(indexState)
                 indexState.visitCursorMove
             }
@@ -145,6 +149,7 @@ private class ListFieldLeaderManyState(
 
 private class SetFieldLeaderManyState(
     leaders: Leaders,
+    traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ) : LeaderManyState(leaders, stateStack) {
     override val actionIterator: Iterator<LeaderManyStateAction>
@@ -158,7 +163,7 @@ private class SetFieldLeaderManyState(
         // TODO(performance): use a custom iterator to avoid above pre-computation (hasNext() is not trivial).
         actionIterator = IteratorAdapter({ elementLeadersList.iterator() }) { elementLeaders ->
             {
-                val elementState = newLeaderManyState(elementLeaders, stateStack)
+                val elementState = newLeaderManyState(elementLeaders, traverseAssociations, stateStack)
                 stateStack.addFirst(elementState)
                 elementState.visitCursorMove
             }
@@ -201,22 +206,41 @@ private class ScalarValueLeaderManyState(
     override val actionIterator = emptyList<LeaderManyStateAction>().iterator()
 }
 
+private class AssociationLeaderManyState(
+    leaders: Leaders,
+    traverseAssociations: Boolean,
+    stateStack: LeaderManyStateStack
+) : LeaderManyState(leaders, stateStack) {
+    override val actionIterator: Iterator<LeaderManyStateAction>
+
+    init {
+        val actionList = if (traverseAssociations) listOf({
+            val valueList = (leaders.elements).map { (it as AssociationModel?)?.value }
+            val valueLeaders = Leaders(valueList)
+            val valueState = newLeaderManyState(valueLeaders, traverseAssociations, stateStack)
+            stateStack.addFirst(valueState)
+            valueState.visitCursorMove
+        }) else emptyList()
+        actionIterator = actionList.iterator()
+    }
+}
+
 // State factory
 
 private fun newLeaderManyState(
     leaders: Leaders,
+    traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ): LeaderManyState = when (leaders.elementType) {
-    ModelElementType.MAIN -> MainLeaderManyState(leaders, stateStack)
-    ModelElementType.ENTITY -> EntityLeaderManyState(leaders, stateStack)
-    ModelElementType.SINGLE_FIELD -> SingleFieldLeaderManyState(leaders, stateStack)
-    ModelElementType.LIST_FIELD -> ListFieldLeaderManyState(leaders, stateStack)
-    ModelElementType.SET_FIELD -> SetFieldLeaderManyState(leaders, stateStack)
+    ModelElementType.MAIN -> MainLeaderManyState(leaders, traverseAssociations, stateStack)
+    ModelElementType.ENTITY -> EntityLeaderManyState(leaders, traverseAssociations, stateStack)
+    ModelElementType.SINGLE_FIELD -> SingleFieldLeaderManyState(leaders, traverseAssociations, stateStack)
+    ModelElementType.LIST_FIELD -> ListFieldLeaderManyState(leaders, traverseAssociations, stateStack)
+    ModelElementType.SET_FIELD -> SetFieldLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.PRIMITIVE -> ScalarValueLeaderManyState(leaders, stateStack)
     ModelElementType.ALIAS -> ScalarValueLeaderManyState(leaders, stateStack)
     ModelElementType.PASSWORD1WAY -> ScalarValueLeaderManyState(leaders, stateStack)
     ModelElementType.PASSWORD2WAY -> ScalarValueLeaderManyState(leaders, stateStack)
     ModelElementType.ENUMERATION -> ScalarValueLeaderManyState(leaders, stateStack)
-    ModelElementType.ASSOCIATION -> ScalarValueLeaderManyState(leaders, stateStack)
-    else -> throw UnsupportedOperationException("Creating state for unsupported model element type: ${leaders.elementType}")
+    ModelElementType.ASSOCIATION -> AssociationLeaderManyState(leaders, traverseAssociations, stateStack)
 }

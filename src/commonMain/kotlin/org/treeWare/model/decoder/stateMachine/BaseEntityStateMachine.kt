@@ -9,8 +9,7 @@ import org.treeWare.model.decoder.OnMissingKeys
 import org.treeWare.util.assertInDevMode
 
 class BaseEntityStateMachine(
-    private val isSetElement: Boolean,
-    private val parentSetField: MutableSetFieldModel?,
+    private val parentCollectionField: MutableCollectionFieldModel?,
     private val baseFactory: () -> MutableBaseEntityModel,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
@@ -31,7 +30,6 @@ class BaseEntityStateMachine(
 
     override fun decodeObjectStart(): Boolean {
         base = baseFactory()
-        assertInDevMode(base != null)
         entityMeta = base?.meta
         assertInDevMode(entityMeta != null)
         return true
@@ -50,26 +48,30 @@ class BaseEntityStateMachine(
         }
         // This state-machine instance gets reused in lists, so clear the map.
         auxStateMachinesMap.clear()
-        return if (!isSetElement) {
-            // Remove self from stack
-            stack.removeFirst()
-            true
-        } else base?.let {
-            try {
-                if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
-                    val existing = parentSetField?.getValueMatching(it)
-                    if (existing != null) {
-                        errors.add("Entity with duplicate keys: ${existing.getMetaResolved()?.fullName}: ${it.getKeyValues()}")
-                        return@let true
+        return when (parentCollectionField?.elementType) {
+            ModelElementType.SET_FIELD -> base?.let {
+                try {
+                    if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
+                        val existing = parentCollectionField.getValueMatching(it)
+                        if (existing != null) {
+                            errors.add("Entity with duplicate keys: ${existing.getMetaResolved()?.fullName}: ${it.getKeyValues()}")
+                            return@let true
+                        }
                     }
+                    parentCollectionField.addValue(it)
+                    true
+                } catch (e: MissingKeysException) {
+                    errors.add(e.message ?: "Missing keys")
+                    options.onMissingKeys == OnMissingKeys.SKIP_WITH_ERRORS
                 }
-                parentSetField?.addValue(it)
+            } ?: true
+            ModelElementType.LIST_FIELD -> true
+            else -> {
+                // Remove self from stack
+                stack.removeFirst()
                 true
-            } catch (e: MissingKeysException) {
-                errors.add(e.message ?: "Missing keys")
-                options.onMissingKeys == OnMissingKeys.SKIP_WITH_ERRORS
             }
-        } ?: true
+        }
     }
 
     override fun decodeListStart(): Boolean {
@@ -79,10 +81,10 @@ class BaseEntityStateMachine(
     }
 
     override fun decodeListEnd(): Boolean {
-        if (isSetElement) {
-            // End of the list needs to be handled by parent state machine.
-            // So remove self from stack and call decodeListEnd() on previous
-            // state machine.
+        if (parentCollectionField != null) {
+            // End of the collection needs to be handled by parent collection
+            // state machine. So remove self from stack and call decodeListEnd()
+            // on the previous (parent) state machine.
             stack.removeFirst()
             val parentStateMachine = stack.firstOrNull()
             if (parentStateMachine == null) {
@@ -229,12 +231,12 @@ class BaseEntityStateMachine(
         val fieldModel = base?.getOrNewField(getMetaName(fieldMeta)) ?: return false
         if (isListFieldMeta(fieldMeta)) {
             val listFieldModel = fieldModel as? MutableListFieldModel ?: return false
-            val listElementStateMachine = AssociationModelStateMachine(
-                true,
+            val listElementStateMachine = BaseEntityStateMachine(
+                listFieldModel,
                 {
-                    val value = newMutableValueModel(fieldMeta, listFieldModel) as MutableAssociationModel
-                    listFieldModel.addValue(value)
-                    value
+                    val association = newMutableValueModel(fieldMeta, listFieldModel) as MutableAssociationModel
+                    listFieldModel.addValue(association)
+                    association.value
                 },
                 stack,
                 options,
@@ -244,12 +246,12 @@ class BaseEntityStateMachine(
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
             val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
-            val elementStateMachine = AssociationModelStateMachine(
-                false,
+            val elementStateMachine = BaseEntityStateMachine(
+                null,
                 {
-                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableAssociationModel
-                    singleFieldModel.setValue(value)
-                    value
+                    val association = newMutableValueModel(fieldMeta, singleFieldModel) as MutableAssociationModel
+                    singleFieldModel.setValue(association)
+                    association.value
                 },
                 stack,
                 options,
@@ -266,7 +268,6 @@ class BaseEntityStateMachine(
         if (isSetFieldMeta(fieldMeta)) {
             val setFieldModel = fieldModel as? MutableSetFieldModel ?: return false
             val setElementStateMachine = BaseEntityStateMachine(
-                true,
                 setFieldModel,
                 { newMutableValueModel(fieldMeta, setFieldModel) as MutableEntityModel },
                 stack,
@@ -274,23 +275,21 @@ class BaseEntityStateMachine(
                 errors,
                 multiAuxDecodingStateMachineFactory
             )
-            addSetElementStateMachineToStack(setFieldModel, setElementStateMachine, isWrappedElements = false)
+            addSetElementStateMachineToStack(setFieldModel, setElementStateMachine)
         } else {
             val singleFieldModel = fieldModel as? MutableSingleFieldModel ?: return false
-            val elementStateMachine =
-                BaseEntityStateMachine(
-                    false,
-                    null,
-                    {
-                        val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableEntityModel
-                        singleFieldModel.setValue(value)
-                        value
-                    },
-                    stack,
-                    options,
-                    errors,
-                    multiAuxDecodingStateMachineFactory
-                )
+            val elementStateMachine = BaseEntityStateMachine(
+                null,
+                {
+                    val value = newMutableValueModel(fieldMeta, singleFieldModel) as MutableEntityModel
+                    singleFieldModel.setValue(value)
+                    value
+                },
+                stack,
+                options,
+                errors,
+                multiAuxDecodingStateMachineFactory
+            )
             addElementStateMachineToStack(elementStateMachine)
         }
         return true
@@ -310,13 +309,9 @@ class BaseEntityStateMachine(
 
     private fun addSetElementStateMachineToStack(
         setFieldModel: MutableSetFieldModel,
-        setElementStateMachine: ValueDecodingStateMachine,
-        isWrappedElements: Boolean
+        setElementStateMachine: ValueDecodingStateMachine
     ) {
-        val elementStateMachine =
-            if (!isWrappedElements) setElementStateMachine
-            else ValueAndAuxStateMachine(true, setElementStateMachine, stack, multiAuxDecodingStateMachineFactory)
-        val setStateMachine = CollectionFieldModelStateMachine(setFieldModel, elementStateMachine, stack)
+        val setStateMachine = CollectionFieldModelStateMachine(setFieldModel, setElementStateMachine, stack)
         stack.addFirst(setStateMachine)
     }
 

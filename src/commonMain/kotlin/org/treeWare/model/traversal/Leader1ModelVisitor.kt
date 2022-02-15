@@ -41,9 +41,4 @@ interface Leader1ModelVisitor<Return> {
 
     fun visitAssociation(leaderValue1: AssociationModel): Return
     fun leaveAssociation(leaderValue1: AssociationModel)
-
-    // Sub-values
-
-    fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): Return
-    fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel)
 }

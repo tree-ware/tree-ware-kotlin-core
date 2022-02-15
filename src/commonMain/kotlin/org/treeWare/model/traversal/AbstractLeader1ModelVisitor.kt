@@ -76,12 +76,4 @@ abstract class AbstractLeader1ModelVisitor<Return>(
     }
 
     override fun leaveAssociation(leaderValue1: AssociationModel) {}
-
-    // Sub-values
-
-    override fun visitEntityKeys(leaderEntityKeys1: EntityKeysModel): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveEntityKeys(leaderEntityKeys1: EntityKeysModel) {}
 }

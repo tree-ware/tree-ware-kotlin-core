@@ -71,7 +71,6 @@ class MainModelStateMachine(
         }
         stack.addFirst(
             BaseEntityStateMachine(
-                false,
                 null,
                 { mainModel.getOrNewRoot() },
                 stack,

@@ -15,5 +15,5 @@ fun encodeJson(
 ): Boolean {
     val wireFormatEncoder = JsonWireFormatEncoder(writer, prettyPrint, indentSizeInSpaces)
     val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, multiAuxEncoder, encodePasswords)
-    return forEach(element, encodingVisitor) != TraversalAction.ABORT_TREE
+    return forEach(element, encodingVisitor, true) != TraversalAction.ABORT_TREE
 }

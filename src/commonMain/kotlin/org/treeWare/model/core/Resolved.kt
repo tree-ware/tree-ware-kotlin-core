@@ -20,8 +20,6 @@ class Resolved(val fullName: String) {
 }
 
 data class ResolvedAssociationMeta(
-    val target: EntityModel,
-    val pathEntityMetaList: List<EntityModel>,
-    val keyPathElementList: List<String>,
-    val keyEntityMetaList: List<EntityModel>
+    val rootEntityMeta: EntityModel,
+    val targetEntityMeta: EntityModel
 )
