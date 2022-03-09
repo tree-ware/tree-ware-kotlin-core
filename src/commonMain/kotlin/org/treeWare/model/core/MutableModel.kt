@@ -70,8 +70,7 @@ abstract class MutableBaseEntityModel(
     }
 
     override fun getKeyFields(): List<FieldModel> {
-        val fieldsMeta = meta?.let { getFieldsMeta(it) } ?: return emptyList()
-        val keyFieldsMeta = filterKeyFields(fieldsMeta.values)
+        val keyFieldsMeta = meta?.let { getKeyFieldsMeta(it) } ?: return emptyList()
         val missingKeys = mutableListOf<String>()
         val keyFields = mutableListOf<FieldModel>()
         keyFieldsMeta.forEach { fieldMeta ->

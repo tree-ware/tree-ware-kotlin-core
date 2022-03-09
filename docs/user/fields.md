@@ -236,8 +236,8 @@ Associations are like pointers to other nodes in the tree. Unlike pointers in pr
 serialized and sent to another machine, and the other machine will be able to use it. They work because they are paths
 in the tree and not memory locations.
 
-Association fields need to define the path to their target from the root of the tree. Since the path is defined in the
-meta-model, runtime values are restricted to that path, with the only variation being the key values along the path.
+Association fields need to define the target entity. In the model, associations can store any path that leads to an
+entity of the type defined in the meta-model.
 
 The following is an example meta-model definition for an association field:
 
@@ -245,15 +245,58 @@ The following is an example meta-model definition for an association field:
 {
   "name": "person",
   "type": "association",
-  "association": [
-    {
-      "value": "address_book"
-    },
-    {
-      "value": "person"
-    }
-  ]
+  "association": {
+    "name": "address_book_person",
+    "package": "address_book.main"
+  }
 }
 ```
 
 The `"association"` array in the above example defines the path by listing the fields in the path from the root.
+
+# Uniqueness
+
+The composite of all the key fields in an entity need to be unique and the uniqueness is enforced by the storage system
+used. In some cases, there can be non-key fields that are unique. This should be specified in the meta-model since it is
+useful information about the model, and can also be used by the storage system to ensure/enforce uniqueness for those
+fields.
+
+A single field can be unique by itself, or a composite of multiple fields can be unique as a combination. To permit
+both, uniqueness is specified at the entity level in the meta-model rather than at the field level. Multiple uniqueness
+definitions can be specified for a single entity. Each definition must include the following:
+
+* a definition name that is unique within the entity
+* a uniqueness type:
+    * `global` (default if not specified), or
+    * `sub_tree` ([not yet supported](https://github.com/tree-ware/tree-ware-kotlin-mysql/issues/52))
+* The names of the fields
+
+The following is an example meta-model definition for uniqueness in an entity. Note that "unique" as a noun is archaic,
+but convenient since it allows a plural to be used for the list of uniqueness definitions.
+
+```json
+{
+  "uniques": [
+    {
+      "name": "serial_number",
+      "type": "global",
+      "fields": [
+        {
+          "value": "make"
+        },
+        {
+          "value": "serial_number"
+        }
+      ]
+    },
+    {
+      "name": "mac",
+      "fields": [
+        {
+          "value": "mac_address"
+        }
+      ]
+    }
+  ]
+}
+```

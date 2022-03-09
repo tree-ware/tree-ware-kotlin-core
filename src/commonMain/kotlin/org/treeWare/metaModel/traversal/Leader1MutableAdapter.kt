@@ -19,6 +19,7 @@ class Leader1MutableAdapter<Return>(
             "/tree_ware_meta_model.main/enumeration_value" -> adaptee.visitEnumerationValueMeta(leaderEntity1)
             "/tree_ware_meta_model.main/entity" -> adaptee.visitEntityMeta(leaderEntity1)
             "/tree_ware_meta_model.main/field" -> adaptee.visitFieldMeta(leaderEntity1)
+            "/tree_ware_meta_model.main/unique" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity_info" -> defaultVisitReturn
             "/tree_ware_meta_model.main/enumeration_info" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
@@ -34,6 +35,7 @@ class Leader1MutableAdapter<Return>(
             "/tree_ware_meta_model.main/enumeration_value" -> adaptee.leaveEnumerationValueMeta(leaderEntity1)
             "/tree_ware_meta_model.main/entity" -> adaptee.leaveEntityMeta(leaderEntity1)
             "/tree_ware_meta_model.main/field" -> adaptee.leaveFieldMeta(leaderEntity1)
+            "/tree_ware_meta_model.main/unique" -> Unit
             "/tree_ware_meta_model.main/entity_info" -> Unit
             "/tree_ware_meta_model.main/enumeration_info" -> Unit
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
@@ -48,6 +50,7 @@ class Leader1MutableAdapter<Return>(
     override fun visitMutableListField(leaderField1: MutableListFieldModel): Return {
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> defaultVisitReturn
+            "/tree_ware_meta_model.main/unique/fields" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
@@ -55,6 +58,7 @@ class Leader1MutableAdapter<Return>(
     override fun leaveMutableListField(leaderField1: MutableListFieldModel) {
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> Unit
+            "/tree_ware_meta_model.main/unique/fields" -> Unit
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
@@ -66,6 +70,7 @@ class Leader1MutableAdapter<Return>(
             "/tree_ware_meta_model.main/enumeration/values" -> defaultVisitReturn
             "/tree_ware_meta_model.main/package/entities" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity/fields" -> defaultVisitReturn
+            "/tree_ware_meta_model.main/entity/uniques" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }

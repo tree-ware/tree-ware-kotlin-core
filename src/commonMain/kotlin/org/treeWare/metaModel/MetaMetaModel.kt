@@ -1,5 +1,6 @@
 package org.treeWare.metaModel
 
+import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutableListFieldModel
@@ -33,13 +34,21 @@ enum class FieldType {
     COMPOSITION
 }
 
+enum class UniqueType {
+    GLOBAL
+}
+
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
 fun newMainMetaMetaModel(): MutableMainModel {
     val mainMeta = newMainMetaMeta()
     populateMain(mainMeta)
     val errors = validate(mainMeta, null, null, mandatoryFieldNumbers = false)
-    if (errors.isNotEmpty()) throw IllegalStateException("Meta-meta-model is not valid")
+    if (errors.isNotEmpty()) {
+        val logger = logging()
+        errors.forEach { logger.error { it } }
+        throw IllegalStateException("Meta-meta-model is not valid")
+    }
     return mainMeta
 }
 
@@ -76,6 +85,8 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
     populateEntityEntity(entityEntityMeta)
     val fieldEntityMeta = newEntityMetaMeta(entitiesMeta, "field")
     populateFieldEntity(fieldEntityMeta)
+    val uniqueEntityMeta = newEntityMetaMeta(entitiesMeta, "unique")
+    populateUniqueEntity(uniqueEntityMeta)
     val enumerationInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "enumeration_info")
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
     val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")
@@ -123,6 +134,7 @@ private fun populateEntityEntity(entityEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newCompositionFieldMetaMeta(fields, "fields", null, "field", META_MODEL_MAIN_PACKAGE, "set")
+    newCompositionFieldMetaMeta(fields, "uniques", null, "unique", META_MODEL_MAIN_PACKAGE, "set")
 }
 
 private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
@@ -142,6 +154,13 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "regex", "Regular expression that strings must match", "string", "optional")
 }
 
+private fun populateUniqueEntity(uniqueEntityMeta: MutableEntityModel) {
+    val fields = newFieldsMetaMeta(uniqueEntityMeta)
+    newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
+    newEnumerationFieldMetaMeta(fields, "type", null, "unique_type", META_MODEL_MAIN_PACKAGE, "optional")
+    newPrimitiveFieldMetaMeta(fields, "fields", null, "string", "list")
+}
+
 private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(enumerationInfoEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string")
@@ -157,6 +176,7 @@ private fun populateEntityInfoEntity(entityInfoEntityMeta: MutableEntityModel) {
 private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel) {
     populateFieldTypeEnumeration(enumerationsMeta)
     populateMultiplicityEnumeration(enumerationsMeta)
+    populateUniqueTypeEnumeration(enumerationsMeta)
 }
 
 fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
@@ -173,4 +193,12 @@ private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldMo
         "multiplicity",
         null,
         Multiplicity.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
+}
+
+fun populateUniqueTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
+    newEnumerationMetaMeta(
+        enumerationsMeta,
+        "unique_type",
+        null,
+        UniqueType.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
