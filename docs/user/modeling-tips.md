@@ -26,11 +26,13 @@ geography, campuses, buildings, and floors. Assume that there are different admi
 that they get to control everything in their campus. Permissions granted for a campus entity in the model apply to all
 entities in the sub-tree (unless overridden in the sub-tree). So if the administrator needs to be able to configure the
 IoT devices in their campus, the IoT device entities need to be part of the campus sub-tree. So the site entities need
-to compose the IoT device entities. In UML, this composition would have implied that the IoT device entities will be
-deleted if their parent site entity is deleted. This is not desirable since sites are logical entities while IoT devices
-are physical entities. So tree-ware does not follow UML conventions. Instead tree-ware follows entity-relationship
-modeling conventions and has separate annotations for specifying what must happen to children if a parent is deleted,
-and similarly, what must happen to the target entity of an association if its source entity is deleted.
+to compose the IoT device entities.
+
+In UML, this composition would have implied that the IoT device entities will be deleted if their parent site entity is
+deleted. This is not desirable since sites are logical entities while IoT devices are physical entities. So tree-ware
+does not follow UML conventions. Instead, tree-ware follows entity-relationship modeling conventions and has separate
+annotations for specifying what must happen to children if a parent is deleted, and similarly, what must happen to the
+target entity of an association if its source entity is deleted.
 
 # Child Compositions vs. Parent Associations
 

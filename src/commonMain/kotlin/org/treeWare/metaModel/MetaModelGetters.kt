@@ -53,7 +53,12 @@ fun hasOnlyPrimitiveKeyFields(entityMeta: EntityModel): Boolean {
     return keyFields.size == fields.size && compositionKeyFields.isEmpty()
 }
 
-fun filterKeyFields(fields: Collection<ElementModel>): List<EntityModel> =
+fun getKeyFieldsMeta(entityMeta: EntityModel): List<EntityModel> {
+    val fieldsMeta = getFieldsMeta(entityMeta)
+    return filterKeyFields(fieldsMeta.values)
+}
+
+private fun filterKeyFields(fields: Collection<ElementModel>): List<EntityModel> =
     fields.mapNotNull { fieldElement ->
         val fieldMeta = fieldElement as? EntityModel
         fieldMeta.takeIf { isKeyFieldMeta(it) }
@@ -64,6 +69,9 @@ private fun filterCompositionKeyFields(fields: List<ElementModel>): List<Element
         val fieldMeta = fieldElement as? EntityModel
         fieldMeta?.let { isKeyFieldMeta(it) && isCompositionFieldMeta(it) } ?: false
     }
+
+fun getUniquesMeta(entityMeta: EntityModel): CollectionFieldModel? =
+    runCatching { getCollectionField(entityMeta, "uniques") }.getOrNull()
 
 fun getMetaName(meta: BaseEntityModel?): String = meta?.let { getSingleString(it, "name") } ?: ""
 

@@ -64,7 +64,7 @@ private fun validateEnumeration(
     packageId: String,
     enumerationIndex: Int
 ): List<String> {
-    val enumerationId = getEnumerationId(packageId, enumerationIndex)
+    val enumerationId = getId(packageId, "enumeration", enumerationIndex)
     val enumerationMeta = enumerationElementMeta as? EntityModel
         ?: return listOf("$enumerationId is not an EntityModel. It is: ${enumerationElementMeta::class.simpleName}")
     return listOf(
@@ -94,7 +94,7 @@ private fun validateEnumerationValue(
     enumerationId: String,
     valueIndex: Int
 ): List<String> {
-    val id = getEnumerationValueId(enumerationId, valueIndex)
+    val id = getId(enumerationId, "value", valueIndex)
     val enumerationValueMeta = enumerationValueElementMeta as? EntityModel
         ?: return listOf("$id is not an EntityModel. It is: ${enumerationValueElementMeta::class.simpleName}")
     return validateSingleStringField(enumerationValueMeta, "name", id)
@@ -116,12 +116,13 @@ private fun validateEntity(
     packageId: String,
     entityIndex: Int
 ): List<String> {
-    val entityId = getEntityId(packageId, entityIndex)
+    val entityId = getId(packageId, "entity", entityIndex)
     val entityMeta = entityElementMeta as? EntityModel
         ?: return listOf("$entityId is not an EntityModel. It is: ${entityElementMeta::class.simpleName}")
     return listOf(
         validateSingleStringField(entityMeta, "name", entityId),
-        validateFields(entityMeta, entityId)
+        validateFields(entityMeta, entityId),
+        validateUniques(entityMeta, entityId)
     ).flatten()
 }
 
@@ -137,7 +138,7 @@ private fun validateField(
     entityId: String,
     fieldIndex: Int
 ): List<String> {
-    val fieldId = getFieldId(entityId, fieldIndex)
+    val fieldId = getId(entityId, "field", fieldIndex)
     val fieldMeta = fieldElementMeta as? EntityModel
         ?: return listOf("$fieldId is not an EntityModel. It is: ${fieldElementMeta::class.simpleName}")
     return listOf(
@@ -160,6 +161,48 @@ private fun validateFieldType(fieldMeta: EntityModel, fieldId: String): List<Str
         FieldType.COMPOSITION -> validateEntityInfo(fieldMeta, fieldId, "composition")
         else -> listOf()
     }
+}
+
+private fun validateUniques(entityMeta: EntityModel, entityId: String): List<String> {
+    val uniquesMeta = getUniquesMeta(entityMeta) ?: return emptyList()
+    return uniquesMeta.values.flatMapIndexed { uniqueIndex, uniqueMeta ->
+        validateUnique(entityMeta, uniqueMeta, entityId, uniqueIndex)
+    }
+}
+
+fun validateUnique(
+    entityMeta: EntityModel,
+    uniqueElementMeta: ElementModel,
+    entityId: String,
+    uniqueIndex: Int
+): List<String> {
+    val uniqueId = getId(entityId, "unique", uniqueIndex)
+    val uniqueMeta = uniqueElementMeta as? EntityModel
+        ?: return listOf("$uniqueId is not an EntityModel. It is: ${uniqueElementMeta::class.simpleName}")
+    val fieldsMeta = runCatching { getFieldsMeta(uniqueMeta) }.getOrNull()
+        ?: return listOf("$uniqueId fields are missing")
+    if (fieldsMeta.values.isEmpty()) return listOf("$uniqueId fields are empty")
+    return fieldsMeta.values.flatMapIndexed { uniqueFieldIndex, uniqueFieldMeta ->
+        validateUniqueField(entityMeta, uniqueFieldMeta, uniqueId, uniqueFieldIndex)
+    }
+}
+
+private fun validateUniqueField(
+    entityMeta: EntityModel,
+    uniqueFieldElementMeta: ElementModel,
+    uniqueId: String,
+    uniqueFieldIndex: Int
+): List<String> {
+    val uniqueFieldId = getId(uniqueId, "field", uniqueFieldIndex)
+    val uniqueFieldMeta = uniqueFieldElementMeta as? PrimitiveModel
+        ?: return listOf("$uniqueFieldId is not a PrimitiveModel. It is: ${uniqueFieldElementMeta::class.simpleName}")
+    val uniqueFieldName = uniqueFieldMeta.value as? String
+        ?: return listOf("$uniqueFieldId is not a string. It is: ${uniqueFieldElementMeta.value::class.simpleName}")
+    val entityField = runCatching { getFieldMeta(entityMeta, uniqueFieldName) }.getOrNull()
+        ?: return listOf("$uniqueFieldId not found: $uniqueFieldName")
+    if (isCollectionFieldMeta(entityField)) return listOf("Collection fields are not supported in uniques: $uniqueFieldId: $uniqueFieldName")
+    if (isCompositionFieldMeta(entityField)) return listOf("Composition fields are not supported in uniques: $uniqueFieldId: $uniqueFieldName")
+    return emptyList()
 }
 
 private fun validateEnumerationInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
@@ -233,10 +276,4 @@ private fun validateSingleStringField(meta: BaseEntityModel, fieldName: String, 
 
 private fun getPackageId(packageIndex: Int) = "Package $packageIndex"
 
-private fun getEnumerationId(packageId: String, enumerationIndex: Int) = "$packageId enumeration $enumerationIndex"
-
-private fun getEnumerationValueId(enumerationId: String, valueIndex: Int) = "$enumerationId value $valueIndex"
-
-private fun getEntityId(packageId: String, entityIndex: Int) = "$packageId entity $entityIndex"
-
-private fun getFieldId(entityId: String, fieldIndex: Int) = "$entityId field $fieldIndex"
+private fun getId(parentId: String, childType: String, childIndex: Int) = "$parentId $childType $childIndex"
