@@ -9,32 +9,54 @@ parent: "User Docs"
 
 # Introduction
 
-Role Based Access Control (RBAC) controls user access to a model.
+RBAC allows ***users*** to perform operations on ***resources*** based on ***permissions*** granted to them for those
+resources.
 
-# Roles
+All RBAC systems have ways of ***granting*** resource permissions to users. Typically, permissions are not granted to
+users directly. Instead, permissions for specific resources are grouped into a ***role***. And one or more roles are
+assigned to a user. Some systems support grouping of users into ***user-groups*** and assigning of roles to user-groups.
 
-A role is a (sparse) model with permissions attached to nodes in the model tree. When a role is assigned to a user, the
-user can access nodes in the model based on the permissions attached to those nodes in the role.
+# Resources
 
-When multiple roles are assigned to a user, the union of the roles determines user access to the model.
+Resources in tree-ware are the nodes in the model tree.
 
 # Permissions
 
-A permission permits a user to do something with the model node to which the permission is attached. The following
-permissions are supported in tree-ware:
+Permissions permit operations on resources. There are only certain operations possible on nodes in the model tree (the
+resources), and tree-ware has a corresponding permission for each of them:
 
 * `create`: permit the user to create a model node.
 * `read`: permit the user to read a model node.
 * `update`: permit the user to update a model node.
 * `delete`: permit the user to delete a model node.
 * `crud`: the above 4 permissions combined.
-* `grant`: permit the user to grant access to a model node to other users.
-    * This permission is needed to create a role with that model node or to add that model node to a role.
-    * This permission is needed to assign such a role to another user.
-* `revoke`: permit the user to revoke access to a model node from other users.
-    * This permission is needed to remove a role with that model node or remove that model node from a role.
-    * This permission is needed to remove such a role from another user.
+* `grant`: permit the user to grant access to a model node to other users. Specifically, this permits a user to:
+    * create a role with that model node.
+    * add that model node to a role.
+    * assign such a role to another user.
+* `revoke`: permit the user to revoke access to a model node from other users. Specifically, this permits a user to:
+    * remove a role with that model node.
+    * remove that model node from a role.
+    * remove such a role from another user.
 * `all`: all of the above permissions combined.
+    * NOTE: if a user has this permission, then that user will automatically get new permissions that are created in the
+      future. So this permission should be used primarily for administrators.
+
+# Roles
+
+As mentioned in the [Introduction](#Introduction), a role is a group of permissions for resources. Each entry in the
+group is a specific permission for a specific resource. Since resources are model nodes in tree-ware, a role is a group
+of model nodes. And a group of model nodes is a sparse model tree. So a role in tree-ware is a sparse model tree!
+
+A role must also associate a permission with each resource (model node). In tree-ware, aux data is used for attaching
+information to model nodes in the tree. So permissions are specified in aux data. So a role in tree-ware is a model tree
+with aux data.
+
+This leads to a natural interpretation of RBAC in tree-ware: when a role is assigned to a user, the user can access
+nodes in the model based on the permissions attached to those nodes in the role.
+
+When multiple roles are assigned to a user, the union of the individual role model trees is computed, and that unified
+model tree determines user access to the model.
 
 # Meta-model
 
@@ -51,7 +73,7 @@ user and role entities need to implement the following [meta-model interfaces](m
       "type": "association",
       "target": {
         "name": "role",
-        "package": "org.tree-ware.rbac"
+        "package": "org.tree_ware.rbac"
       },
       "multiplicity": "list"
     }
@@ -90,7 +112,7 @@ of RBAC data needs to be very fast.
 When targeting a relational DB where each entity is stored in a separate table, it could take too long to fetch a role
 if its `definition` is deeply nested. In such cases, the role `definition` should be stored as a blob or JSON value in a
 single column by annotating the role `definition` field appropriately in its meta-model aux. This aux data is not part
-of the `role` meta-model interface because it is specific to the storage being targeted; some storage systems may be
+of the `role` meta-model *interface* because it is specific to the storage being targeted; some storage systems may be
 able to fetch data quickly even if all RBAC data is not stored as a blob or a JSON value, and therefore not even need
 such an annotation.
 
