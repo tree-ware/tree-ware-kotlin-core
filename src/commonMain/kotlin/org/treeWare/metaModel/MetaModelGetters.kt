@@ -2,6 +2,8 @@ package org.treeWare.metaModel
 
 import org.treeWare.model.core.*
 
+fun getFullName(elementMeta: ElementModel?): String? = getMetaModelResolved(elementMeta)?.fullName
+
 fun getMainMetaName(mainMeta: MainModel): String = getMetaName(getRootMeta(mainMeta))
 
 fun getRootMeta(mainMeta: MainModel): EntityModel = getSingleEntity(mainMeta.root, "root")
@@ -24,6 +26,9 @@ fun getEnumerationValueMeta(enumerationMeta: EntityModel, name: String): EntityM
 
 fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
+
+fun isEntityMeta(entityMeta: BaseEntityModel): Boolean =
+    getMetaModelFullName(entityMeta) == "/tree_ware_meta_model.main/entity"
 
 fun getPackageName(entityMeta: EntityModel): String = getMetaName(entityMeta.parent.parent)
 
@@ -80,6 +85,8 @@ fun getMetaNumber(meta: BaseEntityModel?): UInt? = meta?.let { getOptionalSingle
 fun getFieldTypeMeta(fieldMeta: EntityModel?): FieldType? = fieldMeta?.let {
     FieldType.valueOf(getSingleEnumeration(fieldMeta, "type").uppercase())
 }
+
+fun getParentEntityMeta(fieldMeta: EntityModel): BaseEntityModel? = fieldMeta.parent.parent
 
 fun getEnumerationInfoMeta(fieldMeta: EntityModel): EntityModel =
     getSingleEntity(fieldMeta, "enumeration")

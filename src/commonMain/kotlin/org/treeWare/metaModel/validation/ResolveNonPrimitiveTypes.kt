@@ -161,6 +161,9 @@ private fun resolveCompositionField(
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
     resolved.compositionMeta = targetEntityMeta
+    val targetResolved = getMetaModelResolved(targetEntityMeta)
+        ?: throw IllegalStateException("Resolved aux is missing for target entity $targetFullName")
+    targetResolved.parentFieldsMetaInternal.add(fieldMeta)
     val errors = mutableListOf<String>()
     if (isKeyFieldMeta(fieldMeta) && !hasOnlyPrimitiveKeyFields(targetEntityMeta)) errors.add(
         "Composition key field ${resolved.fullName} target entity does not have only primitive keys"

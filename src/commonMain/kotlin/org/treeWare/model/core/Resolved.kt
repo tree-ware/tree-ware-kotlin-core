@@ -17,6 +17,10 @@ class Resolved(val fullName: String) {
 
     var compositionMeta: EntityModel? = null
         internal set
+
+    internal val parentFieldsMetaInternal = mutableListOf<EntityModel>()
+
+    var parentFieldsMeta: List<EntityModel> = parentFieldsMetaInternal
 }
 
 data class ResolvedAssociationMeta(
