@@ -1,5 +1,5 @@
 <templateSet group="tree-ware">
-  <template name="mmstart" value="{&#10;  &quot;data&quot;: {&#10;    &quot;meta_model&quot;: {&#10;$END$&#10;    }&#10;  }&#10;}" description="Start a meta-model definition" toReformat="true" toShortenFQNames="true">
+  <template name="mmstart" value="{&#10;  &quot;meta_model&quot;: {&#10;$END$&#10;  }&#10;}" description="Start a meta-model definition" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
@@ -37,6 +37,7 @@
   </template>
   <template name="mmenumvalue" value="{&#10;  &quot;name&quot;: &quot;$VALUE$&quot;,&#10;  &quot;number&quot;: $NUMBER$&#10;},&#10;" description="Add a new enumeration value" toReformat="false" toShortenFQNames="true">
     <variable name="VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
@@ -54,6 +55,7 @@
   </template>
   <template name="mmfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;$TYPE$&quot;&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="TYPE" expression="enum(&quot;boolean&quot;, &quot;byte&quot;, &quot;short&quot;, &quot;int&quot;, &quot;long&quot;, &quot;float&quot;, &quot;double&quot;, &quot;string&quot;, &quot;uuid&quot;, &quot;blob&quot;, &quot;timestamp&quot;, &quot;alias&quot;, &quot;password1way&quot;, &quot;password2way&quot;)" defaultValue="" alwaysStopAt="true" />
     <context>
@@ -62,8 +64,9 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmstring" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;string&quot;&#10;}," description="Add a string field" toReformat="false" toShortenFQNames="true">
+  <template name="mmstring" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;string&quot;&#10;}," description="Add a string field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
@@ -108,8 +111,9 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmenumfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;enumeration&quot;,&#10;  &quot;enumeration&quot;: {&#10;    &quot;name&quot;: &quot;$ENUM_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENUM_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new enum field" toReformat="false" toShortenFQNames="true">
+  <template name="mmenumfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;enumeration&quot;,&#10;  &quot;enumeration&quot;: {&#10;    &quot;name&quot;: &quot;$ENUM_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENUM_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new enum field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="ENUM_NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="ENUM_PACKAGE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
@@ -119,8 +123,9 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmcompo" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;composition&quot;,&#10;  &quot;composition&quot;: {&#10;    &quot;name&quot;: &quot;$ENTITY_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENTITY_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new composition field" toReformat="false" toShortenFQNames="true">
+  <template name="mmcompo" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;composition&quot;,&#10;  &quot;composition&quot;: {&#10;    &quot;name&quot;: &quot;$ENTITY_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENTITY_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new composition field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="ENTITY_NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="ENTITY_PACKAGE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
