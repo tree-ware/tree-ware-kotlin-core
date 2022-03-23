@@ -14,7 +14,7 @@ available.
 
 # Compositions vs. Associations
 
-Compositions are nesting of entities are result in a tree structure. Associations are references to entities in the tree
+Compositions are nesting of entities and result in a tree structure. Associations are references to entities in the tree
 structure. In UML, compositions have the additional semantics of child entities existing only if the parent entity
 exists. In tree-ware, that behavior is controlled separately like in entity-relationship models. So the decision between
 compositions and associations should not be based on whether child entities should be automatically deleted if the
@@ -40,22 +40,22 @@ In the example in the previous section, sites were nested by geography, campuses
 modeled with a single `site` entity and a `type` field that indicates what type of site it is. The site entity would
 also have a `sub_sites` field that composes a set of `site` entities. i.e. a self-referential child composition.
 
-Consider another example: modeling a multi-tenant application. The application provider will need to be modeled. The
-customers will need to be modeled. MSP (Managed Service Providers) will need to be modeled. The application provider can
-have direct customers, or they can have customer through MSPs. So there is a hierarchy between the application provider,
-MSPs, and customers. All of them will have their own employees registered as users and administrators. So one way of
-modeling this would be to have an `organization` entity that composes `user` entities as well as a self-referential
-child composition called `sub_organizations`.
+Consider another example: modeling a multi-tenant application. The application provider will need to be modeled.
+Customers will need to be modeled. MSPs (Managed Service Providers) will need to be modeled. The application provider
+can have direct customers, or they can have customers through MSPs. So there is a hierarchy between the application
+provider, MSPs, and customers. All of them will have their own employees registered as users and administrators. So one
+way of modeling this would be to have an `organization` entity that composes `user` entities as well as a
+self-referential child composition called `sub_organizations`.
 
 Another way to model these hierarchies (self-referential or not) is to use parent associations instead of child
-compositions. For example, instead of a `sub_sites` composition, the `site` entity would have a `parent` association
-that pointed to the parent site. Similarly, instead of a `sub_organizations` composition, the `organization` entity
-would have a `parent` association that pointed to the parent organization.
+compositions. For example, instead of a `sub_sites` composition, the `site` entity can have a `parent` association
+that points to the parent site. Similarly, instead of a `sub_organizations` composition, the `organization` entity
+can have a `parent` association that points to the parent organization.
 
 The approach to take is determined by the API that is desired. With child compositions, all ancestor entities and their
 keys need to be specified in API requests. With parent associations, only the desired entity and its keys need to be
 specified in API requests. If organizations are modeled as child compositions, then a customer would need to specify the
-keys of application provider as well as the keys of the MSP if the customer is not a direct customer. This is
+keys of the application provider as well as the keys of their MSP if the customer is not a direct customer. This is
 undesirable, so organizations should be modeled using parent associations. Furthermore, users in the application
 provider or users in the MSP should not have access to data under the customer organization. By not using child
 compositions, RBAC permissions for a user in the application provider or for a user in the MSP will not automatically
