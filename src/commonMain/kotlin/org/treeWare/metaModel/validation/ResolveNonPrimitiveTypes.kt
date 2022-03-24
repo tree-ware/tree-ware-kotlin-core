@@ -161,6 +161,8 @@ private fun resolveCompositionField(
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
     resolved.compositionMeta = targetEntityMeta
+    val parentEntityMeta = getParentEntityMeta(fieldMeta)
+    if (targetEntityMeta == parentEntityMeta) resolved.recursiveFieldsMetaInteral.add(fieldMeta)
     val targetResolved = getMetaModelResolved(targetEntityMeta)
         ?: throw IllegalStateException("Resolved aux is missing for target entity $targetFullName")
     targetResolved.parentFieldsMetaInternal.add(fieldMeta)
