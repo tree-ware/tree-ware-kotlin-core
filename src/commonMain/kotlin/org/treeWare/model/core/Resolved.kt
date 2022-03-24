@@ -20,7 +20,11 @@ class Resolved(val fullName: String) {
 
     internal val parentFieldsMetaInternal = mutableListOf<EntityModel>()
 
-    var parentFieldsMeta: List<EntityModel> = parentFieldsMetaInternal
+    val parentFieldsMeta: List<EntityModel> = parentFieldsMetaInternal
+
+    internal val recursiveFieldsMetaInteral = mutableListOf<EntityModel>()
+
+    val recursiveFieldsMeta: List<EntityModel> = recursiveFieldsMetaInteral
 }
 
 data class ResolvedAssociationMeta(
