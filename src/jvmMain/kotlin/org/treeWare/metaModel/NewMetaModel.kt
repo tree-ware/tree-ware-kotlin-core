@@ -76,8 +76,9 @@ fun newMetaModelFromJsonReaders(
     }
     val metaModel = union(metaModelParts)
     val baseErrors = validate(metaModel, hasher, cipher, logMetaModelFullNames)
+    if (logErrors) baseErrors.forEach { logger.error { it } }
+    if (baseErrors.isNotEmpty()) return ValidatedMetaModel(null, baseErrors)
     val pluginErrors = metaModelAuxPlugins.flatMap { plugin -> plugin.validate(metaModel) }
-    val errors = baseErrors + pluginErrors
-    if (logErrors) errors.forEach { logger.error { it } }
-    return ValidatedMetaModel(metaModel.takeIf { errors.isEmpty() }, errors)
+    if (logErrors) pluginErrors.forEach { logger.error { it } }
+    return ValidatedMetaModel(metaModel.takeIf { pluginErrors.isEmpty() }, pluginErrors)
 }

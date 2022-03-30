@@ -18,16 +18,25 @@ class Resolved(val fullName: String) {
     var compositionMeta: EntityModel? = null
         internal set
 
+    internal val sortedKeyFieldsMetaInternal = mutableListOf<EntityModel>()
+
+    val sortedKeyFieldsMeta: List<EntityModel> = sortedKeyFieldsMetaInternal
+
     internal val parentFieldsMetaInternal = mutableListOf<EntityModel>()
 
     val parentFieldsMeta: List<EntityModel> = parentFieldsMetaInternal
 
-    internal val recursiveFieldsMetaInteral = mutableListOf<EntityModel>()
+    internal val recursiveAssociationFieldsMetaInternal = mutableListOf<EntityModel>()
 
-    val recursiveFieldsMeta: List<EntityModel> = recursiveFieldsMetaInteral
+    val recursiveAssociationFieldsMeta = recursiveAssociationFieldsMetaInternal
+
+    internal val recursiveCompositionFieldsMetaInternal = mutableListOf<EntityModel>()
+
+    val recursiveCompositionFieldsMeta: List<EntityModel> = recursiveCompositionFieldsMetaInternal
 }
 
 data class ResolvedAssociationMeta(
     val rootEntityMeta: EntityModel,
-    val targetEntityMeta: EntityModel
+    val targetEntityMeta: EntityModel,
+    val isRecursive: Boolean
 )

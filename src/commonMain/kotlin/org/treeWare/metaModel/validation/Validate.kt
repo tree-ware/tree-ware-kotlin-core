@@ -4,13 +4,15 @@ import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.MutableMainModel
 
-/** Validates the specified meta-model.
+/**
+ * Validates the specified meta-model.
  * Returns a list of errors. Returns an empty list if there are no errors.
  *
  * Side effects:
  * 1. full-names are set for named elements
  * 2. Non-primitive field types are resolved
- * 3. Hasher and cipher instances are passed to password meta.
+ * 3. Key fields are memoized in field-number sorted order
+ * 4. Hasher and cipher instances are passed to password meta
  */
 fun validate(
     mainMeta: MutableMainModel,

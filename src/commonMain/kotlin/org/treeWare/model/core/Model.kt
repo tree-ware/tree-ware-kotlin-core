@@ -23,6 +23,10 @@ interface MainModel : SingleFieldModel {
     val root: EntityModel // Same as SingleFieldModel.value but different type
 }
 
+data class Keys(val available: List<SingleFieldModel>, val missing: List<String>)
+
+val EmptyKeys = Keys(emptyList(), emptyList())
+
 interface BaseEntityModel : ElementModel {
     override val meta: EntityModel?
 
@@ -31,7 +35,7 @@ interface BaseEntityModel : ElementModel {
     fun getField(fieldName: String): FieldModel?
     fun getMatchingHashCode(): Int
 
-    fun getKeyFields(): List<FieldModel>
+    fun getKeyFields(flatten: Boolean = false): Keys
     fun getKeyValues(): List<Any?>
 }
 
@@ -119,8 +123,10 @@ interface EnumerationModel : ElementModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENUMERATION
 
+    override val meta: EntityModel?
     override val parent: FieldModel
     val value: String
+    val number: UInt
 }
 
 interface AssociationModel : ElementModel {

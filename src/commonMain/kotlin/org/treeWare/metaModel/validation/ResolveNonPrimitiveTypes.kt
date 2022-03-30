@@ -9,6 +9,7 @@ import org.treeWare.model.core.*
  *
  * Side effects:
  * 1. Non-primitive field types are resolved.
+ * 2. Key fields are memoized in field-number sorted order.
  */
 fun resolveNonPrimitiveTypes(
     mainMeta: MainModel,
@@ -69,28 +70,48 @@ private fun resolveEntity(
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val entityMeta = entityElementMeta as EntityModel
-    return resolveFields(entityMeta, rootEntityMeta, hasher, cipher, nonPrimitiveTypes)
+    val entityResolved = getMetaModelResolved(entityMeta)
+        ?: throw IllegalStateException("Resolved aux is missing in entity")
+    val errors = resolveFields(entityMeta, entityResolved, rootEntityMeta, hasher, cipher, nonPrimitiveTypes)
+    entityResolved.sortedKeyFieldsMetaInternal.sortBy { getMetaNumber(it) }
+    return errors
 }
 
 private fun resolveFields(
     entityMeta: EntityModel,
+    entityResolved: Resolved,
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val fieldsMeta = getFieldsMeta(entityMeta)
-    return fieldsMeta.values.flatMap { resolveField(it, rootEntityMeta, hasher, cipher, nonPrimitiveTypes) }
+    return fieldsMeta.values.flatMap {
+        resolveField(
+            it,
+            entityMeta,
+            entityResolved,
+            rootEntityMeta,
+            hasher,
+            cipher,
+            nonPrimitiveTypes
+        )
+    }
 }
 
 private fun resolveField(
     fieldElementMeta: ElementModel,
+    entityMeta: EntityModel,
+    entityResolved: Resolved,
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val fieldMeta = fieldElementMeta as EntityModel
+    if (isKeyFieldMeta(fieldMeta)) {
+        entityResolved.sortedKeyFieldsMetaInternal.add(fieldElementMeta)
+    }
     return when (getFieldTypeMeta(fieldMeta)) {
         FieldType.PASSWORD1WAY -> resolvePassword1wayField(fieldMeta, hasher)
         FieldType.PASSWORD2WAY -> resolvePassword2wayField(fieldMeta, cipher)
@@ -142,9 +163,20 @@ private fun resolveAssociationField(
     val targetFullName = "/$packageName/$entityName"
     val targetEntityMeta = nonPrimitiveTypes.entities[targetFullName]
         ?: return listOf("Entity $targetFullName cannot be resolved")
+    val parentEntityMeta = getParentEntityMeta(fieldMeta)
+    val isRecursive = targetEntityMeta == parentEntityMeta
+
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
-    resolved.associationMeta = rootEntityMeta?.let { ResolvedAssociationMeta(it, targetEntityMeta) }
+    resolved.associationMeta = rootEntityMeta?.let { ResolvedAssociationMeta(it, targetEntityMeta, isRecursive) }
+
+    // Record recursive association fields in the parent entity.
+    if (isRecursive) {
+        val parentResolved = getMetaModelResolved(parentEntityMeta)
+            ?: throw IllegalStateException("Resolved aux is missing for parent entity of ${resolved.fullName}")
+        parentResolved.recursiveAssociationFieldsMetaInternal.add(fieldMeta)
+    }
+
     return emptyList()
 }
 
@@ -158,14 +190,24 @@ private fun resolveCompositionField(
     val targetFullName = "/$packageName/$entityName"
     val targetEntityMeta = nonPrimitiveTypes.entities[targetFullName]
         ?: return listOf("Entity $targetFullName cannot be resolved")
+
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
     resolved.compositionMeta = targetEntityMeta
+
+    // Record recursive composition fields in the parent entity.
     val parentEntityMeta = getParentEntityMeta(fieldMeta)
-    if (targetEntityMeta == parentEntityMeta) resolved.recursiveFieldsMetaInteral.add(fieldMeta)
+    if (targetEntityMeta == parentEntityMeta) {
+        val parentResolved = getMetaModelResolved(parentEntityMeta)
+            ?: throw IllegalStateException("Resolved aux is missing for parent entity of ${resolved.fullName}")
+        parentResolved.recursiveCompositionFieldsMetaInternal.add(fieldMeta)
+    }
+
+    // Record this field as a parent of the target entity.
     val targetResolved = getMetaModelResolved(targetEntityMeta)
         ?: throw IllegalStateException("Resolved aux is missing for target entity $targetFullName")
     targetResolved.parentFieldsMetaInternal.add(fieldMeta)
+
     val errors = mutableListOf<String>()
     if (isKeyFieldMeta(fieldMeta) && !hasOnlyPrimitiveKeyFields(targetEntityMeta)) errors.add(
         "Composition key field ${resolved.fullName} target entity does not have only primitive keys"

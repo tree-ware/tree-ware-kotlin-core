@@ -1,12 +1,14 @@
 package org.treeWare.model.core
 
-import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.*
 
 fun getMetaModelFullName(element: ElementModel): String? = getMetaModelResolved(element.meta)?.fullName
 
 fun getMainName(mainModel: MainModel): String? = mainModel.meta?.let { getMetaName(it) }
 
 fun isRootEntity(entityModel: EntityModel): Boolean = entityModel.parent.elementType == ModelElementType.MAIN
+
+fun isCompositionKey(entityModel: EntityModel): Boolean = isKeyField(entityModel.parent)
 
 fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent.meta?.let { getMetaName(it) }
 
@@ -48,6 +50,12 @@ fun getOptionalSingleEnumeration(entityModel: BaseEntityModel, fieldName: String
     return enumeration.value
 }
 
+fun getSingleDouble(entityModel: BaseEntityModel, fieldName: String): Double {
+    val singleField = getSingleField(entityModel, fieldName)
+    val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()
+    return primitive.value as? Double ?: throw IllegalStateException()
+}
+
 fun getSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel =
     entityModel.getField(fieldName) as? SingleFieldModel ?: throw IllegalStateException()
 
@@ -64,3 +72,21 @@ fun getCollectionField(entityModel: BaseEntityModel, fieldName: String): Collect
 
 fun getFieldName(fieldModel: FieldModel): String =
     fieldModel.meta?.let { getMetaName(it) } ?: throw IllegalStateException()
+
+fun getFieldNumber(fieldModel: FieldModel): UInt =
+    fieldModel.meta?.let { getMetaNumber(it) } ?: throw IllegalStateException()
+
+fun getFieldType(fieldModel: FieldModel): FieldType =
+    fieldModel.meta?.let { getFieldTypeMeta(it) } ?: throw IllegalStateException()
+
+fun isKeyField(fieldModel: FieldModel): Boolean =
+    fieldModel.meta?.let { isKeyFieldMeta(it) } ?: throw IllegalStateException()
+
+fun isListField(fieldModel: FieldModel): Boolean =
+    fieldModel.meta?.let { isListFieldMeta(it) } ?: throw IllegalStateException()
+
+fun isCompositionField(fieldModel: FieldModel): Boolean =
+    fieldModel.meta?.let { isCompositionFieldMeta(it) } ?: throw IllegalStateException()
+
+fun isAssociationField(fieldModel: FieldModel): Boolean =
+    fieldModel.meta?.let { isAssociationFieldMeta(it) } ?: throw IllegalStateException()

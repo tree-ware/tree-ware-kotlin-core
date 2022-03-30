@@ -58,12 +58,12 @@ fun setEnumerationSingleField(
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val enumeration = field.getOrNewValue() as MutableEnumerationModel
-    enumeration.value = value
+    enumeration.setValue(value)
     return field
 }
 
 fun addEnumerationListFieldElement(listField: MutableListFieldModel, value: String): MutableEnumerationModel {
     val enumeration = listField.getNewValue() as MutableEnumerationModel
-    enumeration.value = value
+    enumeration.setValue(value)
     return enumeration
 }

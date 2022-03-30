@@ -120,9 +120,9 @@ Only certain types of primitive fields support constraints. They are covered in 
 Signed integer fields (`int8`, `int16`, `int32`
 , `int64`) [do not yet](https://github.com/tree-ware/tree-ware-kotlin-core/issues/93) support the following constraints:
 
-| Constraint | Values                        | Default | Description                                                 |
-|------------|-------------------------------|---------|-------------------------------------------------------------|
-| `negative` | `true` or `false`             | `false` | Whether the values are mostly negative                      |
+| Constraint        | Values            | Default | Description                            |
+|-------------------|-------------------|---------|----------------------------------------|
+| `mostly_negative` | `true` or `false` | `false` | Whether the values are mostly negative |
 
 ### Strings
 

@@ -27,7 +27,8 @@
                 "number": 3,
                 "info": "Name of the country in which the city is",
                 "type": "string",
-                "is_key": true
+                "is_key": true,
+                "min_size": 2
               }
             ]
           },

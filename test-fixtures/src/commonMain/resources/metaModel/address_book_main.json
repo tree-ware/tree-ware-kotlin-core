@@ -88,7 +88,8 @@
                 "name": "name",
                 "number": 1,
                 "info": "A name for the address book",
-                "type": "string"
+                "type": "string",
+                "min_size": 2
               },
               {
                 "name": "last_updated",
@@ -193,7 +194,8 @@
                 "name": "email",
                 "number": 5,
                 "type": "string",
-                "multiplicity": "list"
+                "multiplicity": "list",
+                "regex": "[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+"
               },
               {
                 "name": "picture",
@@ -254,11 +256,17 @@
                 "name": "name",
                 "number": 1,
                 "type": "string",
-                "is_key": true
+                "is_key": true,
+                "max_size": 10
+              },
+              {
+                "name": "info",
+                "number": 2,
+                "type": "string"
               },
               {
                 "name": "sub_groups",
-                "number": 2,
+                "number": 3,
                 "type": "composition",
                 "composition": {
                   "name": "group",
