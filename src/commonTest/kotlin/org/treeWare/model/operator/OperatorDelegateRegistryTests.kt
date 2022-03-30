@@ -1,6 +1,9 @@
 package org.treeWare.model.operator
 
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 private interface TestOperator1Delegate {
     fun getName(): String
@@ -52,20 +55,17 @@ class OperatorDelegateRegistryTests {
 
         val delegateRegistry1: DelegateRegistry<TestOperator1Delegate>? = operatorDelegateRegistry.get(TestOperator1Id)
         assertNotNull(delegateRegistry1)
-        assertEquals(operator1Entity1DelegateName, delegateRegistry1?.get(ENTITY_1_FULL_NAME)?.getName())
-        assertEquals(operator1Entity2DelegateName, delegateRegistry1?.get(ENTITY_2_FULL_NAME)?.getName())
+        assertEquals(operator1Entity1DelegateName, delegateRegistry1[ENTITY_1_FULL_NAME]?.getName())
+        assertEquals(operator1Entity2DelegateName, delegateRegistry1[ENTITY_2_FULL_NAME]?.getName())
 
         val delegateRegistry2: DelegateRegistry<TestOperator2Delegate>? = operatorDelegateRegistry.get(TestOperator2Id)
         assertNotNull(delegateRegistry2)
-        assertEquals(operator2Entity1DelegateName, delegateRegistry2?.get(ENTITY_1_FULL_NAME)?.getName())
-        assertNull(delegateRegistry2?.get(ENTITY_2_FULL_NAME)?.getName())
+        assertEquals(operator2Entity1DelegateName, delegateRegistry2[ENTITY_1_FULL_NAME]?.getName())
+        assertNull(delegateRegistry2[ENTITY_2_FULL_NAME]?.getName())
     }
 
     @Test
     fun `OperatorDelegateRegistry must return null if delegates for an operator were not registered`() {
-        val operator1DelegateName = "operator1delegate"
-        val operator2DelegateName = "operator2delegate"
-
         val delegateRegistry1: DelegateRegistry<TestOperator1Delegate>? = operatorDelegateRegistry.get(TestOperator1Id)
         assertNull(delegateRegistry1)
 
@@ -97,12 +97,12 @@ class OperatorDelegateRegistryTests {
 
         val delegateRegistry1: DelegateRegistry<TestOperator1Delegate>? = operatorDelegateRegistry.get(TestOperator1Id)
         assertNotNull(delegateRegistry1)
-        assertEquals(operator1Entity1Delegate2Name, delegateRegistry1?.get(ENTITY_1_FULL_NAME)?.getName())
-        assertNull(delegateRegistry1?.get(ENTITY_2_FULL_NAME)?.getName())
+        assertEquals(operator1Entity1Delegate2Name, delegateRegistry1[ENTITY_1_FULL_NAME]?.getName())
+        assertNull(delegateRegistry1[ENTITY_2_FULL_NAME]?.getName())
 
         val delegateRegistry2: DelegateRegistry<TestOperator2Delegate>? = operatorDelegateRegistry.get(TestOperator2Id)
         assertNotNull(delegateRegistry2)
-        assertEquals(operator2Entity1DelegateName, delegateRegistry2?.get(ENTITY_1_FULL_NAME)?.getName())
-        assertNull(delegateRegistry2?.get(ENTITY_2_FULL_NAME)?.getName())
+        assertEquals(operator2Entity1DelegateName, delegateRegistry2[ENTITY_1_FULL_NAME]?.getName())
+        assertNull(delegateRegistry2[ENTITY_2_FULL_NAME]?.getName())
     }
 }

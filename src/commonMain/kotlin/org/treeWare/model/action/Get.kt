@@ -6,7 +6,7 @@ import org.treeWare.model.traversal.forEach
 
 // IMPLEMENTATION: ./Get.md
 
-suspend fun get(
+fun get(
     request: MainModel,
     mapping: MainModel,
     visitor: GetVisitor
