@@ -43,7 +43,11 @@ abstract class MutableBaseEntityModel(
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is BaseEntityModel) return false
-        val thisKeyFields = getKeyFields()
+        val (thisKeyFields, missingKeys) = getKeyFields()
+        if (missingKeys.isNotEmpty()) {
+            val entityMetaName = getMetaModelResolved(meta)?.fullName ?: getMetaName(meta)
+            throw MissingKeysException("Missing key fields $missingKeys in instance of $entityMetaName")
+        }
         return thisKeyFields.all { thisKeyField ->
             val thatKeyField = that.getField(getMetaName(thisKeyField.meta)) ?: return false
             thisKeyField.matches(thatKeyField)
@@ -69,32 +73,47 @@ abstract class MutableBaseEntityModel(
         return newField
     }
 
-    override fun getKeyFields(): List<FieldModel> {
-        val keyFieldsMeta = meta?.let { getKeyFieldsMeta(it) } ?: return emptyList()
+    override fun getKeyFields(flatten: Boolean): Keys {
+        val availableKeys = mutableListOf<SingleFieldModel>()
         val missingKeys = mutableListOf<String>()
-        val keyFields = mutableListOf<FieldModel>()
-        keyFieldsMeta.forEach { fieldMeta ->
-            val keyFieldName = getMetaName(fieldMeta)
-            val keyField = this.fields[keyFieldName]
-            if (keyField == null) missingKeys.add(keyFieldName) else keyFields.add(keyField)
-        }
-        if (missingKeys.isNotEmpty()) {
-            val entityMetaName = getMetaModelResolved(this.meta)?.fullName ?: getMetaName(this.meta)
-            throw MissingKeysException(
-                "Missing key fields $missingKeys in instance of $entityMetaName"
-            )
-        }
-        return keyFields
+        getKeyFields(flatten, null, availableKeys, missingKeys)
+        return Keys(availableKeys, missingKeys)
     }
 
-    override fun getKeyValues(): List<Any?> = getKeyFields().flatMap { field ->
-        if (field.elementType == ModelElementType.SINGLE_FIELD) {
-            val singleField = field as SingleFieldModel
-            when (getFieldTypeMeta(singleField.meta)) {
-                FieldType.COMPOSITION -> (singleField.value as BaseEntityModel).getKeyValues()
-                else -> listOf((singleField.value as PrimitiveModel).value)
+    private fun getKeyFields(
+        flatten: Boolean,
+        prefix: String?,
+        availableKeys: MutableList<SingleFieldModel>,
+        missingKeys: MutableList<String>
+    ) {
+        val keyFieldsMeta = meta?.let { getKeyFieldsMeta(it) } ?: return
+        keyFieldsMeta.forEach { fieldMeta ->
+            val keyFieldName = getMetaName(fieldMeta)
+            val keyFieldFullName = if (prefix == null) keyFieldName else "$prefix/$keyFieldName"
+            val keyField = this.fields[keyFieldName] as SingleFieldModel?
+            if (keyField == null) missingKeys.add(keyFieldFullName)
+            else {
+                if (flatten && isCompositionField(keyField)) {
+                    val childEntity = keyField.value as MutableBaseEntityModel?
+                    if (childEntity == null) missingKeys.add(keyFieldFullName)
+                    else childEntity.getKeyFields(true, keyFieldFullName, availableKeys, missingKeys)
+                } else availableKeys.add(keyField)
             }
-        } else throw IllegalStateException("Unexpected element type ${field.elementType} for key ${field.getMetaResolved()?.fullName}")
+        }
+    }
+
+    override fun getKeyValues(): List<Any?> {
+        val (availableKeys, missingKeys) = getKeyFields()
+        if (missingKeys.isNotEmpty()) {
+            val entityMetaName = getMetaModelResolved(meta)?.fullName ?: getMetaName(meta)
+            throw MissingKeysException("Missing key fields $missingKeys in instance of $entityMetaName")
+        }
+        return availableKeys.flatMap { keyField ->
+            when (getFieldTypeMeta(keyField.meta)) {
+                FieldType.COMPOSITION -> (keyField.value as BaseEntityModel).getKeyValues()
+                else -> listOf((keyField.value as PrimitiveModel).value)
+            }
+        }
     }
 }
 
@@ -348,19 +367,46 @@ class MutablePassword2wayModel(
 
 class MutableEnumerationModel(
     parent: MutableFieldModel,
-    override var value: String
+    value: String
 ) : MutableScalarValueModel(parent), EnumerationModel {
     override var meta: EntityModel? = null
+
+    override var value: String = ""
+        private set
+    override var number: UInt = 0U
+        private set
+
+    init {
+        setValue(value)
+    }
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is EnumerationModel) return false
         return this.value == that.value
     }
 
-    override fun setValue(value: String): Boolean = setEnumerationValue(this, value) { this.value = it }
+    override fun setValue(value: String): Boolean {
+        val fieldMeta: EntityModel? = parent.meta
+        // fieldMeta is null when constructing the meta-meta-model.
+        if (fieldMeta == null) {
+            this.value = value
+        } else {
+            val resolvedEnumeration = getMetaModelResolved(fieldMeta)?.enumerationMeta
+                ?: throw IllegalStateException("Enumeration has not been resolved")
+            val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, value)
+            this.meta = enumerationValueMeta
+            if (enumerationValueMeta != null) {
+                this.value = value
+                this.number = getMetaNumber(enumerationValueMeta) ?: 0U
+            } else return false
+        }
+        return true
+    }
 
     fun copyValueFrom(that: EnumerationModel) {
+        this.meta = that.meta
         this.value = that.value
+        this.number = that.number
     }
 }
 
@@ -379,7 +425,7 @@ class MutableAssociationModel(
         TODO("Requires an equals() model operator")
     }
 
-    // NOTE: instead of wrapping the association value to store aux data, the aux data is store in the root entity of
+    // NOTE: instead of wrapping the association value to store aux data, the aux data is stored in the root entity of
     // the association value. This reduces the amount of nesting in the encoding. The aux getter and setter are
     // overridden to make this possible.
     override val auxs: Map<String, Any>? get() = value.auxs
@@ -508,26 +554,6 @@ fun setValue(fieldMeta: EntityModel?, value: Boolean, setter: ValueSetter): Bool
         }
         else -> false
     }
-}
-
-typealias StringSetter = (String) -> Unit
-
-fun setEnumerationValue(
-    enumerationModel: MutableEnumerationModel,
-    value: String,
-    setter: StringSetter
-): Boolean {
-    val fieldMeta: EntityModel? = enumerationModel.parent.meta
-    // fieldMeta is null when constructing the meta-meta-model.
-    val enumerationValue = if (fieldMeta == null) value else {
-        val resolvedEnumeration = getMetaModelResolved(fieldMeta)?.enumerationMeta
-            ?: throw IllegalStateException("Enumeration has not been resolved")
-        val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, value)
-        enumerationModel.meta = enumerationValueMeta
-        if (enumerationValueMeta != null) value else return false
-    }
-    setter(enumerationValue)
-    return true
 }
 
 class MissingKeysException(message: String) : Exception(message)

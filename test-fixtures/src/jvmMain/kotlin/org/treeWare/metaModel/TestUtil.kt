@@ -2,6 +2,7 @@ package org.treeWare.metaModel
 
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
@@ -51,9 +52,14 @@ private fun assertJsonValidationErrors(
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
     val (metaModel, decodeErrors) = decodeJson(jsonReader, metaMetaModel, options, multiAuxDecodingStateMachineFactory)
-    val errors = metaModel?.let {
-        validate(metaModel, null, null) + auxPlugins.flatMap { it.validate(metaModel) }
-    } ?: listOf("Meta-model decoding failed")
+    val errors = validate(metaModel, auxPlugins)
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     assertEquals(expectedValidationErrors.joinToString("\n"), errors.joinToString("\n"))
+}
+
+private fun validate(metaModel: MutableMainModel?, auxPlugins: Array<out MetaModelAuxPlugin>): List<String> {
+    if (metaModel == null) return listOf("Meta-model decoding failed")
+    val baseErrors = validate(metaModel, null, null)
+    if (baseErrors.isNotEmpty()) return baseErrors
+    return auxPlugins.flatMap { it.validate(metaModel) }
 }

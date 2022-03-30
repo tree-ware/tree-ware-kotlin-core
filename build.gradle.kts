@@ -35,6 +35,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(project(":tree-ware-kotlin-core:test-fixtures"))
+                implementation("io.mockk:mockk-common:$mockkVersion")
                 implementation(kotlin("test"))
             }
         }

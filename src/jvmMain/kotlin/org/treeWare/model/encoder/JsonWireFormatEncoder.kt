@@ -133,7 +133,7 @@ class JsonWireFormatEncoder(
     }
 
     override fun encodeStringField(name: String, value: String) {
-        encodeNameValue(name, "\"$value\"")
+        encodeNameValue(name, "\"${escape(value)}\"")
         elementEncoded()
     }
 
@@ -146,4 +146,20 @@ class JsonWireFormatEncoder(
         encodeNameValue(name, if (value) "true" else "false")
         elementEncoded()
     }
+}
+
+private fun escape(value: String): String {
+    val builder = StringBuilder()
+    value.forEach { character ->
+        when (character) {
+            '"', '\\' -> builder.append('\\').append(character)
+            '\b' -> builder.append("\\b")
+            '\u000C' -> builder.append("\\f")
+            '\n' -> builder.append("\\n")
+            '\r' -> builder.append("\\r")
+            '\t' -> builder.append("\\t")
+            else -> builder.append(character)
+        }
+    }
+    return builder.toString()
 }

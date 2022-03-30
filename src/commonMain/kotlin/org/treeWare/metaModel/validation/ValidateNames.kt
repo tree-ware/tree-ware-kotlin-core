@@ -7,7 +7,8 @@ import org.treeWare.model.core.*
 private val PACKAGE_NAME_REGEX = Regex("^[a-z0-9_.]*$")
 private val ELEMENT_NAME_REGEX = Regex("^[a-z0-9_]*$")
 
-/** Validates the names in the meta-model.
+/**
+ * Validates the names in the meta-model.
  * Returns a list of errors. Returns an empty list if there are no errors.
  *
  * Side effects:

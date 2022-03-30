@@ -19,8 +19,7 @@ fun getEnumerationValuesMeta(enumerationMeta: EntityModel): CollectionFieldModel
 
 fun getEnumerationValueMeta(enumerationMeta: EntityModel, name: String): EntityModel? {
     return getEnumerationValuesMeta(enumerationMeta).values.find { valueMeta ->
-        if (valueMeta !is EntityModel) false
-        else getMetaName(valueMeta) == name
+        if (valueMeta !is EntityModel) false else getMetaName(valueMeta) == name
     } as? EntityModel
 }
 
@@ -40,9 +39,8 @@ fun getFieldsMeta(entityMeta: EntityModel): CollectionFieldModel =
 
 fun getFieldMeta(entityMeta: EntityModel, fieldName: String): EntityModel {
     val fields = getCollectionField(entityMeta, "fields")
-    return fields.values.find { entity ->
-        if (entity !is EntityModel) false
-        else getSingleString(entity, "name") == fieldName
+    return fields.values.find { fieldMeta ->
+        if (fieldMeta !is EntityModel) false else getMetaName(fieldMeta) == fieldName
     } as? EntityModel ?: throw IllegalStateException("Field $fieldName not found in entity ${getMetaName(entityMeta)}")
 }
 
@@ -59,8 +57,9 @@ fun hasOnlyPrimitiveKeyFields(entityMeta: EntityModel): Boolean {
 }
 
 fun getKeyFieldsMeta(entityMeta: EntityModel): List<EntityModel> {
-    val fieldsMeta = getFieldsMeta(entityMeta)
-    return filterKeyFields(fieldsMeta.values)
+    val entityResolved = getMetaModelResolved(entityMeta)
+        ?: throw IllegalStateException("Resolved aux is missing in entity ${getMetaName(entityMeta)}")
+    return entityResolved.sortedKeyFieldsMeta
 }
 
 private fun filterKeyFields(fields: Collection<ElementModel>): List<EntityModel> =
@@ -78,6 +77,7 @@ private fun filterCompositionKeyFields(fields: List<ElementModel>): List<Element
 fun getUniquesMeta(entityMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(entityMeta, "uniques") }.getOrNull()
 
+// TODO(cleanup): getMetaName() should return `String?`. Callers should handle the null value as applicable.
 fun getMetaName(meta: BaseEntityModel?): String = meta?.let { getSingleString(it, "name") } ?: ""
 
 fun getMetaNumber(meta: BaseEntityModel?): UInt? = meta?.let { getOptionalSingleUint32(it, "number") }
@@ -114,6 +114,9 @@ fun isKeyFieldMeta(fieldMeta: EntityModel?): Boolean = fieldMeta?.let {
 
 fun isCompositionFieldMeta(fieldMeta: EntityModel?): Boolean =
     getFieldTypeMeta(fieldMeta) == FieldType.COMPOSITION
+
+fun isAssociationFieldMeta(fieldMeta: EntityModel?): Boolean =
+    getFieldTypeMeta(fieldMeta) == FieldType.ASSOCIATION
 
 // Constraints
 

@@ -5,7 +5,8 @@ import org.treeWare.model.core.*
 
 // TODO(deepak-nulu): replace with a generic validate function which validates a model against its meta-model.
 
-/** Validates the structure of the meta-model.
+/**
+ * Validates the structure of the meta-model.
  * Returns a list of errors. Returns an empty list if there are no errors.
  *
  * Side effects: none

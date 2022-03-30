@@ -1,16 +1,16 @@
 package org.treeWare.model.operator
 
-typealias DelegateRegistry<Delegate> = Map<String, Delegate>
+typealias EntityDelegateRegistry<Delegate> = Map<String, Delegate>
 
-class OperatorDelegateRegistry {
+class OperatorEntityDelegateRegistry {
     fun <Delegate> add(entityFullName: String, operatorId: OperatorId<Delegate>, delegate: Delegate) {
         val delegateRegistry =
             operatorRegistry.getOrPut(operatorId) { HashMap<String, Delegate>() } as HashMap<String, Delegate>
         delegateRegistry[entityFullName] = delegate
     }
 
-    fun <Delegate> get(operatorId: OperatorId<Delegate>): DelegateRegistry<Delegate>? =
-        operatorRegistry[operatorId] as? DelegateRegistry<Delegate>
+    fun <Delegate> get(operatorId: OperatorId<Delegate>): EntityDelegateRegistry<Delegate>? =
+        operatorRegistry[operatorId] as? EntityDelegateRegistry<Delegate>
 
     private val operatorRegistry = HashMap<Any, Map<String, *>>()
 }

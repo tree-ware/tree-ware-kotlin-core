@@ -51,6 +51,7 @@
       },
       "entity:group": {
         "field:name": {},
+        "field:info": {},
         "field:sub_groups": {}
       },
       "entity:address_book_relation": {

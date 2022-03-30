@@ -8,6 +8,12 @@ import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.getMetaModelResolved
 import org.treeWare.model.traversal.TraversalAction
 
+/**
+ * Validates the numbers in the meta-model.
+ * Returns a list of errors. Returns an empty list if there are no errors.
+ *
+ * Side effects: none
+ */
 fun validateNumbers(mainMeta: MainModel): List<String> {
     val visitor = ValidateNumbersVisitor()
     metaModelForEach(mainMeta, visitor)
