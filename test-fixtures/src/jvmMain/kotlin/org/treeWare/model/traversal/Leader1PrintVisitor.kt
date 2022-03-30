@@ -39,7 +39,7 @@ class Leader1PrintVisitor(
     }
 
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
-        val entityName = leaderEntity1?.meta?.let {
+        val entityName = leaderEntity1.meta?.let {
             val packageName = getPackageName(it)
             val entityName = getMetaName(it)
             "$packageName/$entityName"

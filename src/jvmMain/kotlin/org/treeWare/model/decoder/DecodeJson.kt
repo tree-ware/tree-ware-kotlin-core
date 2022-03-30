@@ -12,7 +12,7 @@ fun decodeJson(
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): ModelDecoderResult {
     val decodingStateMachine = ModelDecodingStateMachine(meta, options, multiAuxDecodingStateMachineFactory)
-    val wireFormatDecoder = org.treeWare.model.decoder.JsonWireFormatDecoder()
+    val wireFormatDecoder = JsonWireFormatDecoder()
     val decoded = wireFormatDecoder.decode(reader, decodingStateMachine)
     val mainModel = if (decoded) decodingStateMachine.mainModel else null
     return ModelDecoderResult(mainModel, decodingStateMachine.errors)
