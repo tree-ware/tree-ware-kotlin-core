@@ -4,10 +4,11 @@ import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.FieldModel
 import org.treeWare.model.core.Keys
 import org.treeWare.model.core.SingleFieldModel
+import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.set.aux.SetAux
 
 interface SetDelegate {
-    fun begin(): List<String>
+    fun begin(): List<ElementModelError>
 
     /** Sets the specified entity.
      *
@@ -21,7 +22,7 @@ interface SetDelegate {
         keys: List<SingleFieldModel>,
         associations: List<FieldModel>,
         other: List<FieldModel>
-    ): List<String>
+    ): List<ElementModelError>
 
-    fun end(): List<String>
+    fun end(): List<ElementModelError>
 }

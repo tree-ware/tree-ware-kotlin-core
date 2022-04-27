@@ -5,6 +5,7 @@ import org.treeWare.metaModel.getMaxSizeConstraint
 import org.treeWare.metaModel.getMinSizeConstraint
 import org.treeWare.metaModel.getRegexConstraint
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.set.aux.SetAuxStack
 import org.treeWare.model.operator.set.aux.getSetAux
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
@@ -23,7 +24,7 @@ import org.treeWare.util.assertInDevMode
  * 6. Entities to be deleted do not contain child entities.
  */
 class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
-    val errors = mutableListOf<String>()
+    val errors = mutableListOf<ElementModelError>()
 
     private val entityPathStack = EntityPathStack()
     private val setAuxStack = SetAuxStack()
@@ -38,7 +39,9 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         setAuxStack.pop()
         assertInDevMode(entityPathStack.isEmpty())
         assertInDevMode(setAuxStack.isEmpty())
-        if (setAuxStack.nothingToSet) errors.add("set_ aux not attached to any composition field or entity")
+        if (setAuxStack.nothingToSet) errors.add(
+            ElementModelError("/", "set_ aux not attached to any composition field or entity")
+        )
     }
 
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
@@ -51,10 +54,10 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         entityPathStack.push(leaderEntity1)
         val entityPath = entityPathStack.peekEntityPath()
         val missingKeys = entityPathStack.peekKeys().missing
-        if (missingKeys.isNotEmpty()) errors.add("$entityPath: missing keys: $missingKeys")
+        if (missingKeys.isNotEmpty()) errors.add(ElementModelError(entityPath, "missing keys: $missingKeys"))
 
         val setAuxError = setAuxStack.push(getSetAux(leaderEntity1), true)
-        setAuxError?.also { errors.add("$entityPath: $it") }
+        setAuxError?.also { errors.add(ElementModelError(entityPath, it)) }
 
         return TraversalAction.CONTINUE
     }
@@ -136,15 +139,25 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         val length = value.length
         if (minSize != null && length < minSize) {
             fieldId = getFieldId(entityPath, fieldName, index)
-            errors.add("$fieldId: length $length of string '$value' is less than minimum size $minSize")
+            errors.add(
+                ElementModelError(
+                    fieldId,
+                    "length $length of string '$value' is less than minimum size $minSize"
+                )
+            )
         }
         if (maxSize != null && length > maxSize) {
             fieldId = fieldId ?: getFieldId(entityPath, fieldName, index)
-            errors.add("$fieldId: length $length of string '$value' is more than maximum size $maxSize")
+            errors.add(
+                ElementModelError(
+                    fieldId,
+                    "length $length of string '$value' is more than maximum size $maxSize"
+                )
+            )
         }
         if (regex != null && !Regex(regex).matches(value)) {
             fieldId = fieldId ?: getFieldId(entityPath, fieldName, index)
-            errors.add("$fieldId: string '$value' does not match regex '$regex'")
+            errors.add(ElementModelError(fieldId, "string '$value' does not match regex '$regex'"))
         }
     }
 
@@ -155,7 +168,7 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
             val entityPath = entityPathStack.peekEntityPath()
             val fieldName = getFieldName(field)
             val fieldId = getFieldId(entityPath, fieldName, null)
-            errors.add("$fieldId: $it")
+            errors.add(ElementModelError(fieldId, it))
         }
         return TraversalAction.CONTINUE
     }
@@ -168,7 +181,7 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
             val error = validateAssociation(value)
             error?.also {
                 val fieldId = getFieldId(entityPath, fieldName, index)
-                errors.add("$fieldId: $it")
+                errors.add(ElementModelError(fieldId, it))
             }
         }
         return TraversalAction.CONTINUE
@@ -180,7 +193,7 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
             val entityPath = entityPathStack.peekEntityPath()
             val fieldName = getFieldName(field)
             val fieldId = getFieldId(entityPath, fieldName, null)
-            errors.add("$fieldId: $it")
+            errors.add(ElementModelError(fieldId, it))
         }
         return TraversalAction.CONTINUE
     }

@@ -18,7 +18,7 @@ fun set(
     main: MainModel,
     setDelegate: SetDelegate,
     entityDelegates: EntityDelegateRegistry<SetEntityDelegate>?
-): List<String> {
+): List<ElementModelError> {
     // TODO(performance): traverse all visitors together.
 
     val validationVisitor = SetRequestValidationVisitor()

@@ -2,6 +2,7 @@ package org.treeWare.model.operator.set
 
 import org.treeWare.metaModel.FieldType
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.EntityDelegateRegistry
 import org.treeWare.model.operator.SetEntityDelegate
 import org.treeWare.model.operator.set.aux.SetAuxStack
@@ -15,7 +16,7 @@ class SetDelegateVisitor(
     private val setDelegate: SetDelegate,
     private val entityDelegates: EntityDelegateRegistry<SetEntityDelegate>?
 ) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
-    val errors = mutableListOf<String>()
+    val errors = mutableListOf<ElementModelError>()
 
     private val entityPathStack = EntityPathStack()
     private val setAuxStack = SetAuxStack()
@@ -63,7 +64,7 @@ class SetDelegateVisitor(
             associations,
             other
         )
-        delegateErrors.forEach { errors.add("$entityPath: $it") }
+        errors.addAll(delegateErrors)
         return if (delegateErrors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
     }
 
