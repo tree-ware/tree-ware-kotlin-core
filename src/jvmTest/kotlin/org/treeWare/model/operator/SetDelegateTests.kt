@@ -621,8 +621,8 @@ class SetDelegateTests {
             getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns listOf("delegate begin error")
-        val expectedErrors = listOf("delegate begin error")
+        every { delegate.begin() } returns listOf(ElementModelError("/", "delegate begin error"))
+        val expectedErrors = listOf("/: delegate begin error")
 
         val actualErrors = set(model, delegate, null)
 
@@ -678,8 +678,11 @@ class SetDelegateTests {
         } returnsMany listOf(
             emptyList(),  // address_book entity
             emptyList(),  // settings entity
-            listOf("delegate error 1", "delegate error 2"), // Group-0 entity
-            listOf("delegate error 3") // Group-1 entity
+            listOf(
+                ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
+                ElementModelError("/address_book/groups[Group-0]", "delegate error 2")
+            ), // Group-0 entity
+            listOf(ElementModelError("/address_book/groups[Group-1]", "delegate error 3")) // Group-1 entity
         )
         val expectedErrors = listOf(
             "/address_book/groups[Group-0]: delegate error 1",
@@ -760,8 +763,8 @@ class SetDelegateTests {
                 ofType()
             )
         } returns emptyList()
-        every { delegate.end() } returns listOf("delegate end error")
-        val expectedErrors = listOf("delegate end error")
+        every { delegate.end() } returns listOf(ElementModelError("/", "delegate end error"))
+        val expectedErrors = listOf("/: delegate end error")
 
         val actualErrors = set(model, delegate, null)
 

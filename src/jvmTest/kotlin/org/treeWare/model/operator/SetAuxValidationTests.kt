@@ -43,7 +43,7 @@ class SetAuxValidationTests {
             getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
 
         val delegate = mockk<SetDelegate>()
-        val expectedErrors = listOf("set_ aux not attached to any composition field or entity")
+        val expectedErrors = listOf("/: set_ aux not attached to any composition field or entity")
 
         val actualErrors = set(model, delegate, null)
 
@@ -81,7 +81,7 @@ class SetAuxValidationTests {
             getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
 
         val delegate = mockk<SetDelegate>()
-        val expectedErrors = listOf("set_ aux not attached to any composition field or entity")
+        val expectedErrors = listOf("/: set_ aux not attached to any composition field or entity")
 
         val actualErrors = set(model, delegate, null)
 
