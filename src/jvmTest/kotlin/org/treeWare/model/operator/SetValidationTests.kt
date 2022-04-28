@@ -430,4 +430,63 @@ class SetValidationTests {
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
         verify { delegate wasNot Called }
     }
+
+    @Test
+    fun `set() must abort with errors if association is missing keys`() {
+        val modelJson = """
+            |{
+            |  "address_book__set_": "create",
+            |  "address_book": {
+            |    "name": "Super Heroes",
+            |    "person": [
+            |      {
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "group": {
+            |          "groups": [
+            |            {
+            |              "sub_groups": [
+            |                {
+            |                }
+            |              ]
+            |            }
+            |          ]
+            |        }
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "city": {
+            |          "name": "New York City",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        },
+            |        "info": "One of the most populous and most densely populated major city in USA",
+            |        "related_city_info": [
+            |          {
+            |            "city_info": [
+            |              {
+            |                "city": {
+            |                }
+            |              }
+            |            ]
+            |          }
+            |        ]
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val expectedDecodeErrors = listOf(
+            "Missing key fields [name] in instance of /address_book.main/group",
+            "Missing key fields [name] in instance of /address_book.main/group",
+            "Missing key fields [name, state, country] in instance of /address_book.city/address_book_city",
+        )
+        // NOTE: The following function will assert if the decode errors do not match the above expectedDecodeErrors.
+        getMainModelFromJsonString(
+            metaModel,
+            modelJson,
+            expectedDecodeErrors = expectedDecodeErrors,
+            multiAuxDecodingStateMachineFactory = auxDecodingFactory
+        )
+    }
 }
