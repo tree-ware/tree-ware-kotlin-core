@@ -13,7 +13,11 @@ fun decodeJson(
 ): ModelDecoderResult {
     val decodingStateMachine = ModelDecodingStateMachine(meta, options, multiAuxDecodingStateMachineFactory)
     val wireFormatDecoder = JsonWireFormatDecoder()
-    val decoded = wireFormatDecoder.decode(reader, decodingStateMachine)
+    val decoded = try {
+        wireFormatDecoder.decode(reader, decodingStateMachine)
+    } catch (exception: Exception) {
+        return ModelDecoderResult(null, listOf(exception.message ?: "Exception while decoding set-request"))
+    }
     val mainModel = if (decoded) decodingStateMachine.mainModel else null
     return ModelDecoderResult(mainModel, decodingStateMachine.errors)
 }
