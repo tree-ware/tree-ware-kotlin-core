@@ -1,4 +1,4 @@
-package org.treeWare.model.operator.set
+package org.treeWare.model.operator
 
 import org.treeWare.metaModel.FieldType
 import org.treeWare.model.core.*
