@@ -2,6 +2,7 @@ package org.treeWare.model.traversal
 
 import org.treeWare.model.core.*
 import org.treeWare.model.cursor.CursorMoveDirection
+import org.treeWare.model.cursor.EntityEquals
 import org.treeWare.model.cursor.FollowerModelCursor
 import org.treeWare.model.cursor.Leader1ModelCursor
 import org.treeWare.util.assertInDevMode
@@ -10,10 +11,11 @@ fun forEach(
     leader: ElementModel,
     follower: ElementModel,
     visitor: Leader1Follower1ModelVisitor<TraversalAction>,
-    traverseAssociations: Boolean
+    traverseAssociations: Boolean,
+    followerEntityEquals: EntityEquals? = null
 ): TraversalAction {
     val leaderCursor = Leader1ModelCursor(leader, traverseAssociations)
-    val followerCursor = FollowerModelCursor(follower)
+    val followerCursor = FollowerModelCursor(follower, followerEntityEquals)
     var action = TraversalAction.CONTINUE
     while (action != TraversalAction.ABORT_TREE) {
         val leaderMove = leaderCursor.next(action) ?: break

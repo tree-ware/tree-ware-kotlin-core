@@ -115,16 +115,14 @@ private class SingleFieldLeaderState(
     override val actionIterator: Iterator<LeaderStateAction>
 
     init {
-        val value = field.value
-        val actionList =
-            if (value == null) listOf()
-            else listOf<LeaderStateAction>({
+        actionIterator = SingleValueIteratorAdapter({ field.value }) { value ->
+            {
                 val valueState =
                     dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null single-field state")
                 stateStack.addFirst(valueState)
                 valueState.visitCursorMove
-            })
-        actionIterator = actionList.iterator()
+            }
+        }
     }
 }
 

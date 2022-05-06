@@ -26,6 +26,16 @@ class FollowerModelCursorTests {
     }
 
     @Test
+    fun `Follower-cursor on same null-fields data-model follows leader-cursor without association traversal`() {
+        testFollowerSameModelInstance("org/treeWare/model/cursor/address_book_null_fields.json", false)
+    }
+
+    @Test
+    fun `Follower-cursor on same null-fields data-model follows leader-cursor with association traversal`() {
+        testFollowerSameModelInstance("org/treeWare/model/cursor/address_book_null_fields.json", true)
+    }
+
+    @Test
     fun `Follower-cursor on different data-model follows leader-cursor without association traversal`() {
         testFollowerDifferentModelInstances("model/address_book_1.json", false)
     }
@@ -39,7 +49,7 @@ class FollowerModelCursorTests {
     fun `Follower-cursor on wildcard model follows leader-cursor without association traversal`() {
         testFollowerWildcardModelInstance(
             "model/address_book_1.json",
-            "model/address_book_filter_all_model.json",
+            "model/address_book_empty_root.json",
             false,
             "model/address_book_1_no_associations.json"
         )
@@ -49,7 +59,7 @@ class FollowerModelCursorTests {
     fun `Follower-cursor on wildcard model follows leader-cursor with association traversal`() {
         testFollowerWildcardModelInstance(
             "model/address_book_1.json",
-            "model/address_book_filter_all_model.json",
+            "model/address_book_empty_root.json",
             true
         )
     }
@@ -64,6 +74,7 @@ private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssocia
     val leaderCursor = Leader1ModelCursor(model, traverseAssociations)
     val followerCursor = FollowerModelCursor(model)
 
+    var moveCount = 0
     val action = TraversalAction.CONTINUE
     while (true) {
         val leaderMove = leaderCursor.next(action) ?: break
@@ -72,7 +83,9 @@ private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssocia
         assertNotNull(followerMove)
         assertSame(leaderMove.element, followerMove.element)
         assertSame(leaderCursor.element, followerCursor.element)
+        ++moveCount
     }
+    assertNotEquals(0, moveCount)
 }
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String, traverseAssociations: Boolean) {
