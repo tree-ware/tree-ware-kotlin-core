@@ -6,6 +6,7 @@ import org.treeWare.metaModel.getMinSizeConstraint
 import org.treeWare.metaModel.getRegexConstraint
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.ElementModelError
+import org.treeWare.model.operator.EntityPathStack
 import org.treeWare.model.operator.set.aux.SetAuxStack
 import org.treeWare.model.operator.set.aux.getSetAux
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor

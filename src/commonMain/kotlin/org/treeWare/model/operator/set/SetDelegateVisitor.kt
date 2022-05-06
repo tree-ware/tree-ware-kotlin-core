@@ -4,6 +4,7 @@ import org.treeWare.metaModel.FieldType
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.EntityDelegateRegistry
+import org.treeWare.model.operator.EntityPathStack
 import org.treeWare.model.operator.SetEntityDelegate
 import org.treeWare.model.operator.set.aux.SetAuxStack
 import org.treeWare.model.operator.set.aux.getSetAux
