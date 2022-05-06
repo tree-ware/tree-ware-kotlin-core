@@ -198,13 +198,15 @@ private fun validateUniqueField(
     val uniqueFieldMeta = uniqueFieldElementMeta as? PrimitiveModel
         ?: return listOf("$uniqueFieldId is not a PrimitiveModel. It is: ${uniqueFieldElementMeta::class.simpleName}")
     val uniqueFieldName = uniqueFieldMeta.value as? String
-        ?: return listOf("$uniqueFieldId is not a string. It is: ${uniqueFieldElementMeta.value::class.simpleName}")
+        ?: return listOf("$uniqueFieldId is not a string. It is: ${getClassName(uniqueFieldElementMeta.value)}")
     val entityField = runCatching { getFieldMeta(entityMeta, uniqueFieldName) }.getOrNull()
         ?: return listOf("$uniqueFieldId not found: $uniqueFieldName")
     if (isCollectionFieldMeta(entityField)) return listOf("Collection fields are not supported in uniques: $uniqueFieldId: $uniqueFieldName")
     if (isCompositionFieldMeta(entityField)) return listOf("Composition fields are not supported in uniques: $uniqueFieldId: $uniqueFieldName")
     return emptyList()
 }
+
+private fun getClassName(value: Any?): String? = value?.let { it::class.simpleName }
 
 private fun validateEnumerationInfo(fieldMeta: EntityModel, fieldId: String): List<String> {
     val infoId = "$fieldId enumeration info"

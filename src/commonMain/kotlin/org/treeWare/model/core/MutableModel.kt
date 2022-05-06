@@ -111,7 +111,7 @@ abstract class MutableBaseEntityModel(
         return availableKeys.flatMap { keyField ->
             when (getFieldTypeMeta(keyField.meta)) {
                 FieldType.COMPOSITION -> (keyField.value as BaseEntityModel).getKeyValues()
-                else -> listOf((keyField.value as PrimitiveModel).value)
+                else -> listOf(keyField.value?.let { (it as PrimitiveModel).value })
             }
         }
     }
@@ -216,7 +216,6 @@ class MutableSetFieldModel(
 abstract class MutableScalarValueModel(
     override val parent: MutableFieldModel
 ) : MutableElementModel() {
-    open fun setNullValue(): Boolean = false
     open fun setValue(value: String): Boolean = false
     open fun setValue(value: Boolean): Boolean = false
 }

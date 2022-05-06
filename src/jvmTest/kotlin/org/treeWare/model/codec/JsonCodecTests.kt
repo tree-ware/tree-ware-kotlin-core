@@ -46,17 +46,17 @@ class JsonCodecTests {
     }
 
     @Test
-    fun `JSON codec person filter-branch round trip must be lossless`() {
-        testRoundTrip("model/address_book_filter_person_model.json")
+    fun `JSON codec empty root round trip must be lossless`() {
+        testRoundTrip("model/address_book_empty_root.json")
     }
 
     @Test
-    fun `JSON codec settings filter-branch round trip must be lossless`() {
-        testRoundTrip("model/address_book_filter_settings_model.json")
+    fun `JSON codec empty composition round trip must be lossless`() {
+        testRoundTrip("model/address_book_empty_composition.json")
     }
 
     @Test
-    fun `JSON codec filter-all round trip must be lossless`() {
-        testRoundTrip("model/address_book_filter_all_model.json")
+    fun `JSON codec empty list round trip must be lossless`() {
+        testRoundTrip("model/address_book_empty_list.json")
     }
 }

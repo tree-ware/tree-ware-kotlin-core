@@ -56,14 +56,9 @@ class ScalarValueModelStateMachine(
     }
 
     override fun decodeNullValue(): Boolean {
-        try {
-            val localValue = valueFactory()
-            value = localValue
-            return localValue.setNullValue()
-        } finally {
-            // Remove self from stack
-            stack.removeFirst()
-        }
+        value = null
+        stack.removeFirst()
+        return true
     }
 
     override fun decodeStringValue(value: String): Boolean {

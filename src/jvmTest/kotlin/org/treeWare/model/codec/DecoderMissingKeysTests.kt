@@ -8,7 +8,6 @@ import org.treeWare.model.testRoundTrip
 import org.treeWare.util.getFileReader
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class DecoderMissingKeysTests {
     @Test
@@ -42,7 +41,6 @@ class DecoderMissingKeysTests {
 
         val expectedDecodeErrors =
             listOf("Missing key fields [id] in instance of /address_book.main/address_book_relation")
-        assertNull(mainModel)
         assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     }
 }

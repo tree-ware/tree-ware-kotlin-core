@@ -14,7 +14,8 @@ class BaseEntityStateMachine(
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
-    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
+    private val multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory,
+    private val errorOnNull: String?
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
     private val auxStateMachinesMap = HashMap<String, LinkedHashMap<String, AuxDecodingStateMachine>>()
 
@@ -37,41 +38,7 @@ class BaseEntityStateMachine(
 
     override fun decodeObjectEnd(): Boolean {
         assertInDevMode(base != null)
-        // TODO(deepak-nulu): set aux when found rather than on the way out.
-        auxStateMachinesMap.forEach { (fieldName, auxStateMachines) ->
-            auxStateMachines.forEach { (auxName, auxStateMachine) ->
-                auxStateMachine.getAux()?.also {
-                    if (fieldName.isEmpty()) setAux(auxName, it)
-                    else base?.getField(fieldName)?.setAux(auxName, it)
-                }
-            }
-        }
-        // This state-machine instance gets reused in lists, so clear the map.
-        auxStateMachinesMap.clear()
-        return when (parentCollectionField?.elementType) {
-            ModelElementType.SET_FIELD -> base?.let {
-                try {
-                    if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
-                        val existing = parentCollectionField.getValueMatching(it)
-                        if (existing != null) {
-                            errors.add("Entity with duplicate keys: ${existing.getMetaResolved()?.fullName}: ${it.getKeyValues()}")
-                            return@let true
-                        }
-                    }
-                    parentCollectionField.addValue(it)
-                    true
-                } catch (e: MissingKeysException) {
-                    errors.add(e.message ?: "Missing keys")
-                    options.onMissingKeys == OnMissingKeys.SKIP_WITH_ERRORS
-                }
-            } ?: true
-            ModelElementType.LIST_FIELD -> true
-            else -> {
-                // Remove self from stack
-                stack.removeFirst()
-                true
-            }
-        }
+        return handleObjectEnd()
     }
 
     override fun decodeListStart(): Boolean {
@@ -130,6 +97,52 @@ class BaseEntityStateMachine(
             FieldType.ASSOCIATION -> handleAssociation(fieldMeta)
             FieldType.COMPOSITION -> handleComposition(fieldMeta)
             else -> handleScalar(fieldMeta)
+        }
+    }
+
+    override fun decodeNullValue(): Boolean {
+        if (errorOnNull != null) {
+            errors.add(errorOnNull)
+            return false
+        }
+        return handleObjectEnd()
+    }
+
+    private fun handleObjectEnd(): Boolean {
+        // TODO(deepak-nulu): set aux when found rather than on the way out.
+        auxStateMachinesMap.forEach { (fieldName, auxStateMachines) ->
+            auxStateMachines.forEach { (auxName, auxStateMachine) ->
+                auxStateMachine.getAux()?.also {
+                    if (fieldName.isEmpty()) setAux(auxName, it)
+                    else base?.getField(fieldName)?.setAux(auxName, it)
+                }
+            }
+        }
+        // This state-machine instance gets reused in lists, so clear the map.
+        auxStateMachinesMap.clear()
+        return when (parentCollectionField?.elementType) {
+            ModelElementType.SET_FIELD -> base?.let {
+                try {
+                    if (options.onDuplicateKeys == OnDuplicateKeys.SKIP_WITH_ERRORS) {
+                        val existing = parentCollectionField.getValueMatching(it)
+                        if (existing != null) {
+                            errors.add("Entity with duplicate keys: ${existing.getMetaResolved()?.fullName}: ${it.getKeyValues()}")
+                            return@let true
+                        }
+                    }
+                    parentCollectionField.addValue(it)
+                    true
+                } catch (e: MissingKeysException) {
+                    errors.add(e.message ?: "Missing keys")
+                    options.onMissingKeys == OnMissingKeys.SKIP_WITH_ERRORS
+                }
+            } ?: true
+            ModelElementType.LIST_FIELD -> true
+            else -> {
+                // Remove self from stack
+                stack.removeFirst()
+                true
+            }
         }
     }
 
@@ -241,7 +254,8 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                multiAuxDecodingStateMachineFactory
+                multiAuxDecodingStateMachineFactory,
+                null
             )
             addListElementStateMachineToStack(listFieldModel, listElementStateMachine, isWrappedElements = false)
         } else {
@@ -256,7 +270,8 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                multiAuxDecodingStateMachineFactory
+                multiAuxDecodingStateMachineFactory,
+                null
             )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -273,7 +288,8 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                multiAuxDecodingStateMachineFactory
+                multiAuxDecodingStateMachineFactory,
+                "Entities must not be null; use empty object {} instead"
             )
             addSetElementStateMachineToStack(setFieldModel, setElementStateMachine)
         } else {
@@ -288,7 +304,8 @@ class BaseEntityStateMachine(
                 stack,
                 options,
                 errors,
-                multiAuxDecodingStateMachineFactory
+                multiAuxDecodingStateMachineFactory,
+                "Entities must not be null; use empty object {} instead"
             )
             addElementStateMachineToStack(elementStateMachine)
         }
@@ -303,7 +320,7 @@ class BaseEntityStateMachine(
         val elementStateMachine =
             if (!isWrappedElements) listElementStateMachine
             else ValueAndAuxStateMachine(true, listElementStateMachine, stack, multiAuxDecodingStateMachineFactory)
-        val listStateMachine = CollectionFieldModelStateMachine(listFieldModel, elementStateMachine, stack)
+        val listStateMachine = CollectionFieldModelStateMachine(listFieldModel, elementStateMachine, stack, errors)
         stack.addFirst(listStateMachine)
     }
 
@@ -311,7 +328,7 @@ class BaseEntityStateMachine(
         setFieldModel: MutableSetFieldModel,
         setElementStateMachine: ValueDecodingStateMachine
     ) {
-        val setStateMachine = CollectionFieldModelStateMachine(setFieldModel, setElementStateMachine, stack)
+        val setStateMachine = CollectionFieldModelStateMachine(setFieldModel, setElementStateMachine, stack, errors)
         stack.addFirst(setStateMachine)
     }
 
