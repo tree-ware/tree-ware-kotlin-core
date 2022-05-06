@@ -44,7 +44,7 @@ fun newAddressBook(auxName: String): MainModel {
     setStringSingleField(clark, "hero_name", "Superman")
     val clarkRelations = getOrNewMutableSetField(clark, "relation")
     clarkRelations.setAux(auxName, "Aux for Clark's relation list")
-    addRelation(
+    val clarkRelationToLois = addRelation(
         clarkRelations,
         "05ade278-4b44-43da-a0cc-14463854e397",
         "colleague",
@@ -54,6 +54,8 @@ fun newAddressBook(auxName: String): MainModel {
         "Some aux for relationship field",
         "Aux for association to Clark's colleague Lois"
     )
+    clarkRelations.addValue(clarkRelationToLois)
+
     setGroup(clark, auxName, "Aux for Clark's group", "DC", "Superman")
     persons.addValue(clark)
 
@@ -62,7 +64,7 @@ fun newAddressBook(auxName: String): MainModel {
     setStringSingleField(lois, "first_name", "Lois")
     setStringSingleField(lois, "last_name", "Lane")
     val loisRelations = getOrNewMutableSetField(lois, "relation")
-    addRelation(
+    val loisRelationToClark = addRelation(
         loisRelations,
         "16634916-8f83-4376-ad42-37038e108a0b",
         "colleague",
@@ -72,6 +74,7 @@ fun newAddressBook(auxName: String): MainModel {
         null,
         "Aux for association to Lois' colleague Clark"
     )
+    loisRelations.addValue(loisRelationToClark)
     setGroup(lois, auxName, "Aux for Lois' group", "DC", "Superman")
     persons.addValue(lois)
 
@@ -117,7 +120,7 @@ fun newAddressBook(auxName: String): MainModel {
 
     val princetonCityInfo = getNewMutableSetEntity(cityInfoSet)
     setStringSingleField(princetonCityInfo, "info", "Home of Princeton University")
-    val princetonRelated = getOrNewMutableListField(princetonCityInfo, "related_city_info")
+    getOrNewMutableListField(princetonCityInfo, "related_city_info")
     addCity(princetonCityInfo, "Princeton", "New Jersey", "United States of America")
     cityInfoSet.addValue(princetonCityInfo)
 
@@ -129,28 +132,30 @@ fun newAddressBook(auxName: String): MainModel {
     return main
 }
 
-private fun addRelation(
+fun addRelation(
     relations: MutableSetFieldModel,
     relationId: String,
     relationship: String,
-    personId: String,
+    personId: String?,
     auxName: String,
     relationAux: String? = null,
     relationshipAux: String? = null,
     personAux: String? = null
-) {
+): MutableEntityModel {
     val relation = getNewMutableSetEntity(relations)
     relationAux?.also { relation.setAux(auxName, it) }
     setUuidSingleField(relation, "id", relationId)
     val relationshipField = setEnumerationSingleField(relation, "relationship", relationship)
     relationshipAux?.also { relationshipField.setAux(auxName, it) }
-    val association = getOrNewMutableSingleAssociation(relation, "person")
-    personAux?.also { association.setAux(auxName, it) }
-    val associationPersons = getOrNewMutableSetField(association.value, "person")
-    val associationPersonsPerson = getNewMutableSetEntity(associationPersons)
-    setUuidSingleField(associationPersonsPerson, "id", personId)
-    associationPersons.addValue(associationPersonsPerson)
-    relations.addValue(relation)
+    personId?.also {
+        val association = getOrNewMutableSingleAssociation(relation, "person")
+        personAux?.also { association.setAux(auxName, it) }
+        val associationPersons = getOrNewMutableSetField(association.value, "person")
+        val associationPersonsPerson = getNewMutableSetEntity(associationPersons)
+        setUuidSingleField(associationPersonsPerson, "id", personId)
+        associationPersons.addValue(associationPersonsPerson)
+    }
+    return relation
 }
 
 fun setGroup(person: MutableEntityModel, auxName: String, aux: String?, vararg groupNames: String) {
@@ -167,14 +172,14 @@ fun setGroup(person: MutableEntityModel, auxName: String, aux: String?, vararg g
     }
 }
 
-private fun addCity(parentEntity: MutableEntityModel, name: String, state: String, country: String) {
+fun addCity(parentEntity: MutableEntityModel, name: String, state: String, country: String) {
     val city = getOrNewMutableSingleEntity(parentEntity, "city")
     setStringSingleField(city, "name", name)
     setStringSingleField(city, "state", state)
     setStringSingleField(city, "country", country)
 }
 
-private fun addRelatedCity(
+fun addRelatedCity(
     relatedList: MutableListFieldModel,
     name: String,
     state: String,

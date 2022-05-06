@@ -402,6 +402,18 @@ class MutableEnumerationModel(
         return true
     }
 
+    fun setNumber(number: UInt): Boolean {
+        val fieldMeta: EntityModel = requireNotNull(parent.meta) { "Enumeration meta is missing " }
+        val resolvedEnumeration = getMetaModelResolved(fieldMeta)?.enumerationMeta
+            ?: throw IllegalStateException("Enumeration has not been resolved")
+        val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, number)
+        this.meta = enumerationValueMeta
+        if (enumerationValueMeta == null) return false
+        this.value = getMetaName(enumerationValueMeta)
+        this.number = number
+        return true
+    }
+
     fun copyValueFrom(that: EnumerationModel) {
         this.meta = that.meta
         this.value = that.value
