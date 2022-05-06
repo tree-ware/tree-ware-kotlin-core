@@ -23,6 +23,12 @@ fun getEnumerationValueMeta(enumerationMeta: EntityModel, name: String): EntityM
     } as? EntityModel
 }
 
+fun getEnumerationValueMeta(enumerationMeta: EntityModel, number: UInt): EntityModel? {
+    return getEnumerationValuesMeta(enumerationMeta).values.find { valueMeta ->
+        if (valueMeta !is EntityModel) false else getMetaNumber(valueMeta) == number
+    } as? EntityModel
+}
+
 fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
 

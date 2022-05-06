@@ -1,0 +1,47 @@
+{
+  "address_book": {
+    "person": [
+      {
+        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+        "first_name": null,
+        "last_name": null,
+        "hero_name": null,
+        "relation": [
+          {
+            "id": "05ade278-4b44-43da-a0cc-14463854e397",
+            "relationship": null,
+            "person": null
+          },
+          {
+            "id": "3c71ede8-8ded-4038-b6e9-dcc4a0f3a8ce",
+            "relationship": null
+          }
+        ]
+      },
+      {
+        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+        "first_name": null,
+        "last_name": null
+      }
+    ],
+    "city_info": [
+      {
+        "city": {
+          "name": "New York City",
+          "state": "New York",
+          "country": "United States of America"
+        },
+        "info": null,
+        "related_city_info": []
+      },
+      {
+        "city": {
+          "name": "Albany",
+          "state": "New York",
+          "country": "United States of America"
+        },
+        "info": null
+      }
+    ]
+  }
+}

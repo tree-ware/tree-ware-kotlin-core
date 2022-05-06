@@ -132,9 +132,12 @@ private class CopyVisitor(
     // Helpers
 
     private fun visitField(leaderField1: FieldModel): TraversalAction {
-        val leaderFieldName = getFieldName(leaderField1)
-        val copyParent = modelStack.first() as MutableBaseEntityModel
-        val copyField = copyParent.getOrNewField(leaderFieldName)
+        val copyField = if (modelStack.isEmpty()) to
+        else {
+            val leaderFieldName = getFieldName(leaderField1)
+            val copyParent = modelStack.first() as MutableBaseEntityModel
+            copyParent.getOrNewField(leaderFieldName)
+        }
         modelStack.addFirst(copyField)
         return TraversalAction.CONTINUE
     }
