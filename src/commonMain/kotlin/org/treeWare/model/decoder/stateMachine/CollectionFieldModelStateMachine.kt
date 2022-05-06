@@ -6,7 +6,8 @@ import org.treeWare.util.assertInDevMode
 class CollectionFieldModelStateMachine(
     private val collectionFieldModel: MutableFieldModel,
     private val listElementStateMachine: DecodingStateMachine,
-    private val stack: DecodingStack
+    private val stack: DecodingStack,
+    private val errors: MutableList<String>
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
     override fun setAux(auxName: String, aux: Any?) {
         if (aux == null) return
@@ -34,5 +35,12 @@ class CollectionFieldModelStateMachine(
         // Remove self from stack
         stack.removeFirst()
         return true
+    }
+
+    override fun decodeNullValue(): Boolean {
+        errors.add("Lists must not be null; use empty array [] instead")
+        // Remove self from stack
+        stack.removeFirst()
+        return false
     }
 }

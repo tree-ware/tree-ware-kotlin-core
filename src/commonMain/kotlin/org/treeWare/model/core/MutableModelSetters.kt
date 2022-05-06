@@ -29,14 +29,14 @@ fun setStringSingleField(
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
-    primitive.value = value
+    primitive.setValue(value)
     return field
 }
 
 fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: String) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
-    primitive.value = value
+    primitive.setValue(value)
 }
 
 fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Long) {
@@ -48,7 +48,7 @@ fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: Stri
 fun setBooleanSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Boolean) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
-    primitive.value = value
+    primitive.setValue(value)
 }
 
 fun setEnumerationSingleField(

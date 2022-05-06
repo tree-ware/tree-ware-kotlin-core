@@ -1,6 +1,5 @@
 package org.treeWare.model.decoder
 
-import org.lighthousegames.logging.logging
 import org.treeWare.model.decoder.stateMachine.DecodingStateMachine
 import java.io.Reader
 import javax.json.Json
@@ -8,7 +7,10 @@ import javax.json.stream.JsonParser
 
 // TODO(deepak-nulu): move this into commonMain with an expect-ed enum and interface for the JSON parser
 class JsonWireFormatDecoder : WireFormatDecoder {
-    override fun decode(reader: Reader, decodingStateMachine: DecodingStateMachine): Boolean {
+    /**
+     * @return an error message if there is an error.
+     */
+    override fun decode(reader: Reader, decodingStateMachine: DecodingStateMachine): String? {
         val parser: JsonParser = Json.createParser(reader)
         var success = true
         while (parser.hasNext() && success) {
@@ -26,9 +28,6 @@ class JsonWireFormatDecoder : WireFormatDecoder {
                 JsonParser.Event.END_ARRAY -> decodingStateMachine.decodeListEnd()
             }
         }
-        if (!success) logger.debug { "JSON decoding failed at: ${parser.location}" }
-        return success
+        return if (success) null else "JSON decoding failed at: ${parser.location}"
     }
-
-    private val logger = logging()
 }

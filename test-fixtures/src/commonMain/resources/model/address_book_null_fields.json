@@ -1,0 +1,29 @@
+{
+  "address_book": {
+    "name": null,
+    "settings": {
+      "last_name_first": null
+    },
+    "person": [
+      {
+        "id": null,
+        "relation": [
+          {
+            "id": null,
+            "relationship": null,
+            "person": null
+          }
+        ]
+      }
+    ],
+    "city_info": [
+      {
+        "city": {
+          "name": null,
+          "state": null,
+          "country": null
+        }
+      }
+    ]
+  }
+}

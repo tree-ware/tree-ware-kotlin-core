@@ -76,7 +76,8 @@ class MainModelStateMachine(
                 stack,
                 options,
                 errors,
-                multiAuxDecodingStateMachineFactory
+                multiAuxDecodingStateMachineFactory,
+                "Root entities must not be null; use empty object {} instead"
             )
         )
         return true
