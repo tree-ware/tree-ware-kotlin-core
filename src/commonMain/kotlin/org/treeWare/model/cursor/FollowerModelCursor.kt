@@ -5,9 +5,11 @@ import org.treeWare.model.core.*
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.dispatchVisit
 
-class FollowerModelCursor(private val initial: ElementModel) {
+typealias EntityEquals = (leaderEntity: BaseEntityModel, followerEntity: BaseEntityModel) -> Boolean
+
+class FollowerModelCursor(private val initial: ElementModel, followerEntityEquals: EntityEquals? = null) {
     private val stateStack = FollowerStateStack()
-    private val stateFactoryVisitor = FollowerStateFactoryVisitor(stateStack)
+    private val stateFactoryVisitor = FollowerStateFactoryVisitor(stateStack, followerEntityEquals)
     private var isAtStart = true
 
     val element: ElementModel? get() = stateStack.firstOrNull()?.element
@@ -45,8 +47,8 @@ private abstract class FollowerState(
     }
 }
 
-private val visitNullCursorMover = FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
-private val leaveNullCursorMover = FollowerModelCursorMove(CursorMoveDirection.LEAVE, null)
+private val visitNullCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
+private val leaveNullCursorMove = FollowerModelCursorMove(CursorMoveDirection.LEAVE, null)
 
 private class NullFollowerState(
     override val visitCursorMove: FollowerModelCursorMove,
@@ -55,10 +57,10 @@ private class NullFollowerState(
     override fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove =
         if (move.direction == CursorMoveDirection.VISIT) {
             stateStack.addFirst(this)
-            visitNullCursorMover
+            visitNullCursorMove
         } else {
             stateStack.removeFirst()
-            leaveNullCursorMover
+            leaveNullCursorMove
         }
 }
 
@@ -201,7 +203,8 @@ private class ListFieldFollowerState(
 private class SetFieldFollowerState(
     private val field: SetFieldModel,
     stack: FollowerStateStack,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor
+    private val stateFactoryVisitor: FollowerStateFactoryVisitor,
+    private val followerEntityEquals: EntityEquals?
 ) : FollowerState(field, stack) {
     override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
 
@@ -214,9 +217,11 @@ private class SetFieldFollowerState(
             else -> super.follow(move)
         }
         CursorMoveDirection.VISIT -> {
-            val leaderValue = move.element
             // Follow set elements by matching.
-            val followerValue: ElementModel? = field.getValueMatching(leaderValue)
+            val leaderValue = move.element as BaseEntityModel
+            val followerValue: ElementModel? =
+                if (followerEntityEquals != null) getEntityMatching(leaderValue, field, followerEntityEquals)
+                else field.getValueMatching(leaderValue)
             val elementState = if (followerValue == null) NullFollowerState(
                 FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
                 stateStack
@@ -227,6 +232,14 @@ private class SetFieldFollowerState(
         }
     }
 }
+
+private fun getEntityMatching(
+    leaderEntity: BaseEntityModel,
+    followerSetField: SetFieldModel,
+    followerEntityEquals: EntityEquals
+): BaseEntityModel? = followerSetField.values.find {
+    followerEntityEquals(leaderEntity, it as BaseEntityModel)
+} as BaseEntityModel?
 
 // Values
 
@@ -284,7 +297,8 @@ private class AssociationFollowerState(
 // State factory visitor
 
 private class FollowerStateFactoryVisitor(
-    private val stateStack: FollowerStateStack
+    private val stateStack: FollowerStateStack,
+    private val followerEntityEquals: EntityEquals?
 ) : AbstractLeader1ModelVisitor<FollowerState?>(null) {
     override fun visitMain(leaderMain1: MainModel) = MainFollowerState(leaderMain1, stateStack, this)
     override fun visitEntity(leaderEntity1: EntityModel) = EntityFollowerState(leaderEntity1, stateStack, this)
@@ -298,7 +312,7 @@ private class FollowerStateFactoryVisitor(
         ListFieldFollowerState(leaderField1, stateStack, this)
 
     override fun visitSetField(leaderField1: SetFieldModel) =
-        SetFieldFollowerState(leaderField1, stateStack, this)
+        SetFieldFollowerState(leaderField1, stateStack, this, followerEntityEquals)
 
     // Values
 
