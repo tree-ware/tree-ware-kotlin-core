@@ -41,7 +41,7 @@ private class CopyVisitor(
         val copyEntity = modelStack.removeFirst() as MutableEntityModel
         // NOTE: entities should be added to set-fields only after the entity
         // has key fields.
-        val copyParent = modelStack.first()
+        val copyParent = modelStack.firstOrNull() ?: return
         if (copyParent.elementType == ModelElementType.SET_FIELD) (copyParent as MutableSetFieldModel).addValue(
             copyEntity
         )
