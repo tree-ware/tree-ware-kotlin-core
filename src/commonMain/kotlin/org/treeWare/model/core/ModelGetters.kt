@@ -85,8 +85,25 @@ fun isKeyField(fieldModel: FieldModel): Boolean =
 fun isListField(fieldModel: FieldModel): Boolean =
     fieldModel.meta?.let { isListFieldMeta(it) } ?: throw IllegalStateException()
 
+fun isSetField(fieldModel: FieldModel): Boolean =
+    fieldModel.meta?.let { isSetFieldMeta(it) } ?: throw IllegalStateException()
+
 fun isCompositionField(fieldModel: FieldModel): Boolean =
     fieldModel.meta?.let { isCompositionFieldMeta(it) } ?: throw IllegalStateException()
 
 fun isAssociationField(fieldModel: FieldModel): Boolean =
     fieldModel.meta?.let { isAssociationFieldMeta(it) } ?: throw IllegalStateException()
+
+fun getAssociationTargetEntityMeta(fieldModel: FieldModel): EntityModel {
+    if (!isAssociationField(fieldModel)) throw IllegalArgumentException("Not an association field")
+    val fieldMeta = requireNotNull(fieldModel.meta) { "Field meta is missing" }
+    return getMetaModelResolved(fieldMeta)?.associationMeta?.targetEntityMeta
+        ?: throw IllegalStateException("Association meta-model is not resolved")
+}
+
+fun getCompositionEntityMeta(fieldModel: FieldModel): EntityModel {
+    if (!isCompositionField(fieldModel)) throw IllegalArgumentException("Not a composition field")
+    val fieldMeta = requireNotNull(fieldModel.meta) { "Field meta is missing" }
+    val fieldResolved = requireNotNull(getMetaModelResolved(fieldMeta)) { "Field is not resolved" }
+    return requireNotNull(fieldResolved.compositionMeta) { "Field composition is not resolved" }
+}
