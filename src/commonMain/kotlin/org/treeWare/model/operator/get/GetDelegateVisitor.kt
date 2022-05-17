@@ -46,14 +46,19 @@ class GetDelegateVisitor(
             isCompositionField(it)
         }
         val responseParentField = leaderField1 as MutableSingleFieldModel
-        val fetchedEntity = getDelegate.fetchComposition(
+        val fetchResult = getDelegate.fetchComposition(
             if (entityPathStack.isEmpty()) "/" else entityPathStack.peekEntityPath(),
             entityPathStack.ancestorKeys(),
             requestFields,
             responseParentField
         )
-        fetchedEntity?.also { createResponseCompositionFields(requestCompositionFields, it) }
-        return TraversalAction.CONTINUE
+        when (fetchResult) {
+            is FetchCompositionResult.Entity ->
+                createResponseCompositionFields(requestCompositionFields, fetchResult.entity)
+            is FetchCompositionResult.ErrorList ->
+                errors.addAll(fetchResult.errorList)
+        }
+        return if (errors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
     }
 
     override fun visitSetField(leaderField1: SetFieldModel, followerField1: SetFieldModel?): TraversalAction {
@@ -67,19 +72,22 @@ class GetDelegateVisitor(
             val requestKeys = requestCompositionEntity.getKeyFields().available
             val requestOther = requestFields.filter { !isKeyField(it) }
             val responseParentField = leaderField1 as MutableSetFieldModel
-            val fetchedEntities = getDelegate.fetchCompositionSet(
+            val fetchResult = getDelegate.fetchCompositionSet(
                 entityPathStack.peekEntityPath(),
                 entityPathStack.ancestorKeys(),
                 requestKeys,
                 requestOther,
                 responseParentField
             )
-            fetchedEntities.forEach {
-                createResponseCompositionFields(requestCompositionFields, it)
-                mergeAddToSet(it, responseParentField)
+            when (fetchResult) {
+                is FetchCompositionSetResult.Entities -> fetchResult.entities.forEach {
+                    createResponseCompositionFields(requestCompositionFields, it)
+                    mergeAddToSet(it, responseParentField)
+                }
+                is FetchCompositionSetResult.ErrorList -> errors.addAll(fetchResult.errorList)
             }
         }
-        return TraversalAction.CONTINUE
+        return if (errors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
     }
 }
 
