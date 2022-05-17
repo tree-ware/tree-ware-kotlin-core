@@ -8,6 +8,8 @@ import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
+import org.treeWare.model.operator.get.FetchCompositionResult
+import org.treeWare.model.operator.get.FetchCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +33,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
-            addressBook
+            FetchCompositionResult.Entity(addressBook)
         }
         every {
             delegate.fetchCompositionSet(
@@ -53,7 +55,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
             setStringSingleField(person, "last_name", "Kent")
             setStringSingleField(person, "hero_name", "Superman")
 
-            listOf(person)
+            FetchCompositionSetResult.Entities(listOf(person))
         }
         every {
             delegate.fetchCompositionSet(
@@ -74,7 +76,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
             setStringSingleField(person, "first_name", "Lois")
             setStringSingleField(person, "last_name", "Lane")
 
-            listOf(person)
+            FetchCompositionSetResult.Entities(listOf(person))
         }
         every {
             delegate.fetchCompositionSet(
@@ -97,7 +99,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 "a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ""
             )
-            listOf(clarkRelationToLois)
+            FetchCompositionSetResult.Entities(listOf(clarkRelationToLois))
         }
         every {
             delegate.fetchCompositionSet(
@@ -120,7 +122,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 null,
                 ""
             )
-            listOf(clarkRelationToJimmy)
+            FetchCompositionSetResult.Entities(listOf(clarkRelationToJimmy))
         }
         every {
             delegate.fetchCompositionSet(
@@ -156,7 +158,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 ""
             )
 
-            listOf(newYork)
+            FetchCompositionSetResult.Entities(listOf(newYork))
         }
         every {
             delegate.fetchCompositionSet(
@@ -180,7 +182,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
             addCity(albany, name, state, country)
             setStringSingleField(albany, "info", "Capital of New York state")
 
-            listOf(albany)
+            FetchCompositionSetResult.Entities(listOf(albany))
         }
 
         val response = get(request, delegate, null)

@@ -30,7 +30,6 @@ fun encodeJson(
     val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, multiAuxEncoder, encodePasswords)
     wireFormatEncoder.encodeListStart(null)
     elements.forEach { element ->
-        println("#### encodeJson() list element: $element")
         val action = forEach(element, encodingVisitor, true)
         if (action == TraversalAction.ABORT_TREE) return false
     }

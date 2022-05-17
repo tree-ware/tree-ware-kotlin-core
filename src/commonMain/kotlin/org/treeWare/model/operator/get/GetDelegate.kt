@@ -1,6 +1,17 @@
 package org.treeWare.model.operator.get
 
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.ElementModelError
+
+sealed class FetchCompositionResult {
+    data class Entity(val entity: MutableEntityModel) : FetchCompositionResult()
+    data class ErrorList(val errorList: List<ElementModelError>) : FetchCompositionResult()
+}
+
+sealed class FetchCompositionSetResult {
+    data class Entities(val entities: List<MutableEntityModel>) : FetchCompositionSetResult()
+    data class ErrorList(val errorList: List<ElementModelError>) : FetchCompositionSetResult()
+}
 
 interface GetDelegate {
     fun fetchComposition(
@@ -8,7 +19,7 @@ interface GetDelegate {
         ancestorKeys: List<Keys>,
         requestFields: List<FieldModel>,
         responseParentField: MutableSingleFieldModel
-    ): MutableEntityModel?
+    ): FetchCompositionResult
 
     fun fetchCompositionSet(
         parentEntityPath: String,
@@ -16,5 +27,5 @@ interface GetDelegate {
         requestKeys: List<SingleFieldModel>,
         requestFields: List<FieldModel>,
         responseParentField: MutableSetFieldModel
-    ): List<MutableEntityModel>
+    ): FetchCompositionSetResult
 }

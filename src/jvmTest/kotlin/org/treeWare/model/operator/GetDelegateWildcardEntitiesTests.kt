@@ -8,6 +8,8 @@ import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
+import org.treeWare.model.operator.get.FetchCompositionResult
+import org.treeWare.model.operator.get.FetchCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -29,7 +31,7 @@ class GetDelegateWildcardEntitiesTests {
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
             setStringSingleField(addressBook, "name", "Super Heroes")
             setTimestampSingleField(addressBook, "last_updated", 1587147731L)
-            addressBook
+            FetchCompositionResult.Entity(addressBook)
         }
         every {
             delegate.fetchComposition(
@@ -44,7 +46,7 @@ class GetDelegateWildcardEntitiesTests {
             setBooleanSingleField(settings, "last_name_first", true)
             val cardColors = getOrNewMutableListField(settings, "card_colors")
             addEnumerationListFieldElement(cardColors, "orange")
-            settings
+            FetchCompositionResult.Entity(settings)
         }
         every {
             delegate.fetchCompositionSet(
@@ -70,7 +72,7 @@ class GetDelegateWildcardEntitiesTests {
             setStringSingleField(lois, "last_name", "Lane")
             setStringSingleField(lois, "picture", "UGljdHVyZSBvZiBMb2lzIExhbmU=")
 
-            listOf(clark, lois)
+            FetchCompositionSetResult.Entities(listOf(clark, lois))
         }
         every {
             delegate.fetchCompositionSet(
@@ -89,7 +91,7 @@ class GetDelegateWildcardEntitiesTests {
                 "a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ""
             )
-            listOf(clarkRelationToLois)
+            FetchCompositionSetResult.Entities(listOf(clarkRelationToLois))
         }
         every {
             delegate.fetchCompositionSet(
@@ -108,7 +110,7 @@ class GetDelegateWildcardEntitiesTests {
                 "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ""
             )
-            listOf(loisRelationToClark)
+            FetchCompositionSetResult.Entities(listOf(loisRelationToClark))
         }
         every {
             delegate.fetchCompositionSet(
@@ -143,7 +145,7 @@ class GetDelegateWildcardEntitiesTests {
             val albanyRelated = getOrNewMutableListField(albany, "related_city_info")
             addRelatedCity(albanyRelated, "New York City", "New York", "United States of America", "")
 
-            listOf(newYork, albany)
+            FetchCompositionSetResult.Entities(listOf(newYork, albany))
         }
 
         val response = get(request, delegate, null)

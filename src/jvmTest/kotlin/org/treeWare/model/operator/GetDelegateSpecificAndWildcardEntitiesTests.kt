@@ -8,6 +8,8 @@ import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
+import org.treeWare.model.operator.get.FetchCompositionResult
+import org.treeWare.model.operator.get.FetchCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +35,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
             setStringSingleField(addressBook, "name", "Super Heroes")
             setTimestampSingleField(addressBook, "last_updated", 1587147731L)
-            addressBook
+            FetchCompositionResult.Entity(addressBook)
         }
         every {
             delegate.fetchComposition(
@@ -48,7 +50,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setBooleanSingleField(settings, "last_name_first", true)
             val cardColors = getOrNewMutableListField(settings, "card_colors")
             addEnumerationListFieldElement(cardColors, "orange")
-            settings
+            FetchCompositionResult.Entity(settings)
         }
         every {
             delegate.fetchCompositionSet(
@@ -70,7 +72,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setStringSingleField(person, "last_name", "Kent")
             setStringSingleField(person, "hero_name", "Superman")
 
-            listOf(person)
+            FetchCompositionSetResult.Entities(listOf(person))
         }
         every {
             delegate.fetchCompositionSet(
@@ -91,7 +93,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setStringSingleField(person, "first_name", "Lois")
             setStringSingleField(person, "last_name", "Lane")
 
-            listOf(person)
+            FetchCompositionSetResult.Entities(listOf(person))
         }
         every {
             delegate.fetchCompositionSet(
@@ -108,7 +110,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setUuidSingleField(person, "id", "ec983c56-320f-4d66-9dde-f180e8ac3807")
             setStringSingleField(person, "last_name", "Olsen")
 
-            listOf(person)
+            FetchCompositionSetResult.Entities(listOf(person))
         }
         every {
             delegate.fetchCompositionSet(
@@ -131,7 +133,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 null,
                 ""
             )
-            listOf(clarkRelationToLois)
+            FetchCompositionSetResult.Entities(listOf(clarkRelationToLois))
         }
         every {
             delegate.fetchCompositionSet(
@@ -151,7 +153,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 "ec983c56-320f-4d66-9dde-f180e8ac3807",
                 ""
             )
-            listOf(clarkRelationToJimmy)
+            FetchCompositionSetResult.Entities(listOf(clarkRelationToJimmy))
         }
         every {
             delegate.fetchCompositionSet(
@@ -187,7 +189,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 ""
             )
 
-            listOf(newYork)
+            FetchCompositionSetResult.Entities(listOf(newYork))
         }
         every {
             delegate.fetchCompositionSet(
@@ -211,7 +213,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             addCity(albany, name, state, country)
             setStringSingleField(albany, "info", "Capital of New York state")
 
-            listOf(albany)
+            FetchCompositionSetResult.Entities(listOf(albany))
         }
         every {
             delegate.fetchCompositionSet(
@@ -230,7 +232,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             val sanFrancisco = getNewMutableSetEntity(cityInfo)
             addCity(sanFrancisco, "San Francisco", "California", "United States of America")
 
-            listOf(princeton, sanFrancisco)
+            FetchCompositionSetResult.Entities(listOf(princeton, sanFrancisco))
         }
 
         val response = get(request, delegate, null)
