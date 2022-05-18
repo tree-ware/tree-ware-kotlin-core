@@ -26,7 +26,7 @@ class GetDelegateSingleSpecificEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.fetchComposition("/", ofType(), fieldsWithNames(), ofType())
+            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames(), ofType())
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
@@ -34,7 +34,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
@@ -56,7 +56,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -79,7 +79,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),
@@ -116,23 +116,23 @@ class GetDelegateSingleSpecificEntitiesTests {
 
         val response = get(request, delegate, null)
         verifySequence {
-            delegate.fetchComposition("/", ofType(), fieldsWithNames(), ofType())
+            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames(), ofType())
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
                 ofType()
             )
             delegate.fetchCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),

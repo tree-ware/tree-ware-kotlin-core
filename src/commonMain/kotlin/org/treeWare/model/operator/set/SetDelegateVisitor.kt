@@ -4,7 +4,7 @@ import org.treeWare.metaModel.FieldType
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.EntityDelegateRegistry
-import org.treeWare.model.operator.EntityPathStack
+import org.treeWare.model.operator.ModelPathStack
 import org.treeWare.model.operator.SetEntityDelegate
 import org.treeWare.model.operator.set.aux.SetAuxStack
 import org.treeWare.model.operator.set.aux.getSetAux
@@ -19,48 +19,54 @@ class SetDelegateVisitor(
 ) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val errors = mutableListOf<ElementModelError>()
 
-    private val entityPathStack = EntityPathStack()
+    private val modelPathStack = ModelPathStack()
     private val setAuxStack = SetAuxStack()
 
     override fun visitMain(leaderMain1: MainModel): TraversalAction {
+        modelPathStack.pushField(leaderMain1)
         val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
         assertInDevMode(setAuxError == null)
         return TraversalAction.CONTINUE
     }
 
     override fun leaveMain(leaderMain1: MainModel) {
+        modelPathStack.popField()
         setAuxStack.pop()
-        assertInDevMode(entityPathStack.isEmpty())
+        assertInDevMode(modelPathStack.isEmpty())
         assertInDevMode(setAuxStack.isEmpty())
     }
 
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         if (isCompositionKey(leaderEntity1)) {
-            entityPathStack.push(null)
+            modelPathStack.pushEntity(null)
             setAuxStack.push(null)
             return TraversalAction.ABORT_SUB_TREE
         }
         val entityFullName = getMetaModelFullName(leaderEntity1)
         val entityDelegate = entityDelegates?.get(entityFullName)
         if (entityDelegate?.isSingleValue() == true) {
-            entityPathStack.push(null)
+            modelPathStack.pushEntity(null)
             setAuxStack.push(null)
             return TraversalAction.ABORT_SUB_TREE
         }
 
+        // The field path and entity path are both needed.
+        val fieldPath = modelPathStack.peekModelPath()
+        modelPathStack.pushEntity(leaderEntity1)
+        val entityPath = modelPathStack.peekModelPath()
+
         val setAuxError = setAuxStack.push(getSetAux(leaderEntity1))
         assertInDevMode(setAuxError == null)
-        entityPathStack.push(leaderEntity1)
-
         val activeSetAux = setAuxStack.peekActive() ?: return TraversalAction.CONTINUE
-        val entityPath = entityPathStack.peekEntityPath()
-        val keys = entityPathStack.peekKeys()
+
+        val keys = modelPathStack.peekKeys()
         val (associations, other) = getNonKeys(leaderEntity1)
         val delegateErrors = setDelegate.setEntity(
             activeSetAux,
             leaderEntity1,
+            fieldPath,
             entityPath,
-            entityPathStack.ancestorKeys(),
+            modelPathStack.ancestorKeys(),
             keys.available,
             associations,
             other
@@ -70,11 +76,12 @@ class SetDelegateVisitor(
     }
 
     override fun leaveEntity(leaderEntity1: EntityModel) {
-        entityPathStack.pop()
+        modelPathStack.popEntity()
         setAuxStack.pop()
     }
 
     override fun visitSingleField(leaderField1: SingleFieldModel): TraversalAction {
+        modelPathStack.pushField(leaderField1)
         if (isCompositionField(leaderField1)) {
             val setAuxError = setAuxStack.push(getSetAux(leaderField1))
             assertInDevMode(setAuxError == null)
@@ -83,16 +90,19 @@ class SetDelegateVisitor(
     }
 
     override fun leaveSingleField(leaderField1: SingleFieldModel) {
+        modelPathStack.popField()
         if (isCompositionField(leaderField1)) setAuxStack.pop()
     }
 
     override fun visitSetField(leaderField1: SetFieldModel): TraversalAction {
+        modelPathStack.pushField(leaderField1)
         val setAuxError = setAuxStack.push(getSetAux(leaderField1))
         assertInDevMode(setAuxError == null)
         return TraversalAction.CONTINUE
     }
 
     override fun leaveSetField(leaderField1: SetFieldModel) {
+        modelPathStack.popField()
         setAuxStack.pop()
     }
 

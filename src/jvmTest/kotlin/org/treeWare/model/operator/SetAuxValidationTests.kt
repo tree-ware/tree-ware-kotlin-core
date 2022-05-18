@@ -219,6 +219,7 @@ class SetAuxValidationTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()

@@ -72,6 +72,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()
@@ -86,6 +87,7 @@ class SetDelegateTests {
                 SetAux.UPDATE,
                 ofType(),
                 "/address_book",
+                "/address_book",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -95,6 +97,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/settings",
+                "/address_book/settings",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -103,6 +106,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -112,6 +116,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.DELETE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -175,6 +180,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()
@@ -189,6 +195,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/settings",
+                "/address_book/settings",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -197,6 +204,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -206,6 +214,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.DELETE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[2260d15f-2cc0-4b04-83fb-c950c18a6629]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -270,6 +279,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()
@@ -284,6 +294,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/settings",
+                "/address_book/settings",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -292,6 +303,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -302,6 +314,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.UPDATE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -311,6 +324,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.DELETE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[2260d15f-2cc0-4b04-83fb-c950c18a6629]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -322,7 +336,7 @@ class SetDelegateTests {
     }
 
     @Test
-    fun `set() must escape key values in entity paths`() {
+    fun `set() must escape key values in field paths`() {
         val modelJson = """
             |{
             |  "address_book__set_": "create",
@@ -338,7 +352,20 @@ class SetDelegateTests {
             |        ]
             |      },
             |      {
-            |        "name": "Group/1\\"
+            |        "name": "Group/1\\",
+            |        "sub_groups": [
+            |          {
+            |            "name": "Group/1\\/1"
+            |          }
+            |        ]
+            |      },
+            |      {
+            |        "name": "Group[2,1]",
+            |        "sub_groups": [
+            |          {
+            |            "name": "Group[2,2]"
+            |          }
+            |        ]
             |      }
             |    ]
             |  }
@@ -351,6 +378,7 @@ class SetDelegateTests {
         every { delegate.begin() } returns emptyList()
         every {
             delegate.setEntity(
+                ofType(),
                 ofType(),
                 ofType(),
                 ofType(),
@@ -371,6 +399,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book",
+                "/address_book",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -379,6 +408,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/groups",
                 "/address_book/groups[Group\\[0\\]]",
                 ofType(),
                 fieldsWithNames("name"),
@@ -388,6 +418,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/groups[Group\\[0\\]]/sub_groups",
                 "/address_book/groups[Group\\[0\\]]/sub_groups[Group\\[0\\,1\\]]",
                 ofType(),
                 fieldsWithNames("name"),
@@ -397,7 +428,38 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/groups",
                 "/address_book/groups[Group\\/1\\\\]",
+                ofType(),
+                fieldsWithNames("name"),
+                fieldsWithNames(),
+                fieldsWithNames()
+            )
+            delegate.setEntity(
+                SetAux.CREATE,
+                ofType(),
+                "/address_book/groups[Group\\/1\\\\]/sub_groups",
+                "/address_book/groups[Group\\/1\\\\]/sub_groups[Group\\/1\\\\\\/1]",
+                ofType(),
+                fieldsWithNames("name"),
+                fieldsWithNames(),
+                fieldsWithNames()
+            )
+            delegate.setEntity(
+                SetAux.CREATE,
+                ofType(),
+                "/address_book/groups",
+                "/address_book/groups[Group\\[2\\,1\\]]",
+                ofType(),
+                fieldsWithNames("name"),
+                fieldsWithNames(),
+                fieldsWithNames()
+            )
+            delegate.setEntity(
+                SetAux.CREATE,
+                ofType(),
+                "/address_book/groups[Group\\[2\\,1\\]]/sub_groups",
+                "/address_book/groups[Group\\[2\\,1\\]]/sub_groups[Group\\[2\\,2\\]]",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),
@@ -440,6 +502,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()
@@ -454,6 +517,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book",
+                "/address_book",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -462,6 +526,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/city_info",
                 "/address_book/city_info[New York City,New York,United States of America]",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
@@ -556,6 +621,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()
@@ -570,6 +636,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book",
+                "/address_book",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -578,6 +645,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/person",
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
                 ofType(),
                 fieldsWithNames("id"),
@@ -587,6 +655,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/city_info",
                 "/address_book/city_info[New York City,New York,United States of America]",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
@@ -596,6 +665,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/city_info",
                 "/address_book/city_info[Albany,New York,United States of America]",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
@@ -673,6 +743,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returnsMany listOf(
@@ -699,6 +770,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book",
+                "/address_book",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -708,6 +780,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/settings",
+                "/address_book/settings",
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
@@ -716,6 +789,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/groups",
                 "/address_book/groups[Group-0]",
                 ofType(),
                 fieldsWithNames("name"),
@@ -726,6 +800,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book/groups",
                 "/address_book/groups[Group-1]",
                 ofType(),
                 fieldsWithNames("name"),
@@ -760,6 +835,7 @@ class SetDelegateTests {
                 ofType(),
                 ofType(),
                 ofType(),
+                ofType(),
                 ofType()
             )
         } returns emptyList()
@@ -774,6 +850,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
+                "/address_book",
                 "/address_book",
                 ofType(),
                 fieldsWithNames(),

@@ -12,11 +12,15 @@ interface SetDelegate {
 
     /** Sets the specified entity.
      *
+     * The field-path is the path to the field composing the entity, while the entity-path is the path to the entity
+     * and has key values in the path (if the entity has keys). Errors should be reported using the entity-path.
+     *
      * @param ancestorKeys First element is "self", second is parent, followed by increasing level of ancestors.
      */
     fun setEntity(
         setAux: SetAux,
         entity: EntityModel,
+        fieldPath: String,
         entityPath: String,
         ancestorKeys: List<Keys>,
         keys: List<SingleFieldModel>,
