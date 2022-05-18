@@ -15,14 +15,14 @@ sealed class FetchCompositionSetResult {
 
 interface GetDelegate {
     fun fetchComposition(
-        parentEntityPath: String,
+        fieldPath: String,
         ancestorKeys: List<Keys>,
         requestFields: List<FieldModel>,
         responseParentField: MutableSingleFieldModel
     ): FetchCompositionResult
 
     fun fetchCompositionSet(
-        parentEntityPath: String,
+        fieldPath: String,
         ancestorKeys: List<Keys>,
         requestKeys: List<SingleFieldModel>,
         requestFields: List<FieldModel>,

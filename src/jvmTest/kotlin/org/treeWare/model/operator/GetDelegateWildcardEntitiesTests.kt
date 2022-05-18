@@ -25,7 +25,7 @@ class GetDelegateWildcardEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.fetchComposition("/", ofType(), fieldsWithNames("name", "last_updated"), ofType())
+            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
@@ -35,7 +35,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.fetchComposition(
-                "/address_book",
+                "/address_book/settings",
                 ofType(),
                 fieldsWithNames("last_name_first", "card_colors"),
                 ofType()
@@ -50,7 +50,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name", "picture"),
@@ -76,7 +76,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -95,7 +95,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]",
+                "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -114,7 +114,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),
@@ -151,36 +151,36 @@ class GetDelegateWildcardEntitiesTests {
         val response = get(request, delegate, null)
 
         verifySequence {
-            delegate.fetchComposition("/", ofType(), fieldsWithNames("name", "last_updated"), ofType())
+            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
             delegate.fetchComposition(
-                "/address_book",
+                "/address_book/settings",
                 ofType(),
                 fieldsWithNames("last_name_first", "card_colors"),
                 ofType()
             )
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name", "picture"),
                 ofType()
             )
             delegate.fetchCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.fetchCompositionSet(
-                "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]",
+                "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.fetchCompositionSet(
-                "/address_book",
+                "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),

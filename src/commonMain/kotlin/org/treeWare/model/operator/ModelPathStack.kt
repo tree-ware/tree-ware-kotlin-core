@@ -4,11 +4,32 @@ import org.treeWare.metaModel.FieldType
 import org.treeWare.model.core.*
 import org.treeWare.util.encodeBase64
 
-class EntityPathStack {
+class ModelPathStack {
     fun peekKeys(): Keys = keysStack.first()
-    fun peekEntityPath(): String = pathStack.first()
-    fun isEmpty(): Boolean = keysStack.isEmpty()
+    fun peekModelPath(): String = pathStack.first()
+    fun isEmpty(): Boolean = pathStack.isEmpty()
     fun ancestorKeys(): List<Keys> = keysStack
+
+    /**
+     * Adds the specified field to the path.
+     *
+     * Pass null to add a dummy entry. This is useful when aborting the sub-tree; the leave method will get called
+     * and the leave method can pop the stack without needing to check if the visit method aborted the sub-tree.
+     */
+    fun pushField(field: FieldModel?) {
+        if (field == null) {
+            pathStack.addFirst("")
+            return
+        }
+        val parentPath = pathStack.firstOrNull() ?: ""
+        val newPart = getFieldPathPart(field)
+        val newPath = "$parentPath$newPart"
+        pathStack.addFirst(newPath)
+    }
+
+    fun popField() {
+        pathStack.removeFirst()
+    }
 
     /**
      * Adds the specified entity to the path.
@@ -16,7 +37,7 @@ class EntityPathStack {
      * Pass null to add a dummy entry. This is useful when aborting the sub-tree; the leave method will get called
      * and the leave method can pop the stack without needing to check if the visit method aborted the sub-tree.
      */
-    fun push(entity: EntityModel?, isCompositionKey: Boolean = false) {
+    fun pushEntity(entity: EntityModel?, isCompositionKey: Boolean = false) {
         if (entity == null) {
             keysStack.addFirst(EmptyKeys)
             pathStack.addFirst("")
@@ -30,7 +51,7 @@ class EntityPathStack {
         pathStack.addFirst(newPath)
     }
 
-    fun pop() {
+    fun popEntity() {
         keysStack.removeFirst()
         pathStack.removeFirst()
     }
@@ -39,19 +60,22 @@ class EntityPathStack {
     private val pathStack = ArrayDeque<String>()
 }
 
-private fun getEntityPathPart(entity: EntityModel, keys: List<SingleFieldModel>): String {
-    val parentFieldName = getEntityFieldName(entity)
+private fun getFieldPathPart(field: FieldModel): String {
     val partBuilder = StringBuilder("/")
-    partBuilder.append(parentFieldName)
-    if (keys.isNotEmpty()) {
-        partBuilder.append("[")
-        keys.forEachIndexed { index, key ->
-            if (index != 0) partBuilder.append(",")
-            val keyValue = getEntityPathKeyValue(key)
-            escapeAndAppend(keyValue, partBuilder)
-        }
-        partBuilder.append("]")
+    val fieldName = getFieldName(field)
+    partBuilder.append(fieldName)
+    return partBuilder.toString()
+}
+
+private fun getEntityPathPart(entity: EntityModel, keys: List<SingleFieldModel>): String {
+    if (keys.isEmpty()) return ""
+    val partBuilder = StringBuilder("[")
+    keys.forEachIndexed { index, key ->
+        if (index != 0) partBuilder.append(",")
+        val keyValue = getEntityPathKeyValue(key)
+        escapeAndAppend(keyValue, partBuilder)
     }
+    partBuilder.append("]")
     return partBuilder.toString()
 }
 
