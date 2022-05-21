@@ -85,6 +85,12 @@ class Password1wayModelStateMachine(
         return true
     }
 
+    override fun decodeNullValue(): Boolean {
+        password1way = null
+        stack.removeFirst()
+        return true
+    }
+
     override fun decodeStringValue(value: String): Boolean {
         super.decodeStringValue(value)
         when (keyName) {

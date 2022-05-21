@@ -13,7 +13,11 @@
             "relationship": null,
             "person": null
           }
-        ]
+        ],
+        "password": null,
+        "previous_passwords": [],
+        "main_secret": null,
+        "other_secrets": []
       }
     ],
     "city_info": [
