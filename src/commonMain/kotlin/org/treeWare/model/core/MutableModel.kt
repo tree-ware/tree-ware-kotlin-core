@@ -187,6 +187,10 @@ class MutableListFieldModel(
     override fun addValue(value: MutableElementModel) {
         values.add(value)
     }
+
+    fun clear() {
+        values.clear()
+    }
 }
 
 class MutableSetFieldModel(

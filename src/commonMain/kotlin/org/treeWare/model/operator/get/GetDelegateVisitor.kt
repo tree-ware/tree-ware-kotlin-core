@@ -96,7 +96,7 @@ class GetDelegateVisitor(
             when (fetchResult) {
                 is FetchCompositionSetResult.Entities -> fetchResult.entities.forEach {
                     createResponseCompositionFields(requestCompositionFields, it)
-                    mergeAddToSet(it, responseParentField)
+                    mergeAddToSet(it, responseParentField, true)
                 }
                 is FetchCompositionSetResult.ErrorList -> errors.addAll(fetchResult.errorList)
             }

@@ -6,14 +6,15 @@ import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
-fun copy(from: ElementModel, to: MutableElementModel) {
+fun copy(from: ElementModel, to: MutableElementModel, replaceLists: Boolean = false) {
     if (from.elementType != to.elementType) throw IllegalArgumentException("Types of from and to are different: ${from.elementType}, ${to.elementType}")
-    val copyVisitor = CopyVisitor(to)
+    val copyVisitor = CopyVisitor(to, replaceLists)
     forEach(from, copyVisitor, true)
 }
 
 private class CopyVisitor(
-    private val to: MutableElementModel
+    private val to: MutableElementModel,
+    private val replaceLists: Boolean
 ) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
 
@@ -53,7 +54,11 @@ private class CopyVisitor(
         modelStack.removeFirst()
     }
 
-    override fun visitListField(leaderField1: ListFieldModel): TraversalAction = visitField(leaderField1)
+    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
+        val action = visitField(leaderField1)
+        if (replaceLists) (modelStack.first() as MutableListFieldModel).clear()
+        return action
+    }
 
     override fun leaveListField(leaderField1: ListFieldModel) {
         modelStack.removeFirst()
