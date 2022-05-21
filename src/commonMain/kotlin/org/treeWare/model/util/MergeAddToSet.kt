@@ -10,13 +10,17 @@ import org.treeWare.model.operator.copy
  *
  * @return `true` if the new entity is merged into an existing entity, or `false` if it is added to the set.
  */
-fun mergeAddToSet(newEntity: MutableEntityModel, setField: MutableSetFieldModel): Boolean {
+fun mergeAddToSet(
+    newEntity: MutableEntityModel,
+    setField: MutableSetFieldModel,
+    replaceLists: Boolean = false
+): Boolean {
     val existing = setField.getValueMatching(newEntity) as MutableEntityModel?
     return if (existing == null) {
         setField.addValue(newEntity)
         false
     } else {
-        copy(newEntity, existing)
+        copy(newEntity, existing, replaceLists)
         true
     }
 }
