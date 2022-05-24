@@ -185,7 +185,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
             FetchCompositionSetResult.Entities(listOf(albany))
         }
 
-        val response = get(request, delegate, null)
+        val response = get(request, delegate, null, null)
         verifySequence {
             delegate.fetchComposition("/address_book", ofType(), fieldsWithNames(), ofType())
             delegate.fetchCompositionSet(

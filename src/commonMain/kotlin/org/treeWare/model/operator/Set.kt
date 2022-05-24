@@ -9,6 +9,8 @@ import org.treeWare.model.traversal.forEach
 
 interface SetEntityDelegate {
     fun isSingleValue(): Boolean
+
+    // TODO(cleanup): getSingleValue() is not used in core code, only in delegate code. So drop from here.
     fun getSingleValue(entity: EntityModel): Any?
 }
 
