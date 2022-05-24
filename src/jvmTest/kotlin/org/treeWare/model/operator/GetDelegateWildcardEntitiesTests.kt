@@ -148,7 +148,7 @@ class GetDelegateWildcardEntitiesTests {
             FetchCompositionSetResult.Entities(listOf(newYork, albany))
         }
 
-        val response = get(request, delegate, null)
+        val response = get(request, delegate, null, null)
 
         verifySequence {
             delegate.fetchComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())

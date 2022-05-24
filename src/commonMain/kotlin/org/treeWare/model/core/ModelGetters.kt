@@ -50,10 +50,10 @@ fun getOptionalSingleEnumeration(entityModel: BaseEntityModel, fieldName: String
     return enumeration.value
 }
 
-fun getSingleDouble(entityModel: BaseEntityModel, fieldName: String): Double {
+fun getSingleDouble(entityModel: BaseEntityModel, fieldName: String): Double? {
     val singleField = getSingleField(entityModel, fieldName)
-    val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()
-    return primitive.value as? Double ?: throw IllegalStateException()
+    val primitive = singleField.value as? PrimitiveModel ?: return null
+    return primitive.value as? Double
 }
 
 fun getSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel =

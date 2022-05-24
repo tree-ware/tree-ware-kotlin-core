@@ -6,9 +6,7 @@ import org.treeWare.model.operator.get.GetDelegateVisitor
 import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
-interface GetEntityDelegate {
-    fun isSingleValue(): Boolean
-}
+interface GetEntityDelegate
 
 object GetOperatorId : OperatorId<GetEntityDelegate>
 
@@ -23,11 +21,12 @@ sealed class GetResponse {
 fun get(
     request: MainModel,
     getDelegate: GetDelegate,
-    entityDelegates: EntityDelegateRegistry<GetEntityDelegate>?
+    setEntityDelegates: EntityDelegateRegistry<SetEntityDelegate>?,
+    getEntityDelegates: EntityDelegateRegistry<GetEntityDelegate>?
 ): GetResponse {
     val response = MutableMainModel(request.mainMeta)
     response.getOrNewRoot()
-    val getVisitor = GetDelegateVisitor(getDelegate, entityDelegates)
+    val getVisitor = GetDelegateVisitor(getDelegate, setEntityDelegates)
     forEach(response, request, getVisitor, false, ::followerEntityEquals)
     return if (getVisitor.errors.isEmpty()) GetResponse.Model(response)
     else GetResponse.ErrorList(getVisitor.errors.map { it.toString() })
