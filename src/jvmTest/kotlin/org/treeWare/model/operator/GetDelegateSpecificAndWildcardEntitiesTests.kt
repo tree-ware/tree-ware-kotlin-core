@@ -8,8 +8,8 @@ import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
-import org.treeWare.model.operator.get.FetchCompositionResult
-import org.treeWare.model.operator.get.FetchCompositionSetResult
+import org.treeWare.model.operator.get.GetCompositionResult
+import org.treeWare.model.operator.get.GetCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,16 +29,16 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
+            delegate.getComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
             setStringSingleField(addressBook, "name", "Super Heroes")
             setTimestampSingleField(addressBook, "last_updated", 1587147731L)
-            FetchCompositionResult.Entity(addressBook)
+            GetCompositionResult.Entity(addressBook)
         }
         every {
-            delegate.fetchComposition(
+            delegate.getComposition(
                 "/address_book/settings",
                 ofType(),
                 fieldsWithNames("last_name_first", "card_colors"),
@@ -50,10 +50,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setBooleanSingleField(settings, "last_name_first", true)
             val cardColors = getOrNewMutableListField(settings, "card_colors")
             addEnumerationListFieldElement(cardColors, "orange")
-            FetchCompositionResult.Entity(settings)
+            GetCompositionResult.Entity(settings)
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
@@ -72,10 +72,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setStringSingleField(person, "last_name", "Kent")
             setStringSingleField(person, "hero_name", "Superman")
 
-            FetchCompositionSetResult.Entities(listOf(person))
+            GetCompositionSetResult.Entities(listOf(person))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
@@ -93,10 +93,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setStringSingleField(person, "first_name", "Lois")
             setStringSingleField(person, "last_name", "Lane")
 
-            FetchCompositionSetResult.Entities(listOf(person))
+            GetCompositionSetResult.Entities(listOf(person))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
@@ -110,10 +110,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             setUuidSingleField(person, "id", "ec983c56-320f-4d66-9dde-f180e8ac3807")
             setStringSingleField(person, "last_name", "Olsen")
 
-            FetchCompositionSetResult.Entities(listOf(person))
+            GetCompositionSetResult.Entities(listOf(person))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
@@ -133,10 +133,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 null,
                 ""
             )
-            FetchCompositionSetResult.Entities(listOf(clarkRelationToLois))
+            GetCompositionSetResult.Entities(listOf(clarkRelationToLois))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
@@ -153,10 +153,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 "ec983c56-320f-4d66-9dde-f180e8ac3807",
                 ""
             )
-            FetchCompositionSetResult.Entities(listOf(clarkRelationToJimmy))
+            GetCompositionSetResult.Entities(listOf(clarkRelationToJimmy))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
@@ -189,10 +189,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 ""
             )
 
-            FetchCompositionSetResult.Entities(listOf(newYork))
+            GetCompositionSetResult.Entities(listOf(newYork))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
@@ -213,10 +213,10 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             addCity(albany, name, state, country)
             setStringSingleField(albany, "info", "Capital of New York state")
 
-            FetchCompositionSetResult.Entities(listOf(albany))
+            GetCompositionSetResult.Entities(listOf(albany))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
@@ -232,68 +232,68 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             val sanFrancisco = getNewMutableSetEntity(cityInfo)
             addCity(sanFrancisco, "San Francisco", "California", "United States of America")
 
-            FetchCompositionSetResult.Entities(listOf(princeton, sanFrancisco))
+            GetCompositionSetResult.Entities(listOf(princeton, sanFrancisco))
         }
 
         val response = get(request, delegate, null, null)
         verifySequence {
-            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
-            delegate.fetchComposition(
+            delegate.getComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
+            delegate.getComposition(
                 "/address_book/settings",
                 ofType(),
                 fieldsWithNames("last_name_first", "card_colors"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("last_name"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
