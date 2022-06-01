@@ -22,6 +22,17 @@ fun getOrNewMutableListField(entityModel: MutableBaseEntityModel, fieldName: Str
 fun getOrNewMutableSetField(entityModel: MutableBaseEntityModel, fieldName: String): MutableSetFieldModel =
     entityModel.getOrNewField(fieldName) as MutableSetFieldModel
 
+fun setDoubleSingleField(
+    entityModel: MutableBaseEntityModel,
+    fieldName: String,
+    value: Double
+): MutableSingleFieldModel {
+    val field = getOrNewMutableSingleField(entityModel, fieldName)
+    val primitive = field.getOrNewValue() as MutablePrimitiveModel
+    primitive.value = value
+    return field
+}
+
 fun setStringSingleField(
     entityModel: MutableBaseEntityModel,
     fieldName: String,
