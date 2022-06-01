@@ -52,16 +52,16 @@ class GetDelegateVisitor(
             isComposition(it)
         }
         val responseParentField = leaderField1 as MutableSingleFieldModel
-        val fetchResult = getDelegate.fetchComposition(
+        val fetchResult = getDelegate.getComposition(
             modelPathStack.peekModelPath(),
             modelPathStack.ancestorKeys(),
             requestFields,
             responseParentField
         )
         when (fetchResult) {
-            is FetchCompositionResult.Entity ->
+            is GetCompositionResult.Entity ->
                 createResponseCompositionFields(requestCompositionFields, fetchResult.entity)
-            is FetchCompositionResult.ErrorList ->
+            is GetCompositionResult.ErrorList ->
                 errors.addAll(fetchResult.errorList)
         }
         return if (errors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
@@ -85,7 +85,7 @@ class GetDelegateVisitor(
             val requestKeys = requestCompositionEntity.getKeyFields().available
             val requestOther = requestFields.filter { !isKeyField(it) }
             val responseParentField = leaderField1 as MutableSetFieldModel
-            val fetchResult = getDelegate.fetchCompositionSet(
+            val fetchResult = getDelegate.getCompositionSet(
                 modelPathStack.peekModelPath(),
                 modelPathStack.ancestorKeys(),
                 requestKeys,
@@ -93,11 +93,11 @@ class GetDelegateVisitor(
                 responseParentField
             )
             when (fetchResult) {
-                is FetchCompositionSetResult.Entities -> fetchResult.entities.forEach {
+                is GetCompositionSetResult.Entities -> fetchResult.entities.forEach {
                     createResponseCompositionFields(requestCompositionFields, it)
                     mergeAddToSet(it, responseParentField, true)
                 }
-                is FetchCompositionSetResult.ErrorList -> errors.addAll(fetchResult.errorList)
+                is GetCompositionSetResult.ErrorList -> errors.addAll(fetchResult.errorList)
             }
         }
         return if (errors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE

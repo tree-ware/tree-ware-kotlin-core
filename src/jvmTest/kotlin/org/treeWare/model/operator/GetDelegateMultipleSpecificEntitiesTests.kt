@@ -8,8 +8,8 @@ import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
-import org.treeWare.model.operator.get.FetchCompositionResult
-import org.treeWare.model.operator.get.FetchCompositionSetResult
+import org.treeWare.model.operator.get.GetCompositionResult
+import org.treeWare.model.operator.get.GetCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,14 +29,14 @@ class GetDelegateMultipleSpecificEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames(), ofType())
+            delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
             val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
-            FetchCompositionResult.Entity(addressBook)
+            GetCompositionResult.Entity(addressBook)
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
@@ -55,10 +55,10 @@ class GetDelegateMultipleSpecificEntitiesTests {
             setStringSingleField(person, "last_name", "Kent")
             setStringSingleField(person, "hero_name", "Superman")
 
-            FetchCompositionSetResult.Entities(listOf(person))
+            GetCompositionSetResult.Entities(listOf(person))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
@@ -76,10 +76,10 @@ class GetDelegateMultipleSpecificEntitiesTests {
             setStringSingleField(person, "first_name", "Lois")
             setStringSingleField(person, "last_name", "Lane")
 
-            FetchCompositionSetResult.Entities(listOf(person))
+            GetCompositionSetResult.Entities(listOf(person))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
@@ -99,10 +99,10 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 "a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ""
             )
-            FetchCompositionSetResult.Entities(listOf(clarkRelationToLois))
+            GetCompositionSetResult.Entities(listOf(clarkRelationToLois))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
@@ -122,10 +122,10 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 null,
                 ""
             )
-            FetchCompositionSetResult.Entities(listOf(clarkRelationToJimmy))
+            GetCompositionSetResult.Entities(listOf(clarkRelationToJimmy))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
@@ -158,10 +158,10 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 ""
             )
 
-            FetchCompositionSetResult.Entities(listOf(newYork))
+            GetCompositionSetResult.Entities(listOf(newYork))
         }
         every {
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
@@ -182,48 +182,48 @@ class GetDelegateMultipleSpecificEntitiesTests {
             addCity(albany, name, state, country)
             setStringSingleField(albany, "info", "Capital of New York state")
 
-            FetchCompositionSetResult.Entities(listOf(albany))
+            GetCompositionSetResult.Entities(listOf(albany))
         }
 
         val response = get(request, delegate, null, null)
         verifySequence {
-            delegate.fetchComposition("/address_book", ofType(), fieldsWithNames(), ofType())
-            delegate.fetchCompositionSet(
+            delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),
                 ofType()
             )
-            delegate.fetchCompositionSet(
+            delegate.getCompositionSet(
                 "/address_book/city_info",
                 ofType(),
                 fieldsWithNames("city"),
