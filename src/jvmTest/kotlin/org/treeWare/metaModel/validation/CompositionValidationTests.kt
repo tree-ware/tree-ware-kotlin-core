@@ -51,7 +51,7 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Package 1 entity 0 field 0 composition info name is missing",
+            "Package 1 entity 0 field 0 composition info entity is missing",
             "Package 1 entity 0 field 0 composition info package is missing"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
@@ -71,7 +71,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "undefined_entity",
+            |             "entity": "undefined_entity",
             |             "package": "test.helper"
             |           }
             |         }
@@ -99,7 +99,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_no_keys",
+            |             "entity": "entity_with_no_keys",
             |             "package": "test.helper"
             |           }
             |         }
@@ -127,7 +127,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_no_keys",
+            |             "entity": "entity_with_no_keys",
             |             "package": "test.helper"
             |           },
             |           "is_key": true
@@ -158,7 +158,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_composition_key",
+            |             "entity": "entity_with_composition_key",
             |             "package": "test.helper"
             |           },
             |           "is_key": true
@@ -168,7 +168,7 @@ class CompositionValidationTests {
             |           "number": 2,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_primitive_and_composition_keys",
+            |             "entity": "entity_with_primitive_and_composition_keys",
             |             "package": "test.helper"
             |           },
             |           "is_key": true
@@ -200,7 +200,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_primitive_keys_and_non_keys",
+            |             "entity": "entity_with_primitive_keys_and_non_keys",
             |             "package": "test.helper"
             |           },
             |           "is_key": true
@@ -231,7 +231,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_only_primitive_keys",
+            |             "entity": "entity_with_only_primitive_keys",
             |             "package": "test.helper"
             |           },
             |           "is_key": true
@@ -260,7 +260,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_no_keys",
+            |             "entity": "entity_with_no_keys",
             |             "package": "test.helper"
             |           },
             |           "multiplicity": "set"
@@ -291,7 +291,7 @@ class CompositionValidationTests {
             |           "number": 1,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity_with_primitive_and_composition_keys",
+            |             "entity": "entity_with_primitive_and_composition_keys",
             |             "package": "test.helper"
             |           },
             |           "multiplicity": "set"
@@ -312,7 +312,7 @@ private fun testHelperRootJson() = """
     |   "name": "root",
     |   "type": "composition",
     |   "composition": {
-    |     "name": "entity_with_no_keys",
+    |     "entity": "entity_with_no_keys",
     |     "package": "test.helper"
     |   }
     | }
@@ -340,7 +340,7 @@ private fun testHelperPackageJson() = """
     |           "number": 1,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity_with_only_primitive_keys",
+    |             "entity": "entity_with_only_primitive_keys",
     |             "package": "test.helper"
     |           }
     |         }
@@ -360,7 +360,7 @@ private fun testHelperPackageJson() = """
     |           "number": 2,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity_with_only_primitive_keys",
+    |             "entity": "entity_with_only_primitive_keys",
     |             "package": "test.helper"
     |           },
     |           "is_key": true
@@ -391,7 +391,7 @@ private fun testHelperPackageJson() = """
     |           "number": 4,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity_with_only_primitive_keys",
+    |             "entity": "entity_with_only_primitive_keys",
     |             "package": "test.helper"
     |           }
     |         }

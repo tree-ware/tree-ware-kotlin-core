@@ -169,7 +169,7 @@ private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEnti
 
 private fun populateEntityInfoEntity(entityInfoEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(entityInfoEntityMeta)
-    newPrimitiveFieldMetaMeta(fields, "name", null, "string")
+    newPrimitiveFieldMetaMeta(fields, "entity", null, "string")
     newPrimitiveFieldMetaMeta(fields, "package", null, "string")
 }
 

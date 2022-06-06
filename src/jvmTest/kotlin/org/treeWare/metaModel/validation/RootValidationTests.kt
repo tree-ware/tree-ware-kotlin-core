@@ -22,7 +22,7 @@ class RootValidationTests {
             |   "name": "invalid.root-name",
             |   "type": "composition",
             |   "composition": {
-            |     "name": "entity1",
+            |     "entity": "entity1",
             |     "package": "test.common"
             |   }
             | }
@@ -39,7 +39,7 @@ class RootValidationTests {
             |   "name": "root",
             |   "type": "composition",
             |   "composition": {
-            |     "name": "non_existent_entity",
+            |     "entity": "non_existent_entity",
             |     "package": "non.existent.package"
             |   }
             | }

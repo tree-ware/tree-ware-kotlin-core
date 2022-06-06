@@ -159,7 +159,7 @@ private fun resolveAssociationField(
 ): List<String> {
     val entityInfoMeta = getEntityInfoMeta(fieldMeta, "association")
     val packageName = getSingleString(entityInfoMeta, "package")
-    val entityName = getSingleString(entityInfoMeta, "name")
+    val entityName = getSingleString(entityInfoMeta, "entity")
     val targetFullName = "/$packageName/$entityName"
     val targetEntityMeta = nonPrimitiveTypes.entities[targetFullName]
         ?: return listOf("Entity $targetFullName cannot be resolved")
@@ -186,7 +186,7 @@ private fun resolveCompositionField(
 ): List<String> {
     val entityInfoMeta = getEntityInfoMeta(fieldMeta, "composition")
     val packageName = getSingleString(entityInfoMeta, "package")
-    val entityName = getSingleString(entityInfoMeta, "name")
+    val entityName = getSingleString(entityInfoMeta, "entity")
     val targetFullName = "/$packageName/$entityName"
     val targetEntityMeta = nonPrimitiveTypes.entities[targetFullName]
         ?: return listOf("Entity $targetFullName cannot be resolved")

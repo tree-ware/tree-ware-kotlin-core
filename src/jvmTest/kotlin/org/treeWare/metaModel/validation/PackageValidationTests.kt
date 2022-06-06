@@ -16,7 +16,7 @@ class PackageValidationTests {
             |       "name": "root",
             |       "type": "composition",
             |       "composition": {
-            |         "name": "entity1",
+            |         "entity": "entity1",
             |         "package": "test.common"
             |       }
             |     }
@@ -36,7 +36,7 @@ class PackageValidationTests {
             |       "name": "root",
             |       "type": "composition",
             |       "composition": {
-            |         "name": "entity1",
+            |         "entity": "entity1",
             |         "package": "test.common"
             |       }
             |     },
@@ -57,7 +57,7 @@ class PackageValidationTests {
             |       "name": "root",
             |       "type": "composition",
             |       "composition": {
-            |         "name": "entity1",
+            |         "entity": "entity1",
             |         "package": "test.common"
             |       }
             |     },

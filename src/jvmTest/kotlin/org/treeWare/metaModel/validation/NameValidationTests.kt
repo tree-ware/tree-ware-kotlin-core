@@ -34,7 +34,7 @@ private fun testHelperRootJson() = """
     |   "name": "root",
     |   "type": "composition",
     |   "composition": {
-    |     "name": "valid_entity_name",
+    |     "entity": "valid_entity_name",
     |     "package": "hyphens-not-allowed-for-packages"
     |   }
     | }
@@ -68,7 +68,7 @@ private fun testHelperPackageJson() = """
     |           "number": 1,
     |           "type": "association",
     |           "association": {
-    |             "name": "dots.not_allowed_for.entities",
+    |             "entity": "dots.not_allowed_for.entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }
     |         },
@@ -77,7 +77,7 @@ private fun testHelperPackageJson() = """
     |           "number": 2,
     |           "type": "association",
     |           "association": {
-    |             "name": "dots.not_allowed_for.entities",
+    |             "entity": "dots.not_allowed_for.entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }
     |         }
@@ -96,7 +96,7 @@ private fun testHelperPackageJson() = """
     |           "number": 2,
     |           "type": "association",
     |           "association": {
-    |             "name": "dots.not_allowed_for.entities",
+    |             "entity": "dots.not_allowed_for.entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }
     |         },
@@ -105,7 +105,7 @@ private fun testHelperPackageJson() = """
     |           "number": 3,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "dots.not_allowed_for.entities",
+    |             "entity": "dots.not_allowed_for.entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }
     |         },
@@ -114,7 +114,7 @@ private fun testHelperPackageJson() = """
     |           "number": 4,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "hyphens-not-allowed-for-entities",
+    |             "entity": "hyphens-not-allowed-for-entities",
     |             "package": "hyphens-not-allowed-for-packages"
     |           }
     |         }
