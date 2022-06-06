@@ -3,7 +3,7 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
@@ -15,15 +15,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-private val metaModel = newAddressBookMetaModel(null, null).metaModel
-    ?: throw IllegalStateException("Meta-model has validation errors")
-
 class GetDelegateMultipleSpecificEntitiesTests {
     @Test
     fun `get() must call its delegate for multiple specific entities in a request`() {
         val request =
             getMainModelFromJsonFile(
-                metaModel,
+                addressBookMetaModel,
                 "org/treeWare/model/operator/get_request_multiple_specific_entities.json"
             )
 

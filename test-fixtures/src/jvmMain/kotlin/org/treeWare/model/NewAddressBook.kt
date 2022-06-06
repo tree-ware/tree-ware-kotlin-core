@@ -1,11 +1,9 @@
 package org.treeWare.model
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.core.*
 
 fun newAddressBook(auxName: String): MainModel {
-    val addressBookMetaModel = newAddressBookMetaModel(null, null).metaModel
-        ?: throw IllegalStateException("Meta-model has validation errors")
     val main = MutableMainModel(addressBookMetaModel)
     main.setAux(auxName, "Aux at address_book level")
     val root = main.getOrNewRoot()

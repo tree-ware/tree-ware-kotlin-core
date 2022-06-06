@@ -3,7 +3,7 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
@@ -14,14 +14,14 @@ import org.treeWare.model.operator.get.GetDelegate
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-private val metaModel = newAddressBookMetaModel(null, null).metaModel
-    ?: throw IllegalStateException("Meta-model has validation errors")
-
 class GetDelegateWildcardEntitiesTests {
     @Test
     fun `get() must call its delegate for wildcard entities in a request`() {
         val request =
-            getMainModelFromJsonFile(metaModel, "org/treeWare/model/operator/get_request_wildcard_entities.json")
+            getMainModelFromJsonFile(
+                addressBookMetaModel,
+                "org/treeWare/model/operator/get_request_wildcard_entities.json"
+            )
 
         val delegate = mockk<GetDelegate>()
         every {

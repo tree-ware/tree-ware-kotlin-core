@@ -1,6 +1,6 @@
 package org.treeWare.model.traversal
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.model.readFile
 import java.io.StringWriter
@@ -16,10 +16,8 @@ class LeaderManyForEachTests {
         val jsonAddressBook3 = readFile("model/address_book_3.json")
         assertNotEquals(jsonAddressBook2, jsonAddressBook3)
 
-        val metaModel = newAddressBookMetaModel(null, null).metaModel
-            ?: throw IllegalStateException("Meta-model has validation errors")
-        val addressBook2 = getMainModelFromJsonString(metaModel, jsonAddressBook2)
-        val addressBook3 = getMainModelFromJsonString(metaModel, jsonAddressBook3)
+        val addressBook2 = getMainModelFromJsonString(addressBookMetaModel, jsonAddressBook2)
+        val addressBook3 = getMainModelFromJsonString(addressBookMetaModel, jsonAddressBook3)
 
         val writer = StringWriter()
         val printVisitor = LeaderManyPrintVisitor(writer)

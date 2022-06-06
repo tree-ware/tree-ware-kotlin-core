@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
@@ -24,9 +24,6 @@ class UnionTests {
         assertNotEquals(jsonInput1, expectedJsonOutput)
         assertNotEquals(jsonInput2, expectedJsonOutput)
 
-        val metaModel = newAddressBookMetaModel(null, null).metaModel
-            ?: throw IllegalStateException("Meta-model has validation errors")
-
         val aux2 = "aux2"
         val aux3 = "aux3"
         val multiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(
@@ -35,12 +32,12 @@ class UnionTests {
         )
 
         val input1 = getMainModelFromJsonString(
-            metaModel,
+            addressBookMetaModel,
             jsonInput1,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
         val input2 = getMainModelFromJsonString(
-            metaModel,
+            addressBookMetaModel,
             jsonInput2,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )

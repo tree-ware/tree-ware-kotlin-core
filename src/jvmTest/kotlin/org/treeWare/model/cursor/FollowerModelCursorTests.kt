@@ -1,6 +1,6 @@
 package org.treeWare.model.cursor
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.getMetaResolved
 import org.treeWare.model.encoder.EncodePasswords
@@ -66,10 +66,7 @@ class FollowerModelCursorTests {
 }
 
 private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssociations: Boolean) {
-    val metaModel = newAddressBookMetaModel(null, null).metaModel
-        ?: throw IllegalStateException("Meta-model has validation errors")
-
-    val model = getMainModelFromJsonFile(metaModel, inputFilePath)
+    val model = getMainModelFromJsonFile(addressBookMetaModel, inputFilePath)
 
     val leaderCursor = Leader1ModelCursor(model, traverseAssociations)
     val followerCursor = FollowerModelCursor(model)
@@ -89,12 +86,9 @@ private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssocia
 }
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String, traverseAssociations: Boolean) {
-    val metaModel = newAddressBookMetaModel(null, null).metaModel
-        ?: throw IllegalStateException("Meta-model has validation errors")
-
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getMainModelFromJsonFile(metaModel, inputFilePath)
-    val followerModel = getMainModelFromJsonFile(metaModel, inputFilePath)
+    val leaderModel = getMainModelFromJsonFile(addressBookMetaModel, inputFilePath)
+    val followerModel = getMainModelFromJsonFile(addressBookMetaModel, inputFilePath)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -124,11 +118,8 @@ private fun testFollowerWildcardModelInstance(
     traverseAssociations: Boolean,
     expectedFilePath: String? = null
 ) {
-    val metaModel = newAddressBookMetaModel(null, null).metaModel
-        ?: throw IllegalStateException("Meta-model has validation errors")
-
-    val leaderModel = getMainModelFromJsonFile(metaModel, leaderFilePath)
-    val followerModel = getMainModelFromJsonFile(metaModel, wildcardFilePath)
+    val leaderModel = getMainModelFromJsonFile(addressBookMetaModel, leaderFilePath)
+    val followerModel = getMainModelFromJsonFile(addressBookMetaModel, wildcardFilePath)
 
     val leaderCursor = Leader1ModelCursor(leaderModel, traverseAssociations)
     val followerCursor = FollowerModelCursor(followerModel)
