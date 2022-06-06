@@ -224,7 +224,7 @@ The following is an example meta-model definition for a composition field:
   "name": "settings",
   "type": "composition",
   "composition": {
-    "name": "address_book_settings",
+    "entity": "address_book_settings",
     "package": "address_book.main"
   }
 }
@@ -246,7 +246,7 @@ The following is an example meta-model definition for an association field:
   "name": "person",
   "type": "association",
   "association": {
-    "name": "address_book_person",
+    "entity": "address_book_person",
     "package": "address_book.main"
   }
 }

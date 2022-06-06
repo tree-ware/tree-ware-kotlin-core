@@ -223,7 +223,7 @@ private fun validateEntityInfo(fieldMeta: EntityModel, fieldId: String, entityIn
     val entityInfoMeta = runCatching { getEntityInfoMeta(fieldMeta, entityInfoFor) }.getOrNull()
         ?: return listOf("$infoId is missing")
     return listOf(
-        validateSingleStringField(entityInfoMeta, "name", infoId),
+        validateSingleStringField(entityInfoMeta, "entity", infoId),
         validateSingleStringField(entityInfoMeta, "package", infoId),
     ).flatten()
 }

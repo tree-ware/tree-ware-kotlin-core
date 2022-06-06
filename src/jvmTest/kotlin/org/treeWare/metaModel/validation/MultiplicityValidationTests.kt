@@ -35,7 +35,7 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity must be specified with a valid value`() {
         val metaModelJson = getMetaModelJson("invalid")
-        val expectedDecodeErrors = listOf("JSON decoding failed at: (line no=98, column no=10, offset=1892)")
+        val expectedDecodeErrors = listOf("JSON decoding failed at: (line no=98, column no=10, offset=1898)")
         val expectedValidationErrors = listOf("Meta-model decoding failed")
         assertJsonStringValidationErrors(metaModelJson, expectedValidationErrors, expectedDecodeErrors)
     }
@@ -82,7 +82,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "number": 3,
         |           "type": "association",
         |           "association": {
-        |             "name": "entity2",
+        |             "entity": "entity2",
         |             "package": "test.common"
         |           }
         |           $multiplicityJson
@@ -92,7 +92,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "number": 4,
         |           "type": "composition",
         |           "composition": {
-        |             "name": "entity3",
+        |             "entity": "entity3",
         |             "package": "test.common"
         |           }
         |           $multiplicityJson

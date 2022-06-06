@@ -51,7 +51,7 @@ class AssociationValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Package 1 entity 0 field 0 association info name is missing",
+            "Package 1 entity 0 field 0 association info entity is missing",
             "Package 1 entity 0 field 0 association info package is missing"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
@@ -71,7 +71,7 @@ class AssociationValidationTests {
             |           "number": 1,
             |           "type": "association",
             |           "association": {
-            |             "name": "undefined_entity",
+            |             "entity": "undefined_entity",
             |             "package": "test.helper"
             |           }
             |         }
@@ -99,7 +99,7 @@ class AssociationValidationTests {
             |           "number": 1,
             |           "type": "association",
             |           "association": {
-            |             "name": "entity3",
+            |             "entity": "entity3",
             |             "package": "test.helper"
             |           }
             |         }
@@ -127,7 +127,7 @@ class AssociationValidationTests {
             |           "number": 1,
             |           "type": "association",
             |           "association": {
-            |             "name": "entity3",
+            |             "entity": "entity3",
             |             "package": "test.helper"
             |           },
             |           "is_key": true
@@ -148,7 +148,7 @@ private fun testHelperRootJson() = """
     |   "name": "root",
     |   "type": "composition",
     |   "composition": {
-    |     "name": "entity1",
+    |     "entity": "entity1",
     |     "package": "test.helper"
     |   }
     | }
@@ -166,7 +166,7 @@ private fun testHelperPackageJson() = """
     |           "number": 1,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity2",
+    |             "entity": "entity2",
     |             "package": "test.helper"
     |           }
     |         },
@@ -175,7 +175,7 @@ private fun testHelperPackageJson() = """
     |           "number": 2,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity3",
+    |             "entity": "entity3",
     |             "package": "test.helper"
     |           },
     |           "multiplicity": "set"
@@ -190,7 +190,7 @@ private fun testHelperPackageJson() = """
     |           "number": 1,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity3",
+    |             "entity": "entity3",
     |             "package": "test.helper"
     |           },
     |           "multiplicity": "set"

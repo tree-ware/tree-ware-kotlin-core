@@ -21,7 +21,7 @@ val testMetaModelCommonRootJson = """
     |   "name": "root",
     |   "type": "composition",
     |   "composition": {
-    |     "name": "entity1",
+    |     "entity": "entity1",
     |     "package": "test.common"
     |   }
     | }
@@ -44,7 +44,7 @@ val testMetaModelCommonPackageJson = """
     |           "number": 2,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity2",
+    |             "entity": "entity2",
     |             "package": "test.common"
     |           }
     |         }
@@ -64,7 +64,7 @@ val testMetaModelCommonPackageJson = """
     |           "number": 2,
     |           "type": "composition",
     |           "composition": {
-    |             "name": "entity3",
+    |             "entity": "entity3",
     |             "package": "test.common"
     |           }
     |         }

@@ -95,7 +95,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "number": 3,
         |           "type": "composition",
         |           "composition": {
-        |             "name": "entity3",
+        |             "entity": "entity3",
         |             "package": "test.common"
         |           },
         |           "is_key": true
@@ -160,7 +160,7 @@ private fun getCompositionSetMetaModelJson(): String {
         |           "number": 1,
         |           "type": "composition",
         |           "composition": {
-        |             "name": "entity3",
+        |             "entity": "entity3",
         |             "package": "test.common"
         |           },
         |           "is_key": true
@@ -187,7 +187,7 @@ private fun getAssociationMetaModelJson(isKey: Boolean): String {
         |           "number": 1,
         |           "type": "association",
         |           "association": {
-        |             "name": "entity3",
+        |             "entity": "entity3",
         |             "package": "test.common"
         |           },
         |           "is_key": $isKey

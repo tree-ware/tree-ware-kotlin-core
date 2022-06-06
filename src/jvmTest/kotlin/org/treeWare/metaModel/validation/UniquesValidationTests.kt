@@ -100,7 +100,7 @@ class UniquesValidationTests {
         """.trimMargin()
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
-        val expectedDecodeErrors = listOf("JSON decoding failed at: (line no=108, column no=29, offset=2064)")
+        val expectedDecodeErrors = listOf("JSON decoding failed at: (line no=108, column no=29, offset=2070)")
         val expectedValidationErrors = listOf("Meta-model decoding failed")
         assertJsonStringValidationErrors(metaModelJson, expectedValidationErrors, expectedDecodeErrors)
     }
@@ -239,7 +239,7 @@ class UniquesValidationTests {
             |           "number": 3,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity2",
+            |             "entity": "entity2",
             |             "package": "test.common"
             |           },
             |           "multiplicity": "set"
@@ -292,7 +292,7 @@ class UniquesValidationTests {
             |           "number": 2,
             |           "type": "composition",
             |           "composition": {
-            |             "name": "entity2",
+            |             "entity": "entity2",
             |             "package": "test.common"
             |           }
             |         }
@@ -345,7 +345,7 @@ class UniquesValidationTests {
             |           "number": 3,
             |           "type": "association",
             |           "association": {
-            |             "name": "entity2",
+            |             "entity": "entity2",
             |             "package": "test.common"
             |           }
             |         },         

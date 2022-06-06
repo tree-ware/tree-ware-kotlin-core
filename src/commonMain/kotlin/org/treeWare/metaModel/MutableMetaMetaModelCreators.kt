@@ -15,7 +15,7 @@ fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String
     newStringSingleField(root, "name", name)
     newEnumerationSingleField(root, "type", "composition")
     val composition = newCompositionSingleField(root, "composition")
-    newStringSingleField(composition, "name", entityName)
+    newStringSingleField(composition, "entity", entityName)
     newStringSingleField(composition, "package", packageName)
 }
 
@@ -97,20 +97,6 @@ fun newEnumerationFieldMetaMeta(
     return fieldMeta
 }
 
-fun newAssociationFieldMetaMeta(
-    parent: MutableListFieldModel,
-    name: String,
-    info: String?,
-    entityPath: List<String>,
-    multiplicity: String? = null,
-    isKey: Boolean = false
-): MutableEntityModel {
-    val fieldMeta = newFieldMetaMeta(parent, name, info, "association", multiplicity, isKey)
-    val associationMeta = newStringListField(fieldMeta, "association")
-    entityPath.forEach { addStringToListField(associationMeta, it) }
-    return fieldMeta
-}
-
 fun newCompositionFieldMetaMeta(
     parent: MutableListFieldModel,
     name: String,
@@ -122,7 +108,7 @@ fun newCompositionFieldMetaMeta(
 ): MutableEntityModel {
     val fieldMeta = newFieldMetaMeta(parent, name, info, "composition", multiplicity, isKey)
     val entityMeta = newCompositionSingleField(fieldMeta, "composition")
-    newStringSingleField(entityMeta, "name", entityName)
+    newStringSingleField(entityMeta, "entity", entityName)
     newStringSingleField(entityMeta, "package", packageName)
     return fieldMeta
 }
