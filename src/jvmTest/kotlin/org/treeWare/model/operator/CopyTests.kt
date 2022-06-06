@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.encoder.EncodePasswords
@@ -11,10 +11,8 @@ class CopyTests {
     @Test
     fun `Copy operator must copy all elements of its input`() {
         val modelJsonFile = "model/address_book_1.json"
-        val metaModel = newAddressBookMetaModel(null, null).metaModel
-            ?: throw IllegalStateException("Meta-model has validation errors")
-        val input = getMainModelFromJsonFile(metaModel, modelJsonFile)
-        val clone = MutableMainModel(metaModel)
+        val input = getMainModelFromJsonFile(addressBookMetaModel, modelJsonFile)
+        val clone = MutableMainModel(addressBookMetaModel)
         copy(input, clone)
         assertMatchesJson(clone, modelJsonFile, EncodePasswords.ALL)
     }

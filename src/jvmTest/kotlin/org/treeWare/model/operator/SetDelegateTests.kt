@@ -3,7 +3,7 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.getMainModelFromJsonString
@@ -15,8 +15,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
-private val metaModel = newAddressBookMetaModel(null, null).metaModel
-    ?: throw IllegalStateException("Meta-model has validation errors")
 
 // TODO(deepak-nulu): create and use matches for the ancestorKeys parameter of setEntity()
 
@@ -60,7 +58,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -168,7 +170,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -267,7 +273,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -372,7 +382,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -490,7 +504,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -609,7 +627,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -688,7 +710,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns listOf(ElementModelError("/", "delegate begin error"))
@@ -731,7 +757,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
@@ -823,7 +853,11 @@ class SetDelegateTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()

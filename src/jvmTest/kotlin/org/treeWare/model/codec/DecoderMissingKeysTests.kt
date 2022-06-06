@@ -1,6 +1,6 @@
 package org.treeWare.model.codec
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnMissingKeys
 import org.treeWare.model.decoder.decodeJson
@@ -30,11 +30,9 @@ class DecoderMissingKeysTests {
     @Test
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
         val fileReader = getFileReader("model/address_book_missing_keys.json")
-        val metaModel = newAddressBookMetaModel(null, null).metaModel
-            ?: throw IllegalStateException("Meta-model has validation errors")
         val (mainModel, decodeErrors) = decodeJson(
             fileReader,
-            metaModel,
+            addressBookMetaModel,
             ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR)
         )
         fileReader.close()

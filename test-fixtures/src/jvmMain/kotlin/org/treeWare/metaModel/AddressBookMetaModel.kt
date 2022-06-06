@@ -17,3 +17,6 @@ fun newAddressBookMetaModel(hasher: Hasher?, cipher: Cipher?): ValidatedMetaMode
     emptyList(),
     true
 )
+
+val addressBookMetaModel = newAddressBookMetaModel(null, null).metaModel
+    ?: throw IllegalStateException("Meta-model has validation errors")

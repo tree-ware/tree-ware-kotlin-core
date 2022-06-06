@@ -1,6 +1,6 @@
 package org.treeWare.model.codec
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutablePrimitiveModel
 import org.treeWare.model.core.MutableSetFieldModel
@@ -12,10 +12,7 @@ import kotlin.test.assertTrue
 class JsonBlobDecodeTest {
     @Test
     fun `JSON decoder decodes blob values`() {
-        val metaModel = newAddressBookMetaModel(null, null).metaModel
-            ?: throw IllegalStateException("Meta-model has validation errors")
-
-        val model = getMainModelFromJsonFile(metaModel, "model/address_book_1.json")
+        val model = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1.json")
         val persons = model.root.fields["person"] as MutableSetFieldModel
 
         val clarkKent = persons.values.first() as MutableEntityModel

@@ -1,6 +1,6 @@
 package org.treeWare.model.traversal
 
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.getMainModelFromJsonFile
 import org.treeWare.model.newAddressBook
 import org.treeWare.model.readFile
@@ -24,9 +24,7 @@ class Leader1ForEachTests {
 
     @Test
     fun `Leader1ForEach must visit and leave all elements of a decoded model`() {
-        val metaModel = newAddressBookMetaModel(null, null).metaModel
-            ?: throw IllegalStateException("Meta-model has validation errors")
-        val addressBook = getMainModelFromJsonFile(metaModel, "model/address_book_1.json")
+        val addressBook = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1.json")
 
         val writer = StringWriter()
         val printVisitor = Leader1PrintVisitor(writer)

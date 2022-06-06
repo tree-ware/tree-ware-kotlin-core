@@ -4,7 +4,7 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.model.operator.set.SetDelegate
@@ -14,8 +14,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
-private val metaModel = newAddressBookMetaModel(null, null).metaModel
-    ?: throw IllegalStateException("Meta-model has validation errors")
 
 class SetAuxValidationTests {
     @Test
@@ -40,7 +38,11 @@ class SetAuxValidationTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         val expectedErrors = listOf("/: set_ aux not attached to any composition field or entity")
@@ -78,7 +80,11 @@ class SetAuxValidationTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         val expectedErrors = listOf("/: set_ aux not attached to any composition field or entity")
@@ -118,7 +124,11 @@ class SetAuxValidationTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         val expectedErrors = listOf(
@@ -162,7 +172,11 @@ class SetAuxValidationTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         val expectedErrors = listOf(
@@ -207,7 +221,11 @@ class SetAuxValidationTests {
             |}
         """.trimMargin()
         val model =
-            getMainModelFromJsonString(metaModel, modelJson, multiAuxDecodingStateMachineFactory = auxDecodingFactory)
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns emptyList()
