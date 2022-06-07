@@ -127,8 +127,11 @@ private fun encodeAssociationField(fieldMeta: EntityModel, dotWriter: DotWriter)
     val entityFullName = getMetaModelResolved(fieldMeta.parent.parent)?.fullName
     val fullName = getMetaModelResolved(resolvedEntity)?.fullName
     val name = getMetaName(fieldMeta)
-
-    dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0 [style="dashed" color=sienna]""")
+    if (entityFullName == fullName) {
+        dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0:n [style="dashed" color=sienna]""")
+    } else {
+        dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0 [style="dashed" color=sienna]""")
+    }
 }
 
 private fun encodeCompositionField(fieldMeta: EntityModel, dotWriter: DotWriter) {
@@ -140,7 +143,12 @@ private fun encodeCompositionField(fieldMeta: EntityModel, dotWriter: DotWriter)
     val fullName = getMetaModelResolved(resolvedEntity)?.fullName
     val name = getMetaName(fieldMeta)
 
-    dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0 [dir=both arrowtail=diamond color=orangered]""")
+    if(entityFullName == fullName){
+        dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0:n [dir=both arrowtail=diamond color=orangered]""")
+    }
+    else {
+        dotWriter.linksWriteLine("""  "$entityFullName":"$name:e" -> "$fullName":0 [dir=both arrowtail=diamond color=orangered]""")
+    }
 }
 
 private fun encodeFieldRow(fieldMeta: EntityModel, type: String, dotWriter: DotWriter) {
