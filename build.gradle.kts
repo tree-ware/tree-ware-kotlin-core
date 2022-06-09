@@ -3,12 +3,12 @@ version = "1.0-SNAPSHOT"
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
-val kotlinxCoroutinesVersion = "1.6.0"
+val kotlinxCoroutinesVersion = "1.6.2"
 val loggingVersion = "1.1.1"
 val mockkVersion = "1.12.0"
 
 plugins {
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version "1.7.0"
 }
 
 repositories {
