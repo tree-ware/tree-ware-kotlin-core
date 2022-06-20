@@ -25,10 +25,11 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmenum" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;values&quot;: [&#10;    {&#10;      &quot;name&quot;: &quot;$VALUE$&quot;&#10;    },&#10;    $END$&#10;  ]&#10;},&#10;" description="Add a new enumeration" toReformat="false" toShortenFQNames="true">
+  <template name="mmenum" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;values&quot;: [&#10;    {&#10;      &quot;name&quot;: &quot;$VALUE$&quot;,&#10;      &quot;number&quot;: $NUMBER$&#10;    },&#10;    $END$&#10;  ]&#10;},&#10;" description="Add a new enumeration" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
@@ -57,7 +58,7 @@
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="TYPE" expression="enum(&quot;boolean&quot;, &quot;byte&quot;, &quot;short&quot;, &quot;int&quot;, &quot;long&quot;, &quot;float&quot;, &quot;double&quot;, &quot;string&quot;, &quot;uuid&quot;, &quot;blob&quot;, &quot;timestamp&quot;, &quot;alias&quot;, &quot;password1way&quot;, &quot;password2way&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="TYPE" expression="enum(&quot;boolean&quot;, &quot;uint8&quot;, &quot;uint16&quot;, &quot;uint32&quot;, &quot;uint64&quot;, &quot;int8&quot;, &quot;int16&quot;, &quot;int32&quot;, &quot;int64&quot;, &quot;float&quot;, &quot;double&quot;, &quot;big_integer&quot;, &quot;big_decimal&quot;, &quot;timestamp&quot;, &quot;string&quot;, &quot;uuid&quot;, &quot;blob&quot;, &quot;password1way&quot;, &quot;password2way&quot;)" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
@@ -139,6 +140,13 @@
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="PATH_VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JSON" value="true" />
+      <option name="JSON_PROPERTY_KEYS" value="false" />
+      <option name="JSON_STRING_VALUES" value="false" />
+    </context>
+  </template>
+  <template name="mmuuidkey" value="{&#10;  &quot;name&quot;: &quot;id&quot;,&#10;  &quot;number&quot;: 1,&#10;  &quot;type&quot;: &quot;uuid&quot;,&#10;  &quot;is_key&quot;: true&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
