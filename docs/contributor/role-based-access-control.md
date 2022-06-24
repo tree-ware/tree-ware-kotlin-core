@@ -27,7 +27,7 @@ so it does not need to be "intersected".
 
 # Set-Request Access Control
 
-The `controlSetRequestAccess()` operator is for controlling the access of a set-request.
+The `permitSet()` operator is for controlling the access of a set-request.
 
 ## TODO
 
@@ -36,17 +36,9 @@ The `controlSetRequestAccess()` operator is for controlling the access of a set-
     * Is it sufficient to have `read` permission on the target to be able to assign the association, or should a special
       `associate` permission on the target be introduced for this purpose?
 
-# Get-Request Access Control
+# Get-Request/-Response Access Control
 
-The `controlGetRequestAccess()` operator is for controlling the access of a get-request.
-
-## TODO
-
-* Design
-
-# Get-Response Access Control
-
-The `controlGetResponseAccess()` operator is for controlling the parts of a get-response that can be returned.
+The `permitGet()` operator is for controlling the access of a get-request or get-response.
 
 ## TODO
 
