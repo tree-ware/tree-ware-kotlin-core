@@ -93,11 +93,21 @@ fun getMainModelFromJson(
     return mainModel
 }
 
-/** Encodes the model element to JSON and asserts that it matches the JSON in the file.
- */
+/** Encode the model element to JSON and assert that it matches the JSON in the file. */
 fun assertMatchesJson(
     element: ElementModel,
-    jsonFilePath: String,
+    expectedJsonFilePath: String,
+    encodePasswords: EncodePasswords,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
+) {
+    val expectedJsonString = readFile(expectedJsonFilePath)
+    assertMatchesJsonString(element, expectedJsonString, encodePasswords, multiAuxEncoder)
+}
+
+/** Encode the model element to JSON and assert that it matches the JSON in the file. */
+fun assertMatchesJsonString(
+    element: ElementModel,
+    expectedJsonString: String,
     encodePasswords: EncodePasswords,
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
 ) {
@@ -113,7 +123,6 @@ fun assertMatchesJson(
     }
     assertTrue(isEncoded)
 
-    val expected = readFile(jsonFilePath)
-    val actual = jsonWriter.toString()
-    assertEquals(expected, actual)
+    val actualJsonString = jsonWriter.toString()
+    assertEquals(expectedJsonString, actualJsonString)
 }
