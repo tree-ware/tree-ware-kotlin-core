@@ -52,8 +52,17 @@
                 "type": "string"
               },
               {
-                "name": "related_city_info",
+                "name": "city_center",
                 "number": 3,
+                "type": "composition",
+                "composition": {
+                  "entity": "point",
+                  "package": "org.tree_ware.meta_model.geo"
+                }
+              },
+              {
+                "name": "related_city_info",
+                "number": 30,
                 "type": "association",
                 "association": {
                   "entity": "address_book_city_info",
