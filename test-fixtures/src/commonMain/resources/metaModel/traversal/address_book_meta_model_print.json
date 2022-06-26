@@ -69,7 +69,14 @@
       "entity:address_book_city_info": {
         "field:city": {},
         "field:info": {},
+        "field:city_center": {},
         "field:related_city_info": {}
+      }
+    },
+    "package:org.tree_ware.meta_model.geo": {
+      "entity:point": {
+        "field:latitude": {},
+        "field:longitude": {}
       }
     }
   }
