@@ -36,6 +36,75 @@ class PermitGetTests {
         }
     }
 
+    // region Pruning
+
+    @Test
+    fun `Empty single-compositions in get-model are pruned by the permitGet operator`() {
+        val singleCompositionGetJson = """
+            |{
+            |  "address_book": {
+            |    "settings": {}
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionScope.SUB_TREE)
+        testPermitGet(singleCompositionGetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Get-model with only non-wildcard keys must not be pruned by the permitGet operator`() {
+        val onlyNonWildcardKeysGetJson = """
+            |{
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "id": "$CLARK_KENT_ID"
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "city": {
+            |          "name": "New York City",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionScope.SUB_TREE)
+        testPermitGet(onlyNonWildcardKeysGetJson, rbac, expectedPermittedJson = onlyNonWildcardKeysGetJson)
+    }
+
+    @Test
+    fun `Get-model with only wildcard keys must not be pruned by the permitGet operator`() {
+        val onlyWildcardKeysGetJson = """
+            |{
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "id": null
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "city": {
+            |          "name": null,
+            |          "state": null,
+            |          "country": null
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionScope.SUB_TREE)
+        testPermitGet(onlyWildcardKeysGetJson, rbac, expectedPermittedJson = onlyWildcardKeysGetJson)
+    }
+
+    // endregion
+
     // region No-level RBAC tests
 
     private fun newNoLevelRbac(): MainModel {
@@ -47,15 +116,13 @@ class PermitGetTests {
     @Test
     fun `Fully matching non-wildcard get-model must not be permitted for no-level RBAC`() {
         val rbac = newNoLevelRbac()
-        val expectedPermittedJson = null
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null)
     }
 
     @Test
     fun `Fully matching wildcard get-model must not be permitted for no-level RBAC`() {
         val rbac = newNoLevelRbac()
-        val expectedPermittedJson = null
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null)
     }
 
     // endregion
@@ -72,53 +139,37 @@ class PermitGetTests {
     @Test
     fun `Fully matching non-wildcard get-model must be fully permitted for root-level sub-tree-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardGetJson, rbac, nonWildcardGetJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardGetJson)
     }
 
     @Test
     fun `Fully matching wildcard get-model must be fully permitted for root-level sub-tree-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(wildcardGetJson, rbac, wildcardGetJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = wildcardGetJson)
     }
 
     @Test
-    fun `Only root of fully matching non-wildcard get-model must be permitted for root-level node-scoped RBAC`() {
+    fun `Fully matching non-wildcard get-model must not be permitted for root-level node-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NODE)
-
-        val expectedPermittedJson = """
-            |{
-            |  "address_book": {}
-            |}
-        """.trimMargin()
-
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null)
     }
 
     @Test
-    fun `Only root of fully matching wildcard get-model must be permitted for root-level node-scoped RBAC`() {
+    fun `Fully matching wildcard get-model must not be permitted for root-level node-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NODE)
-
-        val expectedPermittedJson = """
-            |{
-            |  "address_book": {}
-            |}
-        """.trimMargin()
-
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null)
     }
 
     @Test
     fun `Fully matching non-wildcard get-model must not be permitted for root-level none-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NONE)
-        val expectedPermittedJson = null
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null)
     }
 
     @Test
     fun `Fully matching wildcard get-model must not be permitted for root-level none-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NONE)
-        val expectedPermittedJson = null
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null)
     }
 
     // NOTE: Partially matching & non-matching tests don't exist for root-level RBAC since everything is under the root.
@@ -130,13 +181,12 @@ class PermitGetTests {
     private fun newPersonRbac(
         personId: String,
         personReadScope: PermissionScope,
-        personsReadScope: PermissionScope = PermissionScope.NODE
+        personsReadScope: PermissionScope? = null
     ): MainModel {
         val rbac = MutableMainModel(addressBookMetaModel)
-        rbac.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = PermissionScope.NODE))
         val rbacRoot = rbac.getOrNewRoot()
         val rbacPersons = getOrNewMutableSetField(rbacRoot, "person")
-        rbacPersons.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = personsReadScope))
+        personsReadScope?.also { rbacPersons.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = it)) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
         setUuidSingleField(rbacPerson, "id", personId)
         rbacPersons.addValue(rbacPerson)
@@ -147,68 +197,56 @@ class PermitGetTests {
     @Test
     fun `Fully matching non-wildcard get-model must be fully permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardClarkKentGetJson, rbac, nonWildcardClarkKentGetJson)
+        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson)
     }
 
     @Test
     fun `Fully matching wildcard get-model must be fully permitted for first-level sub-tree-scoped RBAC`() {
         // NOTE: wildcards in the get-model do not match explicit keys in the RBAC model.
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(specificClarkKentWithWildcardChildrenGetJson, rbac, specificClarkKentWithWildcardChildrenGetJson)
+        testPermitGet(
+            specificClarkKentWithWildcardChildrenGetJson,
+            rbac,
+            expectedPermittedJson = specificClarkKentWithWildcardChildrenGetJson
+        )
     }
 
     @Test
     fun `Partially matching non-wildcard get-model must be partially permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardGetJson, rbac, nonWildcardClarkKentGetJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson)
     }
 
     @Test
     fun `Partially matching wildcard get-model must be partially permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(wildcardGetJson, rbac, specificClarkKentWithWildcardChildrenGetJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = specificClarkKentWithWildcardChildrenGetJson)
     }
 
     @Test
     fun `Non-matching non-wildcard get-model must not be permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.SUB_TREE)
-        // TODO(cleanup) enhance the permitGet operator to make the following `null`
-        val expectedPermittedJson = """
-            |{
-            |  "address_book": {
-            |    "person": []
-            |  }
-            |}
-        """.trimMargin()
-        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson)
+        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson = null)
     }
 
     @Test
     fun `Non-matching wildcard get-model must not be permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.SUB_TREE)
-        // TODO(cleanup) enhance the permitGet operator to make the following `null`
-        val expectedPermittedJson = """
-            |{
-            |  "address_book": {
-            |    "person": []
-            |  }
-            |}
-        """.trimMargin()
-        testPermitGet(specificClarkKentWithWildcardChildrenGetJson, rbac, expectedPermittedJson)
+        testPermitGet(specificClarkKentWithWildcardChildrenGetJson, rbac, expectedPermittedJson = null)
     }
 
     @Test
-    fun `Partially matching non-wildcard get-model must be partially permitted for first-level none-scoped RBAC`() {
+    fun `Partially matching non-wildcard get-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped RBAC`() {
         // Permit all persons except Lois Lane
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.NONE, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardGetJson, rbac, nonWildcardClarkKentGetJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson)
     }
 
     @Test
-    fun `Partially matching wildcard get-model must be partially permitted for first-level none-scoped RBAC`() {
+    fun `Partially matching wildcard get-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped RBAC`() {
         // Permit all persons except Lois Lane
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.NONE, PermissionScope.SUB_TREE)
-        testPermitGet(wildcardGetJson, rbac, specificClarkKentAndWildcardPersonGetJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = specificClarkKentAndWildcardPersonGetJson)
     }
 
     // endregion
@@ -231,15 +269,7 @@ class PermitGetTests {
             |}
         """.trimMargin()
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        // TODO(cleanup) enhance the permitGet operator to make the following `null`
-        val expectedPermittedJson = """
-            |{
-            |  "address_book": {
-            |    "person": []
-            |  }
-            |}
-        """.trimMargin()
-        testPermitGet(getJson, rbac, expectedPermittedJson)
+        testPermitGet(getJson, rbac, expectedPermittedJson = null)
     }
 
     // endregion
