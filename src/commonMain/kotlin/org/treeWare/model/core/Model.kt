@@ -32,9 +32,12 @@ interface BaseEntityModel : ElementModel {
 
     val fields: Map<String, FieldModel>
 
+    fun isEmpty(): Boolean = fields.isEmpty()
+
     fun getField(fieldName: String): FieldModel?
     fun getMatchingHashCode(): Int
 
+    fun hasOnlyKeyFields(): Boolean = fields.all { (_, field) -> isKeyField(field) }
     fun getKeyFields(flatten: Boolean = false): Keys
     fun getKeyValues(): List<Any?>
 }
@@ -63,6 +66,7 @@ interface SingleFieldModel : FieldModel {
 interface CollectionFieldModel : FieldModel {
     val values: Collection<ElementModel>
 
+    fun isEmpty(): Boolean = values.isEmpty()
     fun firstValue(): ElementModel?
     fun getValueMatching(that: ElementModel): ElementModel?
 }

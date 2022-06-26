@@ -73,6 +73,17 @@ abstract class MutableBaseEntityModel(
         return newField
     }
 
+    fun detachField(field: MutableFieldModel) {
+        val fieldName = getMetaName(field.meta)
+        val existingField = fields[fieldName] ?: return
+        if (field != existingField) throw IllegalArgumentException("Field does not match existing field")
+        fields.remove(fieldName)
+    }
+
+    fun detachAllFields() {
+        fields.clear()
+    }
+
     override fun getKeyFields(flatten: Boolean): Keys {
         val availableKeys = mutableListOf<SingleFieldModel>()
         val missingKeys = mutableListOf<String>()
@@ -127,7 +138,11 @@ class MutableEntityModel(
 abstract class MutableFieldModel(
     override val meta: EntityModel?,
     override val parent: MutableBaseEntityModel?
-) : MutableElementModel(), FieldModel
+) : MutableElementModel(), FieldModel {
+    fun detachFromParent() {
+        parent?.detachField(this)
+    }
+}
 
 open class MutableSingleFieldModel(
     meta: EntityModel?,
