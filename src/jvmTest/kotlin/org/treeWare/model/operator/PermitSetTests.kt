@@ -1,0 +1,815 @@
+package org.treeWare.model.operator
+
+import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.model.addCity
+import org.treeWare.model.assertMatchesJsonString
+import org.treeWare.model.core.*
+import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
+import org.treeWare.model.encoder.EncodePasswords
+import org.treeWare.model.encoder.MultiAuxEncoder
+import org.treeWare.model.getMainModelFromJsonString
+import org.treeWare.model.operator.rbac.aux.PERMISSIONS_AUX_NAME
+import org.treeWare.model.operator.rbac.aux.PermissionScope
+import org.treeWare.model.operator.rbac.aux.PermissionsAux
+import org.treeWare.model.operator.set.aux.SET_AUX_NAME
+import org.treeWare.model.operator.set.aux.SetAux
+import org.treeWare.model.operator.set.aux.SetAuxEncoder
+import org.treeWare.model.operator.set.aux.SetAuxStateMachine
+import org.treeWare.model.readFile
+import kotlin.test.Test
+import kotlin.test.assertNotNull
+
+private const val CLARK_KENT_ID = "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+private const val LOIS_LANE_ID = "a8aacf55-7810-4b43-afe5-4344f25435fd"
+
+private val mixedSetJson = readFile("org/treeWare/model/operator/permitSet/set_request_mixed.json")
+private val mixedClarkKentSetJson = readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent.json")
+
+private val multiAuxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
+private val multiAuxEncoder = MultiAuxEncoder(SET_AUX_NAME to SetAuxEncoder())
+
+class PermitSetTests {
+    private fun testPermitSet(setJson: String, rbac: MainModel, expectedPermittedJson: String?) {
+        val setModel = getMainModelFromJsonString(
+            addressBookMetaModel,
+            setJson,
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory
+        )
+        val actualPermitted = permitSet(setModel, rbac)
+        if (expectedPermittedJson == null) {
+            if (actualPermitted != null) assertMatchesJsonString(
+                actualPermitted,
+                "null",
+                EncodePasswords.ALL,
+                multiAuxEncoder
+            )
+        } else {
+            assertNotNull(actualPermitted)
+            assertMatchesJsonString(actualPermitted, expectedPermittedJson, EncodePasswords.ALL, multiAuxEncoder)
+        }
+    }
+
+    // region Pruning
+
+    @Test
+    fun `Empty single-compositions in set-model will be pruned by the permitSet operator`() {
+        val singleCompositionSetJson = """
+            |{
+            |  "address_book": {
+            |    "settings": {}
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(singleCompositionSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `UPDATE entities with only key fields in set-model will be pruned by the permitSet operator`() {
+        // Since keys cannot be updated and there is nothing else in the entity to be updated.
+        val updateEntitiesSetJson = """
+            |{
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "set_": "update",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "set_": "update",
+            |        "city": {
+            |          "name": "New York City",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(updateEntitiesSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `CREATE entities with only key fields in set-model must not be pruned by the permitSet operator`() {
+        val createEntitiesSetJson = """
+            |{
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "set_": "create",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "set_": "create",
+            |        "city": {
+            |          "name": "New York City",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(createEntitiesSetJson, rbac, expectedPermittedJson = createEntitiesSetJson)
+    }
+
+    @Test
+    fun `DELETE entities with only key fields in set-model must not be pruned by the permitSet operator`() {
+        val deleteEntitiesSetJson = """
+            |{
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "set_": "delete",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "set_": "delete",
+            |        "city": {
+            |          "name": "New York City",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(deleteEntitiesSetJson, rbac, expectedPermittedJson = deleteEntitiesSetJson)
+    }
+
+    // endregion
+
+    // region No-level RBAC tests
+
+    private fun newNoLevelRbac(): MainModel {
+        val rbac = MutableMainModel(addressBookMetaModel)
+        rbac.getOrNewRoot()
+        return rbac
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for no-level RBAC`() {
+        val rbac = newNoLevelRbac()
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // region Root-level RBAC tests
+
+    private fun newRootRbac(permissions: PermissionsAux): MainModel {
+        val rbac = MutableMainModel(addressBookMetaModel)
+        rbac.setAux(PERMISSIONS_AUX_NAME, permissions)
+        rbac.getOrNewRoot()
+        return rbac
+    }
+
+    // region Root-level RBAC tests ALL permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for root-level sub-tree-scoped ALL RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(all = PermissionScope.SUB_TREE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = mixedSetJson)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level node-scoped ALL RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(all = PermissionScope.NODE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level none-scoped ALL RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(all = PermissionScope.NONE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // region Root-level RBAC tests CRUD permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for root-level sub-tree-scoped CRUD RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = mixedSetJson)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level node-scoped CRUD RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.NODE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level none-scoped CRUD RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.NONE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // region Root-level RBAC tests CREATE permissions
+
+    @Test
+    fun `CREATE parts of fully matching set-model must be permitted for root-level sub-tree-scoped CREATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(create = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_with_create_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level node-scoped CREATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(create = PermissionScope.NODE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level none-scoped CREATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(create = PermissionScope.NONE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // region Root-level RBAC tests UPDATE permissions
+
+    @Test
+    fun `UPDATE parts of fully matching set-model must be permitted for root-level sub-tree-scoped UPDATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(update = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_with_update_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level node-scoped UPDATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(update = PermissionScope.NODE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level none-scoped UPDATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(update = PermissionScope.NONE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // region Root-level RBAC tests DELETE permissions
+
+    @Test
+    fun `DELETE parts of fully matching set-model must be permitted for root-level sub-tree-scoped DELETE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(delete = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_with_delete_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level node-scoped DELETE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(delete = PermissionScope.NODE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level none-scoped DELETE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(delete = PermissionScope.NONE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // region Root-level RBAC tests CREATE & UPDATE permissions
+
+    @Test
+    fun `CREATE & UPDATE parts of fully matching set-model must be permitted for root-level sub-tree-scoped CREATE & UPDATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(create = PermissionScope.SUB_TREE, update = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_with_create_and_update_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level node-scoped CREATE & UPDATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(create = PermissionScope.NODE, update = PermissionScope.NODE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for root-level none-scoped CREATE & UPDATE RBAC`() {
+        val rbac = newRootRbac(PermissionsAux(create = PermissionScope.NONE, update = PermissionScope.NONE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    // endregion
+
+    // endregion
+
+    // region First-level RBAC tests
+
+    private fun newPersonRbac(
+        personId: String,
+        personPermissions: PermissionsAux,
+        personsPermissions: PermissionsAux? = null
+    ): MainModel {
+        val rbac = MutableMainModel(addressBookMetaModel)
+        val rbacRoot = rbac.getOrNewRoot()
+        val rbacPersons = getOrNewMutableSetField(rbacRoot, "person")
+        personsPermissions?.also { rbacPersons.setAux(PERMISSIONS_AUX_NAME, it) }
+        val rbacPerson = getNewMutableSetEntity(rbacPersons)
+        setUuidSingleField(rbacPerson, "id", personId)
+        rbacPersons.addValue(rbacPerson)
+        rbacPerson.setAux(PERMISSIONS_AUX_NAME, personPermissions)
+        return rbac
+    }
+
+    // region First-level RBAC tests ALL permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for first-level sub-tree-scoped ALL RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(all = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = mixedClarkKentSetJson)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level sub-tree-scoped ALL RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(all = PermissionScope.SUB_TREE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = mixedClarkKentSetJson)
+    }
+
+    @Test
+    fun `Non-matching set-model must not be permitted for first-level sub-tree-scoped ALL RBAC`() {
+        val rbac = newPersonRbac(LOIS_LANE_ID, PermissionsAux(all = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level node-scoped ALL RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(all = PermissionScope.NODE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level none-scoped ALL RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(all = PermissionScope.NONE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped ALL RBAC`() {
+        // Permit all persons except Lois Lane
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(all = PermissionScope.NONE),
+            PermissionsAux(all = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_persons_other_than_lois_lane.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    // endregion
+
+    // region First-level RBAC tests CRUD permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for first-level sub-tree-scoped CRUD RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = mixedClarkKentSetJson)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level sub-tree-scoped CRUD RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson = mixedClarkKentSetJson)
+    }
+
+    @Test
+    fun `Non-matching set-model must not be permitted for first-level sub-tree-scoped CRUD RBAC`() {
+        val rbac = newPersonRbac(LOIS_LANE_ID, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level node-scoped CRUD RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(crud = PermissionScope.NODE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level none-scoped CRUD RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(crud = PermissionScope.NONE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped CRUD RBAC`() {
+        // Permit all persons except Lois Lane
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(crud = PermissionScope.NONE),
+            PermissionsAux(crud = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_persons_other_than_lois_lane.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    // endregion
+
+    // region First-level RBAC tests CREATE permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for first-level sub-tree-scoped CREATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(create = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_create_only.json")
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level sub-tree-scoped CREATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(create = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_create_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Non-matching set-model must not be permitted for first-level sub-tree-scoped CREATE RBAC`() {
+        val rbac = newPersonRbac(LOIS_LANE_ID, PermissionsAux(create = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level node-scoped CREATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(create = PermissionScope.NODE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level none-scoped CREATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(create = PermissionScope.NONE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped CREATE RBAC`() {
+        // Permit all persons except Lois Lane
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(create = PermissionScope.NONE),
+            PermissionsAux(create = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_create_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    // endregion
+
+    // region First-level RBAC tests UPDATE permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for first-level sub-tree-scoped UPDATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(update = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_update_only.json")
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level sub-tree-scoped UPDATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(update = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_update_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Non-matching set-model must not be permitted for first-level sub-tree-scoped UPDATE RBAC`() {
+        val rbac = newPersonRbac(LOIS_LANE_ID, PermissionsAux(update = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level node-scoped UPDATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(update = PermissionScope.NODE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level none-scoped UPDATE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(update = PermissionScope.NONE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped UPDATE RBAC`() {
+        // Permit all persons except Lois Lane
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(update = PermissionScope.NONE),
+            PermissionsAux(update = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_update_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    // endregion
+
+    // region First-level RBAC tests DELETE permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for first-level sub-tree-scoped DELETE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(delete = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_delete_only.json")
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level sub-tree-scoped DELETE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(delete = PermissionScope.SUB_TREE))
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_delete_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Non-matching set-model must not be permitted for first-level sub-tree-scoped DELETE RBAC`() {
+        val rbac = newPersonRbac(LOIS_LANE_ID, PermissionsAux(delete = PermissionScope.SUB_TREE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level node-scoped DELETE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(delete = PermissionScope.NODE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level none-scoped DELETE RBAC`() {
+        val rbac = newPersonRbac(CLARK_KENT_ID, PermissionsAux(delete = PermissionScope.NONE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped DELETE RBAC`() {
+        // Permit all persons except Lois Lane
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(delete = PermissionScope.NONE),
+            PermissionsAux(delete = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_persons_other_than_lois_lane_with_delete_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    // endregion
+
+    // region First-level RBAC tests CREATE & UPDATE permissions
+
+    @Test
+    fun `Fully matching set-model must be fully permitted for first-level sub-tree-scoped CREATE & UPDATE RBAC`() {
+        val rbac = newPersonRbac(
+            CLARK_KENT_ID,
+            PermissionsAux(create = PermissionScope.SUB_TREE, update = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_create_and_update_only.json")
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level sub-tree-scoped CREATE & UPDATE RBAC`() {
+        val rbac = newPersonRbac(
+            CLARK_KENT_ID,
+            PermissionsAux(create = PermissionScope.SUB_TREE, update = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_create_and_update_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `Non-matching set-model must not be permitted for first-level sub-tree-scoped CREATE & UPDATE RBAC`() {
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(create = PermissionScope.SUB_TREE, update = PermissionScope.SUB_TREE)
+        )
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level node-scoped CREATE & UPDATE RBAC`() {
+        val rbac =
+            newPersonRbac(CLARK_KENT_ID, PermissionsAux(create = PermissionScope.NODE, update = PermissionScope.NODE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Fully matching set-model must not be permitted for first-level none-scoped CREATE & UPDATE RBAC`() {
+        val rbac =
+            newPersonRbac(CLARK_KENT_ID, PermissionsAux(create = PermissionScope.NONE, update = PermissionScope.NONE))
+        testPermitSet(mixedClarkKentSetJson, rbac, expectedPermittedJson = null)
+    }
+
+    @Test
+    fun `Partially matching set-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped CREATE & UPDATE RBAC`() {
+        // Permit all persons except Lois Lane
+        val rbac = newPersonRbac(
+            LOIS_LANE_ID,
+            PermissionsAux(create = PermissionScope.NONE, update = PermissionScope.NONE),
+            PermissionsAux(create = PermissionScope.SUB_TREE, update = PermissionScope.SUB_TREE)
+        )
+        val expectedPermittedJson =
+            readFile("org/treeWare/model/operator/permitSet/set_request_mixed_clark_kent_with_create_and_update_only.json")
+        testPermitSet(mixedSetJson, rbac, expectedPermittedJson)
+    }
+
+    // endregion
+
+    // endregion
+
+    // region Associations
+
+    private fun newAssociationSetJson(setAux: SetAux): String = """
+        |{
+        |  "address_book__set_": "${setAux.name.lowercase()}",
+        |  "address_book": {
+        |    "person": [
+        |      {
+        |        "id": "$CLARK_KENT_ID",
+        |        "group": {
+        |          "groups": [
+        |            {
+        |              "name": "DC"
+        |            }
+        |          ]
+        |        }
+        |      }
+        |    ],
+        |    "city_info": [
+        |      {
+        |        "city": {
+        |          "name": "Albany",
+        |          "state": "New York",
+        |          "country": "United States of America"
+        |        },
+        |        "related_city_info": [
+        |          {
+        |            "city_info": [
+        |              {
+        |                "city": {
+        |                  "name": "New York City",
+        |                  "state": "New York",
+        |                  "country": "United States of America"
+        |                }
+        |              }
+        |            ]
+        |          }
+        |        ]
+        |      }
+        |    ]
+        |  }
+        |}
+    """.trimMargin()
+
+    /**
+     * Create an RBAC model with CRUD permissions for the association sources in the above set-request.
+     * If `permitTargets` is `true`, also grant permissions for the association targets.
+     */
+    private fun newAssociationRbac(permitTargets: Boolean): MainModel {
+        val rbac = MutableMainModel(addressBookMetaModel)
+        val root = rbac.getOrNewRoot()
+
+        val personSet = getOrNewMutableSetField(root, "person")
+        val clarkKent = getNewMutableSetEntity(personSet)
+        setUuidSingleField(clarkKent, "id", CLARK_KENT_ID)
+        clarkKent.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        personSet.addValue(clarkKent)
+
+        val cityInfoSet = getOrNewMutableSetField(root, "city_info")
+        val albanyCityInfo = getNewMutableSetEntity(cityInfoSet)
+        addCity(albanyCityInfo, "Albany", "New York", "United States of America")
+        albanyCityInfo.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        cityInfoSet.addValue(albanyCityInfo)
+
+        if (permitTargets) {
+            val groups = getOrNewMutableSetField(root, "groups")
+            val dc = getNewMutableSetEntity(groups)
+            setStringSingleField(dc, "name", "DC")
+            dc.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = PermissionScope.SUB_TREE))
+            groups.addValue(dc)
+
+            val newYorkCityInfo = getNewMutableSetEntity(cityInfoSet)
+            addCity(newYorkCityInfo, "New York City", "New York", "United States of America")
+            newYorkCityInfo.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = PermissionScope.SUB_TREE))
+            cityInfoSet.addValue(newYorkCityInfo)
+        }
+
+        return rbac
+    }
+
+    @Test
+    fun `CREATE association must fail if user does not have read permission for target`() {
+        val createAssociationJson = newAssociationSetJson(SetAux.CREATE)
+        val rbac = newAssociationRbac(false)
+        // The `person` entity is expected along with its ID because it is a create request.
+        // `related_city_info` is expected as an empty list since empty lists are meaningful and are not pruned.
+        val expectedPermittedJson = """
+            |{
+            |  "address_book__set_": "create",
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ],
+            |    "city_info": [
+            |      {
+            |        "city": {
+            |          "name": "Albany",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        },
+            |        "related_city_info": []
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        testPermitSet(createAssociationJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `CREATE association must succeed if user has read permission for target`() {
+        val createAssociationJson = newAssociationSetJson(SetAux.CREATE)
+        val rbac = newAssociationRbac(true)
+        testPermitSet(createAssociationJson, rbac, expectedPermittedJson = createAssociationJson)
+    }
+
+    @Test
+    fun `UPDATE association must fail if user does not have read permission for target`() {
+        val updateAssociationJson = newAssociationSetJson(SetAux.UPDATE)
+        val rbac = newAssociationRbac(false)
+        // `related_city_info` is expected as an empty list since empty lists are meaningful and are not pruned.
+        val expectedPermittedJson = """
+            |{
+            |  "address_book__set_": "update",
+            |  "address_book": {
+            |    "city_info": [
+            |      {
+            |        "city": {
+            |          "name": "Albany",
+            |          "state": "New York",
+            |          "country": "United States of America"
+            |        },
+            |        "related_city_info": []
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        testPermitSet(updateAssociationJson, rbac, expectedPermittedJson)
+    }
+
+    @Test
+    fun `UPDATE association must succeed if user has read permission for target`() {
+        val updateAssociationJson = newAssociationSetJson(SetAux.UPDATE)
+        val rbac = newAssociationRbac(true)
+        testPermitSet(updateAssociationJson, rbac, expectedPermittedJson = updateAssociationJson)
+    }
+
+    @Test
+    fun `DELETE association must succeed if user does not have read permission for target`() {
+        val deleteAssociationJson = newAssociationSetJson(SetAux.DELETE)
+        val rbac = newAssociationRbac(false)
+        testPermitSet(deleteAssociationJson, rbac, expectedPermittedJson = deleteAssociationJson)
+    }
+
+    @Test
+    fun `DELETE association must succeed if user has read permission for target`() {
+        val deleteAssociationJson = newAssociationSetJson(SetAux.DELETE)
+        val rbac = newAssociationRbac(true)
+        testPermitSet(deleteAssociationJson, rbac, expectedPermittedJson = deleteAssociationJson)
+    }
+
+    // endregion
+}
