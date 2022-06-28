@@ -20,48 +20,12 @@
         }
       ]
     },
-    "groups": [
-      {
-        "name": "Group 1",
-        "sub_groups": [
-          {
-            "name": "Group 1 sub 1"
-          },
-          {
-            "name": "Group 1 sub 2"
-          }
-        ]
-      },
-      {
-        "name": "Group 2",
-        "sub_groups": [
-          {
-            "name": "Group 2 sub 1"
-          },
-          {
-            "name": "Group 2 sub 2"
-          }
-        ]
-      }
-    ],
     "person": [
       {
         "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
         "first_name": "Person 1 first",
         "last_name": "Person 1 last",
         "hero_name": "Person 1 hero name",
-        "group": {
-          "groups": [
-            {
-              "name": "Group 1",
-              "sub_groups": [
-                {
-                  "name": "Group 1 sub 2"
-                }
-              ]
-            }
-          ]
-        },
         "email": [
           {
             "value": "p1e1@test.com"
@@ -118,24 +82,24 @@
             "encrypted": "p1 test-encrypted-secret2",
             "cipher_version": 1
           }
-        ]
-      },
-      {
-        "first_name": "Person 2 first",
-        "last_name": "Person 2 last",
-        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+        ],
         "group": {
           "groups": [
             {
               "name": "Group 1",
               "sub_groups": [
                 {
-                  "name": "Group 1 sub 1"
+                  "name": "Group 1 sub 2"
                 }
               ]
             }
           ]
-        },
+        }
+      },
+      {
+        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+        "first_name": "Person 2 first",
+        "last_name": "Person 2 last",
         "email": [
           {
             "value": "p2e1@test.com"
@@ -180,7 +144,19 @@
             "encrypted": "p2- test-encrypted-secret2",
             "cipher_version": 1
           }
-        ]
+        ],
+        "group": {
+          "groups": [
+            {
+              "name": "Group 1",
+              "sub_groups": [
+                {
+                  "name": "Group 1 sub 1"
+                }
+              ]
+            }
+          ]
+        }
       }
     ],
     "city_info": [
@@ -217,12 +193,12 @@
         ]
       },
       {
-        "info": "Test City B info",
         "city": {
           "name": "Test City B",
           "state": "Test State B",
           "country": "Test Country B"
         },
+        "info": "Test City B info",
         "related_city_info": [
           {
             "city_info": [
@@ -238,21 +214,21 @@
         ]
       },
       {
-        "info": "Test City C info",
-        "related_city_info": [],
         "city": {
           "name": "Test City C",
           "state": "Test State C",
           "country": "Test Country C"
-        }
+        },
+        "info": "Test City C info",
+        "related_city_info": []
       },
       {
-        "info": "Test City D info",
         "city": {
           "name": "Test City D",
           "state": "Test State D",
           "country": "Test Country D"
         },
+        "info": "Test City D info",
         "related_city_info": [
           {
             "city_info": [
@@ -264,6 +240,30 @@
                 }
               }
             ]
+          }
+        ]
+      }
+    ],
+    "groups": [
+      {
+        "name": "Group 1",
+        "sub_groups": [
+          {
+            "name": "Group 1 sub 1"
+          },
+          {
+            "name": "Group 1 sub 2"
+          }
+        ]
+      },
+      {
+        "name": "Group 2",
+        "sub_groups": [
+          {
+            "name": "Group 2 sub 1"
+          },
+          {
+            "name": "Group 2 sub 2"
           }
         ]
       }

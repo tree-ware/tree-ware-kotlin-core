@@ -1,0 +1,97 @@
+{
+  "address_book": {
+    "settings": {
+      "card_colors": [
+        {
+          "value": "orange"
+        },
+        {
+          "value": "green"
+        },
+        {
+          "value": "blue"
+        },
+        {
+          "value": "red"
+        }
+      ]
+    },
+    "person": [
+      {
+        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+        "first_name": "Person 1 first",
+        "email": [
+          {
+            "value": "p1e1@test.com"
+          },
+          {
+            "value": "p1e2@test.com"
+          }
+        ],
+        "previous_passwords": [
+          {
+            "unhashed": "p1PreviousPassword1"
+          },
+          {
+            "hashed": "test-hashed-previousPassword",
+            "hash_version": 1
+          }
+        ],
+        "other_secrets": [
+          {
+            "unencrypted": "p1 secret1"
+          },
+          {
+            "encrypted": "p1 test-encrypted-secret2",
+            "cipher_version": 1
+          }
+        ],
+        "group": {
+          "groups": [
+            {
+              "name": "Group 1",
+              "sub_groups": [
+                {
+                  "name": "Group 1 sub 2"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "city_info": [
+      {
+        "city": {
+          "name": "Test City A",
+          "state": "Test State A",
+          "country": "Test Country A"
+        },
+        "related_city_info": [
+          {
+            "city_info": [
+              {
+                "city": {
+                  "name": "Test City B",
+                  "state": "Test State B",
+                  "country": "Test Country B"
+                }
+              }
+            ]
+          },
+          {
+            "city_info": [
+              {
+                "city": {
+                  "name": "Test City C",
+                  "state": "Test State C",
+                  "country": "Test Country C"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,20 +1,8 @@
 {
   "address_book": {
-    "settings": {
-      "card_colors": [
-        {
-          "value": "red"
-        }
-      ]
-    },
     "person": [
       {
         "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-        "email": [
-          {
-            "value": "p1e2@test.com"
-          }
-        ],
         "relation": [
           {
             "id": "05ade278-4b44-43da-a0cc-14463854e397",
@@ -28,21 +16,9 @@
             }
           }
         ],
-        "previous_passwords": [
-          {
-            "hashed": "test-hashed-previousPassword",
-            "hash_version": 1
-          }
-        ],
         "main_secret": {
           "unencrypted": "p1 Main secret"
-        },
-        "other_secrets": [
-          {
-            "encrypted": "p1 test-encrypted-secret2",
-            "cipher_version": 1
-          }
-        ]
+        }
       },
       {
         "first_name": "Person 2 first",
@@ -108,26 +84,6 @@
       }
     ],
     "city_info": [
-      {
-        "city": {
-          "name": "Test City a",
-          "state": "Test State A",
-          "country": "Test country A"
-        },
-        "related_city_info": [
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Test City C",
-                  "state": "Test State C",
-                  "country": "Test Country C"
-                }
-              }
-            ]
-          }
-        ]
-      },
       {
         "info": "Test City D info",
         "city": {

@@ -245,6 +245,8 @@ class MutablePrimitiveModel(
 ) : MutableScalarValueModel(parent), PrimitiveModel {
     override fun matches(that: ElementModel): Boolean {
         if (that !is PrimitiveModel) return false
+        if (getFieldTypeMeta(this.parent.meta) == FieldType.BLOB)
+            return (this.value as ByteArray).contentEquals(that.value as ByteArray)
         return this.value == that.value
     }
 
