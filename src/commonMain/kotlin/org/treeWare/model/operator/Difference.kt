@@ -25,6 +25,8 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
     lateinit var deleteMainModel: MutableMainModel
     lateinit var updateMainModel: MutableMainModel
 
+    lateinit var mainMeta: MainModel
+
     fun getModels(giveNullIfEmpty: Boolean = true): DifferenceModels {
         /*If a result tree is empty, then instead make the value of the tree null*/
         val createModel = when {
@@ -43,9 +45,10 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
     }
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        createMainModel = MutableMainModel(leaderMainList.last()?.mainMeta)//what needs to be created
-        deleteMainModel = MutableMainModel(leaderMainList.last()?.mainMeta)//what needs to be deleted
-        updateMainModel = MutableMainModel(leaderMainList.last()?.mainMeta)//what needs to be updated
+        mainMeta = checkNotNull(leaderMainList.last()?.mainMeta)
+        createMainModel = MutableMainModel(mainMeta)//what needs to be created
+        deleteMainModel = MutableMainModel(mainMeta)//what needs to be deleted
+        updateMainModel = MutableMainModel(mainMeta)//what needs to be updated
 
         createStack.addFirst(createMainModel)
         deleteStack.addFirst(deleteMainModel)
@@ -171,38 +174,32 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
 
     // Helpers
 
-
     private fun visitValue(
         leaderValueList: List<ElementModel?>
     ): TraversalAction {
-        val createParent = createStack.first() as MutableFieldModel
-        val deleteParent = deleteStack.first() as MutableFieldModel
+        /* NOTE: This only populates create and delete trees if the parent is a key field */
+
         val updateParent = updateStack.first() as MutableFieldModel
         val oldValue = leaderValueList.first()
         val newValue = leaderValueList.last()
-
         val parentInclusion = inclusionStack.first()
-        /**===== Check if it's absent in the original =====**/
-        if (oldValue == null || isKeyField(createParent)) {
-            addValueToTree(leaderValueList, createStack)
-            if (oldValue == null) parentInclusion.inCreate = true
-        }
 
-        /**===== Check if it's absent in the new version =====**/
-        if (newValue == null || isKeyField(deleteParent)) {
+        /**===== Check if it's a key field =====**/
+        if (isKeyField(updateParent)) {
+            addValueToTree(leaderValueList, createStack)
             addValueToTree(leaderValueList, deleteStack)
-            if (newValue == null) parentInclusion.inDelete = true
         }
 
         /**===== Check if it's been updated =====**/
         val oldAndNewMatch =
-            if (oldValue?.elementType != ModelElementType.ASSOCIATION && oldValue != null && newValue != null)
-                oldValue.matches(newValue)
-            else true
+            if (oldValue == null || newValue == null) false
+            else if (oldValue.elementType == ModelElementType.ASSOCIATION)
+                associationsEqual(oldValue as AssociationModel, newValue as AssociationModel)
+            else oldValue.matches(newValue)
 
         if (!oldAndNewMatch || isKeyField(updateParent)) {
-            addValueToTree(leaderValueList, updateStack)
-            if(!oldAndNewMatch) parentInclusion.inUpdate = true
+            if (updateParent.elementType != ModelElementType.LIST_FIELD) addValueToTree(leaderValueList, updateStack)
+            if (!oldAndNewMatch) parentInclusion.inUpdate = true
         }
         return TraversalAction.CONTINUE
     }
@@ -216,7 +213,6 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
         val newElement = newChildValue(parent)
         copy(lastElement, newElement)
     }
-
 
     private fun visitField(leaderFieldList: List<FieldModel?>): TraversalAction {
         val lastLeaderField = leaderFieldList.lastNotNullOf { it }
@@ -257,12 +253,12 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
 
     private fun leaveField(leaderFieldList: List<FieldModel?>) {
         val elementInclusion = inclusionStack.removeFirst()
+        val newField = leaderFieldList.last()
 
         /**===== Handle the create tree =====**/
         val createField = createStack.removeFirst() as MutableFieldModel
         if ((elementInclusion.inCreate) || isKeyField(createField)) { //Case: In or above a created node
             val createParent = createStack.first() as MutableBaseEntityModel
-            //(createField as MutableSingleFieldModel).setValue()
             connectField(createParent, createField)
         }
 
@@ -277,10 +273,28 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
         val updateField = updateStack.removeFirst() as MutableFieldModel
         if ((elementInclusion.inUpdate) || isKeyField(updateField)) { //Case: In or above an updated node
             val updateParent = updateStack.first() as MutableBaseEntityModel
+            if (updateField.elementType == ModelElementType.LIST_FIELD) copy(checkNotNull(newField), updateField)
             connectField(updateParent, updateField)
         }
 
         inclusionStack.first().addChildInclusions(elementInclusion)
+    }
+
+
+    /**===== Uses the difference operator to compare associations =====**/
+    private fun associationsEqual(oldAssociation: AssociationModel, newAssociation: AssociationModel): Boolean {
+        val oldPathTree = oldAssociation.value
+        val newPathTree = newAssociation.value
+
+        val oldModel = MutableMainModel(mainMeta)
+        val oldRoot = oldModel.getOrNewRoot()
+        copy(oldPathTree, oldRoot)
+
+        val newModel = MutableMainModel(mainMeta)
+        val newRoot = newModel.getOrNewRoot()
+        copy(newPathTree, newRoot)
+
+        return !difference(oldModel, newModel).isDifferent()
     }
 }
 

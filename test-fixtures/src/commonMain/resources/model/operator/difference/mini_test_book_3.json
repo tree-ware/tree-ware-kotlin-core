@@ -10,13 +10,13 @@
           "value": "orange"
         },
         {
-          "value": "green"
-        },
-        {
-          "value": "blue"
-        },
-        {
           "value": "red"
+        },
+        {
+          "value": "yellow"
+        },
+        {
+          "value": "green"
         }
       ]
     },
@@ -39,7 +39,7 @@
             "name": "Group 2 sub 1"
           },
           {
-            "name": "Group 2 sub 2"
+            "name": "Group 2 sub 3"
           }
         ]
       }
@@ -53,10 +53,10 @@
         "group": {
           "groups": [
             {
-              "name": "Group 1",
+              "name": "Group 2",
               "sub_groups": [
                 {
-                  "name": "Group 1 sub 2"
+                  "name": "Group 2 sub 3"
                 }
               ]
             }
@@ -67,7 +67,7 @@
             "value": "p1e1@test.com"
           },
           {
-            "value": "p1e2@test.com"
+            "value": "p1e3@test.com"
           }
         ],
         "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
@@ -258,9 +258,9 @@
             "city_info": [
               {
                 "city": {
-                  "name": "Test City A",
-                  "state": "Test State A",
-                  "country": "Test Country A"
+                  "name": "Test City B",
+                  "state": "Test State B",
+                  "country": "Test Country B"
                 }
               }
             ]

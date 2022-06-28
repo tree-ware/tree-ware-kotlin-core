@@ -30,7 +30,7 @@
     "person": [
       {
         "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-        "first_name": "Person 1 first",
+        "first_name": "Person 1 first ?",
         "last_name": "Person 1 last",
         "hero_name": "Person 1 hero name",
         "group": {
@@ -83,9 +83,9 @@
     "city_info": [
       {
         "city": {
-          "name": "Test City a",
+          "name": "Test City A",
           "state": "Test State A",
-          "country": "Test country A"
+          "country": "Test Country A"
         },
         "info": "City A info",
         "related_city_info": [
