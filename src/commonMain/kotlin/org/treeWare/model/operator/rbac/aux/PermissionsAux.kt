@@ -3,7 +3,7 @@ package org.treeWare.model.operator.rbac.aux
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.getAux
 
-const val PERMISSIONS_AUX_NAME = "permissions"
+internal const val PERMISSIONS_AUX_NAME = "permissions"
 
 data class PermissionsAux(
     val create: PermissionScope? = null,
@@ -40,3 +40,7 @@ enum class PermissionScope {
 }
 
 fun getPermissionsAux(element: ElementModel?): PermissionsAux? = element?.getAux(PERMISSIONS_AUX_NAME)
+
+fun setPermissionsAux(element: ElementModel, aux: PermissionsAux) {
+    element.setAux(PERMISSIONS_AUX_NAME, aux)
+}

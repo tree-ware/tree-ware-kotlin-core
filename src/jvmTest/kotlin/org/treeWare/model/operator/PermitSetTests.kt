@@ -8,9 +8,9 @@ import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFacto
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.getMainModelFromJsonString
-import org.treeWare.model.operator.rbac.aux.PERMISSIONS_AUX_NAME
 import org.treeWare.model.operator.rbac.aux.PermissionScope
 import org.treeWare.model.operator.rbac.aux.PermissionsAux
+import org.treeWare.model.operator.rbac.aux.setPermissionsAux
 import org.treeWare.model.operator.set.aux.SET_AUX_NAME
 import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.SetAuxEncoder
@@ -171,7 +171,7 @@ class PermitSetTests {
 
     private fun newRootRbac(permissions: PermissionsAux): MainModel {
         val rbac = MutableMainModel(addressBookMetaModel)
-        rbac.setAux(PERMISSIONS_AUX_NAME, permissions)
+        setPermissionsAux(rbac, permissions)
         rbac.getOrNewRoot()
         return rbac
     }
@@ -328,11 +328,11 @@ class PermitSetTests {
         val rbac = MutableMainModel(addressBookMetaModel)
         val rbacRoot = rbac.getOrNewRoot()
         val rbacPersons = getOrNewMutableSetField(rbacRoot, "person")
-        personsPermissions?.also { rbacPersons.setAux(PERMISSIONS_AUX_NAME, it) }
+        personsPermissions?.also { setPermissionsAux(rbacPersons, it) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
         setUuidSingleField(rbacPerson, "id", personId)
         rbacPersons.addValue(rbacPerson)
-        rbacPerson.setAux(PERMISSIONS_AUX_NAME, personPermissions)
+        setPermissionsAux(rbacPerson, personPermissions)
         return rbac
     }
 
@@ -702,25 +702,25 @@ class PermitSetTests {
         val personSet = getOrNewMutableSetField(root, "person")
         val clarkKent = getNewMutableSetEntity(personSet)
         setUuidSingleField(clarkKent, "id", CLARK_KENT_ID)
-        clarkKent.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        setPermissionsAux(clarkKent, PermissionsAux(crud = PermissionScope.SUB_TREE))
         personSet.addValue(clarkKent)
 
         val cityInfoSet = getOrNewMutableSetField(root, "city_info")
         val albanyCityInfo = getNewMutableSetEntity(cityInfoSet)
         addCity(albanyCityInfo, "Albany", "New York", "United States of America")
-        albanyCityInfo.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(crud = PermissionScope.SUB_TREE))
+        setPermissionsAux(albanyCityInfo, PermissionsAux(crud = PermissionScope.SUB_TREE))
         cityInfoSet.addValue(albanyCityInfo)
 
         if (permitTargets) {
             val groups = getOrNewMutableSetField(root, "groups")
             val dc = getNewMutableSetEntity(groups)
             setStringSingleField(dc, "name", "DC")
-            dc.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = PermissionScope.SUB_TREE))
+            setPermissionsAux(dc, PermissionsAux(read = PermissionScope.SUB_TREE))
             groups.addValue(dc)
 
             val newYorkCityInfo = getNewMutableSetEntity(cityInfoSet)
             addCity(newYorkCityInfo, "New York City", "New York", "United States of America")
-            newYorkCityInfo.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = PermissionScope.SUB_TREE))
+            setPermissionsAux(newYorkCityInfo, PermissionsAux(read = PermissionScope.SUB_TREE))
             cityInfoSet.addValue(newYorkCityInfo)
         }
 
