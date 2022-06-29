@@ -5,9 +5,9 @@ import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.getMainModelFromJsonString
-import org.treeWare.model.operator.rbac.aux.PERMISSIONS_AUX_NAME
 import org.treeWare.model.operator.rbac.aux.PermissionScope
 import org.treeWare.model.operator.rbac.aux.PermissionsAux
+import org.treeWare.model.operator.rbac.aux.setPermissionsAux
 import org.treeWare.model.readFile
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -131,7 +131,7 @@ class PermitGetTests {
 
     private fun newRootRbac(readScope: PermissionScope): MainModel {
         val rbac = MutableMainModel(addressBookMetaModel)
-        rbac.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = readScope))
+        setPermissionsAux(rbac, PermissionsAux(read = readScope))
         rbac.getOrNewRoot()
         return rbac
     }
@@ -186,11 +186,11 @@ class PermitGetTests {
         val rbac = MutableMainModel(addressBookMetaModel)
         val rbacRoot = rbac.getOrNewRoot()
         val rbacPersons = getOrNewMutableSetField(rbacRoot, "person")
-        personsReadScope?.also { rbacPersons.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = it)) }
+        personsReadScope?.also { setPermissionsAux(rbacPersons, PermissionsAux(read = it)) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
         setUuidSingleField(rbacPerson, "id", personId)
         rbacPersons.addValue(rbacPerson)
-        rbacPerson.setAux(PERMISSIONS_AUX_NAME, PermissionsAux(read = personReadScope))
+        setPermissionsAux(rbacPerson, PermissionsAux(read = personReadScope))
         return rbac
     }
 
