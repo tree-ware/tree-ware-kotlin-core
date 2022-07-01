@@ -3,20 +3,13 @@ package org.treeWare.model.operator
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.get.GetDelegate
 import org.treeWare.model.operator.get.GetDelegateVisitor
+import org.treeWare.model.operator.get.GetResponse
 import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
 interface GetEntityDelegate
 
 object GetOperatorId : OperatorId<GetEntityDelegate>
-
-sealed class GetResponse {
-    data class Model(val model: MainModel) : GetResponse()
-    data class ErrorList(val errorList: List<String>) : GetResponse()
-
-    /** A model with "error_" aux. */
-    data class ErrorModel(val errorModel: MainModel) : GetResponse()
-}
 
 fun get(
     request: MainModel,
