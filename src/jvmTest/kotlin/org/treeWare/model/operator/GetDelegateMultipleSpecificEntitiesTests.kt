@@ -11,6 +11,7 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.operator.get.GetCompositionResult
 import org.treeWare.model.operator.get.GetCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
+import org.treeWare.model.operator.get.GetResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
