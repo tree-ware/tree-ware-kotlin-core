@@ -12,3 +12,7 @@ enum class SetAux {
 }
 
 fun getSetAux(element: ElementModel?): SetAux? = element?.getAux(SET_AUX_NAME)
+
+fun setSetAux(element: ElementModel, aux: SetAux) {
+    element.setAux(SET_AUX_NAME, aux)
+}
