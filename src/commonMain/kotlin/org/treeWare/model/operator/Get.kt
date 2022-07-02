@@ -22,7 +22,7 @@ fun get(
     val getVisitor = GetDelegateVisitor(getDelegate, setEntityDelegates)
     forEach(response, request, getVisitor, false, ::followerEntityEquals)
     return if (getVisitor.errors.isEmpty()) GetResponse.Model(response)
-    else GetResponse.ErrorList(getVisitor.errors.map { it.toString() })
+    else GetResponse.ErrorList(getVisitor.errors)
 }
 
 private fun followerEntityEquals(
