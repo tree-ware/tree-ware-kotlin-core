@@ -8,11 +8,12 @@ import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.model.operator.set.SetDelegate
+import org.treeWare.model.operator.set.SetResponse
+import org.treeWare.model.operator.set.assertSetResponse
 import org.treeWare.model.operator.set.aux.SET_AUX_NAME
 import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.SetAuxStateMachine
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
 
@@ -80,9 +81,10 @@ class SetDelegateTests {
         } returns emptyList()
         every { delegate.end() } returns emptyList()
 
-        val actualErrors = set(model, delegate, null)
+        val expectedResponse = SetResponse.Success
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals("", actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -192,9 +194,10 @@ class SetDelegateTests {
         } returns emptyList()
         every { delegate.end() } returns emptyList()
 
-        val actualErrors = set(model, delegate, null)
+        val expectedResponse = SetResponse.Success
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals("", actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -295,9 +298,10 @@ class SetDelegateTests {
         } returns emptyList()
         every { delegate.end() } returns emptyList()
 
-        val actualErrors = set(model, delegate, null)
+        val expectedResponse = SetResponse.Success
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals("", actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -404,9 +408,10 @@ class SetDelegateTests {
         } returns emptyList()
         every { delegate.end() } returns emptyList()
 
-        val actualErrors = set(model, delegate, null)
+        val expectedResponse = SetResponse.Success
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals("", actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -526,9 +531,10 @@ class SetDelegateTests {
         } returns emptyList()
         every { delegate.end() } returns emptyList()
 
-        val actualErrors = set(model, delegate, null)
+        val expectedResponse = SetResponse.Success
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals("", actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -649,9 +655,10 @@ class SetDelegateTests {
         } returns emptyList()
         every { delegate.end() } returns emptyList()
 
-        val actualErrors = set(model, delegate, null)
+        val expectedResponse = SetResponse.Success
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals("", actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -718,11 +725,11 @@ class SetDelegateTests {
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns listOf(ElementModelError("/", "delegate begin error"))
-        val expectedErrors = listOf("/: delegate begin error")
+        val expectedResponse = SetResponse.ErrorList(listOf(ElementModelError("/", "delegate begin error")))
 
-        val actualErrors = set(model, delegate, null)
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
         }
@@ -785,15 +792,17 @@ class SetDelegateTests {
             ), // Group-0 entity
             listOf(ElementModelError("/address_book/groups[Group-1]", "delegate error 3")) // Group-1 entity
         )
-        val expectedErrors = listOf(
-            "/address_book/groups[Group-0]: delegate error 1",
-            "/address_book/groups[Group-0]: delegate error 2",
-            "/address_book/groups[Group-1]: delegate error 3"
+        val expectedResponse = SetResponse.ErrorList(
+            listOf(
+                ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
+                ElementModelError("/address_book/groups[Group-0]", "delegate error 2"),
+                ElementModelError("/address_book/groups[Group-1]", "delegate error 3")
+            )
         )
 
-        val actualErrors = set(model, delegate, null)
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
@@ -874,11 +883,11 @@ class SetDelegateTests {
             )
         } returns emptyList()
         every { delegate.end() } returns listOf(ElementModelError("/", "delegate end error"))
-        val expectedErrors = listOf("/: delegate end error")
+        val expectedResponse = SetResponse.ErrorList(listOf(ElementModelError("/", "delegate end error")))
 
-        val actualErrors = set(model, delegate, null)
+        val actualResponse = set(model, delegate, null)
 
-        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+        assertSetResponse(expectedResponse, actualResponse)
         verifySequence {
             delegate.begin()
             delegate.setEntity(
