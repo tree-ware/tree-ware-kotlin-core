@@ -725,7 +725,8 @@ class SetDelegateTests {
 
         val delegate = mockk<SetDelegate>()
         every { delegate.begin() } returns listOf(ElementModelError("/", "delegate begin error"))
-        val expectedResponse = SetResponse.ErrorList(listOf(ElementModelError("/", "delegate begin error")))
+        val expectedResponse =
+            SetResponse.ErrorList(ErrorCode.SERVER_ERROR, listOf(ElementModelError("/", "delegate begin error")))
 
         val actualResponse = set(model, delegate, null)
 
@@ -793,6 +794,7 @@ class SetDelegateTests {
             listOf(ElementModelError("/address_book/groups[Group-1]", "delegate error 3")) // Group-1 entity
         )
         val expectedResponse = SetResponse.ErrorList(
+            ErrorCode.CLIENT_ERROR,
             listOf(
                 ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
                 ElementModelError("/address_book/groups[Group-0]", "delegate error 2"),
@@ -883,7 +885,8 @@ class SetDelegateTests {
             )
         } returns emptyList()
         every { delegate.end() } returns listOf(ElementModelError("/", "delegate end error"))
-        val expectedResponse = SetResponse.ErrorList(listOf(ElementModelError("/", "delegate end error")))
+        val expectedResponse =
+            SetResponse.ErrorList(ErrorCode.CLIENT_ERROR, listOf(ElementModelError("/", "delegate end error")))
 
         val actualResponse = set(model, delegate, null)
 

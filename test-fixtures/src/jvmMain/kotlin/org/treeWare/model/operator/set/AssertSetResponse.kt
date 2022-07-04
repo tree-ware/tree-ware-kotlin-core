@@ -4,6 +4,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 fun assertSetResponse(expected: SetResponse, actual: SetResponse) {
+    assertEquals(expected.errorCode, actual.errorCode)
     when (expected) {
         is SetResponse.Success -> assertIs<SetResponse.Success>(actual)
         is SetResponse.ErrorList -> {
