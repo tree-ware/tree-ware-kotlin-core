@@ -21,15 +21,15 @@ fun set(
     setDelegate: SetDelegate,
     entityDelegates: EntityDelegateRegistry<SetEntityDelegate>?
 ): SetResponse {
-    val beginErrors = setDelegate.begin()
-    if (beginErrors.isNotEmpty()) return SetResponse.ErrorList(ErrorCode.SERVER_ERROR, beginErrors)
+    val beginResponse = setDelegate.begin()
+    if (!beginResponse.isOk()) return beginResponse
 
     val setVisitor = SetDelegateVisitor(setDelegate, entityDelegates)
     forEach(main, setVisitor, false)
     if (setVisitor.errors.isNotEmpty()) return SetResponse.ErrorList(ErrorCode.CLIENT_ERROR, setVisitor.errors)
 
-    val endErrors = setDelegate.end()
-    if (endErrors.isNotEmpty()) return SetResponse.ErrorList(ErrorCode.CLIENT_ERROR, endErrors)
+    val endResponse = setDelegate.end()
+    if (!endResponse.isOk()) return endResponse
 
     return SetResponse.Success
 }

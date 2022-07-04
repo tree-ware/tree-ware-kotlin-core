@@ -5,6 +5,8 @@ import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.ErrorCode
 
 sealed class SetResponse(open val errorCode: ErrorCode) {
+    fun isOk(): Boolean = errorCode == ErrorCode.OK
+
     object Success : SetResponse(ErrorCode.OK)
 
     data class ErrorList(override val errorCode: ErrorCode, val errorList: List<ElementModelError>) :
