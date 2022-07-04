@@ -1,10 +1,7 @@
 package org.treeWare.model.operator.get
 
 import org.treeWare.model.core.*
-import org.treeWare.model.operator.ElementModelError
-import org.treeWare.model.operator.EntityDelegateRegistry
-import org.treeWare.model.operator.ModelPathStack
-import org.treeWare.model.operator.SetEntityDelegate
+import org.treeWare.model.operator.*
 import org.treeWare.model.traversal.AbstractLeader1Follower1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.util.mergeAddToSet
@@ -16,6 +13,7 @@ class GetDelegateVisitor(
     private val getDelegate: GetDelegate,
     private val setEntityDelegates: EntityDelegateRegistry<SetEntityDelegate>?
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+    var errorCode = ErrorCode.OK
     val errors = mutableListOf<ElementModelError>()
 
     private val modelPathStack = ModelPathStack()
@@ -58,13 +56,17 @@ class GetDelegateVisitor(
             requestFields,
             responseParentField
         )
-        when (fetchResult) {
-            is GetCompositionResult.Entity ->
+        return when (fetchResult) {
+            is GetCompositionResult.Entity -> {
                 createResponseCompositionFields(requestCompositionFields, fetchResult.entity)
-            is GetCompositionResult.ErrorList ->
+                TraversalAction.CONTINUE
+            }
+            is GetCompositionResult.ErrorList -> {
+                errorCode = fetchResult.errorCode
                 errors.addAll(fetchResult.errorList)
+                TraversalAction.ABORT_SUB_TREE
+            }
         }
-        return if (errors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
     }
 
     override fun leaveSingleField(leaderField1: SingleFieldModel, followerField1: SingleFieldModel?) {
@@ -77,6 +79,7 @@ class GetDelegateVisitor(
             return TraversalAction.CONTINUE
         }
         modelPathStack.pushField(leaderField1)
+        val fieldErrors = mutableListOf<ElementModelError>()
         followerField1.values.forEach { requestCompositionElement ->
             val requestCompositionEntity = requestCompositionElement as EntityModel
             val (requestCompositionFields, requestFields) = requestCompositionEntity.fields.values.partition {
@@ -97,10 +100,14 @@ class GetDelegateVisitor(
                     createResponseCompositionFields(requestCompositionFields, it)
                     mergeAddToSet(it, responseParentField, true)
                 }
-                is GetCompositionSetResult.ErrorList -> errors.addAll(fetchResult.errorList)
+                is GetCompositionSetResult.ErrorList -> {
+                    errorCode = fetchResult.errorCode
+                    fieldErrors.addAll(fetchResult.errorList)
+                }
             }
         }
-        return if (errors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
+        errors.addAll(fieldErrors)
+        return if (fieldErrors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
     }
 
     override fun leaveSetField(leaderField1: SetFieldModel, followerField1: SetFieldModel?) {
