@@ -66,7 +66,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -78,8 +78,8 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns emptyList()
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.Success
 
         val expectedResponse = SetResponse.Success
         val actualResponse = set(model, delegate, null)
@@ -179,7 +179,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -191,8 +191,8 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns emptyList()
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.Success
 
         val expectedResponse = SetResponse.Success
         val actualResponse = set(model, delegate, null)
@@ -283,7 +283,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -295,8 +295,8 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns emptyList()
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.Success
 
         val expectedResponse = SetResponse.Success
         val actualResponse = set(model, delegate, null)
@@ -393,7 +393,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -405,8 +405,8 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns emptyList()
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.Success
 
         val expectedResponse = SetResponse.Success
         val actualResponse = set(model, delegate, null)
@@ -516,7 +516,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -528,8 +528,8 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns emptyList()
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.Success
 
         val expectedResponse = SetResponse.Success
         val actualResponse = set(model, delegate, null)
@@ -640,7 +640,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -652,8 +652,8 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns emptyList()
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.Success
 
         val expectedResponse = SetResponse.Success
         val actualResponse = set(model, delegate, null)
@@ -724,7 +724,10 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns listOf(ElementModelError("/", "delegate begin error"))
+        every { delegate.begin() } returns SetResponse.ErrorList(
+            ErrorCode.SERVER_ERROR,
+            listOf(ElementModelError("/", "delegate begin error"))
+        )
         val expectedResponse =
             SetResponse.ErrorList(ErrorCode.SERVER_ERROR, listOf(ElementModelError("/", "delegate begin error")))
 
@@ -772,7 +775,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -785,13 +788,18 @@ class SetDelegateTests {
                 ofType()
             )
         } returnsMany listOf(
-            emptyList(),  // address_book entity
-            emptyList(),  // settings entity
-            listOf(
-                ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
-                ElementModelError("/address_book/groups[Group-0]", "delegate error 2")
+            SetResponse.Success,  // address_book entity
+            SetResponse.Success,  // settings entity
+            SetResponse.ErrorList(
+                ErrorCode.CLIENT_ERROR, listOf(
+                    ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
+                    ElementModelError("/address_book/groups[Group-0]", "delegate error 2")
+                )
             ), // Group-0 entity
-            listOf(ElementModelError("/address_book/groups[Group-1]", "delegate error 3")) // Group-1 entity
+            SetResponse.ErrorList(
+                ErrorCode.CLIENT_ERROR,
+                listOf(ElementModelError("/address_book/groups[Group-1]", "delegate error 3"))
+            ) // Group-1 entity
         )
         val expectedResponse = SetResponse.ErrorList(
             ErrorCode.CLIENT_ERROR,
@@ -871,7 +879,7 @@ class SetDelegateTests {
             )
 
         val delegate = mockk<SetDelegate>()
-        every { delegate.begin() } returns emptyList()
+        every { delegate.begin() } returns SetResponse.Success
         every {
             delegate.setEntity(
                 ofType(),
@@ -883,8 +891,11 @@ class SetDelegateTests {
                 ofType(),
                 ofType()
             )
-        } returns emptyList()
-        every { delegate.end() } returns listOf(ElementModelError("/", "delegate end error"))
+        } returns SetResponse.Success
+        every { delegate.end() } returns SetResponse.ErrorList(
+            ErrorCode.CLIENT_ERROR,
+            listOf(ElementModelError("/", "delegate end error"))
+        )
         val expectedResponse =
             SetResponse.ErrorList(ErrorCode.CLIENT_ERROR, listOf(ElementModelError("/", "delegate end error")))
 

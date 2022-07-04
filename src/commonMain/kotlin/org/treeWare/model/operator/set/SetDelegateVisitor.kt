@@ -61,7 +61,7 @@ class SetDelegateVisitor(
 
         val keys = modelPathStack.peekKeys()
         val (associations, other) = getNonKeys(leaderEntity1)
-        val delegateErrors = setDelegate.setEntity(
+        val delegateResponse = setDelegate.setEntity(
             activeSetAux,
             leaderEntity1,
             fieldPath,
@@ -71,8 +71,14 @@ class SetDelegateVisitor(
             associations,
             other
         )
-        errors.addAll(delegateErrors)
-        return if (delegateErrors.isEmpty()) TraversalAction.CONTINUE else TraversalAction.ABORT_SUB_TREE
+        return when (delegateResponse) {
+            SetResponse.Success -> TraversalAction.CONTINUE
+            is SetResponse.ErrorList -> {
+                errors.addAll(delegateResponse.errorList)
+                TraversalAction.ABORT_SUB_TREE
+            }
+            is SetResponse.ErrorModel -> TODO()
+        }
     }
 
     override fun leaveEntity(leaderEntity1: EntityModel) {
