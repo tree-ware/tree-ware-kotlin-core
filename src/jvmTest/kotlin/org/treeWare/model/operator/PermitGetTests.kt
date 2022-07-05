@@ -5,12 +5,15 @@ import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.getMainModelFromJsonString
+import org.treeWare.model.operator.rbac.FullyPermitted
+import org.treeWare.model.operator.rbac.NotPermitted
+import org.treeWare.model.operator.rbac.PartiallyPermitted
 import org.treeWare.model.operator.rbac.aux.PermissionScope
 import org.treeWare.model.operator.rbac.aux.PermissionsAux
 import org.treeWare.model.operator.rbac.aux.setPermissionsAux
 import org.treeWare.model.readFile
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertIs
 
 private const val CLARK_KENT_ID = "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
 private const val LOIS_LANE_ID = "a8aacf55-7810-4b43-afe5-4344f25435fd"
@@ -25,14 +28,34 @@ private val specificClarkKentAndWildcardPersonGetJson =
     readFile("org/treeWare/model/operator/get_request_specific_clark_kent_and_wildcard_person.json")
 
 class PermitGetTests {
-    private fun testPermitGet(getJson: String, rbac: MainModel, expectedPermittedJson: String?) {
+    private fun testPermitGet(
+        getJson: String,
+        rbac: MainModel,
+        expectedPermittedJson: String?,
+        isFullyPermitted: Boolean
+    ) {
         val getModel = getMainModelFromJsonString(addressBookMetaModel, getJson)
-        val actualPermitted = permitGet(getModel, rbac)
+        val actual = permitGet(getModel, rbac)
         if (expectedPermittedJson == null) {
-            if (actualPermitted != null) assertMatchesJsonString(actualPermitted, "null", EncodePasswords.ALL)
+            when (actual) {
+                is FullyPermitted -> assertMatchesJsonString(
+                    actual.permitted,
+                    "NotPermitted instead of FullyPermitted",
+                    EncodePasswords.ALL
+                )
+                is PartiallyPermitted -> assertMatchesJsonString(
+                    actual.permitted,
+                    "NotPermitted instead of PartiallyPermitted",
+                    EncodePasswords.ALL
+                )
+                NotPermitted -> {}
+            }
+        } else if (isFullyPermitted) {
+            assertIs<FullyPermitted>(actual)
+            assertMatchesJsonString(actual.permitted, expectedPermittedJson, EncodePasswords.ALL)
         } else {
-            assertNotNull(actualPermitted)
-            assertMatchesJsonString(actualPermitted, expectedPermittedJson, EncodePasswords.ALL)
+            assertIs<PartiallyPermitted>(actual)
+            assertMatchesJsonString(actual.permitted, expectedPermittedJson, EncodePasswords.ALL)
         }
     }
 
@@ -48,7 +71,7 @@ class PermitGetTests {
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(singleCompositionGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(singleCompositionGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
@@ -74,7 +97,7 @@ class PermitGetTests {
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(onlyNonWildcardKeysGetJson, rbac, expectedPermittedJson = onlyNonWildcardKeysGetJson)
+        testPermitGet(onlyNonWildcardKeysGetJson, rbac, expectedPermittedJson = onlyNonWildcardKeysGetJson, true)
     }
 
     @Test
@@ -100,7 +123,7 @@ class PermitGetTests {
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(onlyWildcardKeysGetJson, rbac, expectedPermittedJson = onlyWildcardKeysGetJson)
+        testPermitGet(onlyWildcardKeysGetJson, rbac, expectedPermittedJson = onlyWildcardKeysGetJson, true)
     }
 
     // endregion
@@ -116,13 +139,13 @@ class PermitGetTests {
     @Test
     fun `Fully matching non-wildcard get-model must not be permitted for no-level RBAC`() {
         val rbac = newNoLevelRbac()
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
     fun `Fully matching wildcard get-model must not be permitted for no-level RBAC`() {
         val rbac = newNoLevelRbac()
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     // endregion
@@ -139,37 +162,37 @@ class PermitGetTests {
     @Test
     fun `Fully matching non-wildcard get-model must be fully permitted for root-level sub-tree-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardGetJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardGetJson, true)
     }
 
     @Test
     fun `Fully matching wildcard get-model must be fully permitted for root-level sub-tree-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.SUB_TREE)
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = wildcardGetJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = wildcardGetJson, true)
     }
 
     @Test
     fun `Fully matching non-wildcard get-model must not be permitted for root-level node-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NODE)
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
     fun `Fully matching wildcard get-model must not be permitted for root-level node-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NODE)
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
     fun `Fully matching non-wildcard get-model must not be permitted for root-level none-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NONE)
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
     fun `Fully matching wildcard get-model must not be permitted for root-level none-scoped RBAC`() {
         val rbac = newRootRbac(PermissionScope.NONE)
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     // NOTE: Partially matching & non-matching tests don't exist for root-level RBAC since everything is under the root.
@@ -197,7 +220,7 @@ class PermitGetTests {
     @Test
     fun `Fully matching non-wildcard get-model must be fully permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson)
+        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson, true)
     }
 
     @Test
@@ -207,46 +230,52 @@ class PermitGetTests {
         testPermitGet(
             specificClarkKentWithWildcardChildrenGetJson,
             rbac,
-            expectedPermittedJson = specificClarkKentWithWildcardChildrenGetJson
+            expectedPermittedJson = specificClarkKentWithWildcardChildrenGetJson,
+            true
         )
     }
 
     @Test
     fun `Partially matching non-wildcard get-model must be partially permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson, false)
     }
 
     @Test
     fun `Partially matching wildcard get-model must be partially permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = specificClarkKentWithWildcardChildrenGetJson)
+        testPermitGet(
+            wildcardGetJson,
+            rbac,
+            expectedPermittedJson = specificClarkKentWithWildcardChildrenGetJson,
+            false
+        )
     }
 
     @Test
     fun `Non-matching non-wildcard get-model must not be permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(nonWildcardClarkKentGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
     fun `Non-matching wildcard get-model must not be permitted for first-level sub-tree-scoped RBAC`() {
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.SUB_TREE)
-        testPermitGet(specificClarkKentWithWildcardChildrenGetJson, rbac, expectedPermittedJson = null)
+        testPermitGet(specificClarkKentWithWildcardChildrenGetJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test
     fun `Partially matching non-wildcard get-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped RBAC`() {
         // Permit all persons except Lois Lane
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.NONE, PermissionScope.SUB_TREE)
-        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson)
+        testPermitGet(nonWildcardGetJson, rbac, expectedPermittedJson = nonWildcardClarkKentGetJson, false)
     }
 
     @Test
     fun `Partially matching wildcard get-model must be partially permitted for first-level none-scoped-inside-sub-tree-scoped RBAC`() {
         // Permit all persons except Lois Lane
         val rbac = newPersonRbac(LOIS_LANE_ID, PermissionScope.NONE, PermissionScope.SUB_TREE)
-        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = specificClarkKentAndWildcardPersonGetJson)
+        testPermitGet(wildcardGetJson, rbac, expectedPermittedJson = specificClarkKentAndWildcardPersonGetJson, false)
     }
 
     // endregion
@@ -269,7 +298,7 @@ class PermitGetTests {
             |}
         """.trimMargin()
         val rbac = newPersonRbac(CLARK_KENT_ID, PermissionScope.SUB_TREE)
-        testPermitGet(getJson, rbac, expectedPermittedJson = null)
+        testPermitGet(getJson, rbac, expectedPermittedJson = null, false)
     }
 
     // endregion

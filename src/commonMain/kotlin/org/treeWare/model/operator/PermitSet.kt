@@ -1,6 +1,10 @@
 package org.treeWare.model.operator
 
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.rbac.FullyPermitted
+import org.treeWare.model.operator.rbac.NotPermitted
+import org.treeWare.model.operator.rbac.PartiallyPermitted
+import org.treeWare.model.operator.rbac.PermitResponse
 import org.treeWare.model.operator.rbac.aux.PermitSetAuxStack
 import org.treeWare.model.operator.rbac.aux.getPermissionsAux
 import org.treeWare.model.operator.set.aux.SET_AUX_NAME
@@ -13,16 +17,22 @@ import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
 /** Return a subset of `set` that is permitted by `rbac` */
-fun permitSet(set: MainModel, rbac: MainModel): MutableMainModel? {
+fun permitSet(set: MainModel, rbac: MainModel): PermitResponse {
     val visitor = PermitSetVisitor(rbac)
     forEach(set, rbac, visitor, false)
-    return visitor.permittedMain
+    return visitor.permitResponse
 }
 
 private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(
     TraversalAction.CONTINUE
 ) {
-    val permittedMain: MutableMainModel?
+    val permitResponse: PermitResponse
+        get() {
+            val permitted = permittedMain ?: return NotPermitted
+            return if (partiallyDenied) PartiallyPermitted(permitted) else FullyPermitted(permitted)
+        }
+
+    private val permittedMain: MutableMainModel?
         get() = permittedMainInternal.takeIf {
             val root = runCatching { it.root }.getOrNull()
             root != null && !root.isEmpty()
@@ -32,6 +42,7 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
     private val permittedStack = ArrayDeque<MutableElementModel?>()
     private val setAuxStack = SetAuxStack()
     private val permitSetAuxStack = PermitSetAuxStack()
+    private var partiallyDenied = false
 
     override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): TraversalAction {
         val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
@@ -46,6 +57,7 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
             permittedStack.addFirst(permittedMainInternal)
             TraversalAction.CONTINUE
         } else {
+            partiallyDenied = true
             permittedStack.addFirst(null)
             TraversalAction.ABORT_SUB_TREE
         }
@@ -179,7 +191,8 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
             val target = MutableMainModel(rbac.mainMeta)
             target.root = leaderValue1.value as MutableEntityModel
             val targetPermitted = permitGet(target, rbac)
-            if (targetPermitted == null) {
+            if (targetPermitted !is FullyPermitted) {
+                partiallyDenied = true
                 if (permittedParent.elementType == ModelElementType.SINGLE_FIELD) permittedParent.detachFromParent()
                 return TraversalAction.CONTINUE
             }
@@ -197,6 +210,7 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
 
         permitSetAuxStack.push(getPermissionsAux(followerField1))
         if (!permitSetAuxStack.isAnySetPermitted() && followerField1 == null) {
+            partiallyDenied = true
             permittedStack.addFirst(null)
             return TraversalAction.ABORT_SUB_TREE
         }
@@ -225,6 +239,7 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
         // fields in the sub-tree, the keys (and their containing entity) will be removed.
         val isWritePermitted = isKeyField(leaderField1) || permitSetAuxStack.isSetPermitted(setAuxStack.peekActive())
         if (!isWritePermitted) {
+            partiallyDenied = true
             permittedStack.addFirst(null)
             return TraversalAction.ABORT_SUB_TREE
         }

@@ -1,6 +1,10 @@
 package org.treeWare.model.operator
 
 import org.treeWare.model.core.*
+import org.treeWare.model.operator.rbac.FullyPermitted
+import org.treeWare.model.operator.rbac.NotPermitted
+import org.treeWare.model.operator.rbac.PartiallyPermitted
+import org.treeWare.model.operator.rbac.PermitResponse
 import org.treeWare.model.operator.rbac.aux.PermitGetAuxStack
 import org.treeWare.model.operator.rbac.aux.getPermissionsAux
 import org.treeWare.model.traversal.AbstractLeader1Follower1ModelVisitor
@@ -11,16 +15,22 @@ import org.treeWare.util.assertInDevMode
 // NOTE: wildcards in the get-model do not match explicit keys in the RBAC model.
 
 /** Return a subset of `get` that is permitted by `rbac`. */
-fun permitGet(get: MainModel, rbac: MainModel): MutableMainModel? {
+fun permitGet(get: MainModel, rbac: MainModel): PermitResponse {
     val visitor = PermitGetVisitor()
     forEach(get, rbac, visitor, false)
-    return visitor.permittedMain
+    return visitor.permitResponse
 }
 
 private class PermitGetVisitor : AbstractLeader1Follower1ModelVisitor<TraversalAction>(
     TraversalAction.CONTINUE
 ) {
-    val permittedMain: MutableMainModel?
+    val permitResponse: PermitResponse
+        get() {
+            val permitted = permittedMain ?: return NotPermitted
+            return if (partiallyDenied) PartiallyPermitted(permitted) else FullyPermitted(permitted)
+        }
+
+    private val permittedMain: MutableMainModel?
         get() = permittedMainInternal.takeIf {
             val root = runCatching { it.root }.getOrNull()
             root != null && !root.isEmpty()
@@ -29,6 +39,7 @@ private class PermitGetVisitor : AbstractLeader1Follower1ModelVisitor<TraversalA
     private lateinit var permittedMainInternal: MutableMainModel
     private val permittedStack = ArrayDeque<MutableElementModel?>()
     private val permitGetAuxStack = PermitGetAuxStack()
+    private var partiallyDenied = false
 
     override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): TraversalAction {
         permitGetAuxStack.push(getPermissionsAux(followerMain1))
@@ -40,6 +51,7 @@ private class PermitGetVisitor : AbstractLeader1Follower1ModelVisitor<TraversalA
             permittedStack.addFirst(permittedMainInternal)
             TraversalAction.CONTINUE
         } else {
+            partiallyDenied = true
             permittedStack.addFirst(null)
             TraversalAction.ABORT_SUB_TREE
         }
@@ -168,6 +180,7 @@ private class PermitGetVisitor : AbstractLeader1Follower1ModelVisitor<TraversalA
     private fun visitBranchField(leaderField1: FieldModel, followerField1: FieldModel?): TraversalAction {
         permitGetAuxStack.push(getPermissionsAux(followerField1))
         if (!permitGetAuxStack.isGetPermitted() && followerField1 == null) {
+            partiallyDenied = true
             permittedStack.addFirst(null)
             return TraversalAction.ABORT_SUB_TREE
         }
@@ -190,6 +203,7 @@ private class PermitGetVisitor : AbstractLeader1Follower1ModelVisitor<TraversalA
         // fields in the sub-tree, the keys (and their containing entity) will be removed.
         val isReadPermitted = isKeyField(leaderField1) || permitGetAuxStack.isGetPermitted()
         if (!isReadPermitted) {
+            partiallyDenied = true
             permittedStack.addFirst(null)
             return TraversalAction.ABORT_SUB_TREE
         }
