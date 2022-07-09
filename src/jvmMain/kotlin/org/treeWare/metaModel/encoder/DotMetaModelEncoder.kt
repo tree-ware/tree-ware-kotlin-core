@@ -10,7 +10,10 @@ import java.io.Writer
 
 fun encodeDot(mainMeta: MainModel) {
     val mainMetaName = getMainMetaName(mainMeta)
-    val fileName = "generated/diagrams/${mainMetaName}_meta_model"
+    val directoryName = "generated/diagram"
+    val directory = File(directoryName)
+    if (!directory.exists()) directory.mkdirs()
+    val fileName = "$directoryName/${mainMetaName}_meta_model"
     val fileWriter = File("${fileName}.dot").bufferedWriter()
     encodeDot(mainMeta, fileWriter)
     fileWriter.flush()
