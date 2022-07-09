@@ -5,7 +5,18 @@ import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.getMetaModelResolved
+import java.io.File
 import java.io.Writer
+
+fun encodeDot(mainMeta: MainModel) {
+    val mainMetaName = getMainMetaName(mainMeta)
+    val fileName = "generated/diagrams/${mainMetaName}_meta_model"
+    val fileWriter = File("${fileName}.dot").bufferedWriter()
+    encodeDot(mainMeta, fileWriter)
+    fileWriter.flush()
+    Runtime.getRuntime().exec("dot -Tpng ${fileName}.dot -o ${fileName}.png").waitFor()
+}
+
 
 fun encodeDot(mainMeta: MainModel, writer: Writer) {
     val dotWriter = DotWriter()
