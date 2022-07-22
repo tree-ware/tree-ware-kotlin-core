@@ -108,6 +108,9 @@ fun isCollectionFieldMeta(fieldMeta: EntityModel?): Boolean = fieldMeta?.let {
     multiplicity == Multiplicity.LIST || multiplicity == Multiplicity.SET
 } ?: false
 
+fun isRequiredFieldMeta(fieldMeta: EntityModel?): Boolean =
+    fieldMeta?.let { getMultiplicityMeta(fieldMeta) == Multiplicity.REQUIRED } ?: false
+
 fun isListFieldMeta(fieldMeta: EntityModel?): Boolean =
     fieldMeta?.let { getMultiplicityMeta(fieldMeta) == Multiplicity.LIST } ?: false
 
