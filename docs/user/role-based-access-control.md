@@ -9,16 +9,19 @@ parent: "User Docs"
 
 # Introduction
 
-RBAC allows ***users*** to perform operations on ***resources*** based on ***permissions*** granted to them for those
-resources.
+RBAC allows ***users*** to perform ***operations*** on ***resources*** based on ***permissions*** that are
+***granted***.
 
-All RBAC systems have ways of ***granting*** resource permissions to users. Typically, permissions are not granted to
-users directly. Instead, permissions for specific resources are grouped into a ***role***. And one or more roles are
-assigned to a user. Some systems support grouping of users into ***user-groups*** and assigning of roles to user-groups.
+All RBAC systems have ways of granting resource permissions to users. Typically, permissions are not granted to users
+directly. Instead, permissions for specific resources are grouped into a ***role***. And one or more roles are
+***assigned*** to a user. Some systems support grouping users into ***user-groups*** and assigning roles to user-groups.
 
 # Resources
 
 Resources in tree-ware are the nodes in the model tree.
+
+Resources can be fine-grained (leaf-nodes representing individual fields) or coarse grained (branch nodes representing
+an entity of fields or a sub-tree of nested entities and fields).
 
 # Permissions
 
@@ -30,14 +33,22 @@ resources), and tree-ware has a corresponding permission for each of them:
 * `update`: permit the user to update a model node.
 * `delete`: permit the user to delete a model node.
 * `crud`: the above 4 permissions combined.
-* `grant`: permit the user to grant access to a model node to other users. Specifically, this permits a user to:
+* `grant` (not yet supported): permit the user to grant access to a model node to other users. Specifically, this
+  permits a user to:
     * create a role with that model node.
     * add that model node to a role.
     * assign such a role to another user.
-* `revoke`: permit the user to revoke access to a model node from other users. Specifically, this permits a user to:
+* `revoke` (not yet supported): permit the user to revoke access to a model node from other users. Specifically, this
+  permits a user to:
     * remove a role with that model node.
     * remove that model node from a role.
     * remove such a role from another user.
+* `associate` (partially supported): permit the user to create an association to a model node.
+    * Associating to a target node can result in changing the system behavior. For example, changing an organization
+      parent can cause metrics to be reported to the new parent. So associations are prevented if the user does not have
+      permission to associate to the target node.
+    * **WARNING**: in the current implementation, associations can be made if the user has `read` permission on the
+      target node.
 * `all`: all of the above permissions combined.
     * NOTE: if a user has this permission, then that user will automatically get new permissions that are created in the
       future. So this permission should be used primarily for administrators.
@@ -58,7 +69,96 @@ nodes in the model based on the permissions attached to those nodes in the role.
 When multiple roles are assigned to a user, the union of the individual role model trees is computed, and that unified
 model tree determines user access to the model.
 
+# Permission Inheritance/Scopes
+
+Permissions granted to a user for a particular node in the model tree can be inherited by all the nodes in the sub-tree.
+
+This allows a tree-ware model to be organized by "ownership" as described in [Modeling Tips](modeling-tips.md). For
+example, everything a customer can access is organized in the sub-tree of a customer node in the model. So the admin
+role for a customer needs to only specify the customer node in the model tree; it does not have to specify the rest of
+the sub-tree below the customer node.
+
+To control whether permissions are inherited or not, each assignment of a permission to a node in the role model can
+specify one of the following permission-scopes:
+
+* `sub_tree`: the permission is for the assigned node and is inherited by its sub-tree.
+* `node`: the permission is for the assigned node but is not inherited by its sub-tree. Overrides inherited permissions.
+* `none`: the permission is removed for the assigned node and its sub-tree. Overrides inherited permissions.
+
+# Examples
+
+## Global-Admin Role
+
+A global-admin role for an entire address-book model assigns `all` permissions to the root node with `sub_tree` scope:
+
+```json
+{
+  "address_book__permissions_": {
+    "all": "sub_tree"
+  },
+  "address_book": {}
+}
+```
+
+## Global-Observer Role
+
+A global-observer role for an entire address-book model assigns `read` permissions to the root node with `sub_tree`
+scope:
+
+```json
+{
+  "address_book__permissions_": {
+    "read": "sub_tree"
+  },
+  "address_book": {}
+}
+```
+
+## Specific-Admin Role
+
+An admin role for a specific person in the address-book assigns `all` permissions to the specific person in the model
+with `sub_tree` scope:
+
+```json
+{
+  "address_book": {
+    "person": [
+      {
+        "permissions_": {
+          "all": "sub_tree"
+        },
+        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+      }
+    ]
+  }
+}
+```
+
+## List-Only Role
+
+A role that allows the listing of the IDs and names of people in the address-book assigns `read` permissions to the
+person list with `node` scope, and lists only the ID and name fields in the person entity:
+
+```json
+{
+  "address_book": {
+    "person__permissions_": {
+      "read": "node"
+    },
+    "person": [
+      {
+        "id": null,
+        "first_name": null,
+        "last_name": null
+      }
+    ]
+  }
+}
+```
+
 # Meta-model
+
+Not yet supported.
 
 Users, roles, and role assignment are defined in the same meta-model as the rest of the product-specific system. The
 user and role entities need to implement the following [meta-model interfaces](meta-model-interfaces.md):
@@ -96,6 +196,8 @@ user and role entities need to implement the following [meta-model interfaces](m
 
 # API
 
+Not yet supported.
+
 Since users and roles are part of the meta-model, they can be accessed via the tree-ware API just like any other data
 defined in the meta-model.
 
@@ -106,6 +208,8 @@ will replace the previous definition in the storage system.
 
 # Storage
 
+Not yet supported.
+
 RBAC data is needed in every API call in order to control access to the data being accessed in the API call. So fetching
 of RBAC data needs to be very fast.
 
@@ -115,34 +219,6 @@ single column by annotating the role `definition` field appropriately in its met
 of the `role` meta-model *interface* because it is specific to the storage being targeted; some storage systems may be
 able to fetch data quickly even if all RBAC data is not stored as a blob or a JSON value, and therefore not even need
 such an annotation.
-
-# Examples
-
-TODO
-
-# TODO
-
-* An association can be assigned only if the user has access to the source as well as the target
-    * Reason: assigning a target might result in changing the system behavior. For example, changing an organization
-      parent can cause metrics to be reported to the new parent.
-* Customers are not sub-trees of the MSP, so how does the super-admin in an MSP get access to the sub-trees of their new
-  customers?
-    * Some side-effect function needs to keep the super-admin role up-to-date.
-* How can a customer grant an MSP admin access to customer data?
-    * One way is the association workflow mentioned in the roadmap section below.
-    * Another could be to have a role to user-email mapping. The `roles` list field in the `user` entity is not being
-      updated (since the customer won't have access to the `user` entity of the MSP admin), but if each `organization`
-      had its own role to user-email mapping, then they would be able to add such entries.
-        * Can this map be the only way to specify user to role mappings?
-        * How will the RBAC library find such mappings when an API call is being made and needs to be checked?
-            * A side-effect function can mirror the role -> user mapping into a user -> role map
-        * Is this option generic and useful in other places?
-* Need the ability to store lists of associations as separate rows for each association. This will allow a new role to
-  be added to a user without having to know the old list of associations.
-    * Recommended way of storing lists in MySQL is to use a join table. The user ID and the role association value will
-      have to be keys in the join table. So associations as keys needs to be supported. Associations are long paths, but
-      only the final keys in the path are needed when targeting MySQL. So it should be possible to support associations
-      as keys.
 
 # Roadmap
 
