@@ -472,6 +472,10 @@ fun setValue(fieldMeta: EntityModel?, value: String, setter: ValueSetter): Boole
     // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
     // are encoded as strings.
     return when (getFieldTypeMeta(fieldMeta)) {
+        FieldType.BOOLEAN -> {
+            setter(value.toBoolean())
+            true
+        }
         FieldType.UINT8 ->
             try {
                 setter(value.toUByte())
