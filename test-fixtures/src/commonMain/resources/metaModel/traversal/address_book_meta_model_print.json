@@ -33,7 +33,8 @@
       "entity:address_book_settings": {
         "field:last_name_first": {},
         "field:encrypt_hero_name": {},
-        "field:card_colors": {}
+        "field:card_colors": {},
+        "field:background_color": {}
       },
       "entity:address_book_person": {
         "field:id": {},

@@ -12,7 +12,7 @@ private const val PATH_SEPARATOR = "/"
 fun decodePaths(reader: Reader, mainModel: MutableMainModel, pathValueSeparator: String = " = "): List<String> {
     val mainName = getMainName(mainModel)
     val errors = mutableListOf<String>()
-    reader.forEachLine label@{ line ->
+    reader.forEachLine { line ->
         val (path, value) = line.split(pathValueSeparator, limit = 2)
         val error = decodePath(path, value, mainModel, mainName)
         error?.also { errors.add(it) }
@@ -60,14 +60,48 @@ private fun decodePath(
             decodePath(path, pathParts, partIndex + 1, lastPartIndex, value, nextEntity)
         }
     } else {
-        if (fieldType == FieldType.COMPOSITION) return "Last field $fieldId must not be a composition"
         val singleField = field as MutableSingleFieldModel
         // TODO(deepak-nulu): support all field types
-        val primitive = newMutableValueModel(fieldMeta, singleField) as MutablePrimitiveModel
-        singleField.setValue(primitive)
-        primitive.setValue(value)
-        null
+        when (fieldType) {
+            FieldType.BOOLEAN,
+            FieldType.UINT8,
+            FieldType.UINT16,
+            FieldType.UINT32,
+            FieldType.UINT64,
+            FieldType.INT8,
+            FieldType.INT16,
+            FieldType.INT32,
+            FieldType.INT64,
+            FieldType.FLOAT,
+            FieldType.DOUBLE,
+            FieldType.BIG_INTEGER,
+            FieldType.BIG_DECIMAL,
+            FieldType.TIMESTAMP,
+            FieldType.STRING,
+            FieldType.UUID,
+            FieldType.BLOB -> setPrimitive(fieldMeta, singleField, value)
+            FieldType.PASSWORD1WAY -> TODO()
+            FieldType.PASSWORD2WAY -> TODO()
+            FieldType.ALIAS -> TODO()
+            FieldType.ENUMERATION -> setEnumeration(fieldMeta, singleField, value)
+            FieldType.ASSOCIATION -> TODO()
+            FieldType.COMPOSITION -> "Last field $fieldId must not be a composition"
+        }
     }
+}
+
+fun setPrimitive(fieldMeta: EntityModel, singleField: MutableSingleFieldModel, value: String): String? {
+    val primitive = newMutableValueModel(fieldMeta, singleField) as MutablePrimitiveModel
+    singleField.setValue(primitive)
+    primitive.setValue(value)
+    return null
+}
+
+fun setEnumeration(fieldMeta: EntityModel, singleField: MutableSingleFieldModel, value: String): String? {
+    val enumeration = newMutableValueModel(fieldMeta, singleField) as MutableEnumerationModel
+    singleField.setValue(enumeration)
+    enumeration.setValue(value)
+    return null
 }
 
 fun decodeSetField(
