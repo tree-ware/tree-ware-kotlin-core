@@ -17,6 +17,7 @@ class DecodePathsTests {
             |/address_book/last_updated = 1587147731
             |/address_book/settings/last_name_first = true
             |/address_book/settings/encrypt_hero_name = false
+            |/address_book/settings/background_color = white
             |/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name = Clark
             |/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/last_name = Kent
             |/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_name = Superman
@@ -29,7 +30,8 @@ class DecodePathsTests {
             |    "last_updated": "1587147731",
             |    "settings": {
             |      "last_name_first": true,
-            |      "encrypt_hero_name": false
+            |      "encrypt_hero_name": false,
+            |      "background_color": "white"
             |    },
             |    "person": [
             |      {

@@ -162,6 +162,16 @@
                   "package": "address_book.main"
                 },
                 "multiplicity": "list"
+              },
+              {
+                "name": "background_color",
+                "number": 4,
+                "type": "enumeration",
+                "enumeration": {
+                  "name": "address_book_color",
+                  "package": "address_book.main"
+                },
+                "multiplicity": "optional"
               }
             ]
           },
