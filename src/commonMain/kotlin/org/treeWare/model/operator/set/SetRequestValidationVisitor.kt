@@ -7,6 +7,7 @@ import org.treeWare.metaModel.getRegexConstraint
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.ModelPathStack
+import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.SetAuxStack
 import org.treeWare.model.operator.set.aux.getSetAux
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
@@ -18,7 +19,9 @@ import org.treeWare.util.assertInDevMode
  * Validates a set-request model.
  *
  * Validates the following:
- * 1. All keys are specified.
+ * 1. All required fields are specified.
+ *    a. Keys are required fields, but since it is not possible to create a model without keys, they do not have to be
+ *       validated here.
  * 2. Field constraints are met.
  * 3. Associations are valid.
  * 5. Nested set_ aux types are valid.
@@ -60,7 +63,14 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         if (missingKeys.isNotEmpty()) errors.add(ElementModelError(entityPath, "missing keys: $missingKeys"))
 
         val setAuxError = setAuxStack.push(getSetAux(leaderEntity1), true)
-        setAuxError?.also { errors.add(ElementModelError(entityPath, it)) }
+        if (setAuxError != null) {
+            errors.add(ElementModelError(entityPath, setAuxError))
+        } else if (setAuxStack.peekActive() == SetAux.CREATE) {
+            val missingRequired = leaderEntity1.getRequiredNonKeyFields().missing
+            if (missingRequired.isNotEmpty()) errors.add(
+                ElementModelError(entityPath, "missing required fields for `create`: $missingRequired")
+            )
+        }
 
         return TraversalAction.CONTINUE
     }

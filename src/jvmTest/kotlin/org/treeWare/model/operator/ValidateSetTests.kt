@@ -12,6 +12,117 @@ private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAM
 
 class ValidateSetTests {
     @Test
+    fun `validateSet() must return errors if required fields are missing in create-request`() {
+        val modelJson = """
+            |{
+            |  "address_book__set_": "create",
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = listOf(
+            "/address_book: missing required fields for `create`: [name]",
+            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: missing required fields for `create`: [first_name, last_name]",
+        )
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
+    fun `validateSet() must not return errors if required fields are specified in create-request`() {
+        val modelJson = """
+            |{
+            |  "address_book__set_": "create",
+            |  "address_book": {
+            |    "name": "Super Heroes",
+            |    "person": [
+            |      {
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent"
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = emptyList<String>()
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
+    fun `validateSet() must return errors if required fields are missing in update-request`() {
+        val modelJson = """
+            |{
+            |  "address_book__set_": "update",
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = emptyList<String>()
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
+    fun `validateSet() must return errors if required fields are missing in delete-request`() {
+        val modelJson = """
+            |{
+            |  "address_book": {
+            |    "set_": "delete",
+            |    "person": [
+            |      {
+            |        "set_": "delete",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = emptyList<String>()
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
     fun `validateSet() must return errors if string min_size constraint is not met`() {
         val modelJson = """
             |{
@@ -72,6 +183,8 @@ class ValidateSetTests {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
             |        "email": [
             |          {
             |            "value": "valid@email.com"
@@ -149,6 +262,8 @@ class ValidateSetTests {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
             |        "group": {}
             |      }
             |    ],
@@ -193,6 +308,8 @@ class ValidateSetTests {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
             |        "group": {
             |          "person": [
             |            {
@@ -254,6 +371,8 @@ class ValidateSetTests {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
             |        "group": {
             |          "name": "additional field for causing multiple paths",
             |          "groups": [
@@ -345,6 +464,8 @@ class ValidateSetTests {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
             |        "group": {
             |          "person": [],
             |          "groups": [

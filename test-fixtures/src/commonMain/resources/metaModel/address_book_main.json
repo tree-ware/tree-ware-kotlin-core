@@ -94,7 +94,8 @@
               {
                 "name": "last_updated",
                 "number": 2,
-                "type": "timestamp"
+                "type": "timestamp",
+                "multiplicity": "optional"
               },
               {
                 "name": "settings",
@@ -144,8 +145,7 @@
               {
                 "name": "last_name_first",
                 "number": 1,
-                "type": "boolean",
-                "multiplicity": "optional"
+                "type": "boolean"
               },
               {
                 "name": "encrypt_hero_name",
@@ -254,7 +254,8 @@
                 "association": {
                   "entity": "group",
                   "package": "address_book.main"
-                }
+                },
+                "multiplicity": "optional"
               }
             ]
           },
@@ -272,7 +273,8 @@
               {
                 "name": "info",
                 "number": 2,
-                "type": "string"
+                "type": "string",
+                "multiplicity": "optional"
               },
               {
                 "name": "sub_groups",
@@ -311,7 +313,8 @@
                 "association": {
                   "entity": "address_book_person",
                   "package": "address_book.main"
-                }
+                },
+                "multiplicity": "optional"
               }
             ]
           }

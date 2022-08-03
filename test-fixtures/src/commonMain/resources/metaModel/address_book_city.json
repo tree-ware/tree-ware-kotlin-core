@@ -58,7 +58,8 @@
                 "composition": {
                   "entity": "point",
                   "package": "org.tree_ware.meta_model.geo"
-                }
+                },
+                "multiplicity": "optional"
               },
               {
                 "name": "related_city_info",
