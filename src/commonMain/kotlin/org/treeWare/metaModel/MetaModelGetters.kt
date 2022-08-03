@@ -44,7 +44,7 @@ fun getFieldsMeta(entityMeta: EntityModel): CollectionFieldModel =
     getCollectionField(entityMeta, "fields")
 
 fun getFieldMeta(entityMeta: EntityModel, fieldName: String): EntityModel {
-    val fields = getCollectionField(entityMeta, "fields")
+    val fields = getFieldsMeta(entityMeta)
     return fields.values.find { fieldMeta ->
         if (fieldMeta !is EntityModel) false else getMetaName(fieldMeta) == fieldName
     } as? EntityModel ?: throw IllegalStateException("Field $fieldName not found in entity ${getMetaName(entityMeta)}")
@@ -78,6 +78,11 @@ private fun filterCompositionKeyFields(fields: List<ElementModel>): List<Element
     fields.filter { fieldElement ->
         val fieldMeta = fieldElement as? EntityModel
         fieldMeta?.let { isKeyFieldMeta(it) && isCompositionFieldMeta(it) } ?: false
+    }
+
+fun getRequiredNonKeyFieldsMeta(entityMeta: EntityModel): List<EntityModel> =
+    getFieldsMeta(entityMeta).values.mapNotNull { fieldElement ->
+        (fieldElement as? EntityModel)?.takeIf { isRequiredFieldMeta(it) && !isKeyFieldMeta(it) }
     }
 
 fun getUniquesMeta(entityMeta: EntityModel): CollectionFieldModel? =

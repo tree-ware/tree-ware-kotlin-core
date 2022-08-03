@@ -126,6 +126,19 @@ abstract class MutableBaseEntityModel(
             }
         }
     }
+
+    override fun getRequiredNonKeyFields(): RequiredNonKeyFields {
+        val requiredNonKeyFieldsMeta = meta?.let { getRequiredNonKeyFieldsMeta(it) } ?: return EmptyRequiredNonKeyFields
+        val available = mutableListOf<SingleFieldModel>()
+        val missing = mutableListOf<String>()
+        requiredNonKeyFieldsMeta.forEach { fieldMeta ->
+            val fieldName = getMetaName(fieldMeta)
+            val field = this.fields[fieldName] as SingleFieldModel?
+            if (field == null) missing.add(fieldName)
+            else available.add(field)
+        }
+        return RequiredNonKeyFields(available, missing)
+    }
 }
 
 class MutableEntityModel(
