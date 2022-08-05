@@ -1,5 +1,5 @@
 ---
-title: "Meta-Model Interfaces"
+title: "Model Granularity"
 layout: "titled"
 nav_order: "d"
 parent: "User Docs"
