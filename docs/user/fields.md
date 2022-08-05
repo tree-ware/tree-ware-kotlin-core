@@ -63,7 +63,7 @@ The `multiplicity` of a field determines how many values the field can contain a
 # Key Fields
 
 Fields can be marked as key fields in the meta-model. Key fields help identify entities in a set and differentiate one
-entity in the set from another. The following property in JSON definition of a field in the meta-model determines
+entity in the set from another. The following property in the JSON definition of a field in the meta-model determines
 whether the field is a key field or not. It defaults to `false` if omitted.
 
 ```json
@@ -253,6 +253,73 @@ The following is an example meta-model definition for an association field:
 ```
 
 The `"association"` array in the above example defines the path by listing the fields in the path from the root.
+
+# Conditionally-Existing Fields
+
+Certain fields make sense only when other fields have certain values. They should not exist if the other fields do not
+have the desired values.
+
+NOTE: If the other fields do have the desired values, then these fields **_can_** exist, but if their
+[multiplicity](#multiplicity) is `optional`, then they do not **_need_** to exist; they need to exist only if their
+multiplicity is not `optional`.
+
+The conditions can be specified as a boolean expression in the meta-model definition of the field using the `exists_if`
+attribute. The boolean expression must currently be specified in Abstract Syntax Tree (AST) form; a simpler string
+syntax will be supported in the future.
+
+```json
+{
+  "exists_if": {
+    "operator": "equals",
+    "field": "protocol",
+    "value": "ip"
+  }
+}
+```
+
+The field specified in the `equals` clause must be:
+
+* a [required or optional](#multiplicity) field; it cannot be a collection (`list` or `set`) field
+* a [built-in type](#built-in-types) or [enumeration](#enumerations) field
+* in the same entity (current limitation, can be anywhere in the model in the future)
+
+The value specified in the `equality` clause must be:
+
+* of the same type as the field specified in that clause
+
+The other boolean operators supported are `and`, `or`, `not`. The first two (`and`, `or`) must have two arguments `arg1`
+and `arg2`, while `not` must have only one argument `arg1`.
+
+```json
+{
+  "exists_if": {
+    "operator": "and",
+    "arg1": {
+      "operator": "equals",
+      "field": "protocol",
+      "value": "ip"
+    },
+    "arg2": {
+      "operator": "equals",
+      "field": "version",
+      "value": "6"
+    }
+  }
+}
+```
+
+Conditionally-existing fields can be used to simulate [tagged-unions](https://en.wikipedia.org/wiki/Tagged_union) and
+has the following advantages over tagged-unions:
+
+* The tag can be read and used without the union being read.
+* The tag can be anywhere in the model tree (but currently it must be in the same entity as the conditional field).
+* More than one tag can be used in the boolean expression.
+* The boolean expression can be elaborate with `not`, `and`, `or` operators.
+* The tag can be used by more than one conditional field.
+* Which values are expected for which tags are documented in the meta-model.
+  * These expectations can be validated at runtime.
+
+That being said, tagged-unions still have a place and will be supported eventually.
 
 # Uniqueness
 
