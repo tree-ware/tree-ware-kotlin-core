@@ -198,6 +198,11 @@
                 "name": "hero_name",
                 "number": 4,
                 "type": "string",
+                "exists_if": {
+                  "operator": "equals",
+                  "field": "is_hero",
+                  "value": "true"
+                },
                 "multiplicity": "optional"
               },
               {
@@ -254,6 +259,28 @@
                 "association": {
                   "entity": "group",
                   "package": "address_book.main"
+                },
+                "multiplicity": "optional"
+              },
+              {
+                "name": "is_hero",
+                "number": 13,
+                "info": "",
+                "type": "boolean"
+              },
+              {
+                "name": "hero_details",
+                "number": 14,
+                "info": "",
+                "type": "composition",
+                "composition": {
+                  "entity": "hero_details",
+                  "package": "address_book.main"
+                },
+                "exists_if": {
+                  "operator": "equals",
+                  "field": "is_hero",
+                  "value": "true"
                 },
                 "multiplicity": "optional"
               }
@@ -315,6 +342,24 @@
                   "package": "address_book.main"
                 },
                 "multiplicity": "optional"
+              }
+            ]
+          },
+          {
+            "name": "hero_details",
+            "info": "",
+            "fields": [
+              {
+                "name": "strengths",
+                "number": 1,
+                "info": "",
+                "type": "string"
+              },
+              {
+                "name": "weaknesses",
+                "number": 2,
+                "info": "",
+                "type": "string"
               }
             ]
           }

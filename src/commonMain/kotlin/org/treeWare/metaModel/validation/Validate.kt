@@ -34,5 +34,7 @@ fun validate(
     val nonPrimitiveTypes = getNonPrimitiveTypes(mainMeta)
     val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, nonPrimitiveTypes)
 
-    return listOf(nameErrors, numberErrors, nonPrimitiveErrors).flatten()
+    val existsIfErrors = validateExistsIf(mainMeta)
+
+    return listOf(nameErrors, numberErrors, nonPrimitiveErrors, existsIfErrors).flatten()
 }

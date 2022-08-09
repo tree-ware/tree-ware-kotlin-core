@@ -65,11 +65,11 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         val setAuxError = setAuxStack.push(getSetAux(leaderEntity1), true)
         if (setAuxError != null) {
             errors.add(ElementModelError(entityPath, setAuxError))
-        } else if (setAuxStack.peekActive() == SetAux.CREATE) {
-            val missingRequired = leaderEntity1.getRequiredNonKeyFields().missing
-            if (missingRequired.isNotEmpty()) errors.add(
-                ElementModelError(entityPath, "missing required fields for `create`: $missingRequired")
-            )
+        } else when (setAuxStack.peekActive()) {
+            SetAux.CREATE -> errors.addAll(validateFieldExistence(leaderEntity1, entityPath, true, true, true))
+            SetAux.UPDATE -> errors.addAll(validateFieldExistence(leaderEntity1, entityPath, false, false, true))
+            SetAux.DELETE -> {}
+            null -> {}
         }
 
         return TraversalAction.CONTINUE
