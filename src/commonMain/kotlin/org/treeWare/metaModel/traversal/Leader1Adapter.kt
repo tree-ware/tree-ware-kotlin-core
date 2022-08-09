@@ -3,6 +3,8 @@ package org.treeWare.metaModel.traversal
 import org.treeWare.model.core.*
 import org.treeWare.model.traversal.Leader1ModelVisitor
 
+// TODO(deepak-nulu): meta-meta-models should support fullName so validators using this adapter can validate meta-meta-models.
+
 class Leader1Adapter<Return>(
     private val adaptee: Leader1MetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
@@ -22,6 +24,8 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/unique" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity_info" -> defaultVisitReturn
             "/tree_ware_meta_model.main/enumeration_info" -> defaultVisitReturn
+            "/tree_ware_meta_model.main/exists_if_clause" -> defaultVisitReturn
+            null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
@@ -38,6 +42,8 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/unique" -> Unit
             "/tree_ware_meta_model.main/entity_info" -> Unit
             "/tree_ware_meta_model.main/enumeration_info" -> Unit
+            "/tree_ware_meta_model.main/exists_if_clause" -> Unit
+            null -> Unit // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
@@ -51,6 +57,7 @@ class Leader1Adapter<Return>(
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> defaultVisitReturn
             "/tree_ware_meta_model.main/unique/fields" -> defaultVisitReturn
+            null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
@@ -59,6 +66,7 @@ class Leader1Adapter<Return>(
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/field/association" -> Unit
             "/tree_ware_meta_model.main/unique/fields" -> Unit
+            null -> Unit // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }
@@ -71,6 +79,7 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/package/entities" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity/fields" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity/uniques" -> defaultVisitReturn
+            null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
     }

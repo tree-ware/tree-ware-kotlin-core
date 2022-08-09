@@ -19,7 +19,8 @@ class ValidateSetTests {
             |  "address_book": {
             |    "person": [
             |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "is_hero": true
             |      }
             |    ]
             |  }
@@ -33,8 +34,9 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book: missing required fields for `create`: [name]",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: missing required fields for `create`: [first_name, last_name]",
+            "/address_book: required field not found: name",
+            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: first_name",
+            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: last_name",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -51,7 +53,8 @@ class ValidateSetTests {
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
-            |        "last_name": "Kent"
+            |        "last_name": "Kent",
+            |        "is_hero": true
             |      }
             |    ]
             |  }
@@ -70,14 +73,40 @@ class ValidateSetTests {
     }
 
     @Test
-    fun `validateSet() must return errors if required fields are missing in update-request`() {
+    fun `validateSet() must return errors if required fields in an optional entity are missing in create-request`() {
+        val modelJson = """
+            |{
+            |  "address_book__set_": "create",
+            |  "address_book": {
+            |    "name": "Super Heroes",
+            |    "settings": {}
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = listOf(
+            "/address_book/settings: required field not found: last_name_first",
+        )
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
+    fun `validateSet() must not return errors if required fields are missing in update-request`() {
         val modelJson = """
             |{
             |  "address_book__set_": "update",
             |  "address_book": {
             |    "person": [
             |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "is_hero": true
             |      }
             |    ]
             |  }
@@ -96,7 +125,7 @@ class ValidateSetTests {
     }
 
     @Test
-    fun `validateSet() must return errors if required fields are missing in delete-request`() {
+    fun `validateSet() must not return errors if required fields are missing in delete-request`() {
         val modelJson = """
             |{
             |  "address_book": {
@@ -185,6 +214,7 @@ class ValidateSetTests {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
             |        "last_name": "Kent",
+            |        "is_hero": true,
             |        "email": [
             |          {
             |            "value": "valid@email.com"
@@ -233,7 +263,8 @@ class ValidateSetTests {
             |          "state": "New York",
             |          "name": "New York City"
             |        },
-            |        "info": "One of the most populous and most densely populated major city in USA"
+            |        "info": "One of the most populous and most densely populated major city in USA",
+            |        "is_coastal_city": false
             |      }
             |    ]
             |  }
@@ -264,6 +295,7 @@ class ValidateSetTests {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
             |        "last_name": "Kent",
+            |        "is_hero": true,
             |        "group": {}
             |      }
             |    ],
@@ -275,6 +307,7 @@ class ValidateSetTests {
             |          "country": "United States of America"
             |        },
             |        "info": "One of the most populous and most densely populated major city in USA",
+            |        "is_coastal_city": false,
             |        "related_city_info": [
             |          {}
             |        ]
@@ -310,6 +343,7 @@ class ValidateSetTests {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
             |        "last_name": "Kent",
+            |        "is_hero": true,
             |        "group": {
             |          "person": [
             |            {
@@ -327,6 +361,7 @@ class ValidateSetTests {
             |          "country": "United States of America"
             |        },
             |        "info": "One of the most populous and most densely populated major city in USA",
+            |        "is_coastal_city": false,
             |        "related_city_info": [
             |          {
             |            "groups": [
@@ -373,6 +408,7 @@ class ValidateSetTests {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
             |        "last_name": "Kent",
+            |        "is_hero": true,
             |        "group": {
             |          "name": "additional field for causing multiple paths",
             |          "groups": [
@@ -397,6 +433,7 @@ class ValidateSetTests {
             |          "country": "United States of America"
             |        },
             |        "info": "One of the most populous and most densely populated major city in USA",
+            |        "is_coastal_city": false,
             |        "related_city_info": [
             |          {
             |            "city_info": [
@@ -428,6 +465,7 @@ class ValidateSetTests {
             |          }
             |        ],
             |        "info": "Capital of New York state",
+            |        "is_coastal_city": false,
             |        "city": {
             |          "name": "Albany",
             |          "state": "New York",
@@ -466,6 +504,7 @@ class ValidateSetTests {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
             |        "last_name": "Kent",
+            |        "is_hero": true,
             |        "group": {
             |          "person": [],
             |          "groups": [
@@ -489,6 +528,7 @@ class ValidateSetTests {
             |          "country": "United States of America"
             |        },
             |        "info": "One of the most populous and most densely populated major city in USA",
+            |        "is_coastal_city": false,
             |        "related_city_info": [
             |          {
             |            "person": [],
@@ -520,6 +560,7 @@ class ValidateSetTests {
             |          }
             |        ],
             |        "info": "Capital of New York state",
+            |        "is_coastal_city": false,
             |        "city": {
             |          "name": "Albany",
             |          "state": "New York",

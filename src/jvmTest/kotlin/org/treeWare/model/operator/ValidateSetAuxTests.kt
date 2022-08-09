@@ -100,7 +100,8 @@ class ValidateSetAuxTests {
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark",
-            |        "last_name": "Kent"
+            |        "last_name": "Kent",
+            |        "is_hero": true
             |      },
             |      {
             |        "set_": "delete",

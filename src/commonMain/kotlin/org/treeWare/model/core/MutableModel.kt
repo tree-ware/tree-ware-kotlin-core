@@ -126,19 +126,6 @@ abstract class MutableBaseEntityModel(
             }
         }
     }
-
-    override fun getRequiredNonKeyFields(): RequiredNonKeyFields {
-        val requiredNonKeyFieldsMeta = meta?.let { getRequiredNonKeyFieldsMeta(it) } ?: return EmptyRequiredNonKeyFields
-        val available = mutableListOf<SingleFieldModel>()
-        val missing = mutableListOf<String>()
-        requiredNonKeyFieldsMeta.forEach { fieldMeta ->
-            val fieldName = getMetaName(fieldMeta)
-            val field = this.fields[fieldName] as SingleFieldModel?
-            if (field == null) missing.add(fieldName)
-            else available.add(field)
-        }
-        return RequiredNonKeyFields(available, missing)
-    }
 }
 
 class MutableEntityModel(
@@ -418,23 +405,12 @@ class MutableEnumerationModel(
         return this.value == that.value
     }
 
-    override fun setValue(value: String): Boolean {
-        val fieldMeta: EntityModel? = parent.meta
-        // fieldMeta is null when constructing the meta-meta-model.
-        if (fieldMeta == null) {
-            this.value = value
-        } else {
-            val resolvedEnumeration = getMetaModelResolved(fieldMeta)?.enumerationMeta
-                ?: throw IllegalStateException("Enumeration has not been resolved")
-            val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, value)
-            this.meta = enumerationValueMeta
-            if (enumerationValueMeta != null) {
-                this.value = value
-                this.number = getMetaNumber(enumerationValueMeta) ?: 0U
-            } else return false
+    override fun setValue(value: String): Boolean =
+        setEnumerationValue(parent.meta, value) { stringValue, number, meta ->
+            this.value = stringValue
+            this.number = number
+            this.meta = meta
         }
-        return true
-    }
 
     fun setNumber(number: UInt): Boolean {
         val fieldMeta: EntityModel = requireNotNull(parent.meta) { "Enumeration meta is missing " }
@@ -485,10 +461,13 @@ fun setValue(fieldMeta: EntityModel?, value: String, setter: ValueSetter): Boole
     // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
     // are encoded as strings.
     return when (getFieldTypeMeta(fieldMeta)) {
-        FieldType.BOOLEAN -> {
-            setter(value.toBoolean())
-            true
-        }
+        FieldType.BOOLEAN ->
+            try {
+                setter(value.lowercase().toBooleanStrict())
+                true
+            } catch (e: Exception) {
+                false
+            }
         FieldType.UINT8 ->
             try {
                 setter(value.toUByte())
@@ -604,5 +583,23 @@ fun setValue(fieldMeta: EntityModel?, value: Boolean, setter: ValueSetter): Bool
         else -> false
     }
 }
+
+typealias EnumerationValueSetter = (String, UInt, EntityModel?) -> Unit
+
+fun setEnumerationValue(fieldMeta: EntityModel?, value: String, setter: EnumerationValueSetter): Boolean =
+    // fieldMeta is null when constructing the meta-meta-model.
+    if (fieldMeta == null) {
+        setter(value, 0U, null)
+        true
+    } else {
+        val resolvedEnumeration = getMetaModelResolved(fieldMeta)?.enumerationMeta
+            ?: throw IllegalStateException("Enumeration has not been resolved")
+        val enumerationValueMeta = getEnumerationValueMeta(resolvedEnumeration, value)
+        if (enumerationValueMeta != null) {
+            val number = getMetaNumber(enumerationValueMeta) ?: 0U
+            setter(value, number, enumerationValueMeta)
+            true
+        } else false
+    }
 
 class MissingKeysException(message: String) : Exception(message)

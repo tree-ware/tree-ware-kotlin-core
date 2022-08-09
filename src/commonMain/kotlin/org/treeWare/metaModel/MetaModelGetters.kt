@@ -80,11 +80,6 @@ private fun filterCompositionKeyFields(fields: List<ElementModel>): List<Element
         fieldMeta?.let { isKeyFieldMeta(it) && isCompositionFieldMeta(it) } ?: false
     }
 
-fun getRequiredNonKeyFieldsMeta(entityMeta: EntityModel): List<EntityModel> =
-    getFieldsMeta(entityMeta).values.mapNotNull { fieldElement ->
-        (fieldElement as? EntityModel)?.takeIf { isRequiredFieldMeta(it) && !isKeyFieldMeta(it) }
-    }
-
 fun getUniquesMeta(entityMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(entityMeta, "uniques") }.getOrNull()
 
@@ -139,3 +134,5 @@ fun getMinSizeConstraint(fieldMeta: EntityModel): UInt? = getOptionalSingleUint3
 fun getMaxSizeConstraint(fieldMeta: EntityModel): UInt? = getOptionalSingleUint32(fieldMeta, "max_size")
 
 fun getRegexConstraint(fieldMeta: EntityModel): String? = getOptionalSingleString(fieldMeta, "regex")
+
+fun getExistsIfMeta(fieldMeta: EntityModel): EntityModel? = getOptionalSingleEntity(fieldMeta, "exists_if")

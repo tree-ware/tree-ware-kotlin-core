@@ -38,6 +38,8 @@ enum class UniqueType {
     GLOBAL
 }
 
+enum class ExistsIfOperator { EQUALS, AND, OR, NOT }
+
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
 fun newMainMetaMetaModel(): MutableMainModel {
@@ -91,6 +93,8 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
     val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")
     populateEntityInfoEntity(entityInfoEntityMeta)
+    val existsIfClauseEntityMeta = newEntityMetaMeta(entitiesMeta, "exists_if_clause")
+    populateExistsIfClauseEntity(existsIfClauseEntityMeta)
 }
 
 private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel) {
@@ -152,6 +156,7 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "min_size", "Minimum string length", "uint32", "optional")
     newPrimitiveFieldMetaMeta(fields, "max_size", "Maximum string length", "uint32", "optional")
     newPrimitiveFieldMetaMeta(fields, "regex", "Regular expression that strings must match", "string", "optional")
+    newCompositionFieldMetaMeta(fields, "exists_if", null, "exists_if_clause", META_MODEL_MAIN_PACKAGE, "optional")
 }
 
 private fun populateUniqueEntity(uniqueEntityMeta: MutableEntityModel) {
@@ -173,10 +178,20 @@ private fun populateEntityInfoEntity(entityInfoEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "package", null, "string")
 }
 
+fun populateExistsIfClauseEntity(existsIfEntityMeta: MutableEntityModel) {
+    val fields = newFieldsMetaMeta(existsIfEntityMeta)
+    newEnumerationFieldMetaMeta(fields, "operator", null, "exists_if_operator", META_MODEL_MAIN_PACKAGE)
+    newPrimitiveFieldMetaMeta(fields, "field", null, "string", "optional")
+    newPrimitiveFieldMetaMeta(fields, "value", null, "string", "optional")
+    newCompositionFieldMetaMeta(fields, "arg1", null, "exists_if_clause", META_MODEL_MAIN_PACKAGE, "optional")
+    newCompositionFieldMetaMeta(fields, "arg2", null, "exists_if_clause", META_MODEL_MAIN_PACKAGE, "optional")
+}
+
 private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel) {
     populateFieldTypeEnumeration(enumerationsMeta)
     populateMultiplicityEnumeration(enumerationsMeta)
     populateUniqueTypeEnumeration(enumerationsMeta)
+    populateExistsIfOperatorEnumeration(enumerationsMeta)
 }
 
 fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
@@ -201,4 +216,12 @@ fun populateUniqueTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
         "unique_type",
         null,
         UniqueType.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
+}
+
+fun populateExistsIfOperatorEnumeration(enumerationsMeta: MutableListFieldModel) {
+    newEnumerationMetaMeta(
+        enumerationsMeta,
+        "exists_if_operator",
+        null,
+        ExistsIfOperator.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }

@@ -17,6 +17,11 @@ fun getSingleEntity(entityModel: BaseEntityModel, fieldName: String): EntityMode
     return singleField.value as? EntityModel ?: throw IllegalStateException()
 }
 
+fun getOptionalSingleEntity(entityModel: BaseEntityModel, fieldName: String): EntityModel? {
+    val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
+    return singleField.value as? EntityModel ?: throw IllegalStateException()
+}
+
 fun getSingleString(entityModel: BaseEntityModel, fieldName: String): String {
     val singleField = getSingleField(entityModel, fieldName)
     val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()

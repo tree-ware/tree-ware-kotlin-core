@@ -62,6 +62,24 @@
                 "multiplicity": "optional"
               },
               {
+                "name": "is_coastal_city",
+                "number": 4,
+                "info": "Is this city a coastal city?",
+                "type": "boolean",
+                "multiplicity": "optional"
+              },
+              {
+                "name": "water_body_name",
+                "number": 5,
+                "info": "The name of the ocean/sea/large-lake if this is a coastal city",
+                "type": "string",
+                "exists_if": {
+                  "operator": "equals",
+                  "field": "is_coastal_city",
+                  "value": "true"
+                }
+              },
+              {
                 "name": "related_city_info",
                 "number": 30,
                 "type": "association",
