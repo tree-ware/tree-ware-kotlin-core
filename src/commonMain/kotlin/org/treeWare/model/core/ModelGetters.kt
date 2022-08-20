@@ -107,3 +107,10 @@ fun getCompositionEntityMeta(fieldModel: FieldModel): EntityModel {
     val fieldResolved = requireNotNull(getMetaModelResolved(fieldMeta)) { "Field is not resolved" }
     return requireNotNull(fieldResolved.compositionMeta) { "Field composition is not resolved" }
 }
+
+fun forEachEntity(setField: SetFieldModel, body: (entity: EntityModel) -> Unit) {
+    setField.values.forEach { element ->
+        val entity = element as EntityModel
+        body(entity)
+    }
+}

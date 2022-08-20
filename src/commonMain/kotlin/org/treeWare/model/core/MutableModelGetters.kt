@@ -10,3 +10,10 @@ fun getMutableSingleField(entityModel: MutableBaseEntityModel, fieldName: String
 
 fun getMutableCollectionField(entityModel: MutableBaseEntityModel, fieldName: String): MutableCollectionFieldModel =
     entityModel.getField(fieldName) as? MutableCollectionFieldModel ?: throw IllegalStateException()
+
+fun forEachEntity(setField: MutableSetFieldModel, body: (entity: MutableEntityModel) -> Unit) {
+    setField.values.forEach { element ->
+        val entity = element as MutableEntityModel
+        body(entity)
+    }
+}
