@@ -13,6 +13,8 @@ class ModelEncodingVisitor(
     private val multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     private val encodePasswords: EncodePasswords = EncodePasswords.NONE
 ) : Leader1ModelVisitor<TraversalAction> {
+    private var isEncodingAssociation = false
+
     private fun encodeAuxs(name: String?, element: ElementModel) {
         element.auxs?.forEach { (auxName, aux) -> multiAuxEncoder.encode(name, auxName, aux, wireFormatEncoder) }
     }
@@ -33,6 +35,7 @@ class ModelEncodingVisitor(
         wireFormatEncoder.encodeObjectStart(name)
         val isCollectionElement = leaderEntity1.parent.meta?.let { isCollectionFieldMeta(it) } ?: false
         if (isCollectionElement) encodeAuxs(null, leaderEntity1)
+        else if (!isEncodingAssociation) encodeAuxs(null, leaderEntity1)
         return TraversalAction.CONTINUE
     }
 
@@ -193,8 +196,11 @@ class ModelEncodingVisitor(
         val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
         if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        isEncodingAssociation = true
         return TraversalAction.CONTINUE
     }
 
-    override fun leaveAssociation(leaderValue1: AssociationModel) {}
+    override fun leaveAssociation(leaderValue1: AssociationModel) {
+        isEncodingAssociation = false
+    }
 }

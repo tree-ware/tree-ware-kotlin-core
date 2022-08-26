@@ -1,5 +1,6 @@
 package org.treeWare.model.operator
 
+import org.treeWare.metaModel.hasKeyFields
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.rbac.FullyPermitted
 import org.treeWare.model.operator.rbac.NotPermitted
@@ -7,10 +8,7 @@ import org.treeWare.model.operator.rbac.PartiallyPermitted
 import org.treeWare.model.operator.rbac.PermitResponse
 import org.treeWare.model.operator.rbac.aux.PermitSetAuxStack
 import org.treeWare.model.operator.rbac.aux.getPermissionsAux
-import org.treeWare.model.operator.set.aux.SET_AUX_NAME
-import org.treeWare.model.operator.set.aux.SetAux
-import org.treeWare.model.operator.set.aux.SetAuxStack
-import org.treeWare.model.operator.set.aux.getSetAux
+import org.treeWare.model.operator.set.aux.*
 import org.treeWare.model.traversal.AbstractLeader1Follower1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
@@ -88,15 +86,19 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
     override fun leaveEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?) {
         val permittedEntity = permittedStack.removeFirst() as MutableEntityModel?
             ?: throw IllegalStateException("Entity parent is null")
+        val permittedParent = permittedStack.firstOrNull() ?: return
         if (!isCompositionKey(permittedEntity) && permittedEntity.hasOnlyKeyFields()) {
             // Even if an entity is not permitted, it and its keys are added on the way down since its descendants
             // might be permitted. On the way up, the entity must be removed if it does not have any other fields.
             // It should be removed if the entity is to be updated, or if it does not have permission to be created
-            // or deleted. The entity is indirectly removed by detaching all its fields.
+            // or deleted. The entity is indirectly removed by detaching all its fields and unsetting its setAux.
             val setAux = setAuxStack.peekActive()
-            if (setAux == SetAux.UPDATE || !permitSetAuxStack.isSetPermitted(setAux)) permittedEntity.detachAllFields()
+            if (setAux == SetAux.UPDATE || !permitSetAuxStack.isSetPermitted(setAux)) {
+                permittedEntity.detachAllFields()
+                unsetSetAux(permittedEntity)
+                if (permittedParent.elementType == ModelElementType.SINGLE_FIELD) unsetSetAux(permittedParent)
+            }
         }
-        val permittedParent = permittedStack.firstOrNull() ?: return
         if (permittedParent.elementType == ModelElementType.SET_FIELD) {
             // NOTE: entities should be added to set-fields only after the entity has key fields.
             // If the keys don't exist, an exception will be thrown. Catch and ignore it.
@@ -111,12 +113,16 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
         else visitLeafField(leaderField1, followerField1)
 
     override fun leaveSingleField(leaderField1: SingleFieldModel, followerField1: SingleFieldModel?) {
-        // Drop composition field if its entity is empty.
+        // Drop composition field if its entity is empty, unless it is a keyless entity being deleted.
         if (isCompositionField(leaderField1)) {
             val permittedSingleField = permittedStack.first() as? MutableSingleFieldModel
             val permittedSingleFieldValue = permittedSingleField?.value
             val permittedEntity = permittedSingleFieldValue as MutableEntityModel?
-            if (permittedEntity == null || permittedEntity.isEmpty()) permittedSingleField?.detachFromParent()
+            if (permittedEntity == null) permittedSingleField?.detachFromParent()
+            else if (permittedEntity.isEmpty()) {
+                val hasKeyFields = permittedEntity.meta?.let { hasKeyFields(it) } ?: false
+                if (hasKeyFields || getSetAux(permittedEntity) != SetAux.DELETE) permittedSingleField?.detachFromParent()
+            }
             leaveBranchField()
         } else leaveLeafField()
     }

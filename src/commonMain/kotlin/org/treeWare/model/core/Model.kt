@@ -7,6 +7,7 @@ interface ElementModel {
     val auxs: Map<String, Any>?
 
     fun setAux(auxName: String, aux: Any) // TODO(#77): remove when #77 is implemented
+    fun unsetAux(auxName: String)
     fun matches(that: ElementModel): Boolean
 }
 

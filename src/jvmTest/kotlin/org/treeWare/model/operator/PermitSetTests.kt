@@ -43,6 +43,7 @@ class PermitSetTests {
             setJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory
         )
+        assertMatchesJsonString(setModel, setJson, EncodePasswords.ALL, multiAuxEncoder)
         val actual = permitSet(setModel, rbac)
         if (expectedPermittedJson == null) {
             when (actual) {
@@ -159,6 +160,27 @@ class PermitSetTests {
             |          "name": "New York City",
             |          "state": "New York",
             |          "country": "United States of America"
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
+        testPermitSet(deleteEntitiesSetJson, rbac, expectedPermittedJson = deleteEntitiesSetJson, true)
+    }
+
+    @Test
+    fun `DELETE keyless entities without any fields in set-model must not be pruned by the permitSet operator`() {
+        val deleteEntitiesSetJson = """
+            |{
+            |  "address_book": {
+            |    "person": [
+            |      {
+            |        "set_": "delete",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "hero_details": {
+            |          "set_": "delete"
             |        }
             |      }
             |    ]
