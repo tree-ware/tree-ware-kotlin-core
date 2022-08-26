@@ -17,6 +17,10 @@ abstract class MutableElementModel : ElementModel {
         if (auxsInternal == null) auxsInternal = LinkedHashMap()
         auxsInternal?.also { it[auxName] = aux }
     }
+
+    override fun unsetAux(auxName: String) {
+        auxsInternal?.also { it.remove(auxName) }
+    }
 }
 
 class MutableMainModel(override val mainMeta: MainModel?) :
@@ -451,6 +455,7 @@ class MutableAssociationModel(
     // overridden to make this possible.
     override val auxs: Map<String, Any>? get() = value.auxs
     override fun setAux(auxName: String, aux: Any) = value.setAux(auxName, aux)
+    override fun unsetAux(auxName: String) = value.unsetAux(auxName)
 }
 
 // Helpers
