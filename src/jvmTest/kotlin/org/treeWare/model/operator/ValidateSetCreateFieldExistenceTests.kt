@@ -45,9 +45,9 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: field is_hero in exists_if not found",
+            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: field is_hero not found; it is needed for validating other fields",
             "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: is_hero",
-            "/address_book/city_info[San Francisco,CA,USA]: field is_coastal_city in exists_if not found",
+            "/address_book/city_info[San Francisco,CA,USA]: field is_coastal_city not found; it is needed for validating other fields",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
