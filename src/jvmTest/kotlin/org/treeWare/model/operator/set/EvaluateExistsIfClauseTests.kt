@@ -41,7 +41,8 @@ class EvaluateExistsIfClauseTests {
 
     @Test
     fun `Equals clause must return error for missing fields`() {
-        val expectedErrors = listOf("/address_book/settings: field last_name_first in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field last_name_first not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(equalsClause1, missingFieldsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))
@@ -49,7 +50,8 @@ class EvaluateExistsIfClauseTests {
 
     @Test
     fun `Not clause must return error for missing fields`() {
-        val expectedErrors = listOf("/address_book/settings: field background_color in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field background_color not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(notClause, missingFieldsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))
@@ -57,7 +59,8 @@ class EvaluateExistsIfClauseTests {
 
     @Test
     fun `And clause must return error for missing fields`() {
-        val expectedErrors = listOf("/address_book/settings: field last_name_first in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field last_name_first not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(andClause, missingFieldsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))
@@ -65,7 +68,8 @@ class EvaluateExistsIfClauseTests {
 
     @Test
     fun `Or clause must return error for missing fields`() {
-        val expectedErrors = listOf("/address_book/settings: field last_name_first in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field last_name_first not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(orClause, missingFieldsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))
@@ -73,7 +77,8 @@ class EvaluateExistsIfClauseTests {
 
     @Test
     fun `Mixed clause must return error for missing fields`() {
-        val expectedErrors = listOf("/address_book/settings: field last_name_first in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field last_name_first not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(mixedClause, missingFieldsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))
@@ -220,7 +225,8 @@ class EvaluateExistsIfClauseTests {
             |}
         """.trimMargin()
         val settingsEntity = getSettingsEntity(modelJson)
-        val expectedErrors = listOf("/address_book/settings: field encrypt_hero_name in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field encrypt_hero_name not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(andClause, settingsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))
@@ -273,7 +279,8 @@ class EvaluateExistsIfClauseTests {
             |}
         """.trimMargin()
         val settingsEntity = getSettingsEntity(modelJson)
-        val expectedErrors = listOf("/address_book/settings: field encrypt_hero_name in exists_if not found")
+        val expectedErrors =
+            listOf("/address_book/settings: field encrypt_hero_name not found; it is needed for validating other fields")
         val result = evaluateExistsIfClause(orClause, settingsEntity, "/address_book/settings")
         assertTrue(result is ExistsIfClauseResult.Errors)
         assertEquals(expectedErrors.joinToString("\n"), result.errors.joinToString("\n"))

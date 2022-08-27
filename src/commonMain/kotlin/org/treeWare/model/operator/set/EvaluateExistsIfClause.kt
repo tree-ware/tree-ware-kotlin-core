@@ -27,7 +27,7 @@ private fun evaluateEqualsClause(
 ): ExistsIfClauseResult {
     val fieldName = equalsClause.fieldName
     val field = entity.getField(fieldName) ?: return ExistsIfClauseResult.Errors(
-        listOf(ElementModelError(entityPath, "field $fieldName in exists_if not found"))
+        listOf(ElementModelError(entityPath, "field $fieldName not found; it is needed for validating other fields"))
     )
     val valueModel = (field as SingleFieldModel).value
     return when (val valueType = valueModel?.elementType) {
