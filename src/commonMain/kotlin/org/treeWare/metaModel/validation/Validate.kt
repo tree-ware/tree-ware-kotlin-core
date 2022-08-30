@@ -35,6 +35,7 @@ fun validate(
     val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, nonPrimitiveTypes)
 
     val existsIfErrors = validateExistsIf(mainMeta)
+    val granularityErrors = validateGranularity(mainMeta)
 
-    return listOf(nameErrors, numberErrors, nonPrimitiveErrors, existsIfErrors).flatten()
+    return listOf(nameErrors, numberErrors, nonPrimitiveErrors, existsIfErrors, granularityErrors).flatten()
 }
