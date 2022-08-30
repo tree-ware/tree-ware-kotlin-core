@@ -40,6 +40,8 @@ enum class UniqueType {
 
 enum class ExistsIfOperator { EQUALS, AND, OR, NOT }
 
+enum class Granularity { FIELD, ENTITY, SUB_TREE }
+
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
 fun newMainMetaMetaModel(): MutableMainModel {
@@ -157,6 +159,7 @@ private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "max_size", "Maximum string length", "uint32", "optional")
     newPrimitiveFieldMetaMeta(fields, "regex", "Regular expression that strings must match", "string", "optional")
     newCompositionFieldMetaMeta(fields, "exists_if", null, "exists_if_clause", META_MODEL_MAIN_PACKAGE, "optional")
+    newEnumerationFieldMetaMeta(fields, "granularity", null, "granularity", META_MODEL_MAIN_PACKAGE)
 }
 
 private fun populateUniqueEntity(uniqueEntityMeta: MutableEntityModel) {
@@ -192,6 +195,7 @@ private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel) {
     populateMultiplicityEnumeration(enumerationsMeta)
     populateUniqueTypeEnumeration(enumerationsMeta)
     populateExistsIfOperatorEnumeration(enumerationsMeta)
+    populateGranularityEnumeration(enumerationsMeta)
 }
 
 fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
@@ -224,4 +228,12 @@ fun populateExistsIfOperatorEnumeration(enumerationsMeta: MutableListFieldModel)
         "exists_if_operator",
         null,
         ExistsIfOperator.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
+}
+
+fun populateGranularityEnumeration(enumerationsMeta: MutableListFieldModel) {
+    newEnumerationMetaMeta(
+        enumerationsMeta,
+        "granularity",
+        null,
+        Granularity.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }

@@ -142,3 +142,6 @@ fun getMaxSizeConstraint(fieldMeta: EntityModel): UInt? = getOptionalSingleUint3
 fun getRegexConstraint(fieldMeta: EntityModel): String? = getOptionalSingleString(fieldMeta, "regex")
 
 fun getExistsIfMeta(fieldMeta: EntityModel): EntityModel? = getOptionalSingleEntity(fieldMeta, "exists_if")
+
+fun getGranularityMeta(fieldMeta: EntityModel): Granularity? =
+    getOptionalSingleEnumeration(fieldMeta, "granularity")?.let { Granularity.valueOf(it.uppercase()) }
