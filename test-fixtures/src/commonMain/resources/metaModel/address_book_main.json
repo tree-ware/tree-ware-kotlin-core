@@ -136,6 +136,18 @@
                   "package": "address_book.main"
                 },
                 "multiplicity": "set"
+              },
+              {
+                "name": "sub_tree_persons",
+                "number": 7,
+                "info": "For testing sub_tree granularity",
+                "type": "composition",
+                "composition": {
+                  "entity": "address_book_person",
+                  "package": "address_book.main"
+                },
+                "granularity": "sub_tree",
+                "multiplicity": "set"
               }
             ]
           },

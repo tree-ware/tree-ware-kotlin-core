@@ -28,7 +28,8 @@
         "field:settings": {},
         "field:person": {},
         "field:city_info": {},
-        "field:groups": {}
+        "field:groups": {},
+        "field:sub_tree_persons": {}
       },
       "entity:address_book_settings": {
         "field:last_name_first": {},

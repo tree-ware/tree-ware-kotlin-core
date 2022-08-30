@@ -6,6 +6,7 @@ import org.treeWare.metaModel.getMinSizeConstraint
 import org.treeWare.metaModel.getRegexConstraint
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.ElementModelError
+import org.treeWare.model.operator.GranularityStack
 import org.treeWare.model.operator.ModelPathStack
 import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.SetAuxStack
@@ -31,6 +32,7 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
     val errors = mutableListOf<ElementModelError>()
 
     private val modelPathStack = ModelPathStack()
+    private val granularityStack = GranularityStack()
     private val setAuxStack = SetAuxStack()
 
     override fun visitMain(leaderMain1: MainModel): TraversalAction {
@@ -41,10 +43,11 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
     }
 
     override fun leaveMain(leaderMain1: MainModel) {
-        modelPathStack.popField()
         setAuxStack.pop()
-        assertInDevMode(modelPathStack.isEmpty())
+        modelPathStack.popField()
         assertInDevMode(setAuxStack.isEmpty())
+        assertInDevMode(granularityStack.isEmpty())
+        assertInDevMode(modelPathStack.isEmpty())
         if (setAuxStack.nothingToSet) errors.add(
             ElementModelError("/", "set_ aux not attached to any composition field or entity")
         )
@@ -53,6 +56,7 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         if (isCompositionKey(leaderEntity1)) {
             modelPathStack.pushEntity(leaderEntity1, true)
+            granularityStack.push(leaderEntity1)
             setAuxStack.push(null)
             return TraversalAction.CONTINUE
         }
@@ -62,7 +66,10 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         val missingKeys = modelPathStack.peekKeys().missing
         if (missingKeys.isNotEmpty()) errors.add(ElementModelError(entityPath, "missing keys: $missingKeys"))
 
-        val setAuxError = setAuxStack.push(getSetAux(leaderEntity1), true)
+        val previousGranularity = granularityStack.peekActive()
+        granularityStack.push(leaderEntity1)
+
+        val setAuxError = setAuxStack.push(getSetAux(leaderEntity1), true, previousGranularity)
         if (setAuxError != null) {
             errors.add(ElementModelError(entityPath, setAuxError))
         } else when (setAuxStack.peekActive()) {
@@ -76,8 +83,9 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
     }
 
     override fun leaveEntity(leaderEntity1: EntityModel) {
-        modelPathStack.popEntity()
         setAuxStack.pop()
+        granularityStack.pop()
+        modelPathStack.popEntity()
     }
 
     override fun visitSingleField(leaderField1: SingleFieldModel): TraversalAction {
@@ -144,7 +152,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         if (minSize == null && maxSize == null && regex == null) return TraversalAction.CONTINUE
 
         val fieldPath = modelPathStack.peekModelPath()
-        val fieldName = getFieldName(field)
         field.values.forEachIndexed { index, elementModel ->
             val value = (elementModel as PrimitiveModel).value as String
             validateStringValue(fieldPath, index, value, minSize, maxSize, regex)
@@ -192,7 +199,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         val error = validateAssociation(value)
         error?.also {
             val fieldPath = modelPathStack.peekModelPath()
-            val fieldName = getFieldName(field)
             val fieldId = getFieldId(fieldPath, null)
             errors.add(ElementModelError(fieldId, it))
         }
@@ -201,7 +207,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
 
     private fun validateListAssociation(field: ListFieldModel): TraversalAction {
         val fieldPath = modelPathStack.peekModelPath()
-        val fieldName = getFieldName(field)
         field.values.forEachIndexed { index, elementModel ->
             val value = elementModel as AssociationModel
             val error = validateAssociation(value)
@@ -217,7 +222,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         val setAuxError = setAuxStack.push(getSetAux(field))
         setAuxError?.also {
             val fieldPath = modelPathStack.peekModelPath()
-            val fieldName = getFieldName(field)
             val fieldId = getFieldId(fieldPath, null)
             errors.add(ElementModelError(fieldId, it))
         }
