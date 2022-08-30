@@ -1,5 +1,6 @@
 package org.treeWare.model.operator.set.aux
 
+import org.treeWare.metaModel.Granularity
 import org.treeWare.util.assertInDevMode
 
 class SetAuxStack {
@@ -14,36 +15,41 @@ class SetAuxStack {
      *
      * @return an error message if the aux value is not valid compared to the active aux.
      */
-    fun push(newAux: SetAux?, isEntity: Boolean = false): String? = when (val activeAux = peekActive()) {
-        SetAux.CREATE -> {
-            if (newAux == null) {
-                pushAux(null)
-                null
-            } else if (newAux != SetAux.CREATE) {
-                pushAux(null)
-                getAuxError(activeAux, newAux)
-            } else {
+    fun push(newAux: SetAux?, isEntity: Boolean = false, granularity: Granularity? = null): String? =
+        if (granularity == Granularity.SUB_TREE && newAux != null) {
+            pushAux(null)
+            "set_ aux is not valid inside a sub-tree with sub_tree granularity"
+        } else when (val activeAux = peekActive()) {
+            SetAux.CREATE -> {
+                if (newAux == null) {
+                    pushAux(null)
+                    null
+                } else if (newAux != SetAux.CREATE) {
+                    pushAux(null)
+                    getAuxError(activeAux, newAux)
+                } else {
+                    pushAux(newAux)
+                    null
+                }
+            }
+            SetAux.DELETE -> {
+                if (newAux == null) {
+                    pushAux(null)
+                    if (!isEntity || granularity == Granularity.SUB_TREE) null
+                    else "entity without `delete` must not be in the subtree of a `delete`"
+                } else if (newAux != SetAux.DELETE) {
+                    pushAux(null)
+                    getAuxError(activeAux, newAux)
+                } else {
+                    pushAux(newAux)
+                    null
+                }
+            }
+            else -> {
                 pushAux(newAux)
                 null
             }
         }
-        SetAux.DELETE -> {
-            if (newAux == null) {
-                pushAux(null)
-                if (isEntity) "entity without `delete` must not be in the subtree of a `delete`" else null
-            } else if (newAux != SetAux.DELETE) {
-                pushAux(null)
-                getAuxError(activeAux, newAux)
-            } else {
-                pushAux(newAux)
-                null
-            }
-        }
-        else -> {
-            pushAux(newAux)
-            null
-        }
-    }
 
     private fun pushAux(aux: SetAux?) {
         currentSetAuxStack.addFirst(aux)

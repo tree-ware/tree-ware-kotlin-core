@@ -253,4 +253,88 @@ class ValidateSetAuxTests {
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
     }
+
+    @Test
+    fun `validateSet() must return errors if a sub-tree-granularity sub-tree contains set_ aux below the root`() {
+        val modelJson = """
+            |{
+            |  "address_book": {
+            |    "sub_tree_persons": [
+            |      {
+            |        "set_": "update",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
+            |        "is_hero": true,
+            |        "hero_details": {
+            |          "set_": "create",
+            |          "strengths": "super-strength",
+            |          "weaknesses": "kryptonite"
+            |        }
+            |      },
+            |      {
+            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |        "is_hero": false,
+            |        "hero_details": {
+            |          "set_": "delete"
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = listOf(
+            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/hero_details: set_ aux is not valid inside a sub-tree with sub_tree granularity",
+            "/address_book/sub_tree_persons[a8aacf55-7810-4b43-afe5-4344f25435fd]/hero_details: set_ aux is not valid inside a sub-tree with sub_tree granularity",
+        )
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
+    fun `validateSet() must not return errors if a sub-tree-granularity sub-tree has set_ aux only at the root`() {
+        val modelJson = """
+            |{
+            |  "address_book": {
+            |    "sub_tree_persons": [
+            |      {
+            |        "set_": "update",
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "first_name": "Clark",
+            |        "last_name": "Kent",
+            |        "is_hero": true,
+            |        "hero_details": {
+            |          "strengths": "super-strength",
+            |          "weaknesses": "kryptonite"
+            |        }
+            |      },
+            |      {
+            |        "set_": "delete",
+            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |        "is_hero": false,
+            |        "hero_details": {
+            |        }
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = emptyList<String>()
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
 }
