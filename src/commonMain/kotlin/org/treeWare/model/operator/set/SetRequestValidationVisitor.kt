@@ -1,9 +1,6 @@
 package org.treeWare.model.operator.set
 
-import org.treeWare.metaModel.FieldType
-import org.treeWare.metaModel.getMaxSizeConstraint
-import org.treeWare.metaModel.getMinSizeConstraint
-import org.treeWare.metaModel.getRegexConstraint
+import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.ElementModelError
 import org.treeWare.model.operator.GranularityStack
@@ -68,13 +65,22 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
 
         val previousGranularity = granularityStack.peekActive()
         granularityStack.push(leaderEntity1)
+        val currentGranularity = granularityStack.peekActive()
 
         val setAuxError = setAuxStack.push(getSetAux(leaderEntity1), true, previousGranularity)
         if (setAuxError != null) {
             errors.add(ElementModelError(entityPath, setAuxError))
         } else when (setAuxStack.peekActive()) {
             SetAux.CREATE -> errors.addAll(validateFieldExistence(leaderEntity1, entityPath, true, true, true))
-            SetAux.UPDATE -> errors.addAll(validateFieldExistence(leaderEntity1, entityPath, false, false, true))
+            SetAux.UPDATE -> errors.addAll(
+                validateFieldExistence(
+                    leaderEntity1,
+                    entityPath,
+                    currentGranularity == Granularity.SUB_TREE,
+                    false,
+                    true
+                )
+            )
             SetAux.DELETE -> {}
             null -> {}
         }

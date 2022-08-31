@@ -125,6 +125,36 @@ class ValidateSetTests {
     }
 
     @Test
+    fun `validateSet() must return errors if required fields are missing in sub_tree granularity in update-request`() {
+        val modelJson = """
+            |{
+            |  "address_book__set_": "update",
+            |  "address_book": {
+            |    "sub_tree_persons": [
+            |      {
+            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |        "is_hero": true
+            |      }
+            |    ]
+            |  }
+            |}
+        """.trimMargin()
+        val model =
+            getMainModelFromJsonString(
+                addressBookMetaModel,
+                modelJson,
+                multiAuxDecodingStateMachineFactory = auxDecodingFactory
+            )
+
+        val expectedErrors = listOf(
+            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: first_name",
+            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: last_name",
+        )
+        val actualErrors = validateSet(model)
+        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
+    }
+
+    @Test
     fun `validateSet() must not return errors if required fields are missing in delete-request`() {
         val modelJson = """
             |{
