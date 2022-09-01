@@ -33,6 +33,11 @@ fun getOptionalSingleString(entityModel: BaseEntityModel, fieldName: String): St
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
+fun getSingleBoolean(entityModel: BaseEntityModel, fieldName: String): Boolean {
+    val primitive = getSinglePrimitive(entityModel, fieldName)
+    return primitive.value as? Boolean ?: throw IllegalStateException()
+}
+
 fun getOptionalSingleBoolean(entityModel: BaseEntityModel, fieldName: String): Boolean? {
     val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
     return primitive.value as? Boolean ?: throw IllegalStateException()
@@ -63,6 +68,9 @@ fun getSingleDouble(entityModel: BaseEntityModel, fieldName: String): Double? {
 
 fun getSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel =
     entityModel.getField(fieldName) as? SingleFieldModel ?: throw IllegalStateException()
+
+fun getSinglePrimitive(entityModel: BaseEntityModel, fieldName: String): PrimitiveModel =
+    getSingleField(entityModel, fieldName).value as? PrimitiveModel ?: throw IllegalStateException()
 
 fun getOptionalSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel? =
     entityModel.getField(fieldName) as? SingleFieldModel?

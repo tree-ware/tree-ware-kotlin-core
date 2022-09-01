@@ -44,6 +44,12 @@ fun setStringSingleField(
     return field
 }
 
+fun addStringListFieldElement(listField: MutableListFieldModel, value: String): MutablePrimitiveModel {
+    val primitive = listField.getNewValue() as MutablePrimitiveModel
+    primitive.setValue(value)
+    return primitive
+}
+
 fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: String) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel

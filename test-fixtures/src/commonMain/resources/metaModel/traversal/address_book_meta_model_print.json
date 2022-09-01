@@ -35,7 +35,11 @@
         "field:last_name_first": {},
         "field:encrypt_hero_name": {},
         "field:card_colors": {},
-        "field:background_color": {}
+        "field:background_color": {},
+        "field:advanced": {}
+      },
+      "entity:advanced_settings": {
+        "field:border_color": {}
       },
       "entity:address_book_person": {
         "field:id": {},

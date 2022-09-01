@@ -134,6 +134,7 @@ fun decodeSetField(
     }
 
     // Use `newEntity` if there is no matching entity in the set already; else use the matching entity.
+    // TODO(cleanup): need a getOrNew() method with key values as parameters.
     val existingEntity = setField.getValueMatching(newEntity) as MutableEntityModel?
     val nextEntity = if (existingEntity != null) existingEntity else {
         setField.addValue(newEntity)
