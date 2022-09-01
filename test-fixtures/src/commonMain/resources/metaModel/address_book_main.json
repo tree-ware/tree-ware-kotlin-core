@@ -184,6 +184,31 @@
                   "package": "address_book.main"
                 },
                 "multiplicity": "optional"
+              },
+              {
+                "name": "advanced",
+                "number": 5,
+                "type": "composition",
+                "composition": {
+                  "entity": "advanced_settings",
+                  "package": "address_book.main"
+                },
+                "multiplicity": "optional"
+              }
+            ]
+          },
+          {
+            "name": "advanced_settings",
+            "fields": [
+              {
+                "name": "border_color",
+                "number": 1,
+                "type": "enumeration",
+                "enumeration": {
+                  "name": "address_book_color",
+                  "package": "address_book.main"
+                },
+                "multiplicity": "optional"
               }
             ]
           },

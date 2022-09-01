@@ -93,7 +93,7 @@ fun getMainModelFromJson(
     return mainModel
 }
 
-/** Encode the model element to JSON and assert that it matches the JSON in the file. */
+/** Encode the model element to JSON and assert that it matches the specified JSON file. */
 fun assertMatchesJson(
     element: ElementModel,
     expectedJsonFilePath: String,
@@ -104,13 +104,33 @@ fun assertMatchesJson(
     assertMatchesJsonString(element, expectedJsonString, encodePasswords, multiAuxEncoder)
 }
 
-/** Encode the model element to JSON and assert that it matches the JSON in the file. */
+/** Encode the model element to JSON and assert that it matches the specified JSON string. */
 fun assertMatchesJsonString(
     element: ElementModel,
     expectedJsonString: String,
     encodePasswords: EncodePasswords,
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
 ) {
+    val actualJsonString = getEncodedJsonString(element, encodePasswords, multiAuxEncoder)
+    assertEquals(expectedJsonString, actualJsonString)
+}
+
+/** Encode the model element to JSON and assert that it contains the specified JSON string. */
+fun assertContainsJsonString(
+    element: ElementModel,
+    expectedJsonStringSnippet: String,
+    encodePasswords: EncodePasswords,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
+) {
+    val actualJsonString = getEncodedJsonString(element, encodePasswords, multiAuxEncoder)
+    assertTrue(actualJsonString.contains(expectedJsonStringSnippet))
+}
+
+fun getEncodedJsonString(
+    element: ElementModel,
+    encodePasswords: EncodePasswords,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
+): String {
     val jsonWriter = StringWriter()
     val isEncoded = try {
         encodeJson(element, jsonWriter, multiAuxEncoder, encodePasswords, true)
@@ -122,7 +142,5 @@ fun assertMatchesJsonString(
         false
     }
     assertTrue(isEncoded)
-
-    val actualJsonString = jsonWriter.toString()
-    assertEquals(expectedJsonString, actualJsonString)
+    return jsonWriter.toString()
 }
