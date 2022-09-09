@@ -11,8 +11,8 @@ import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.SetAuxEncoder
 import org.treeWare.model.operator.set.aux.setSetAux
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 private val multiAuxEncoder = MultiAuxEncoder(SET_AUX_NAME to SetAuxEncoder())
 
@@ -24,9 +24,8 @@ class PopulateSubTreeWithAuxTests {
         val settings = getOrNewMutableSingleEntity(root, "settings")
         setBooleanSingleField(settings, "last_name_first", true) // non-key field
 
-        val error = populateSubTree(settings, true) { setSetAux(it, SetAux.DELETE) }
-
-        assertEquals("Sub-tree root is not empty", error)
+        val success = populateSubTree(settings, true) { setSetAux(it, SetAux.DELETE) }
+        assertFalse(success)
     }
 
     @Test
@@ -39,9 +38,8 @@ class PopulateSubTreeWithAuxTests {
         setStringSingleField(clark, "first_name", "Clark") // non-key field
         persons.addValue(clark)
 
-        val error = populateSubTree(clark, true) { setSetAux(it, SetAux.DELETE) }
-
-        assertEquals("Sub-tree root is not empty", error)
+        val success = populateSubTree(clark, true) { setSetAux(it, SetAux.DELETE) }
+        assertFalse(success)
     }
 
     @Test
@@ -50,7 +48,7 @@ class PopulateSubTreeWithAuxTests {
         val root = model.getOrNewRoot()
         val settings = getOrNewMutableSingleEntity(root, "settings")
 
-        val error = populateSubTree(settings, true) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(settings, true) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJson = """
             {
@@ -70,7 +68,7 @@ class PopulateSubTreeWithAuxTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -79,7 +77,7 @@ class PopulateSubTreeWithAuxTests {
         val root = model.getOrNewRoot()
         val settings = getOrNewMutableSingleEntity(root, "settings")
 
-        val error = populateSubTree(settings, false) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(settings, false) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJson = """
             {
@@ -94,7 +92,7 @@ class PopulateSubTreeWithAuxTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -106,7 +104,7 @@ class PopulateSubTreeWithAuxTests {
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
 
-        val error = populateSubTree(clark, true) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(clark, true) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJson = """
             {
@@ -145,7 +143,7 @@ class PopulateSubTreeWithAuxTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -157,7 +155,7 @@ class PopulateSubTreeWithAuxTests {
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
 
-        val error = populateSubTree(clark, false) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(clark, false) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJson = """
             {
@@ -181,7 +179,7 @@ class PopulateSubTreeWithAuxTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -196,7 +194,7 @@ class PopulateSubTreeWithAuxTests {
         setStringSingleField(keys, "country", "USA")
         cities.addValue(sanFrancisco)
 
-        val error = populateSubTree(sanFrancisco, true) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(sanFrancisco, true) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJson = """
             {
@@ -225,7 +223,7 @@ class PopulateSubTreeWithAuxTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -240,7 +238,7 @@ class PopulateSubTreeWithAuxTests {
         setStringSingleField(keys, "country", "USA")
         cities.addValue(sanFrancisco)
 
-        val error = populateSubTree(sanFrancisco, false) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(sanFrancisco, false) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJson = """
             {
@@ -263,7 +261,7 @@ class PopulateSubTreeWithAuxTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -271,7 +269,7 @@ class PopulateSubTreeWithAuxTests {
         val model = MutableMainModel(addressBookMetaModel)
         val root = model.getOrNewRoot()
 
-        val error = populateSubTree(root, true) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(root, true) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJsonSnippet = """
             |    "city_info": [
@@ -285,7 +283,7 @@ class PopulateSubTreeWithAuxTests {
             |        }
         """.trimMargin()
         assertContainsJsonString(model, expectedJsonSnippet, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -293,7 +291,7 @@ class PopulateSubTreeWithAuxTests {
         val model = MutableMainModel(addressBookMetaModel)
         val root = model.getOrNewRoot()
 
-        val error = populateSubTree(root, false) { setSetAux(it, SetAux.DELETE) }
+        val success = populateSubTree(root, false) { setSetAux(it, SetAux.DELETE) }
 
         val expectedJsonSnippet = """
             |    "city_info": [
@@ -307,6 +305,6 @@ class PopulateSubTreeWithAuxTests {
             |        }
         """.trimMargin()
         assertContainsJsonString(model, expectedJsonSnippet, EncodePasswords.NONE, multiAuxEncoder)
-        assertNull(error)
+        assertTrue(success)
     }
 }

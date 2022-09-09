@@ -6,24 +6,23 @@ import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.EncodePasswords
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class PopulateSubTreeTests {
     @Test
-    fun `populateSubTree() must return an error if sub-tree root in a single-field has non-key fields`() {
+    fun `populateSubTree() must not succeed if sub-tree root in a single-field has non-key fields`() {
         val model = MutableMainModel(addressBookMetaModel)
         val root = model.getOrNewRoot()
         val settings = getOrNewMutableSingleEntity(root, "settings")
         setBooleanSingleField(settings, "last_name_first", true) // non-key field
 
-        val error = populateSubTree(settings, true)
-
-        assertEquals("Sub-tree root is not empty", error)
+        val success = populateSubTree(settings, true)
+        assertFalse(success)
     }
 
     @Test
-    fun `populateSubTree() must return an error if sub-tree root in a set-field has non-key fields`() {
+    fun `populateSubTree() must not succeed if sub-tree root in a set-field has non-key fields`() {
         val model = MutableMainModel(addressBookMetaModel)
         val root = model.getOrNewRoot()
         val persons = getOrNewMutableSetField(root, "person")
@@ -32,9 +31,8 @@ class PopulateSubTreeTests {
         setStringSingleField(clark, "first_name", "Clark") // non-key field
         persons.addValue(clark)
 
-        val error = populateSubTree(clark, true)
-
-        assertEquals("Sub-tree root is not empty", error)
+        val success = populateSubTree(clark, true)
+        assertFalse(success)
     }
 
     @Test
@@ -43,7 +41,7 @@ class PopulateSubTreeTests {
         val root = model.getOrNewRoot()
         val settings = getOrNewMutableSingleEntity(root, "settings")
 
-        val error = populateSubTree(settings, true)
+        val success = populateSubTree(settings, true)
 
         val expectedJson = """
             {
@@ -61,7 +59,7 @@ class PopulateSubTreeTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -70,7 +68,7 @@ class PopulateSubTreeTests {
         val root = model.getOrNewRoot()
         val settings = getOrNewMutableSingleEntity(root, "settings")
 
-        val error = populateSubTree(settings, false)
+        val success = populateSubTree(settings, false)
 
         val expectedJson = """
             {
@@ -82,7 +80,7 @@ class PopulateSubTreeTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -94,7 +92,7 @@ class PopulateSubTreeTests {
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
 
-        val error = populateSubTree(clark, true)
+        val success = populateSubTree(clark, true)
 
         val expectedJson = """
             {
@@ -130,7 +128,7 @@ class PopulateSubTreeTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -142,7 +140,7 @@ class PopulateSubTreeTests {
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
 
-        val error = populateSubTree(clark, false)
+        val success = populateSubTree(clark, false)
 
         val expectedJson = """
             {
@@ -162,7 +160,7 @@ class PopulateSubTreeTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -177,7 +175,7 @@ class PopulateSubTreeTests {
         setStringSingleField(keys, "country", "USA")
         cities.addValue(sanFrancisco)
 
-        val error = populateSubTree(sanFrancisco, true)
+        val success = populateSubTree(sanFrancisco, true)
 
         val expectedJson = """
             {
@@ -203,7 +201,7 @@ class PopulateSubTreeTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -218,7 +216,7 @@ class PopulateSubTreeTests {
         setStringSingleField(keys, "country", "USA")
         cities.addValue(sanFrancisco)
 
-        val error = populateSubTree(sanFrancisco, false)
+        val success = populateSubTree(sanFrancisco, false)
 
         val expectedJson = """
             {
@@ -237,7 +235,7 @@ class PopulateSubTreeTests {
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -245,7 +243,7 @@ class PopulateSubTreeTests {
         val model = MutableMainModel(addressBookMetaModel)
         val root = model.getOrNewRoot()
 
-        val error = populateSubTree(root, true)
+        val success = populateSubTree(root, true)
 
         val expectedJsonSnippet = """
             |    "city_info": [
@@ -257,7 +255,7 @@ class PopulateSubTreeTests {
             |        }
         """.trimMargin()
         assertContainsJsonString(model, expectedJsonSnippet, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 
     @Test
@@ -265,7 +263,7 @@ class PopulateSubTreeTests {
         val model = MutableMainModel(addressBookMetaModel)
         val root = model.getOrNewRoot()
 
-        val error = populateSubTree(root, false)
+        val success = populateSubTree(root, false)
 
         val expectedJsonSnippet = """
             |    "city_info": [
@@ -277,6 +275,6 @@ class PopulateSubTreeTests {
             |        }
         """.trimMargin()
         assertContainsJsonString(model, expectedJsonSnippet, EncodePasswords.NONE)
-        assertNull(error)
+        assertTrue(success)
     }
 }

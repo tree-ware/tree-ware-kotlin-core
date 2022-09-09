@@ -13,17 +13,17 @@ typealias AuxSetter = (entity: MutableBaseEntityModel) -> Unit
 /**
  * Populate the sub-tree of the specified entity.
  *
- * @return an error if the specified entity is not empty.
+ * @return `false` if sub-tree is not empty and could not be populated, `true` if sub-tree is successfully populated.
  */
 fun populateSubTree(
     entity: MutableBaseEntityModel,
     populateNonKeyNonCompositionFields: Boolean,
     auxSetter: AuxSetter? = null
-): String? {
-    if (!entity.hasOnlyKeyFields()) return "Sub-tree root is not empty"
+): Boolean {
+    if (!entity.hasOnlyKeyFields()) return false
     val visitor = PopulateSubTreeVisitor(populateNonKeyNonCompositionFields, auxSetter)
     mutableForEach(entity, visitor, false)
-    return null
+    return true
 }
 
 private class PopulateSubTreeVisitor(
