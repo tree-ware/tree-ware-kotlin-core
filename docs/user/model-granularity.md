@@ -9,9 +9,9 @@ parent: "User Docs"
 
 # Introduction
 
-Tree-ware allows fine-grained (set/get) access to individual fields in a model. Other systems that a tree-ware based
-system interacts with may not be able to handle this fine field-level granularity. So tree-ware supports coarser
-granularities. Different granularities can be chosen for different parts of the model tree.
+Tree-ware allows fine-grained (set/get) access to individual fields in a model. Other services (in a tree-ware based
+system) may not be able to handle this fine field-level granularity. So tree-ware supports coarser granularities.
+Different granularities can be chosen for different parts of the model tree.
 
 # Granularities
 
@@ -42,13 +42,13 @@ of the granularity specified in the meta-model. The following table indicates wh
 
 | API Operation | Meta-Model Granularity | API Granularity                                                       |
 |---------------|------------------------|-----------------------------------------------------------------------|
-| `CREATE`      | `field`                | Entity :rage:                                                         |
+| `CREATE`      | `field`                | Entity                                                                |
 |               | `entity`               | Entity                                                                |
 |               | `sub_tree`             | Sub-tree                                                              |
 | `UPDATE`      | `field`                | Field                                                                 |
 |               | `entity`               | Entity                                                                |
 |               | `sub_tree`             | Sub-tree                                                              |
-| `DELETE`      | `field`                | Entity :rage:                                                         |
+| `DELETE`      | `field`                | Entity                                                                |
 |               | `entity`               | Entity                                                                |
 |               | `sub_tree`             | Sub-tree                                                              |
 | get           | `field`                | Only fields specified in the request must be returned                 |
@@ -57,5 +57,5 @@ of the granularity specified in the meta-model. The following table indicates wh
 
 # Storage
 
-Every storage supported by tree-ware is free to choose how to store fields based on their granularity as long as they
-can meet the above API requirements.
+Granularity is implemented completely in the API layer and has no impact on storage. The model is stored the same way
+for all granularities.
