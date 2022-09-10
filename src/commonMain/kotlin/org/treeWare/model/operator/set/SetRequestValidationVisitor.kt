@@ -81,6 +81,7 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
                     true
                 )
             )
+
             SetAux.DELETE -> {}
             null -> {}
         }
@@ -142,8 +143,11 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         if (minSize == null && maxSize == null && regex == null) return TraversalAction.CONTINUE
 
         val fieldPath = modelPathStack.peekModelPath()
-        val value = (field.value as PrimitiveModel).value as String
-        validateStringValue(fieldPath, null, value, minSize, maxSize, regex)
+        val primitive = field.value as PrimitiveModel?
+        if (primitive == null) {
+            val fieldId = getFieldId(fieldPath, null)
+            errors.add(ElementModelError(fieldId, "string values must not be null in set-requests"))
+        } else validateStringValue(fieldPath, null, primitive.value as String, minSize, maxSize, regex)
 
         return TraversalAction.CONTINUE
     }
