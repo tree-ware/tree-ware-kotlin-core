@@ -111,7 +111,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -121,7 +121,7 @@ class SetDelegateTests {
                 SetAux.DELETE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]",
+                "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -214,7 +214,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -224,7 +224,7 @@ class SetDelegateTests {
                 SetAux.DELETE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[2260d15f-2cc0-4b04-83fb-c950c18a6629]",
+                "/address_book/person/2260d15f-2cc0-4b04-83fb-c950c18a6629",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -318,7 +318,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -329,7 +329,7 @@ class SetDelegateTests {
                 SetAux.UPDATE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]",
+                "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -339,7 +339,7 @@ class SetDelegateTests {
                 SetAux.DELETE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[2260d15f-2cc0-4b04-83fb-c950c18a6629]",
+                "/address_book/person/2260d15f-2cc0-4b04-83fb-c950c18a6629",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -428,7 +428,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/groups",
-                "/address_book/groups[Group\\[0\\]]",
+                "/address_book/groups/Group[0]",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),
@@ -437,28 +437,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/address_book/groups[Group\\[0\\]]/sub_groups",
-                "/address_book/groups[Group\\[0\\]]/sub_groups[Group\\[0\\,1\\]]",
-                ofType(),
-                fieldsWithNames("name"),
-                fieldsWithNames(),
-                fieldsWithNames()
-            )
-            delegate.setEntity(
-                SetAux.CREATE,
-                ofType(),
-                "/address_book/groups",
-                "/address_book/groups[Group\\/1\\\\]",
-                ofType(),
-                fieldsWithNames("name"),
-                fieldsWithNames(),
-                fieldsWithNames()
-            )
-            delegate.setEntity(
-                SetAux.CREATE,
-                ofType(),
-                "/address_book/groups[Group\\/1\\\\]/sub_groups",
-                "/address_book/groups[Group\\/1\\\\]/sub_groups[Group\\/1\\\\\\/1]",
+                "/address_book/groups/Group[0]/sub_groups",
+                "/address_book/groups/Group[0]/sub_groups/Group[0,1]",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),
@@ -468,7 +448,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/groups",
-                "/address_book/groups[Group\\[2\\,1\\]]",
+                "/address_book/groups/Group\\/1\\\\",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),
@@ -477,8 +457,28 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/address_book/groups[Group\\[2\\,1\\]]/sub_groups",
-                "/address_book/groups[Group\\[2\\,1\\]]/sub_groups[Group\\[2\\,2\\]]",
+                "/address_book/groups/Group\\/1\\\\/sub_groups",
+                "/address_book/groups/Group\\/1\\\\/sub_groups/Group\\/1\\\\\\/1",
+                ofType(),
+                fieldsWithNames("name"),
+                fieldsWithNames(),
+                fieldsWithNames()
+            )
+            delegate.setEntity(
+                SetAux.CREATE,
+                ofType(),
+                "/address_book/groups",
+                "/address_book/groups/Group[2,1]",
+                ofType(),
+                fieldsWithNames("name"),
+                fieldsWithNames(),
+                fieldsWithNames()
+            )
+            delegate.setEntity(
+                SetAux.CREATE,
+                ofType(),
+                "/address_book/groups/Group[2,1]/sub_groups",
+                "/address_book/groups/Group[2,1]/sub_groups/Group[2,2]",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),
@@ -551,7 +551,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/city_info",
-                "/address_book/city_info[New York City,New York,United States of America]",
+                "/address_book/city_info/New York City/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
                 fieldsWithNames(),
@@ -675,7 +675,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/person",
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("group"),
@@ -685,7 +685,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/city_info",
-                "/address_book/city_info[New York City,New York,United States of America]",
+                "/address_book/city_info/New York City/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
                 fieldsWithNames("related_city_info"),
@@ -695,7 +695,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/city_info",
-                "/address_book/city_info[Albany,New York,United States of America]",
+                "/address_book/city_info/Albany/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
                 fieldsWithNames("related_city_info"),
@@ -792,21 +792,21 @@ class SetDelegateTests {
             SetResponse.Success,  // settings entity
             SetResponse.ErrorList(
                 ErrorCode.CLIENT_ERROR, listOf(
-                    ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
-                    ElementModelError("/address_book/groups[Group-0]", "delegate error 2")
+                    ElementModelError("/address_book/groups/Group-0", "delegate error 1"),
+                    ElementModelError("/address_book/groups/Group-0", "delegate error 2")
                 )
             ), // Group-0 entity
             SetResponse.ErrorList(
                 ErrorCode.CLIENT_ERROR,
-                listOf(ElementModelError("/address_book/groups[Group-1]", "delegate error 3"))
+                listOf(ElementModelError("/address_book/groups/Group-1", "delegate error 3"))
             ) // Group-1 entity
         )
         val expectedResponse = SetResponse.ErrorList(
             ErrorCode.CLIENT_ERROR,
             listOf(
-                ElementModelError("/address_book/groups[Group-0]", "delegate error 1"),
-                ElementModelError("/address_book/groups[Group-0]", "delegate error 2"),
-                ElementModelError("/address_book/groups[Group-1]", "delegate error 3")
+                ElementModelError("/address_book/groups/Group-0", "delegate error 1"),
+                ElementModelError("/address_book/groups/Group-0", "delegate error 2"),
+                ElementModelError("/address_book/groups/Group-1", "delegate error 3")
             )
         )
 
@@ -839,7 +839,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/groups",
-                "/address_book/groups[Group-0]",
+                "/address_book/groups/Group-0",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),
@@ -850,7 +850,7 @@ class SetDelegateTests {
                 SetAux.CREATE,
                 ofType(),
                 "/address_book/groups",
-                "/address_book/groups[Group-1]",
+                "/address_book/groups/Group-1",
                 ofType(),
                 fieldsWithNames("name"),
                 fieldsWithNames(),

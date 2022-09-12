@@ -216,7 +216,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
         )
 
         val expectedErrors = listOf(
-            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: A delete-request must only specify the root of a sub-tree with sub_tree granularity"
+            "/address_book/sub_tree_persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f: A delete-request must only specify the root of a sub-tree with sub_tree granularity"
         )
         val actualErrors = populateSubTreeGranularityDeleteRequest(setRequest)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))

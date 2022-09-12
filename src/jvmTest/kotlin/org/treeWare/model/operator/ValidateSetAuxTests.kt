@@ -121,7 +121,7 @@ class ValidateSetAuxTests {
         val expectedErrors = listOf(
             "/address_book/settings: `delete` must not be in the subtree of a `create`",
             "/address_book/person: `update` must not be in the subtree of a `create`",
-            "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]: `delete` must not be in the subtree of a `create`"
+            "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd: `delete` must not be in the subtree of a `create`"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -161,8 +161,8 @@ class ValidateSetAuxTests {
 
         val expectedErrors = listOf(
             "/address_book/settings: entity without `delete` must not be in the subtree of a `delete`",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: entity without `delete` must not be in the subtree of a `delete`",
-            "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]: entity without `delete` must not be in the subtree of a `delete`"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: entity without `delete` must not be in the subtree of a `delete`",
+            "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd: entity without `delete` must not be in the subtree of a `delete`"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -207,8 +207,8 @@ class ValidateSetAuxTests {
             "/address_book/settings: `update` must not be in the subtree of a `delete`",
             "/address_book/settings: entity without `delete` must not be in the subtree of a `delete`",
             "/address_book/person: `create` must not be in the subtree of a `delete`",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: entity without `delete` must not be in the subtree of a `delete`",
-            "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]: `create` must not be in the subtree of a `delete`"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: entity without `delete` must not be in the subtree of a `delete`",
+            "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd: `create` must not be in the subtree of a `delete`"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -291,8 +291,8 @@ class ValidateSetAuxTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/hero_details: set_ aux is not valid inside a sub-tree with sub_tree granularity",
-            "/address_book/sub_tree_persons[a8aacf55-7810-4b43-afe5-4344f25435fd]/hero_details: set_ aux is not valid inside a sub-tree with sub_tree granularity",
+            "/address_book/sub_tree_persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: set_ aux is not valid inside a sub-tree with sub_tree granularity",
+            "/address_book/sub_tree_persons/a8aacf55-7810-4b43-afe5-4344f25435fd/hero_details: set_ aux is not valid inside a sub-tree with sub_tree granularity",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
