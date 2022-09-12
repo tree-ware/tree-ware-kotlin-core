@@ -35,8 +35,8 @@ class ValidateSetTests {
 
         val expectedErrors = listOf(
             "/address_book: required field not found: name",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: first_name",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: last_name",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: first_name",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: last_name",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -147,8 +147,8 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: first_name",
-            "/address_book/sub_tree_persons[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: last_name",
+            "/address_book/sub_tree_persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: first_name",
+            "/address_book/sub_tree_persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: last_name",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -227,7 +227,7 @@ class ValidateSetTests {
             )
 
         val expectedErrors =
-            listOf("/address_book/groups[a0123456789]/name: length 11 of string 'a0123456789' is more than maximum size 10")
+            listOf("/address_book/groups/a0123456789/name: length 11 of string 'a0123456789' is more than maximum size 10")
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
     }
@@ -272,8 +272,8 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/email[1]: string 'invalid_email_1' does not match regex '[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+'",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/email[3]: string 'invalid_email_2' does not match regex '[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+'"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/email/1: string 'invalid_email_1' does not match regex '[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+'",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/email/3: string 'invalid_email_2' does not match regex '[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+'"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -308,7 +308,7 @@ class ValidateSetTests {
             )
 
         val expectedErrors =
-            listOf("/address_book/city_info[New York City,New York,U]/city/country: length 1 of string 'U' is less than minimum size 2")
+            listOf("/address_book/city_info/New York City/New York/U/city/country: length 1 of string 'U' is less than minimum size 2")
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
     }
@@ -354,8 +354,8 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/group: association has an invalid target type",
-            "/address_book/city_info[New York City,New York,United States of America]/related_city_info[0]: association has an invalid target type"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type",
+            "/address_book/city_info/New York City/New York/United States of America/related_city_info/0: association has an invalid target type"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -419,8 +419,8 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/group: association has an invalid target type",
-            "/address_book/city_info[New York City,New York,United States of America]/related_city_info[0]: association has an invalid target type"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type",
+            "/address_book/city_info/New York City/New York/United States of America/related_city_info/0: association has an invalid target type"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -514,9 +514,9 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/group: association has non-key fields",
-            "/address_book/city_info[New York City,New York,United States of America]/related_city_info[0]: association has non-key fields",
-            "/address_book/city_info[Albany,New York,United States of America]/related_city_info[0]: association has non-key fields"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has non-key fields",
+            "/address_book/city_info/New York City/New York/United States of America/related_city_info/0: association has non-key fields",
+            "/address_book/city_info/Albany/New York/United States of America/related_city_info/0: association has non-key fields"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -609,9 +609,9 @@ class ValidateSetTests {
             )
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/group: association has multiple paths",
-            "/address_book/city_info[New York City,New York,United States of America]/related_city_info[0]: association has multiple paths",
-            "/address_book/city_info[Albany,New York,United States of America]/related_city_info[0]: association has multiple paths"
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has multiple paths",
+            "/address_book/city_info/New York City/New York/United States of America/related_city_info/0: association has multiple paths",
+            "/address_book/city_info/Albany/New York/United States of America/related_city_info/0: association has multiple paths"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))

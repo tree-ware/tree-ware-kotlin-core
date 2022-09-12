@@ -16,13 +16,13 @@ class ModelPathStack {
      * Pass null to add a dummy entry. This is useful when aborting the sub-tree; the leave method will get called
      * and the leave method can pop the stack without needing to check if the visit method aborted the sub-tree.
      */
-    fun pushField(field: FieldModel?) {
+    fun pushField(field: FieldModel?, listFieldIndex: Int? = null) {
         if (field == null) {
             pathStack.addFirst("")
             return
         }
         val parentPath = pathStack.firstOrNull() ?: ""
-        val newPart = getFieldPathPart(field)
+        val newPart = getFieldPathPart(field, listFieldIndex)
         val newPath = "$parentPath$newPart"
         pathStack.addFirst(newPath)
     }
@@ -60,22 +60,22 @@ class ModelPathStack {
     private val pathStack = ArrayDeque<String>()
 }
 
-private fun getFieldPathPart(field: FieldModel): String {
+private fun getFieldPathPart(field: FieldModel, listFieldIndex: Int?): String {
     val partBuilder = StringBuilder("/")
     val fieldName = getFieldName(field)
     partBuilder.append(fieldName)
+    listFieldIndex?.also { partBuilder.append("/").append(it) }
     return partBuilder.toString()
 }
 
 private fun getEntityPathPart(entity: EntityModel, keys: List<SingleFieldModel>): String {
     if (keys.isEmpty()) return ""
-    val partBuilder = StringBuilder("[")
+    val partBuilder = StringBuilder("/")
     keys.forEachIndexed { index, key ->
-        if (index != 0) partBuilder.append(",")
+        if (index != 0) partBuilder.append("/")
         val keyValue = getEntityPathKeyValue(key)
         escapeAndAppend(keyValue, partBuilder)
     }
-    partBuilder.append("]")
     return partBuilder.toString()
 }
 
@@ -111,7 +111,7 @@ private fun getEntityPathKeyValue(key: SingleFieldModel): String {
 private fun escapeAndAppend(value: String, builder: StringBuilder) {
     value.forEach { character ->
         when (character) {
-            '/', '[', ']', ',', '\\' -> builder.append('\\')
+            '/', '\\' -> builder.append('\\')
         }
         builder.append(character)
     }

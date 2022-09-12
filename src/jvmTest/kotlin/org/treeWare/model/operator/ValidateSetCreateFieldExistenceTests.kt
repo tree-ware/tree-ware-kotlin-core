@@ -45,9 +45,9 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: field is_hero not found; it is needed for validating other fields",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: required field not found: is_hero",
-            "/address_book/city_info[San Francisco,CA,USA]: field is_coastal_city not found; it is needed for validating other fields",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: field is_hero not found; it is needed for validating other fields",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: is_hero",
+            "/address_book/city_info/San Francisco/CA/USA: field is_coastal_city not found; it is needed for validating other fields",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -108,7 +108,7 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/city_info[San Francisco,CA,USA]: conditions are met for required conditional-field water_body_name, but field is not found",
+            "/address_book/city_info/San Francisco/CA/USA: conditions are met for required conditional-field water_body_name, but field is not found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -212,8 +212,8 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/hero_details: required field not found: strengths",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/hero_details: required field not found: weaknesses",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: strengths",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: weaknesses",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -275,7 +275,7 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/city_info[Sacramento,CA,USA]: conditions are not met for conditional-field water_body_name, but field is found",
+            "/address_book/city_info/Sacramento/CA/USA: conditions are not met for conditional-field water_body_name, but field is found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -329,7 +329,7 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person[a8aacf55-7810-4b43-afe5-4344f25435fd]: conditions are not met for conditional-field hero_name, but field is found",
+            "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd: conditions are not met for conditional-field hero_name, but field is found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -383,7 +383,7 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: conditions are not met for conditional-field hero_details, but field is found",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: conditions are not met for conditional-field hero_details, but field is found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -410,9 +410,9 @@ class ValidateSetCreateFieldExistenceTests {
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]: conditions are not met for conditional-field hero_details, but field is found",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/hero_details: required field not found: strengths",
-            "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/hero_details: required field not found: weaknesses",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: conditions are not met for conditional-field hero_details, but field is found",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: strengths",
+            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: weaknesses",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))

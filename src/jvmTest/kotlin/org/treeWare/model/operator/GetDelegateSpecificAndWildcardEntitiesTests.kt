@@ -112,7 +112,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship"),
@@ -135,7 +135,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -264,14 +264,14 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 ofType()
             )
             delegate.getCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/address_book/person[cc477201-48ec-4367-83a4-7fdbd92f8a6f]/relation",
+                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
