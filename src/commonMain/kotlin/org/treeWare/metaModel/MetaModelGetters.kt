@@ -29,6 +29,8 @@ fun getEnumerationValueMeta(enumerationMeta: EntityModel, number: UInt): EntityM
     } as? EntityModel
 }
 
+fun getParentEnumerationMeta(enumerationValueMeta: EntityModel): BaseEntityModel? = enumerationValueMeta.parent.parent
+
 fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
 
