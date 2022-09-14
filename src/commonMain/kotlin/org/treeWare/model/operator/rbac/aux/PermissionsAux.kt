@@ -3,7 +3,7 @@ package org.treeWare.model.operator.rbac.aux
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.getAux
 
-internal const val PERMISSIONS_AUX_NAME = "permissions"
+const val PERMISSIONS_AUX_NAME = "permissions"
 
 data class PermissionsAux(
     val create: PermissionScope? = null,
