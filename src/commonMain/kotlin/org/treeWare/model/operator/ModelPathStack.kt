@@ -111,7 +111,7 @@ private fun getEntityPathKeyValue(key: SingleFieldModel): String {
 private fun escapeAndAppend(value: String, builder: StringBuilder) {
     value.forEach { character ->
         when (character) {
-            '/', '\\' -> builder.append('\\')
+            '/', '\\', '*' -> builder.append('\\')
         }
         builder.append(character)
     }
