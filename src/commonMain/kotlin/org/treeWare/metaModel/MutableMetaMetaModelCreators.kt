@@ -1,5 +1,6 @@
 package org.treeWare.metaModel
 
+import io.github.z4kn4fein.semver.Version
 import org.treeWare.model.core.*
 
 // Functions for creating the meta-meta-model.
@@ -8,6 +9,11 @@ fun newMainMetaMeta(): MutableMainModel {
     val mainMeta = MutableMainModel(null)
     mainMeta.root = MutableEntityModel(null, mainMeta)
     return mainMeta
+}
+
+fun newVersionMetaMeta(mainMeta: MutableMainModel, semanticVersion: Version) {
+    val version = newCompositionSingleField(mainMeta.root, "version")
+    newStringSingleField(version, "semantic", semanticVersion.toString())
 }
 
 fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String, packageName: String) {

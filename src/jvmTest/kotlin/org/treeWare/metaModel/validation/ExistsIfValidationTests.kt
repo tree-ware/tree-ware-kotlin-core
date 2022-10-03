@@ -37,7 +37,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf("Meta-model decoding failed")
-        val expectedDecodeErrors = listOf("JSON decoding failed at: (line no=98, column no=24, offset=1895)")
+        val expectedDecodeErrors = listOf("JSON decoding failed at: (line no=102, column no=24, offset=1965)")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 

@@ -1,5 +1,6 @@
 package org.treeWare.metaModel
 
+import io.github.z4kn4fein.semver.Version
 import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
@@ -57,6 +58,7 @@ fun newMainMetaMetaModel(): MutableMainModel {
 }
 
 private fun populateMain(mainMeta: MutableMainModel) {
+    newVersionMetaMeta(mainMeta, Version(1, 0, 0))
     newRootMetaMeta(mainMeta, "meta_model", "meta_model", "tree_ware_meta_model.main")
     val packagesMeta = newPackagesMetaMeta(mainMeta)
     populatePackages(packagesMeta)
@@ -77,6 +79,8 @@ private fun populateMainPackage(mainPackage: MutableEntityModel) {
 private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
     val metaModelEntityMeta = newEntityMetaMeta(entitiesMeta, "meta_model")
     populateMetaModelEntity(metaModelEntityMeta)
+    val versionEntityMeta = newEntityMetaMeta(entitiesMeta, "version")
+    populateVersionEntity(versionEntityMeta)
     val rootEntityMeta = newEntityMetaMeta(entitiesMeta, "root")
     populateRootEntity(rootEntityMeta)
     val packageEntityMeta = newEntityMetaMeta(entitiesMeta, "package")
@@ -101,8 +105,15 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
 
 private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(metaModelEntityMeta)
+    newCompositionFieldMetaMeta(fields, "version", null, "version", META_MODEL_MAIN_PACKAGE)
     newCompositionFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE)
     newCompositionFieldMetaMeta(fields, "packages", null, "package", META_MODEL_MAIN_PACKAGE, "set")
+}
+
+fun populateVersionEntity(versionEntityMeta: MutableEntityModel) {
+    val fields = newFieldsMetaMeta(versionEntityMeta)
+    newPrimitiveFieldMetaMeta(fields, "semantic", null, "string")
+    newPrimitiveFieldMetaMeta(fields, "name", null, "string", "optional")
 }
 
 private fun populateRootEntity(rootEntityMeta: MutableEntityModel) {

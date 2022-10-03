@@ -1,5 +1,6 @@
 {
   "meta_model": {
+    "version:pacific-ocean": {},
     "root:address_book": {},
     "package:address_book.main": {
       "enumeration:address_book_color": [
