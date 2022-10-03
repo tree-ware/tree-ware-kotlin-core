@@ -1,6 +1,9 @@
 package org.treeWare.metaModel.validation
 
+import io.github.z4kn4fein.semver.toVersionOrNull
 import org.treeWare.metaModel.*
+import org.treeWare.metaModel.aux.ResolvedVersionAux
+import org.treeWare.metaModel.aux.setResolvedVersionAux
 import org.treeWare.model.core.*
 
 // TODO(deepak-nulu): replace with a generic validate function which validates a model against its meta-model.
@@ -9,12 +12,25 @@ import org.treeWare.model.core.*
  * Validates the structure of the meta-model.
  * Returns a list of errors. Returns an empty list if there are no errors.
  *
- * Side effects: none
+ * Side effects:
+ * 1. ResolvedVersionAux is set on `mainMeta` if the version can be resolved
  */
 fun validateStructure(mainMeta: MainModel) = listOf(
+    validateVersion(mainMeta),
     validateRoot(mainMeta),
     validatePackages(mainMeta)
 ).flatten()
+
+fun validateVersion(mainMeta: MainModel): List<String> {
+    val versionMeta = runCatching { getVersionMeta(mainMeta) }.getOrNull() ?: return listOf("Version is missing")
+    val semanticVersionString = runCatching { getSingleString(versionMeta, "semantic") }.getOrNull()
+        ?: return listOf("Semantic version is missing")
+    val semanticVersion = semanticVersionString.toVersionOrNull()
+        ?: return listOf("Strictly invalid semantic version: $semanticVersionString")
+    val name = getOptionalSingleString(versionMeta, "name")
+    setResolvedVersionAux(mainMeta, ResolvedVersionAux(semanticVersion, name))
+    return emptyList()
+}
 
 private fun validateRoot(mainMeta: MainModel): List<String> {
     val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root is missing")

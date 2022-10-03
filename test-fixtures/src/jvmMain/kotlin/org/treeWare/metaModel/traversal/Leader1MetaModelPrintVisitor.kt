@@ -41,6 +41,15 @@ class Leader1MetaModelPrintVisitor(
         endObject()
     }
 
+    override fun visitVersionMeta(leaderVersionMeta1: EntityModel): TraversalAction {
+        startObject("version", leaderVersionMeta1)
+        return TraversalAction.CONTINUE
+    }
+
+    override fun leaveVersionMeta(leaderVersionMeta1: EntityModel) {
+        endObject()
+    }
+
     override fun visitRootMeta(leaderRootMeta1: EntityModel): TraversalAction {
         startObject("root", leaderRootMeta1)
         return TraversalAction.CONTINUE

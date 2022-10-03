@@ -6,6 +6,7 @@ val jsonVersion = "1.1.4"
 val kotlinxCoroutinesVersion = "1.6.2"
 val loggingVersion = "1.1.1"
 val mockkVersion = "1.12.0"
+val semverVersion = "1.3.3"
 
 plugins {
     kotlin("multiplatform") version "1.7.0"
@@ -28,6 +29,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("io.github.z4kn4fein:semver:$semverVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 api("org.lighthousegames:logging:$loggingVersion")
             }

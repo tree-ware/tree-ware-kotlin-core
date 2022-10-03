@@ -9,10 +9,11 @@ import org.treeWare.model.core.MutableMainModel
  * Returns a list of errors. Returns an empty list if there are no errors.
  *
  * Side effects:
- * 1. full-names are set for named elements
- * 2. Non-primitive field types are resolved
- * 3. Key fields are memoized in field-number sorted order
- * 4. Hasher and cipher instances are passed to password meta
+ * 1. ResolvedVersionAux is set on `mainMeta` if the version can be resolved
+ * 2. full-names are set for named elements
+ * 3. Non-primitive field types are resolved
+ * 4. Key fields are memoized in field-number sorted order
+ * 5. Hasher and cipher instances are passed to password meta
  */
 fun validate(
     mainMeta: MutableMainModel,

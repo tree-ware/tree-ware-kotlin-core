@@ -9,6 +9,9 @@ abstract class AbstractLeader1MutableMetaModelVisitor<Return>(
     override fun visitMainMeta(leaderMainMeta1: MutableMainModel): Return = defaultVisitReturn
     override fun leaveMainMeta(leaderMainMeta1: MutableMainModel) {}
 
+    override fun visitVersionMeta(leaderVersionMeta1: MutableEntityModel): Return = defaultVisitReturn
+    override fun leaveVersionMeta(leaderVersionMeta1: MutableEntityModel) {}
+
     override fun visitRootMeta(leaderRootMeta1: MutableEntityModel): Return = defaultVisitReturn
     override fun leaveRootMeta(leaderRootMeta1: MutableEntityModel) {}
 

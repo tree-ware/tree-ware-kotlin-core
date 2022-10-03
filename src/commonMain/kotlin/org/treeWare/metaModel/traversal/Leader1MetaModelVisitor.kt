@@ -7,6 +7,9 @@ interface Leader1MetaModelVisitor<Return> {
     fun visitMainMeta(leaderMainMeta1: MainModel): Return
     fun leaveMainMeta(leaderMainMeta1: MainModel)
 
+    fun visitVersionMeta(leaderVersionMeta1: EntityModel): Return
+    fun leaveVersionMeta(leaderVersionMeta1: EntityModel)
+
     fun visitRootMeta(leaderRootMeta1: EntityModel): Return
     fun leaveRootMeta(leaderRootMeta1: EntityModel)
 

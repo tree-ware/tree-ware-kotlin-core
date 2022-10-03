@@ -12,6 +12,10 @@ class PackageValidationTests {
         val metaModelJson = """
             | {
             |   "meta_model": {
+            |     "version": {
+            |       "semantic": "1.0.0",
+            |       "name": "pacific-ocean"
+            |     },
             |     "root": {
             |       "name": "root",
             |       "type": "composition",
@@ -32,6 +36,10 @@ class PackageValidationTests {
         val metaModelJson = """
             | {
             |   "meta_model": {
+            |     "version": {
+            |       "semantic": "1.0.0",
+            |       "name": "pacific-ocean"
+            |     },
             |     "root": {
             |       "name": "root",
             |       "type": "composition",
@@ -53,6 +61,10 @@ class PackageValidationTests {
         val metaModelJson = """
             | {
             |   "meta_model": {
+            |     "version": {
+            |       "semantic": "1.0.0",
+            |       "name": "pacific-ocean"
+            |     },
             |     "root": {
             |       "name": "root",
             |       "type": "composition",

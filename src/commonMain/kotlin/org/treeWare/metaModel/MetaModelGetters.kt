@@ -6,6 +6,8 @@ fun getFullName(elementMeta: ElementModel?): String? = getMetaModelResolved(elem
 
 fun getMainMetaName(mainMeta: MainModel): String = getMetaName(getRootMeta(mainMeta))
 
+fun getVersionMeta(mainMeta: MainModel): EntityModel = getSingleEntity(mainMeta.root, "version")
+
 fun getRootMeta(mainMeta: MainModel): EntityModel = getSingleEntity(mainMeta.root, "root")
 
 fun getPackagesMeta(mainMeta: MainModel): CollectionFieldModel =

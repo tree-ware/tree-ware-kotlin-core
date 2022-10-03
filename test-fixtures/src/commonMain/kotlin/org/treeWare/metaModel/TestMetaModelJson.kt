@@ -3,6 +3,7 @@ package org.treeWare.metaModel
 fun newTestMetaModelJson(rootJson: String?, vararg packageJsonList: String): String = """
     | {
     |   "meta_model": {
+    |     $testMetaModelCommonVersionJson,
     |     ${rootJson ?: ""}
     |     ${if (rootJson == null) "" else ","}
     |     "packages": [
@@ -15,6 +16,13 @@ fun newTestMetaModelJson(rootJson: String?, vararg packageJsonList: String): Str
 fun getMultiplicityJson(multiplicity: String?): String =
     if (multiplicity == null) ""
     else """, "multiplicity": "$multiplicity""""
+
+val testMetaModelCommonVersionJson = """
+    "version": {
+      "semantic": "1.0.0",
+      "name": "pacific-ocean"
+    }
+""".trimIndent()
 
 val testMetaModelCommonRootJson = """
     | "root": {
