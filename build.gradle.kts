@@ -29,7 +29,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.github.z4kn4fein:semver:$semverVersion")
+                api("io.github.z4kn4fein:semver:$semverVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 api("org.lighthousegames:logging:$loggingVersion")
             }
