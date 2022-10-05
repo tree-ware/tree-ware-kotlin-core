@@ -10,8 +10,6 @@ const val RESOLVED_VERSION_AUX_NAME = "resolved_version"
 enum class SemanticVersionError { INVALID, HIGHER_THAN_SUPPORTED }
 
 data class ResolvedVersionAux(val semantic: Version, val name: String?) {
-    val supportedVersion: String = semantic.toString()
-
     fun validateModelSemanticVersion(modelVersionString: String): SemanticVersionError? {
         val modelSemanticVersion = modelVersionString.toVersionOrNull(false) ?: return SemanticVersionError.INVALID
         return if (modelSemanticVersion <= semantic) null else SemanticVersionError.HIGHER_THAN_SUPPORTED
