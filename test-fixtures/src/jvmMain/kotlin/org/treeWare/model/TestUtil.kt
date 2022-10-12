@@ -9,6 +9,7 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.encodeJson
 import org.treeWare.util.getFileReader
+import org.treeWare.util.readFile
 import java.io.Reader
 import java.io.StringReader
 import java.io.StringWriter
@@ -37,13 +38,6 @@ fun testRoundTrip(
             multiAuxDecodingStateMachineFactory
         )
     assertMatchesJson(model, outputFilePath ?: inputFilePath, encodePasswords, multiAuxEncoder)
-}
-
-fun readFile(filePath: String): String {
-    val reader = getFileReader(filePath)
-    val text = reader.readText()
-    reader.close()
-    return text
 }
 
 fun getMainModelFromJsonString(
