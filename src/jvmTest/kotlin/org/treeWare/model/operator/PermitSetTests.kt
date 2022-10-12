@@ -18,7 +18,7 @@ import org.treeWare.model.operator.set.aux.SET_AUX_NAME
 import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.SetAuxEncoder
 import org.treeWare.model.operator.set.aux.SetAuxStateMachine
-import org.treeWare.model.readFile
+import org.treeWare.util.readFile
 import kotlin.test.Test
 import kotlin.test.assertIs
 

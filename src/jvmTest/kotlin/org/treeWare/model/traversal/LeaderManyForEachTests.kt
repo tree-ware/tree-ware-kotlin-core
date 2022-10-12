@@ -2,7 +2,7 @@ package org.treeWare.model.traversal
 
 import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.getMainModelFromJsonString
-import org.treeWare.model.readFile
+import org.treeWare.util.readFile
 import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals

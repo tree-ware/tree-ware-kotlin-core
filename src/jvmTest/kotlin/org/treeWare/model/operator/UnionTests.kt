@@ -8,7 +8,7 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.StringAuxEncoder
 import org.treeWare.model.getMainModelFromJsonString
-import org.treeWare.model.readFile
+import org.treeWare.util.readFile
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 

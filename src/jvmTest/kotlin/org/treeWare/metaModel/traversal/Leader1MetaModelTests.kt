@@ -1,7 +1,7 @@
 package org.treeWare.metaModel.traversal
 
 import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.readFile
+import org.treeWare.util.readFile
 import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals

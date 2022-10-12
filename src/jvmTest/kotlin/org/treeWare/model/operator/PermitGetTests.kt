@@ -11,7 +11,7 @@ import org.treeWare.model.operator.rbac.PartiallyPermitted
 import org.treeWare.model.operator.rbac.aux.PermissionScope
 import org.treeWare.model.operator.rbac.aux.PermissionsAux
 import org.treeWare.model.operator.rbac.aux.setPermissionsAux
-import org.treeWare.model.readFile
+import org.treeWare.util.readFile
 import kotlin.test.Test
 import kotlin.test.assertIs
 
