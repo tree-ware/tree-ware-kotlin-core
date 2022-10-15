@@ -19,7 +19,13 @@ kotlin {
         }
         withJava()
         testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
+            useJUnitPlatform {
+                when (System.getProperty("integrationTests", "")) {
+                    "include" -> includeTags("integrationTest")
+                    "exclude" -> excludeTags("integrationTest")
+                    else -> {}
+                }
+            }
         }
     }
     sourceSets {
