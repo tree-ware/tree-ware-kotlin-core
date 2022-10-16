@@ -17,7 +17,11 @@ fun encodeDot(mainMeta: MainModel) {
     val fileWriter = File("${fileName}.dot").bufferedWriter()
     encodeDot(mainMeta, fileWriter)
     fileWriter.flush()
-    Runtime.getRuntime().exec("dot -Tpdf ${fileName}.dot -o ${fileName}.pdf").waitFor()
+    try {
+        Runtime.getRuntime().exec("dot -Tpdf ${fileName}.dot -o ${fileName}.pdf").waitFor()
+    } catch (e: Exception) {
+        println("Error while converting dot file to PDF: $e")
+    }
 }
 
 
