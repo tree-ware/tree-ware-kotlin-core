@@ -1,6 +1,5 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.operator.set.SetDelegate
 import org.treeWare.model.operator.set.SetDelegateVisitor
@@ -9,9 +8,6 @@ import org.treeWare.model.traversal.forEach
 
 interface SetEntityDelegate {
     fun isSingleValue(): Boolean
-
-    // TODO(cleanup): getSingleValue() is not used in core code, only in delegate code. So drop from here.
-    fun getSingleValue(entity: EntityModel): Any?
 }
 
 object SetOperatorId : OperatorId<SetEntityDelegate>
