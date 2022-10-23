@@ -1,25 +1,24 @@
 package org.treeWare.model.traversal
 
+import okio.BufferedSink
 import org.treeWare.metaModel.FieldType
 import org.treeWare.metaModel.getFieldTypeMeta
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.getPackageName
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.PrettyPrintHelper
-import java.io.Writer
-import java.util.*
+import org.treeWare.util.encodeBase64
 
-class LeaderManyPrintVisitor(
-    private val writer: Writer
-) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+class LeaderManyPrintVisitor(private val bufferedSink: BufferedSink) :
+    AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     private val prettyPrinter = PrettyPrintHelper(true)
 
     private fun print(key: String, values: List<String?> = listOf("TODO")) {
-        writer.write(prettyPrinter.currentIndent)
-        writer.write(key)
-        writer.write(": ")
-        writer.write(values.joinToString(", "))
-        writer.write(prettyPrinter.endOfLine)
+        bufferedSink.writeUtf8(prettyPrinter.currentIndent)
+        bufferedSink.writeUtf8(key)
+        bufferedSink.writeUtf8(": ")
+        bufferedSink.writeUtf8(values.joinToString(", "))
+        bufferedSink.writeUtf8(prettyPrinter.endOfLine)
     }
 
     private fun printFieldNames(key: String, leaderFieldList: List<FieldModel?>) {
@@ -89,7 +88,7 @@ class LeaderManyPrintVisitor(
         val values = leaderValueList.map { valueElement ->
             valueElement?.value?.let { value ->
                 val fieldType = valueElement.parent.meta?.let { getFieldTypeMeta(it) }
-                if (fieldType == FieldType.BLOB) Base64.getEncoder().encodeToString(value as ByteArray)
+                if (fieldType == FieldType.BLOB) encodeBase64(value as ByteArray)
                 else value.toString()
             }
         }

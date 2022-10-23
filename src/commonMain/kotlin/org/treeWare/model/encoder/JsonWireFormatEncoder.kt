@@ -1,7 +1,7 @@
 package org.treeWare.model.encoder
 
+import okio.BufferedSink
 import org.treeWare.util.assertInDevMode
-import java.io.Writer
 
 private enum class NestingState {
     OBJECT_START, OBJECT_ELEMENT,
@@ -9,49 +9,48 @@ private enum class NestingState {
 }
 
 class JsonWireFormatEncoder(
-    private val writer: Writer,
+    private val bufferedSink: BufferedSink,
     private val prettyPrint: Boolean = false,
     indentSizeInSpaces: Int = 2
 ) : WireFormatEncoder {
     private val nesting = ArrayDeque<NestingState>()
-    private val prettyPrinter =
-        PrettyPrintHelper(prettyPrint, indentSizeInSpaces)
+    private val prettyPrinter = PrettyPrintHelper(prettyPrint, indentSizeInSpaces)
 
     private fun encodeNameValue(name: String?, value: String) {
         when (nesting.firstOrNull()) {
             NestingState.OBJECT_START -> {
-                writer.write(prettyPrinter.endOfLine)
+                bufferedSink.writeUtf8(prettyPrinter.endOfLine)
                 prettyPrinter.indent()
-                writer.write(prettyPrinter.currentIndent)
+                bufferedSink.writeUtf8(prettyPrinter.currentIndent)
                 assertInDevMode(name != null)
-                writer.write("\"${name ?: ""}\":")
-                if (prettyPrint) writer.write(" ")
-                writer.write(value)
+                bufferedSink.writeUtf8("\"${name ?: ""}\":")
+                if (prettyPrint) bufferedSink.writeUtf8(" ")
+                bufferedSink.writeUtf8(value)
             }
             NestingState.OBJECT_ELEMENT -> {
-                writer.write(",")
-                writer.write(prettyPrinter.endOfLine)
-                writer.write(prettyPrinter.currentIndent)
+                bufferedSink.writeUtf8(",")
+                bufferedSink.writeUtf8(prettyPrinter.endOfLine)
+                bufferedSink.writeUtf8(prettyPrinter.currentIndent)
                 assertInDevMode(name != null)
-                writer.write("\"${name ?: ""}\":")
-                if (prettyPrint) writer.write(" ")
-                writer.write(value)
+                bufferedSink.writeUtf8("\"${name ?: ""}\":")
+                if (prettyPrint) bufferedSink.writeUtf8(" ")
+                bufferedSink.writeUtf8(value)
             }
             NestingState.LIST_START -> {
-                writer.write(prettyPrinter.endOfLine)
+                bufferedSink.writeUtf8(prettyPrinter.endOfLine)
                 prettyPrinter.indent()
-                writer.write(prettyPrinter.currentIndent)
-                writer.write(value)
+                bufferedSink.writeUtf8(prettyPrinter.currentIndent)
+                bufferedSink.writeUtf8(value)
             }
             NestingState.LIST_ELEMENT -> {
-                writer.write(",")
-                writer.write(prettyPrinter.endOfLine)
-                writer.write(prettyPrinter.currentIndent)
-                writer.write(value)
+                bufferedSink.writeUtf8(",")
+                bufferedSink.writeUtf8(prettyPrinter.endOfLine)
+                bufferedSink.writeUtf8(prettyPrinter.currentIndent)
+                bufferedSink.writeUtf8(value)
             }
             else -> {
                 assertInDevMode(prettyPrinter.currentIndent == "")
-                writer.write(value)
+                bufferedSink.writeUtf8(value)
             }
         }
     }
@@ -79,15 +78,15 @@ class JsonWireFormatEncoder(
     override fun encodeObjectEnd() {
         when (nesting.firstOrNull()) {
             NestingState.OBJECT_START -> {
-                writer.write("}")
+                bufferedSink.writeUtf8("}")
                 nesting.removeFirst()
                 elementEncoded()
             }
             NestingState.OBJECT_ELEMENT -> {
-                writer.write(prettyPrinter.endOfLine)
+                bufferedSink.writeUtf8(prettyPrinter.endOfLine)
                 prettyPrinter.unindent()
-                writer.write(prettyPrinter.currentIndent)
-                writer.write("}")
+                bufferedSink.writeUtf8(prettyPrinter.currentIndent)
+                bufferedSink.writeUtf8("}")
                 nesting.removeFirst() // remove OBJECT_ELEMENT
                 assertInDevMode(nesting.firstOrNull() == NestingState.OBJECT_START)
                 nesting.removeFirst() // remove OBJECT_START
@@ -109,15 +108,15 @@ class JsonWireFormatEncoder(
             NestingState.OBJECT_START -> assertInDevMode(false) { "End of JSON list instead of end of JSON object" }
             NestingState.OBJECT_ELEMENT -> assertInDevMode(false) { "End of JSON list instead of end of JSON object" }
             NestingState.LIST_START -> {
-                writer.write("]")
+                bufferedSink.writeUtf8("]")
                 nesting.removeFirst()
                 elementEncoded()
             }
             NestingState.LIST_ELEMENT -> {
-                writer.write(prettyPrinter.endOfLine)
+                bufferedSink.writeUtf8(prettyPrinter.endOfLine)
                 prettyPrinter.unindent()
-                writer.write(prettyPrinter.currentIndent)
-                writer.write("]")
+                bufferedSink.writeUtf8(prettyPrinter.currentIndent)
+                bufferedSink.writeUtf8("]")
                 nesting.removeFirst() // remove LIST_ELEMENT
                 assertInDevMode(nesting.first() == NestingState.LIST_START)
                 nesting.removeFirst() // remove LIST_START

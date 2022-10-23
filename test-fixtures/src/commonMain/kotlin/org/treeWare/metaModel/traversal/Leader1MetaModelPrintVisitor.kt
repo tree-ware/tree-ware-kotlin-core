@@ -1,16 +1,14 @@
 package org.treeWare.metaModel.traversal
 
+import okio.BufferedSink
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.traversal.TraversalAction
-import java.io.Writer
 
-class Leader1MetaModelPrintVisitor(
-    writer: Writer
-) : Leader1MetaModelVisitor<TraversalAction> {
-    private val jsonEncoder = JsonWireFormatEncoder(writer, true)
+class Leader1MetaModelPrintVisitor(bufferedSink: BufferedSink) : Leader1MetaModelVisitor<TraversalAction> {
+    private val jsonEncoder = JsonWireFormatEncoder(bufferedSink, true)
 
     private fun startObject(prefix: String, namedMeta: EntityModel? = null) {
         val name = listOf(prefix, getMetaName(namedMeta)).filter { it.isNotEmpty() }.joinToString(":")

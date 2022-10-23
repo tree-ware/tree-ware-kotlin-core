@@ -1,25 +1,24 @@
 package org.treeWare.model.traversal
 
+import okio.BufferedSink
 import org.treeWare.metaModel.FieldType
 import org.treeWare.metaModel.getFieldTypeMeta
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.metaModel.getPackageName
 import org.treeWare.model.core.*
 import org.treeWare.model.encoder.PrettyPrintHelper
-import java.io.Writer
 import java.util.*
 
-class Leader1PrintVisitor(
-    private val writer: Writer
-) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
+class Leader1PrintVisitor(private val bufferedSink: BufferedSink) :
+    AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     private val prettyPrinter = PrettyPrintHelper(true)
 
     private fun print(key: String, value: String? = "TODO") {
-        writer.write(prettyPrinter.currentIndent)
-        writer.write(key)
-        writer.write(": ")
-        writer.write(value)
-        writer.write(prettyPrinter.endOfLine)
+        bufferedSink.writeUtf8(prettyPrinter.currentIndent)
+        bufferedSink.writeUtf8(key)
+        bufferedSink.writeUtf8(": ")
+        bufferedSink.writeUtf8(value ?: "null")
+        bufferedSink.writeUtf8(prettyPrinter.endOfLine)
     }
 
     private fun printFieldName(key: String, leaderField: FieldModel) {

@@ -1,5 +1,6 @@
 package org.treeWare.model
 
+import okio.Buffer
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
@@ -12,7 +13,6 @@ import org.treeWare.util.getFileReader
 import org.treeWare.util.readFile
 import java.io.Reader
 import java.io.StringReader
-import java.io.StringWriter
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -125,16 +125,16 @@ fun getEncodedJsonString(
     encodePasswords: EncodePasswords,
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder()
 ): String {
-    val jsonWriter = StringWriter()
+    val buffer = Buffer()
     val isEncoded = try {
-        encodeJson(element, jsonWriter, multiAuxEncoder, encodePasswords, true)
+        encodeJson(element, buffer, multiAuxEncoder, encodePasswords, true)
     } catch (e: Throwable) {
         e.printStackTrace()
         println("Encoded so far:")
-        println(jsonWriter.toString())
+        println(buffer.readUtf8())
         println("End of encoded")
         false
     }
     assertTrue(isEncoded)
-    return jsonWriter.toString()
+    return buffer.readUtf8()
 }

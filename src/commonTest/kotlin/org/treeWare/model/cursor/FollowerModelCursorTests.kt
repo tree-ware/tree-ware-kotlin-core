@@ -1,5 +1,6 @@
 package org.treeWare.model.cursor
 
+import okio.Buffer
 import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.getMetaResolved
@@ -11,43 +12,48 @@ import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchLeave
 import org.treeWare.model.traversal.dispatchVisit
 import org.treeWare.util.getFileReader
-import java.io.StringWriter
 import kotlin.test.*
 
 class FollowerModelCursorTests {
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor without association traversal`() {
-        testFollowerSameModelInstance("model/address_book_1.json", false)
+        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1.json", false)
     }
 
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor with association traversal`() {
-        testFollowerSameModelInstance("model/address_book_1.json", true)
+        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1.json", true)
     }
 
     @Test
     fun `Follower-cursor on same null-fields data-model follows leader-cursor without association traversal`() {
-        testFollowerSameModelInstance("org/treeWare/model/cursor/address_book_null_fields.json", false)
+        org.treeWare.model.cursor.testFollowerSameModelInstance(
+            "org/treeWare/model/cursor/address_book_null_fields.json",
+            false
+        )
     }
 
     @Test
     fun `Follower-cursor on same null-fields data-model follows leader-cursor with association traversal`() {
-        testFollowerSameModelInstance("org/treeWare/model/cursor/address_book_null_fields.json", true)
+        org.treeWare.model.cursor.testFollowerSameModelInstance(
+            "org/treeWare/model/cursor/address_book_null_fields.json",
+            true
+        )
     }
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor without association traversal`() {
-        testFollowerDifferentModelInstances("model/address_book_1.json", false)
+        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1.json", false)
     }
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor with association traversal`() {
-        testFollowerDifferentModelInstances("model/address_book_1.json", true)
+        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1.json", true)
     }
 
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor without association traversal`() {
-        testFollowerWildcardModelInstance(
+        org.treeWare.model.cursor.testFollowerWildcardModelInstance(
             "model/address_book_1.json",
             "model/address_book_empty_root.json",
             false,
@@ -57,7 +63,7 @@ class FollowerModelCursorTests {
 
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor with association traversal`() {
-        testFollowerWildcardModelInstance(
+        org.treeWare.model.cursor.testFollowerWildcardModelInstance(
             "model/address_book_1.json",
             "model/address_book_empty_root.json",
             true
@@ -124,8 +130,8 @@ private fun testFollowerWildcardModelInstance(
     val leaderCursor = Leader1ModelCursor(leaderModel, traverseAssociations)
     val followerCursor = FollowerModelCursor(followerModel)
 
-    val jsonWriter = StringWriter()
-    val wireFormatEncoder = JsonWireFormatEncoder(jsonWriter, true)
+    val jsonBuffer = Buffer()
+    val wireFormatEncoder = JsonWireFormatEncoder(jsonBuffer, true)
     val encodingVisitor = ModelEncodingVisitor(wireFormatEncoder, encodePasswords = EncodePasswords.ALL)
 
     var action = TraversalAction.CONTINUE
@@ -147,7 +153,7 @@ private fun testFollowerWildcardModelInstance(
     val expectedFileReader = getFileReader(expectedFilePath ?: leaderFilePath)
     val expected = expectedFileReader.readText()
     expectedFileReader.close()
-    val actual = jsonWriter.toString()
+    val actual = jsonBuffer.readUtf8()
     assertEquals(expected, actual)
 }
 

@@ -1,38 +1,41 @@
 package org.treeWare.metaModel.encoder
 
+import okio.BufferedSink
+import okio.Sink
 import org.treeWare.model.encoder.PrettyPrintHelper
-import java.io.StringWriter
-import java.io.Writer
+import org.treeWare.util.buffered
 
 class DotWriter {
-    private val nodesWriter = StringWriter()
-    private val linksWriter = StringWriter()
+    private val nodesWriter = StringBuilder()
+    private val linksWriter = StringBuilder()
 
     fun nodesIndent() = prettyPrinter.indent()
     fun nodesUnindent() = prettyPrinter.unindent()
 
     fun nodesWriteLine(string: String) {
-        nodesWriter.write(prettyPrinter.currentIndent)
-        nodesWriter.write(string)
-        nodesWriter.write(prettyPrinter.endOfLine)
+        nodesWriter.append(prettyPrinter.currentIndent)
+        nodesWriter.append(string)
+        nodesWriter.append(prettyPrinter.endOfLine)
     }
 
     fun linksWriteLine(string: String) {
-        linksWriter.write(string)
-        linksWriter.write(prettyPrinter.endOfLine)
+        linksWriter.append(string)
+        linksWriter.append(prettyPrinter.endOfLine)
     }
 
-    fun writeAll(writer: Writer) {
-        writeGraphStart(writer)
-        writer.write(nodesWriter.toString())
-        writer.write(linksWriter.toString())
-        writeGraphClose(writer)
+    fun writeAll(sink: Sink) {
+        sink.buffered().use { bufferedSink ->
+            writeGraphStart(bufferedSink)
+            bufferedSink.writeUtf8(nodesWriter.toString())
+            bufferedSink.writeUtf8(linksWriter.toString())
+            writeGraphClose(bufferedSink)
+        }
     }
 
     private val prettyPrinter = PrettyPrintHelper(true)
 
-    private fun writeGraphStart(writer: Writer) {
-        writer.write(
+    private fun writeGraphStart(bufferedSink: BufferedSink) {
+        bufferedSink.writeUtf8(
             """
             |digraph meta_model {
             |  rankdir=LR
@@ -41,15 +44,15 @@ class DotWriter {
             |
             """.trimMargin()
         )
-        writeLegend(writer)
+        writeLegend(bufferedSink)
     }
 
-    private fun writeGraphClose(writer: Writer) {
-        writer.write("}")
+    private fun writeGraphClose(bufferedSink: BufferedSink) {
+        bufferedSink.writeUtf8("}")
     }
 
-    private fun writeLegend(writer: Writer) {
-        writer.write(
+    private fun writeLegend(bufferedSink: BufferedSink) {
+        bufferedSink.writeUtf8(
             """
             |  subgraph "cluster_legend" {
             |    label="legend"
