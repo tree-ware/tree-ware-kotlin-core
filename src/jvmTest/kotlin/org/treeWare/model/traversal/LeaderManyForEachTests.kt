@@ -1,9 +1,9 @@
 package org.treeWare.model.traversal
 
+import okio.Buffer
 import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.util.readFile
-import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -19,12 +19,12 @@ class LeaderManyForEachTests {
         val addressBook2 = getMainModelFromJsonString(addressBookMetaModel, jsonAddressBook2)
         val addressBook3 = getMainModelFromJsonString(addressBookMetaModel, jsonAddressBook3)
 
-        val writer = StringWriter()
-        val printVisitor = LeaderManyPrintVisitor(writer)
+        val buffer = Buffer()
+        val printVisitor = LeaderManyPrintVisitor(buffer)
         forEach(listOf(addressBook2, addressBook3), printVisitor, true)
 
         val expected = readFile("model/traversal/address_book_print_2_3.txt")
-        val actual = writer.toString()
+        val actual = buffer.readUtf8()
         assertEquals(expected, actual)
     }
 }
