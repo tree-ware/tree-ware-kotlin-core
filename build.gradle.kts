@@ -3,6 +3,7 @@ version = "1.0-SNAPSHOT"
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
+val kotlinxBenchmarkVersion = "0.4.4"
 val kotlinxCoroutinesVersion = "1.6.2"
 val loggingVersion = "1.1.1"
 val mockkVersion = "1.12.0"
@@ -11,6 +12,7 @@ val semverVersion = "1.3.3"
 
 plugins {
     kotlin("multiplatform") version "1.7.0"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
 }
 
 repositories {
@@ -19,8 +21,11 @@ repositories {
 
 kotlin {
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
+        compilations {
+            create("benchmarks")
+            all {
+                kotlinOptions.jvmTarget = "1.8"
+            }
         }
         withJava()
         testRuns["test"].executionTask.configure {
@@ -49,6 +54,12 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+        val commonBenchmarks by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$kotlinxBenchmarkVersion")
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 implementation("javax.json:javax.json-api:$jsonVersion")
@@ -62,5 +73,15 @@ kotlin {
                 implementation("io.mockk:mockk:$mockkVersion")
             }
         }
+        val jvmBenchmarks by getting {
+            dependsOn(commonBenchmarks)
+            dependsOn(jvmMain)
+        }
+    }
+}
+
+benchmark {
+    targets {
+        register("jvmBenchmarks")
     }
 }
