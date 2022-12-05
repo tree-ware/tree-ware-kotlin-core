@@ -2,6 +2,7 @@ package org.treeWare.json
 
 import okio.Buffer
 import okio.BufferedSource
+import okio.EOFException
 
 sealed interface JsonToken {
     object ObjectStart : JsonToken
@@ -24,10 +25,14 @@ class InvalidJsonException(message: String) : Exception(message)
 
 fun tokenizeJson(bufferedSource: BufferedSource): Sequence<JsonToken> = sequence {
     val state = JsonState(bufferedSource)
-    this.parseElement(state)
+    try {
+        this.parseElement(state)
+    } catch (_: EOFException) {
+    }
 }
 
 private class JsonState(val bufferedSource: BufferedSource) {
+    var peekedUtf8CodePoint: Int? = null
     val tokenBuffer = Buffer()
 }
 
@@ -50,7 +55,7 @@ private suspend fun SequenceScope<JsonToken>.parseValue(state: JsonState) {
 }
 
 private suspend fun SequenceScope<JsonToken>.parseObject(state: JsonState) {
-    skipCharacters(state, 1) // skip '{'
+    discardPeekedUtf8CodePoint(state) // discard '{'
     yield(JsonToken.ObjectStart)
     skipWs(state)
     if (peekUtf8CodePoint(state) != '}'.code) parseMembers(state)
@@ -62,7 +67,7 @@ private suspend fun SequenceScope<JsonToken>.parseMembers(state: JsonState) {
     while (true) {
         parseMember(state)
         if (peekUtf8CodePoint(state) != ','.code) break
-        skipCharacters(state, 1) // skip ','
+        discardPeekedUtf8CodePoint(state) // discard ','
     }
 }
 
@@ -75,7 +80,7 @@ private suspend fun SequenceScope<JsonToken>.parseMember(state: JsonState) {
 }
 
 private suspend fun SequenceScope<JsonToken>.parseArray(state: JsonState) {
-    skipCharacters(state, 1) // skip '['
+    discardPeekedUtf8CodePoint(state) // discard '['
     yield(JsonToken.ArrayStart)
     parseElements(state)
     expectCharacters(state, "]")
@@ -86,7 +91,7 @@ private suspend fun SequenceScope<JsonToken>.parseElements(state: JsonState) {
     while (true) {
         parseElement(state)
         if (peekUtf8CodePoint(state) != ','.code) break
-        skipCharacters(state, 1) // skip ','
+        discardPeekedUtf8CodePoint(state) // discard ','
     }
 }
 
@@ -120,7 +125,7 @@ private fun parseCharacter(state: JsonState): Boolean = when (peekUtf8CodePoint(
 }
 
 private fun parseEscape(state: JsonState): Boolean {
-    skipCharacters(state, 1) // skip '\'
+    discardPeekedUtf8CodePoint(state) // discard '\'
     when (val code = readUtf8CodePoint(state)) {
         '"'.code, '\\'.code, '/'.code -> state.tokenBuffer.writeUtf8CodePoint(code)
         'b'.code -> state.tokenBuffer.writeUtf8("\b")
@@ -223,31 +228,42 @@ private suspend fun SequenceScope<JsonToken>.parseNull(state: JsonState) {
 }
 
 private fun skipWs(state: JsonState) {
-    var whiteSpaceCount = 0
-    val peek = state.bufferedSource.peek()
-    while (!peek.exhausted()) {
-        when (peek.readUtf8CodePoint()) {
-            0x0020, 0x000A, 0x000D, 0x0009 -> ++whiteSpaceCount
+    while (true) {
+        when (peekUtf8CodePoint(state)) {
+            0x0020, 0x000A, 0x000D, 0x0009 -> discardPeekedUtf8CodePoint(state)
             else -> break
         }
     }
-    skipCharacters(state, whiteSpaceCount)
 }
 
 // endregion
 
 // region Helper functions
 
-private fun peekUtf8CodePoint(state: JsonState): Int = state.bufferedSource.peek().readUtf8CodePoint()
+private fun peekUtf8CodePoint(state: JsonState): Int {
+    val existing = state.peekedUtf8CodePoint
+    if (existing != null) return existing
+    val next = state.bufferedSource.readUtf8CodePoint()
+    state.peekedUtf8CodePoint = next
+    return next
+}
 
-private fun readUtf8CodePoint(state: JsonState): Int = state.bufferedSource.readUtf8CodePoint()
+private fun discardPeekedUtf8CodePoint(state: JsonState) {
+    if (state.peekedUtf8CodePoint == null) throw IllegalStateException("No peeked character to discard")
+    state.peekedUtf8CodePoint = null
+}
 
-private fun skipCharacters(state: JsonState, count: Int) {
-    repeat(count) { state.bufferedSource.readUtf8CodePoint() }
+private fun readUtf8CodePoint(state: JsonState): Int {
+    val existing = state.peekedUtf8CodePoint
+    if (existing != null) {
+        state.peekedUtf8CodePoint = null
+        return existing
+    }
+    return state.bufferedSource.readUtf8CodePoint()
 }
 
 private fun expectCharacters(state: JsonState, characters: String) {
-    val asExpected = characters.all { it.code == state.bufferedSource.readUtf8CodePoint() }
+    val asExpected = characters.all { it.code == readUtf8CodePoint(state) }
     if (!asExpected) throw InvalidJsonException("Expected '$characters'")
 }
 
