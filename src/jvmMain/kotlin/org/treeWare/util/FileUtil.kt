@@ -7,4 +7,4 @@ fun getFileReader(filePath: String): Reader =
     ClassLoader.getSystemResourceAsStream(filePath)?.let { InputStreamReader(it) }
         ?: throw IllegalArgumentException("File $filePath not found")
 
-fun readFile(filePath: String): String = getFileReader(filePath).use { it.readText() }
+//fun readFile(filePath: String): String = getFileReader(filePath).use { it.readText() }
