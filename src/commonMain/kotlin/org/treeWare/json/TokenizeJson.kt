@@ -4,27 +4,27 @@ import okio.BufferedSource
 import okio.EOFException
 import org.treeWare.util.TokenBuilder
 
-sealed interface JsonToken {
-    object ObjectStart : JsonToken
-    object ObjectEnd : JsonToken
-    object ArrayStart : JsonToken
-    object ArrayEnd : JsonToken
-    data class KeyName(val name: String) : JsonToken
-    data class ValueString(val value: String) : JsonToken
-    data class ValueNumber(val value: String) : JsonToken
-    object ValueTrue : JsonToken
-    object ValueFalse : JsonToken
-    object ValueNull : JsonToken
+private enum class NestingState {
+    OBJECT_START, ARRAY_START, STRING_START, KEY_NAME, COLON, OBJECT_VALUE, ARRAY_VALUE, COMMA
+}
+
+private class TokenizeState(bufferedSource: BufferedSource) {
+    val tokenBuilder = TokenBuilder(bufferedSource)
+    val nestingStack = ArrayDeque<NestingState>()
 }
 
 // TODO(performance): would it be faster to use a buffered channel compared to the current approach of yielding after
 //                    each token? The channel buffer size can be varied to tradeoff performance and memory consumption.
 
 fun tokenizeJson(bufferedSource: BufferedSource): Sequence<JsonToken> = sequence {
-    val tokenBuilder = TokenBuilder(bufferedSource)
+    val tokenizeState = TokenizeState(bufferedSource)
     try {
-        this.parseElement(tokenBuilder)
+        this.parseElement(tokenizeState)
+        // Throw an exception if EOF has not occurred
+        if (tokenizeState.tokenBuilder.hasPeekedUtf8CodePoint()) tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint()
+        tokenizeState.tokenBuilder.throwException("Unexpected character")
     } catch (_: EOFException) {
+        if (tokenizeState.nestingStack.isNotEmpty()) tokenizeState.tokenBuilder.throwException("Incomplete JSON")
     }
 }
 
@@ -32,200 +32,236 @@ fun tokenizeJson(bufferedSource: BufferedSource): Sequence<JsonToken> = sequence
 
 // TODO(performance): use an approach that is faster than reading 1 character at a time.
 
-private suspend fun SequenceScope<JsonToken>.parseValue(tokenBuilder: TokenBuilder) {
-    when (tokenBuilder.peekUtf8CodePoint()) {
-        '{'.code -> parseObject(tokenBuilder)
-        '['.code -> parseArray(tokenBuilder)
-        '"'.code -> parseString(tokenBuilder) { JsonToken.ValueString(it) }
-        '-'.code -> parseNumber(tokenBuilder)
-        in '0'.code..'9'.code -> parseNumber(tokenBuilder)
-        't'.code -> parseTrue(tokenBuilder)
-        'f'.code -> parseFalse(tokenBuilder)
-        'n'.code -> parseNull(tokenBuilder)
-        else -> {}
+private suspend fun SequenceScope<JsonToken>.parseValue(tokenizeState: TokenizeState) {
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
+        '{'.code -> parseObject(tokenizeState)
+        '['.code -> parseArray(tokenizeState)
+        '"'.code -> parseString(tokenizeState) { JsonToken.ValueString(it) }
+        '-'.code -> parseNumber(tokenizeState)
+        in '0'.code..'9'.code -> parseNumber(tokenizeState)
+        't'.code -> parseTrue(tokenizeState)
+        'f'.code -> parseFalse(tokenizeState)
+        'n'.code -> parseNull(tokenizeState)
+        '}'.code -> handleClose(tokenizeState, NestingState.OBJECT_START, "Unexpected '}'")
+        ']'.code -> handleClose(tokenizeState, NestingState.ARRAY_START, "Unexpected ']'")
+        else -> {
+            tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint()
+            tokenizeState.tokenBuilder.throwException("Unknown value type")
+        }
     }
 }
 
-private suspend fun SequenceScope<JsonToken>.parseObject(tokenBuilder: TokenBuilder) {
-    tokenBuilder.discardPeekedUtf8CodePoint() // discard '{'
+private fun handleClose(tokenizeState: TokenizeState, expectedNestingState: NestingState, error: String) =
+    when (tokenizeState.nestingStack.firstOrNull()) {
+        expectedNestingState -> {}
+        NestingState.COMMA -> tokenizeState.tokenBuilder.throwException("Unsupported trailing comma")
+        else -> {
+            tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint()
+            tokenizeState.tokenBuilder.throwException(error)
+        }
+    }
+
+private suspend fun SequenceScope<JsonToken>.parseObject(tokenizeState: TokenizeState) {
+    tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard '{'
+    tokenizeState.nestingStack.addFirst(NestingState.OBJECT_START)
     yield(JsonToken.ObjectStart)
-    skipWs(tokenBuilder)
-    if (tokenBuilder.peekUtf8CodePoint() != '}'.code) parseMembers(tokenBuilder)
-    tokenBuilder.expectCharacters("}")
+    skipWs(tokenizeState)
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
+        '}'.code -> {}
+        ']'.code -> {
+            tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint()
+            tokenizeState.tokenBuilder.throwException("Expected '}'")
+        }
+        else -> parseMembers(tokenizeState)
+    }
+    tokenizeState.tokenBuilder.expectCharacters("}")
+    tokenizeState.nestingStack.removeFirst()
     yield(JsonToken.ObjectEnd)
 }
 
-private suspend fun SequenceScope<JsonToken>.parseMembers(tokenBuilder: TokenBuilder) {
+private suspend fun SequenceScope<JsonToken>.parseMembers(tokenizeState: TokenizeState) {
     while (true) {
-        parseMember(tokenBuilder)
-        if (tokenBuilder.peekUtf8CodePoint() != ','.code) break
-        tokenBuilder.discardPeekedUtf8CodePoint() // discard ','
+        parseMember(tokenizeState)
+        if (tokenizeState.tokenBuilder.peekUtf8CodePoint() != ','.code) break
+        tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard ','
     }
 }
 
-private suspend fun SequenceScope<JsonToken>.parseMember(tokenBuilder: TokenBuilder) {
-    skipWs(tokenBuilder)
-    this.parseString(tokenBuilder) { JsonToken.KeyName(it) }
-    skipWs(tokenBuilder)
-    tokenBuilder.expectCharacters(":")
-    parseElement(tokenBuilder)
+private suspend fun SequenceScope<JsonToken>.parseMember(tokenizeState: TokenizeState) {
+    skipWs(tokenizeState)
+    this.parseString(tokenizeState) { JsonToken.KeyName(it) }
+    skipWs(tokenizeState)
+    tokenizeState.tokenBuilder.expectCharacters(":")
+    parseElement(tokenizeState)
 }
 
-private suspend fun SequenceScope<JsonToken>.parseArray(tokenBuilder: TokenBuilder) {
-    tokenBuilder.discardPeekedUtf8CodePoint() // discard '['
+private suspend fun SequenceScope<JsonToken>.parseArray(tokenizeState: TokenizeState) {
+    tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard '['
+    tokenizeState.nestingStack.addFirst(NestingState.ARRAY_START)
     yield(JsonToken.ArrayStart)
-    parseElements(tokenBuilder)
-    tokenBuilder.expectCharacters("]")
+    parseElements(tokenizeState)
+    tokenizeState.tokenBuilder.expectCharacters("]")
+    tokenizeState.nestingStack.removeFirst()
     yield(JsonToken.ArrayEnd)
 }
 
-private suspend fun SequenceScope<JsonToken>.parseElements(tokenBuilder: TokenBuilder) {
+private suspend fun SequenceScope<JsonToken>.parseElements(tokenizeState: TokenizeState) {
     while (true) {
-        parseElement(tokenBuilder)
-        if (tokenBuilder.peekUtf8CodePoint() != ','.code) break
-        tokenBuilder.discardPeekedUtf8CodePoint() // discard ','
+        parseElement(tokenizeState)
+        // Remove comma from previous iteration of the loop
+        if (tokenizeState.nestingStack.firstOrNull() == NestingState.COMMA) tokenizeState.nestingStack.removeFirst()
+        if (tokenizeState.tokenBuilder.peekUtf8CodePoint() != ','.code) break
+        tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard ','
+        tokenizeState.nestingStack.addFirst(NestingState.COMMA)
     }
 }
 
-private suspend fun SequenceScope<JsonToken>.parseElement(tokenBuilder: TokenBuilder) {
-    skipWs(tokenBuilder)
-    this.parseValue(tokenBuilder)
-    skipWs(tokenBuilder)
+private suspend fun SequenceScope<JsonToken>.parseElement(tokenizeState: TokenizeState) {
+    skipWs(tokenizeState)
+    this.parseValue(tokenizeState)
+    skipWs(tokenizeState)
 }
 
 private suspend fun SequenceScope<JsonToken>.parseString(
-    tokenBuilder: TokenBuilder,
+    tokenizeState: TokenizeState,
     tokenFactory: (String) -> JsonToken
 ) {
-    tokenBuilder.expectCharacters("\"")
-    tokenBuilder.clearToken()
-    parseCharacters(tokenBuilder)
-    tokenBuilder.expectCharacters("\"")
-    yield(tokenFactory(tokenBuilder.getToken()))
-    tokenBuilder.clearToken()
+    tokenizeState.tokenBuilder.expectCharacters("\"")
+    tokenizeState.nestingStack.addFirst(NestingState.STRING_START)
+    tokenizeState.tokenBuilder.clearToken()
+    parseCharacters(tokenizeState)
+    tokenizeState.tokenBuilder.expectCharacters("\"")
+    tokenizeState.nestingStack.removeFirst()
+    yield(tokenFactory(tokenizeState.tokenBuilder.getToken()))
+    tokenizeState.tokenBuilder.clearToken()
 }
 
-private fun parseCharacters(tokenBuilder: TokenBuilder) {
-    while (true) if (!parseCharacter(tokenBuilder)) break
+private fun parseCharacters(tokenizeState: TokenizeState) {
+    while (true) if (!parseCharacter(tokenizeState)) break
 }
 
-private fun parseCharacter(tokenBuilder: TokenBuilder): Boolean = when (tokenBuilder.peekUtf8CodePoint()) {
-    '"'.code -> false
-    '\\'.code -> parseEscape(tokenBuilder)
-    in 0x0020..0x10FFFF -> {
-        tokenBuilder.appendUtf8CodePointToToken(tokenBuilder.readUtf8CodePoint())
-        true
+private fun parseCharacter(tokenizeState: TokenizeState): Boolean =
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
+        '"'.code -> false
+        '\\'.code -> parseEscape(tokenizeState)
+        in 0x0020..0x10FFFF -> {
+            tokenizeState.tokenBuilder.appendUtf8CodePointToToken(tokenizeState.tokenBuilder.readUtf8CodePoint())
+            true
+        }
+        else -> false
     }
-    else -> false
-}
 
-private fun parseEscape(tokenBuilder: TokenBuilder): Boolean {
-    tokenBuilder.discardPeekedUtf8CodePoint() // discard '\'
-    when (val code = tokenBuilder.readUtf8CodePoint()) {
-        '"'.code, '\\'.code, '/'.code -> tokenBuilder.appendUtf8CodePointToToken(code)
-        'b'.code -> tokenBuilder.appendUtf8ToToken("\b")
+private fun parseEscape(tokenizeState: TokenizeState): Boolean {
+    tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard '\'
+    when (val code = tokenizeState.tokenBuilder.readUtf8CodePoint()) {
+        '"'.code, '\\'.code, '/'.code -> tokenizeState.tokenBuilder.appendUtf8CodePointToToken(code)
+        'b'.code -> tokenizeState.tokenBuilder.appendUtf8ToToken("\b")
         // "\f" is supported in Java but not in Kotlin: https://youtrack.jetbrains.com/issue/KT-8507
-        'f'.code -> tokenBuilder.appendUtf8ToToken("\u000c")
-        'n'.code -> tokenBuilder.appendUtf8ToToken("\n")
-        'r'.code -> tokenBuilder.appendUtf8ToToken("\r")
-        't'.code -> tokenBuilder.appendUtf8ToToken("\t")
+        'f'.code -> tokenizeState.tokenBuilder.appendUtf8ToToken("\u000c")
+        'n'.code -> tokenizeState.tokenBuilder.appendUtf8ToToken("\n")
+        'r'.code -> tokenizeState.tokenBuilder.appendUtf8ToToken("\r")
+        't'.code -> tokenizeState.tokenBuilder.appendUtf8ToToken("\t")
         'u'.code -> {
             var codePoint = 0
             repeat(4) {
-                val hex: Int = parseHex(tokenBuilder)
+                val hex: Int = parseHex(tokenizeState)
                 codePoint = codePoint * 16 + hex
             }
-            tokenBuilder.appendUtf8CodePointToToken(codePoint)
+            tokenizeState.tokenBuilder.appendUtf8CodePointToToken(codePoint)
         }
     }
     return true
 }
 
-private fun parseHex(tokenBuilder: TokenBuilder): Int = when (val code = tokenBuilder.readUtf8CodePoint()) {
-    in '0'.code..'9'.code -> code - '0'.code
-    in 'A'.code..'F'.code -> code - 'A'.code + 10
-    in 'a'.code..'f'.code -> code - 'a'.code + 10
-    else -> tokenBuilder.throwException("Expected hex digit but found '${Char(code)}'")
+private fun parseHex(tokenizeState: TokenizeState): Int =
+    when (val code = tokenizeState.tokenBuilder.readUtf8CodePoint()) {
+        in '0'.code..'9'.code -> code - '0'.code
+        in 'A'.code..'F'.code -> code - 'A'.code + 10
+        in 'a'.code..'f'.code -> code - 'a'.code + 10
+        else -> tokenizeState.tokenBuilder.throwException("Expected hex digit but found '${Char(code)}'")
+    }
+
+private suspend fun SequenceScope<JsonToken>.parseNumber(tokenizeState: TokenizeState) {
+    tokenizeState.tokenBuilder.clearToken()
+    parseInteger(tokenizeState)
+    parseFraction(tokenizeState)
+    parseExponent(tokenizeState)
+    yield(JsonToken.ValueNumber(tokenizeState.tokenBuilder.getToken()))
+    tokenizeState.tokenBuilder.clearToken()
 }
 
-private suspend fun SequenceScope<JsonToken>.parseNumber(tokenBuilder: TokenBuilder) {
-    tokenBuilder.clearToken()
-    parseInteger(tokenBuilder)
-    parseFraction(tokenBuilder)
-    parseExponent(tokenBuilder)
-    yield(JsonToken.ValueNumber(tokenBuilder.getToken()))
-    tokenBuilder.clearToken()
-}
-
-private fun parseInteger(tokenBuilder: TokenBuilder) {
-    when (tokenBuilder.peekUtf8CodePoint()) {
-        '-'.code -> tokenBuilder.appendUtf8CodePointToToken(tokenBuilder.readUtf8CodePoint())
+private fun parseInteger(tokenizeState: TokenizeState) {
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
+        '-'.code -> tokenizeState.tokenBuilder.appendUtf8CodePointToToken(tokenizeState.tokenBuilder.readUtf8CodePoint())
         else -> {}
     }
-    parseDigits(tokenBuilder)
+    parseDigits(tokenizeState)
 }
 
-private fun parseDigits(tokenBuilder: TokenBuilder) {
-    val isDigit = parseDigit(tokenBuilder)
-    if (!isDigit) tokenBuilder.throwException("Expected digit")
-    while (true) if (!parseDigit(tokenBuilder)) break
+private fun parseDigits(tokenizeState: TokenizeState) {
+    val isDigit = parseDigit(tokenizeState)
+    if (!isDigit) {
+        tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint()
+        tokenizeState.tokenBuilder.throwException("Expected digit")
+    }
+    while (true) if (!parseDigit(tokenizeState)) break
 }
 
-private fun parseDigit(tokenBuilder: TokenBuilder): Boolean = when (tokenBuilder.peekUtf8CodePoint()) {
+private fun parseDigit(tokenizeState: TokenizeState): Boolean = when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
     in '0'.code..'9'.code -> {
-        tokenBuilder.appendUtf8CodePointToToken(tokenBuilder.readUtf8CodePoint())
+        tokenizeState.tokenBuilder.appendUtf8CodePointToToken(tokenizeState.tokenBuilder.readUtf8CodePoint())
         true
     }
     else -> false
 }
 
-private fun parseFraction(tokenBuilder: TokenBuilder) {
-    when (tokenBuilder.peekUtf8CodePoint()) {
+private fun parseFraction(tokenizeState: TokenizeState) {
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
         '.'.code -> {
-            tokenBuilder.appendUtf8CodePointToToken(tokenBuilder.readUtf8CodePoint())
-            parseDigits(tokenBuilder)
+            tokenizeState.tokenBuilder.appendUtf8CodePointToToken(tokenizeState.tokenBuilder.readUtf8CodePoint())
+            parseDigits(tokenizeState)
         }
         else -> {}
     }
 }
 
-private fun parseExponent(tokenBuilder: TokenBuilder) {
-    when (tokenBuilder.peekUtf8CodePoint()) {
+private fun parseExponent(tokenizeState: TokenizeState) {
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
         'E'.code, 'e'.code -> {
-            tokenBuilder.appendUtf8CodePointToToken(tokenBuilder.readUtf8CodePoint())
-            parseSign(tokenBuilder)
-            parseDigits(tokenBuilder)
+            tokenizeState.tokenBuilder.appendUtf8CodePointToToken(tokenizeState.tokenBuilder.readUtf8CodePoint())
+            parseSign(tokenizeState)
+            parseDigits(tokenizeState)
         }
         else -> {}
     }
 }
 
-private fun parseSign(tokenBuilder: TokenBuilder) {
-    when (tokenBuilder.peekUtf8CodePoint()) {
-        '+'.code, '-'.code -> tokenBuilder.appendUtf8CodePointToToken(tokenBuilder.readUtf8CodePoint())
+private fun parseSign(tokenizeState: TokenizeState) {
+    when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
+        '+'.code, '-'.code -> tokenizeState.tokenBuilder.appendUtf8CodePointToToken(tokenizeState.tokenBuilder.readUtf8CodePoint())
         else -> {}
     }
 }
 
-private suspend fun SequenceScope<JsonToken>.parseTrue(tokenBuilder: TokenBuilder) {
-    tokenBuilder.expectCharacters("true")
+private suspend fun SequenceScope<JsonToken>.parseTrue(tokenizeState: TokenizeState) {
+    tokenizeState.tokenBuilder.expectCharacters("true")
     yield(JsonToken.ValueTrue)
 }
 
-private suspend fun SequenceScope<JsonToken>.parseFalse(tokenBuilder: TokenBuilder) {
-    tokenBuilder.expectCharacters("false")
+private suspend fun SequenceScope<JsonToken>.parseFalse(tokenizeState: TokenizeState) {
+    tokenizeState.tokenBuilder.expectCharacters("false")
     yield(JsonToken.ValueFalse)
 }
 
-private suspend fun SequenceScope<JsonToken>.parseNull(tokenBuilder: TokenBuilder) {
-    tokenBuilder.expectCharacters("null")
+private suspend fun SequenceScope<JsonToken>.parseNull(tokenizeState: TokenizeState) {
+    tokenizeState.tokenBuilder.expectCharacters("null")
     yield(JsonToken.ValueNull)
 }
 
-private fun skipWs(tokenBuilder: TokenBuilder) {
+private fun skipWs(tokenizeState: TokenizeState) {
     while (true) {
-        when (tokenBuilder.peekUtf8CodePoint()) {
-            0x0020, 0x000A, 0x000D, 0x0009 -> tokenBuilder.discardPeekedUtf8CodePoint()
+        when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
+            0x0020, 0x000A, 0x000D, 0x0009 -> tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint()
             else -> break
         }
     }
