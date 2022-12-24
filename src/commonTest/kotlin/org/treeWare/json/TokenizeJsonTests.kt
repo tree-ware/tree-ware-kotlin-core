@@ -1,8 +1,10 @@
 package org.treeWare.json
 
 import okio.Buffer
+import org.treeWare.util.TokenException
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 internal class TokenizeJsonTests {
     private fun doubleQuoted(value: String): String = "\"$value\""
@@ -348,7 +350,7 @@ internal class TokenizeJsonTests {
                 "empty array": [],
                 "non-empty array": [true, false]
             }
-            """.trimIndent()
+            """
         )
         val expected = listOf(
             JsonToken.ObjectStart,
@@ -629,6 +631,162 @@ internal class TokenizeJsonTests {
         )
         val actual = tokenizeJson(buffer).toList()
         assertEquals(expected, actual)
+    }
+
+    // endregion
+
+    // region Errors
+
+    @Test
+    fun must_fail_if_string_value_does_not_end_with_double_quotes() {
+        testError("\"hello", "Incomplete JSON", 1, 6, 6)
+        testError("{\n\t\"a\": \"hello}", "Incomplete JSON", 2, 16, 15)
+        testError("[\r\n\t\"hello]", "Incomplete JSON", 2, 11, 11)
+    }
+
+    @Test
+    fun must_fail_for_invalid_hex_escape() {
+        testError("\"\\uC4f\"", "Expected hex digit but found '\"'", 1, 7, 7)
+    }
+
+    @Test
+    fun must_fail_for_invalid_single_digit_integer() {
+        testError("-a", "Expected digit", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_for_invalid_multi_digit_integer() {
+        testError("1a", "Unexpected character", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_for_invalid_single_digit_fraction() {
+        testError("-12.a", "Expected digit", 1, 5, 5)
+    }
+
+    @Test
+    fun must_fail_for_invalid_multi_digit_fraction() {
+        testError("-12.3a", "Unexpected character", 1, 6, 6)
+    }
+
+    @Test
+    fun must_fail_for_invalid_single_digit_exponent() {
+        testError("-12.34Ea", "Expected digit", 1, 8, 8)
+    }
+
+    @Test
+    fun must_fail_for_invalid_multi_digit_exponent() {
+        testError("-12.34E5a", "Unexpected character", 1, 9, 9)
+    }
+
+    @Test
+    fun must_fail_for_invalid_true() {
+        testError("[ tRUE ]", "Expected 'true'", 1, 4, 4)
+    }
+
+    @Test
+    fun must_fail_for_invalid_false() {
+        testError("[\nfaLSE\n]", "Expected 'false'", 2, 3, 5)
+    }
+
+    @Test
+    fun must_fail_for_invalid_null() {
+        testError("nULL", "Expected 'null'", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_for_invalid_value() {
+        testError("hello", "Unknown value type", 1, 1, 1)
+    }
+
+    @Test
+    fun must_fail_if_starts_with_object_end() {
+        testError("}", "Unexpected '}'", 1, 1, 1)
+    }
+
+    @Test
+    fun must_fail_if_starts_with_array_end() {
+        testError("]", "Unexpected ']'", 1, 1, 1)
+    }
+
+    @Test
+    fun must_fail_if_starts_with_colon() {
+        testError(":", "Unknown value type", 1, 1, 1)
+    }
+
+    @Test
+    fun must_fail_if_starts_with_comma() {
+        testError(",", "Unknown value type", 1, 1, 1)
+    }
+
+    @Test
+    fun must_fail_for_invalid_value_in_an_object() {
+        testError("{\"greeting\": hello}", "Unknown value type", 1, 14, 14)
+    }
+
+    @Test
+    fun must_fail_for_invalid_value_in_an_array() {
+        testError("[hello]", "Unknown value type", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_if_field_name_does_not_start_with_double_quotes() {
+        testError("{a: 1}", "Expected '\"'", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_if_field_name_does_not_end_with_double_quotes() {
+        testError("{\"a: 1}", "Incomplete JSON", 1, 7, 7)
+    }
+
+    @Test
+    fun must_fail_if_colon_is_missing_after_field_name() {
+        testError("{\"a\" 1}", "Expected ':'", 1, 6, 6)
+    }
+
+    @Test
+    fun must_fail_for_trailing_comma_in_object() {
+        testError("{\"a\": 1,}", "Expected '\"'", 1, 9, 9)
+    }
+
+    @Test
+    fun must_fail_if_object_is_not_closed() {
+        testError("{\"a\": 1", "Incomplete JSON", 1, 7, 7)
+    }
+
+    @Test
+    fun must_fail_if_object_close_is_not_balanced() {
+        testError("[}", "Unexpected '}'", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_for_trailing_comma_in_array() {
+        testError("[1,]", "Unsupported trailing comma", 1, 3, 3)
+    }
+
+    @Test
+    fun must_fail_if_array_is_not_closed() {
+        testError("[1", "Incomplete JSON", 1, 2, 2)
+    }
+
+    @Test
+    fun must_fail_if_array_close_is_not_balanced() {
+        testError("{]", "Expected '}'", 1, 2, 2)
+    }
+
+    // endregion
+
+    // region Helper Functions
+
+    private fun testError(json: String, error: String, line: Int, column: Int, charactersFromStart: Int) {
+        val buffer = Buffer().writeUtf8(json)
+        val exception = assertFailsWith<TokenException> {
+            tokenizeJson(buffer).toList()
+        }
+        assertEquals(error, exception.message)
+        assertEquals(line, exception.line)
+        assertEquals(column, exception.column)
+        assertEquals(charactersFromStart, exception.charactersFromStart)
     }
 
     // endregion
