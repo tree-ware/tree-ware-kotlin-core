@@ -1,11 +1,12 @@
 package org.treeWare.model.codec
 
+import okio.buffer
 import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnMissingKeys
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.testRoundTrip
-import org.treeWare.util.getFileReader
+import org.treeWare.util.getFileSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -29,13 +30,13 @@ class DecoderMissingKeysTests {
 
     @Test
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
-        val fileReader = getFileReader("model/address_book_missing_keys.json")
-        val (mainModel, decodeErrors) = decodeJson(
-            fileReader,
-            addressBookMetaModel,
-            ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR)
-        )
-        fileReader.close()
+        val (_, decodeErrors) = getFileSource("model/address_book_missing_keys.json").use {
+            decodeJson(
+                it.buffer(),
+                addressBookMetaModel,
+                ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR)
+            )
+        }
 
         val expectedDecodeErrors =
             listOf("Missing key fields [id] in instance of /address_book.main/address_book_relation")

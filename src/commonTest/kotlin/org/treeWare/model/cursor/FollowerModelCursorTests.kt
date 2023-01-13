@@ -11,7 +11,7 @@ import org.treeWare.model.getMainModelFromJsonFile
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchLeave
 import org.treeWare.model.traversal.dispatchVisit
-import org.treeWare.util.getFileReader
+import org.treeWare.util.readFile
 import kotlin.test.*
 
 class FollowerModelCursorTests {
@@ -150,9 +150,7 @@ private fun testFollowerWildcardModelInstance(
         }
     }
 
-    val expectedFileReader = getFileReader(expectedFilePath ?: leaderFilePath)
-    val expected = expectedFileReader.readText()
-    expectedFileReader.close()
+    val expected = readFile(expectedFilePath ?: leaderFilePath)
     val actual = jsonBuffer.readUtf8()
     assertEquals(expected, actual)
 }

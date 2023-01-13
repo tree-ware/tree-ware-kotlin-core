@@ -1,5 +1,8 @@
 package org.treeWare.metaModel
 
+import okio.Buffer
+import okio.BufferedSource
+import okio.buffer
 import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
@@ -8,9 +11,7 @@ import org.treeWare.model.core.Hasher
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.operator.union
-import org.treeWare.util.getFileReader
-import java.io.Reader
-import java.io.StringReader
+import org.treeWare.util.getFileSource
 
 private val logger = logging()
 
@@ -22,14 +23,21 @@ fun newMetaModelFromJsonFiles(
     cipher: Cipher?,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean
-): ValidatedMetaModel = newMetaModelFromJsonReaders(
-    metaModelFiles.map { getFileReader(it) },
-    logMetaModelFullNames,
-    hasher,
-    cipher,
-    metaModelAuxPlugins,
-    logErrors
-)
+): ValidatedMetaModel {
+    val sources = metaModelFiles.map { getFileSource(it) }
+    return try {
+        newMetaModelFromJsonReaders(
+            sources.map { it.buffer() },
+            logMetaModelFullNames,
+            hasher,
+            cipher,
+            metaModelAuxPlugins,
+            logErrors
+        )
+    } finally {
+        sources.forEach { it.close() }
+    }
+}
 
 /** Returns a validated meta-model created from the meta-model strings. */
 fun newMetaModelFromJsonStrings(
@@ -39,18 +47,21 @@ fun newMetaModelFromJsonStrings(
     cipher: Cipher?,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean
-): ValidatedMetaModel = newMetaModelFromJsonReaders(
-    metaModelStrings.map { StringReader(it) },
-    logMetaModelFullNames,
-    hasher,
-    cipher,
-    metaModelAuxPlugins,
-    logErrors
-)
+): ValidatedMetaModel {
+    val sources = metaModelStrings.map { Buffer().writeUtf8(it) }
+    return newMetaModelFromJsonReaders(
+        sources,
+        logMetaModelFullNames,
+        hasher,
+        cipher,
+        metaModelAuxPlugins,
+        logErrors
+    )
+}
 
 /** Returns a validated meta-model created from the meta-model readers. */
 fun newMetaModelFromJsonReaders(
-    metaModelReaders: List<Reader>,
+    metaModelSources: List<BufferedSource>,
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
@@ -62,9 +73,9 @@ fun newMetaModelFromJsonReaders(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*metaModelAuxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val metaModelParts = metaModelReaders.map { reader ->
+    val metaModelParts = metaModelSources.map { source ->
         val (decodedMetaModel, decodeErrors) = decodeJson(
-            reader,
+            source,
             metaMetaModel,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
