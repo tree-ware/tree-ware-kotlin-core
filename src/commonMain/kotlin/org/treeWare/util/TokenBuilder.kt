@@ -3,10 +3,39 @@ package org.treeWare.util
 import okio.Buffer
 import okio.BufferedSource
 
-class TokenException(
-    message: String, val line: Int, val column: Int, val charactersFromStart: Int
-) : Exception(message) {
-    override fun toString() = "$message at line $line column $column, $charactersFromStart characters from the start"
+interface TokenPosition {
+    val line: Int
+    val column: Int
+    val charactersFromStart: Int
+
+    fun isEqual(other: Any?): Boolean {
+        val that = other as? TokenPosition ?: return false
+        if (this.line != that.line) return false
+        if (this.column != that.column) return false
+        if (this.charactersFromStart != that.charactersFromStart) return false
+        return true
+    }
+
+    fun asString(): String = "{line: $line, column: $column, charactersFromStart: $charactersFromStart}"
+}
+
+class ImmutableTokenPosition(
+    override val line: Int, override val column: Int, override val charactersFromStart: Int
+) : TokenPosition {
+    override fun equals(other: Any?): Boolean = isEqual(other)
+    override fun toString(): String = asString()
+}
+
+class MutableTokenPosition(
+    override var line: Int, override var column: Int, override var charactersFromStart: Int
+) : TokenPosition {
+    override fun equals(other: Any?): Boolean = isEqual(other)
+    override fun toString(): String = asString()
+}
+
+class TokenException(message: String, val position: TokenPosition) : Exception(message) {
+    override fun toString() =
+        "$message at line ${position.line} column ${position.column}, ${position.charactersFromStart} characters from the start"
 }
 
 class TokenBuilder(private val bufferedSource: BufferedSource) {
@@ -14,12 +43,10 @@ class TokenBuilder(private val bufferedSource: BufferedSource) {
 
     private var peekedUtf8CodePoint: Int? = null
 
-    // Position
-    private var line = 1
-    private var column = 0
-    private var charactersFromStart = 0
+    private val position = MutableTokenPosition(1, 0, 0)
 
     fun getToken(): String = tokenBuffer.readUtf8()
+    fun getPosition(): TokenPosition = position
 
     fun appendUtf8CodePointToToken(code: Int) {
         tokenBuffer.writeUtf8CodePoint(code)
@@ -65,16 +92,16 @@ class TokenBuilder(private val bufferedSource: BufferedSource) {
     }
 
     fun throwException(message: String): Nothing {
-        throw TokenException(message, line, column, charactersFromStart)
+        throw TokenException(message, position)
     }
 
     private fun updatePosition(code: Int) {
-        ++charactersFromStart
+        ++position.charactersFromStart
         if (code == '\n'.code) {
-            ++line
-            column = 0
+            ++position.line
+            position.column = 0
         } else {
-            column += if (code == '\t'.code) 4 else 1
+            position.column += if (code == '\t'.code) 4 else 1
         }
     }
 }
