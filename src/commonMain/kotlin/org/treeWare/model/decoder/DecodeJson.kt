@@ -1,14 +1,14 @@
 package org.treeWare.model.decoder
 
+import okio.BufferedSource
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.stateMachine.DelegatingStateMachine
 import org.treeWare.model.decoder.stateMachine.MainModelStateMachine
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
-import java.io.Reader
 
 fun decodeJson(
-    reader: Reader,
+    bufferedSource: BufferedSource,
     mainMeta: MainModel,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
@@ -20,7 +20,7 @@ fun decodeJson(
     }
     val wireFormatDecoder = JsonWireFormatDecoder()
     val decodeError = try {
-        wireFormatDecoder.decode(reader, delegatingStateMachine)
+        wireFormatDecoder.decode(bufferedSource, delegatingStateMachine)
     } catch (exception: Exception) {
         exception.message ?: "Exception while decoding JSON"
     }

@@ -1,13 +1,13 @@
 package org.treeWare.model.decoder
 
+import okio.BufferedSource
 import org.treeWare.model.core.MutableFieldModel
 import org.treeWare.model.decoder.stateMachine.DelegatingStateMachine
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.decoder.stateMachine.getFieldStateMachine
-import java.io.Reader
 
 fun decodeJsonField(
-    reader: Reader,
+    bufferedSource: BufferedSource,
     field: MutableFieldModel,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
@@ -18,7 +18,7 @@ fun decodeJsonField(
     }
     val wireFormatDecoder = JsonWireFormatDecoder()
     val decodeError = try {
-        wireFormatDecoder.decode(reader, delegatingStateMachine)
+        wireFormatDecoder.decode(bufferedSource, delegatingStateMachine)
     } catch (exception: Exception) {
         exception.message ?: "Exception while decoding JSON field"
     }

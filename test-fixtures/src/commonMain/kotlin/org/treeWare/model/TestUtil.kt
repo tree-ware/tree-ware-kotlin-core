@@ -1,6 +1,8 @@
 package org.treeWare.model
 
 import okio.Buffer
+import okio.BufferedSource
+import okio.buffer
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
@@ -9,10 +11,8 @@ import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFacto
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.encodeJson
-import org.treeWare.util.getFileReader
+import org.treeWare.util.getFileSource
 import org.treeWare.util.readFile
-import java.io.Reader
-import java.io.StringReader
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -46,13 +46,16 @@ fun getMainModelFromJsonString(
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
-): MutableMainModel = getMainModelFromJson(
-    meta,
-    StringReader(jsonString),
-    options,
-    expectedDecodeErrors,
-    multiAuxDecodingStateMachineFactory
-)
+): MutableMainModel {
+    val bufferedSource = Buffer().writeUtf8(jsonString)
+    return getMainModelFromJson(
+        meta,
+        bufferedSource,
+        options,
+        expectedDecodeErrors,
+        multiAuxDecodingStateMachineFactory
+    )
+}
 
 fun getMainModelFromJsonFile(
     meta: MainModel,
@@ -60,28 +63,29 @@ fun getMainModelFromJsonFile(
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
-): MutableMainModel = getMainModelFromJson(
-    meta,
-    getFileReader(jsonFilePath),
-    options,
-    expectedDecodeErrors,
-    multiAuxDecodingStateMachineFactory
-)
+): MutableMainModel = getFileSource(jsonFilePath).use {
+    getMainModelFromJson(
+        meta,
+        it.buffer(),
+        options,
+        expectedDecodeErrors,
+        multiAuxDecodingStateMachineFactory
+    )
+}
 
 fun getMainModelFromJson(
     meta: MainModel,
-    jsonReader: Reader,
+    bufferedSource: BufferedSource,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel {
     val (mainModel, decodeErrors) = decodeJson(
-        jsonReader,
+        bufferedSource,
         meta,
         options,
         multiAuxDecodingStateMachineFactory
     )
-    jsonReader.close()
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     assertTrue(mainModel != null)
     return mainModel

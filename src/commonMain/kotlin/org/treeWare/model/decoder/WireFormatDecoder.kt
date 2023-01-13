@@ -1,11 +1,11 @@
 package org.treeWare.model.decoder
 
+import okio.BufferedSource
 import org.treeWare.model.decoder.stateMachine.DelegatingStateMachine
-import java.io.Reader
 
 interface WireFormatDecoder {
     /**
      * @return an error message if there is an error.
      */
-    fun decode(reader: Reader, delegatingStateMachine: DelegatingStateMachine): String?
+    fun decode(bufferedSource: BufferedSource, delegatingStateMachine: DelegatingStateMachine): String?
 }

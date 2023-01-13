@@ -1,14 +1,15 @@
 package org.treeWare.metaModel
 
+import okio.Buffer
+import okio.BufferedSource
+import okio.buffer
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
-import org.treeWare.util.getFileReader
-import java.io.Reader
-import java.io.StringReader
+import org.treeWare.util.getFileSource
 import kotlin.test.assertEquals
 
 private val metaMetaModel = newMainMetaMetaModel()
@@ -19,13 +20,16 @@ fun assertJsonStringValidationErrors(
     expectedDecodeErrors: List<String> = listOf(),
     options: ModelDecoderOptions = ModelDecoderOptions(),
     vararg auxPlugins: MetaModelAuxPlugin
-) = assertJsonValidationErrors(
-    StringReader(metaModelJsonString),
-    expectedValidationErrors,
-    expectedDecodeErrors,
-    options,
-    *auxPlugins
-)
+) {
+    val bufferedSource = Buffer().writeUtf8(metaModelJsonString)
+    return assertJsonValidationErrors(
+        bufferedSource,
+        expectedValidationErrors,
+        expectedDecodeErrors,
+        options,
+        *auxPlugins
+    )
+}
 
 fun assertJsonFileValidationErrors(
     metaModelJsonFile: String,
@@ -33,16 +37,18 @@ fun assertJsonFileValidationErrors(
     expectedDecodeErrors: List<String> = listOf(),
     options: ModelDecoderOptions = ModelDecoderOptions(),
     vararg auxPlugins: MetaModelAuxPlugin
-) = assertJsonValidationErrors(
-    getFileReader(metaModelJsonFile),
-    expectedValidationErrors,
-    expectedDecodeErrors,
-    options,
-    *auxPlugins
-)
+) = getFileSource(metaModelJsonFile).use {
+    assertJsonValidationErrors(
+        it.buffer(),
+        expectedValidationErrors,
+        expectedDecodeErrors,
+        options,
+        *auxPlugins
+    )
+}
 
 private fun assertJsonValidationErrors(
-    jsonReader: Reader,
+    bufferedSource: BufferedSource,
     expectedValidationErrors: List<String>,
     expectedDecodeErrors: List<String>,
     options: ModelDecoderOptions,
@@ -51,7 +57,12 @@ private fun assertJsonValidationErrors(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val (metaModel, decodeErrors) = decodeJson(jsonReader, metaMetaModel, options, multiAuxDecodingStateMachineFactory)
+    val (metaModel, decodeErrors) = decodeJson(
+        bufferedSource,
+        metaMetaModel,
+        options,
+        multiAuxDecodingStateMachineFactory
+    )
     val errors = validate(metaModel, auxPlugins)
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     assertEquals(expectedValidationErrors.joinToString("\n"), errors.joinToString("\n"))
