@@ -1,5 +1,6 @@
 package org.treeWare.model.codec
 
+import okio.Buffer
 import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.MutableMainModel
@@ -7,12 +8,11 @@ import org.treeWare.model.decoder.DecodePathResult
 import org.treeWare.model.decoder.decodePath
 import org.treeWare.model.decoder.decodePaths
 import org.treeWare.model.encoder.EncodePasswords
-import java.io.StringReader
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-private const val addressBookMainName = "address_book"
+private const val ADDRESS_BOOK_MAIN_NAME = "address_book"
 
 class DecodePathsTests {
     // region Multiple paths
@@ -53,7 +53,7 @@ class DecodePathsTests {
         """.trimMargin()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val errors = decodePaths(StringReader(paths), mainModel)
+        val errors = decodePaths(Buffer().writeUtf8(paths), mainModel)
 
         assertEquals("", errors.joinToString("\n"))
         assertMatchesJsonString(mainModel, expectedJson, EncodePasswords.ALL)
@@ -75,7 +75,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -96,7 +96,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -115,7 +115,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -134,7 +134,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -159,7 +159,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -180,7 +180,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -208,7 +208,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -232,7 +232,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -256,7 +256,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -284,7 +284,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -308,7 +308,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -332,7 +332,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -359,7 +359,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -388,7 +388,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -416,7 +416,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -449,7 +449,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -477,7 +477,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -501,7 +501,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -524,7 +524,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -547,7 +547,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -561,7 +561,7 @@ class DecodePathsTests {
         val path = "/address_book/name/*"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals(
@@ -582,7 +582,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -601,7 +601,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -617,7 +617,7 @@ class DecodePathsTests {
         val path = "/address_book/settings/last_name_first/*"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `last_name_first` at index 3 in `$path` must be a composition", result.error)
@@ -637,7 +637,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -651,21 +651,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for a primitive-field in a non-wildcard set-field entity with 1 trailing wildcard`() {
         val path = "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/*"
-        val expectedJson = """
-            {
-              "address_book": {
-                "person": [
-                  {
-                    "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                    "first_name": null
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `first_name` at index 4 in `$path` must be a composition", result.error)
@@ -688,7 +676,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -712,7 +700,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -726,21 +714,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for a primitive-field in a wildcard set-field entity with 1 trailing wildcard`() {
         val path = "/address_book/person/*/first_name/*"
-        val expectedJson = """
-            {
-              "address_book": {
-                "person": [
-                  {
-                    "id": null,
-                    "first_name": null
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `first_name` at index 4 in `$path` must be a composition", result.error)
@@ -763,7 +739,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -787,7 +763,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -814,7 +790,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -843,7 +819,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -871,7 +847,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -885,26 +861,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for a primitive-field path with escaped keys with 1 trailing wildcard`() {
         val path = "/address_book/groups/Group\\/1\\\\/sub_groups/Group\\/1\\\\\\/1/info/*"
-        val expectedJson = """
-            {
-              "address_book": {
-                "groups": [
-                  {
-                    "name": "Group/1\\",
-                    "sub_groups": [
-                      {
-                        "name": "Group/1\\/1",
-                        "info": null
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `info` at index 6 in `$path` must be a composition", result.error)
@@ -931,7 +890,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -941,21 +900,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for an escaped wildcard key in a primitive-field path with 1 trailing wildcard`() {
         val path = "/address_book/person/\\*/first_name/*"
-        val expectedJson = """
-            {
-              "address_book": {
-                "person": [
-                  {
-                    "id": "*",
-                    "first_name": null
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `first_name` at index 4 in `$path` must be a composition", result.error)
@@ -977,7 +924,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(1, result.trailingWildcards)
@@ -1000,7 +947,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1014,7 +961,7 @@ class DecodePathsTests {
         val path = "/address_book/name/**"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `name` at index 2 in `$path` must be a composition", result.error)
@@ -1032,7 +979,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1051,7 +998,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1067,7 +1014,7 @@ class DecodePathsTests {
         val path = "/address_book/settings/last_name_first/**"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `last_name_first` at index 3 in `$path` must be a composition", result.error)
@@ -1087,7 +1034,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1101,21 +1048,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for a primitive-field in a non-wildcard set-field entity with 2 trailing wildcards`() {
         val path = "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/**"
-        val expectedJson = """
-            {
-              "address_book": {
-                "person": [
-                  {
-                    "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                    "first_name": null
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `first_name` at index 4 in `$path` must be a composition", result.error)
@@ -1138,7 +1073,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1162,7 +1097,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1176,21 +1111,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for a primitive-field in a wildcard set-field entity with 2 trailing wildcards`() {
         val path = "/address_book/person/*/first_name/**"
-        val expectedJson = """
-            {
-              "address_book": {
-                "person": [
-                  {
-                    "id": null,
-                    "first_name": null
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `first_name` at index 4 in `$path` must be a composition", result.error)
@@ -1213,7 +1136,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1237,7 +1160,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1264,7 +1187,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1293,7 +1216,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1321,7 +1244,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1335,26 +1258,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for a primitive-field path with escaped keys with 2 trailing wildcards`() {
         val path = "/address_book/groups/Group\\/1\\\\/sub_groups/Group\\/1\\\\\\/1/info/**"
-        val expectedJson = """
-            {
-              "address_book": {
-                "groups": [
-                  {
-                    "name": "Group/1\\",
-                    "sub_groups": [
-                      {
-                        "name": "Group/1\\/1",
-                        "info": null
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `info` at index 6 in `$path` must be a composition", result.error)
@@ -1381,7 +1287,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1391,21 +1297,9 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must return an error for an escaped wildcard key in a primitive-field path with 2 trailing wildcards`() {
         val path = "/address_book/person/\\*/first_name/**"
-        val expectedJson = """
-            {
-              "address_book": {
-                "person": [
-                  {
-                    "id": "*",
-                    "first_name": null
-                  }
-                ]
-              }
-            }
-        """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `first_name` at index 4 in `$path` must be a composition", result.error)
@@ -1427,7 +1321,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
         assertEquals(2, result.trailingWildcards)
@@ -1456,7 +1350,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -1479,7 +1373,7 @@ class DecodePathsTests {
         """.trimIndent()
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
         assertEquals(0, result.trailingWildcards)
@@ -1495,7 +1389,7 @@ class DecodePathsTests {
         val path = "/address_book/unknown_entity/unknown_field_name"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Unknown field `unknown_entity` at index 2 in `$path`", result.error)
@@ -1506,7 +1400,7 @@ class DecodePathsTests {
         val path = "/address_book/name/invalid_field_name"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Intermediate field `name` at index 2 in `$path` must be a composition", result.error)
@@ -1517,7 +1411,7 @@ class DecodePathsTests {
         val path = "/address_book/*/*"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Unknown field `*` at index 2 in `$path`", result.error)
@@ -1528,7 +1422,7 @@ class DecodePathsTests {
         val path = "/address_book/**/*"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Unknown field `**` at index 2 in `$path`", result.error)
@@ -1539,7 +1433,7 @@ class DecodePathsTests {
         val path = "/address_book/person/**/first_name"
 
         val mainModel = MutableMainModel(addressBookMetaModel)
-        val result = decodePath(path, null, mainModel, addressBookMainName)
+        val result = decodePath(path, null, mainModel, ADDRESS_BOOK_MAIN_NAME)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
         assertEquals("Sub-tree wildcard `**` at index 3 in `$path` is invalid in the middle of a path", result.error)

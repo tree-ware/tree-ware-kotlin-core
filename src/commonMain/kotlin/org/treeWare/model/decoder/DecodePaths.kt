@@ -1,8 +1,8 @@
 package org.treeWare.model.decoder
 
+import okio.BufferedSource
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.*
-import java.io.Reader
 
 // TODO(deepak-nulu): support aux-data
 
@@ -12,15 +12,17 @@ private const val ESCAPE_CHARACTER = '\\'
 private const val WILDCARD = "*"
 private const val SUB_TREE_WILDCARD = "**"
 
-fun decodePaths(reader: Reader, mainModel: MutableMainModel, pathValueSeparator: String = " = "): List<String> {
+fun decodePaths(source: BufferedSource, mainModel: MutableMainModel, pathValueSeparator: String = " = "): List<String> {
     val mainName = requireNotNull(getMainName(mainModel))
     val errors = mutableListOf<String>()
-    reader.forEachLine { line ->
+    var line = source.readUtf8Line()
+    while (line != null) {
         val (path, value) = line.split(pathValueSeparator, limit = 2)
         when (val result = decodePath(path, value, mainModel, mainName)) {
             is DecodePathResult.Error -> errors.add(result.error)
             else -> {}
         }
+        line = source.readUtf8Line()
     }
     return errors
 }
