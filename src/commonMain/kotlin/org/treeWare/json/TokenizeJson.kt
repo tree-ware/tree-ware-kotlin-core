@@ -2,15 +2,39 @@ package org.treeWare.json
 
 import okio.BufferedSource
 import okio.EOFException
+import org.treeWare.util.ImmutableTokenPosition
+import org.treeWare.util.MutableTokenPosition
 import org.treeWare.util.TokenBuilder
+import org.treeWare.util.TokenPosition
 
 private enum class NestingState {
+    // TODO #### remove unused enum values
     OBJECT_START, ARRAY_START, STRING_START, KEY_NAME, COLON, OBJECT_VALUE, ARRAY_VALUE, COMMA
 }
 
 private class TokenizeState(bufferedSource: BufferedSource) {
     val tokenBuilder = TokenBuilder(bufferedSource)
     val nestingStack = ArrayDeque<NestingState>()
+
+    fun setTokenStart(charactersDelta: Int) {
+        val start = tokenBuilder.getPosition()
+        // TODO #### avoid having to create a new instance
+        tokenStart = ImmutableTokenPosition(
+            start.line,
+            start.column + charactersDelta,
+            start.charactersFromStart + charactersDelta
+        )
+    }
+
+    fun getToken(jsonTokenType: JsonTokenType, value: String = ""): JsonToken {
+        token.jsonTokenType = jsonTokenType
+        token.value = value
+        token.position = tokenStart
+        return token
+    }
+
+    private var tokenStart: TokenPosition = ImmutableTokenPosition(0, 0, 0)
+    private val token = MutableJsonToken(JsonTokenType.VALUE_NULL, "", ImmutableTokenPosition(0, 0, 0))
 }
 
 // TODO(performance): would it be faster to use a buffered channel compared to the current approach of yielding after
@@ -36,7 +60,7 @@ private suspend fun SequenceScope<JsonToken>.parseValue(tokenizeState: TokenizeS
     when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
         '{'.code -> parseObject(tokenizeState)
         '['.code -> parseArray(tokenizeState)
-        '"'.code -> parseString(tokenizeState) { JsonToken.ValueString(it) }
+        '"'.code -> parseString(tokenizeState) { tokenizeState.getToken(JsonTokenType.VALUE_STRING, it) }
         '-'.code -> parseNumber(tokenizeState)
         in '0'.code..'9'.code -> parseNumber(tokenizeState)
         't'.code -> parseTrue(tokenizeState)
@@ -64,7 +88,7 @@ private fun handleClose(tokenizeState: TokenizeState, expectedNestingState: Nest
 private suspend fun SequenceScope<JsonToken>.parseObject(tokenizeState: TokenizeState) {
     tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard '{'
     tokenizeState.nestingStack.addFirst(NestingState.OBJECT_START)
-    yield(JsonToken.ObjectStart)
+    yield(tokenizeState.getToken(JsonTokenType.OBJECT_START))
     skipWs(tokenizeState)
     when (tokenizeState.tokenBuilder.peekUtf8CodePoint()) {
         '}'.code -> {}
@@ -76,7 +100,8 @@ private suspend fun SequenceScope<JsonToken>.parseObject(tokenizeState: Tokenize
     }
     tokenizeState.tokenBuilder.expectCharacters("}")
     tokenizeState.nestingStack.removeFirst()
-    yield(JsonToken.ObjectEnd)
+    tokenizeState.setTokenStart(0)
+    yield(tokenizeState.getToken(JsonTokenType.OBJECT_END))
 }
 
 private suspend fun SequenceScope<JsonToken>.parseMembers(tokenizeState: TokenizeState) {
@@ -89,7 +114,8 @@ private suspend fun SequenceScope<JsonToken>.parseMembers(tokenizeState: Tokeniz
 
 private suspend fun SequenceScope<JsonToken>.parseMember(tokenizeState: TokenizeState) {
     skipWs(tokenizeState)
-    this.parseString(tokenizeState) { JsonToken.KeyName(it) }
+    tokenizeState.setTokenStart(1)
+    this.parseString(tokenizeState) { tokenizeState.getToken(JsonTokenType.KEY_NAME, it) }
     skipWs(tokenizeState)
     tokenizeState.tokenBuilder.expectCharacters(":")
     parseElement(tokenizeState)
@@ -98,11 +124,12 @@ private suspend fun SequenceScope<JsonToken>.parseMember(tokenizeState: Tokenize
 private suspend fun SequenceScope<JsonToken>.parseArray(tokenizeState: TokenizeState) {
     tokenizeState.tokenBuilder.discardPeekedUtf8CodePoint() // discard '['
     tokenizeState.nestingStack.addFirst(NestingState.ARRAY_START)
-    yield(JsonToken.ArrayStart)
+    yield(tokenizeState.getToken(JsonTokenType.ARRAY_START))
     parseElements(tokenizeState)
     tokenizeState.tokenBuilder.expectCharacters("]")
     tokenizeState.nestingStack.removeFirst()
-    yield(JsonToken.ArrayEnd)
+    tokenizeState.setTokenStart(0)
+    yield(tokenizeState.getToken(JsonTokenType.ARRAY_END))
 }
 
 private suspend fun SequenceScope<JsonToken>.parseElements(tokenizeState: TokenizeState) {
@@ -118,6 +145,7 @@ private suspend fun SequenceScope<JsonToken>.parseElements(tokenizeState: Tokeni
 
 private suspend fun SequenceScope<JsonToken>.parseElement(tokenizeState: TokenizeState) {
     skipWs(tokenizeState)
+    tokenizeState.setTokenStart(1)
     this.parseValue(tokenizeState)
     skipWs(tokenizeState)
 }
@@ -186,7 +214,7 @@ private suspend fun SequenceScope<JsonToken>.parseNumber(tokenizeState: Tokenize
     parseInteger(tokenizeState)
     parseFraction(tokenizeState)
     parseExponent(tokenizeState)
-    yield(JsonToken.ValueNumber(tokenizeState.tokenBuilder.getToken()))
+    yield(tokenizeState.getToken(JsonTokenType.VALUE_NUMBER, tokenizeState.tokenBuilder.getToken()))
     tokenizeState.tokenBuilder.clearToken()
 }
 
@@ -245,17 +273,17 @@ private fun parseSign(tokenizeState: TokenizeState) {
 
 private suspend fun SequenceScope<JsonToken>.parseTrue(tokenizeState: TokenizeState) {
     tokenizeState.tokenBuilder.expectCharacters("true")
-    yield(JsonToken.ValueTrue)
+    yield(tokenizeState.getToken(JsonTokenType.VALUE_TRUE))
 }
 
 private suspend fun SequenceScope<JsonToken>.parseFalse(tokenizeState: TokenizeState) {
     tokenizeState.tokenBuilder.expectCharacters("false")
-    yield(JsonToken.ValueFalse)
+    yield(tokenizeState.getToken(JsonTokenType.VALUE_FALSE))
 }
 
 private suspend fun SequenceScope<JsonToken>.parseNull(tokenizeState: TokenizeState) {
     tokenizeState.tokenBuilder.expectCharacters("null")
-    yield(JsonToken.ValueNull)
+    yield(tokenizeState.getToken(JsonTokenType.VALUE_NULL))
 }
 
 private fun skipWs(tokenizeState: TokenizeState) {
