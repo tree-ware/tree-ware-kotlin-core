@@ -1,5 +1,5 @@
 group = "org.tree-ware.tree-ware-kotlin-core"
-version = "0.1.0.0"
+version = "0.1.0.1"
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
