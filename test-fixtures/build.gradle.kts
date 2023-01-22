@@ -1,11 +1,12 @@
-group = "org.tree-ware"
-version = "1.0-SNAPSHOT"
+group = "org.tree-ware.tree-ware-kotlin-core"
+version = "0.1.0.0"
 
 val log4j2Version = "2.16.0"
 val mockkVersion = "1.12.0"
 
 plugins {
     kotlin("multiplatform")
+    id("maven-publish")
 }
 
 repositories {
@@ -31,7 +32,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":tree-ware-kotlin-core"))
+                implementation(project(":"))
                 implementation("io.mockk:mockk-common:$mockkVersion")
                 implementation(kotlin("test"))
             }
