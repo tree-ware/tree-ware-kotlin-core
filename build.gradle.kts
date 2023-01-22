@@ -1,5 +1,5 @@
-group = "org.tree-ware"
-version = "1.0-SNAPSHOT"
+group = "org.tree-ware.tree-ware-kotlin-core"
+version = "0.1.0.0"
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
@@ -13,6 +13,7 @@ val semverVersion = "1.3.3"
 plugins {
     kotlin("multiplatform") version "1.7.0"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
+    id("maven-publish")
 }
 
 repositories {
@@ -49,7 +50,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(project(":tree-ware-kotlin-core:test-fixtures"))
+                implementation(project(":test-fixtures"))
                 implementation("io.mockk:mockk-common:$mockkVersion")
                 implementation(kotlin("test"))
             }
@@ -69,7 +70,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation(project(":tree-ware-kotlin-core:test-fixtures"))
+                implementation(project(":test-fixtures"))
                 implementation("io.mockk:mockk:$mockkVersion")
             }
         }
