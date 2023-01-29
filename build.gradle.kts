@@ -1,5 +1,11 @@
-group = "org.tree-ware.tree-ware-kotlin-core"
-version = "0.1.0.1"
+// The libraries are currently published to JitPack. JitPack picks up the
+// version from the repo label, resulting in all libraries from the repo
+// having the same version in JitPack. Setting the version for all projects
+// conveys this.
+allprojects {
+    group = "org.tree-ware.tree-ware-kotlin-core"
+    version = "0.1.0.2"
+}
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
