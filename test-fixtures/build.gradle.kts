@@ -1,11 +1,8 @@
-group = "org.tree-ware.tree-ware-kotlin-core"
-version = "0.1.0.0"
-
 val log4j2Version = "2.16.0"
 val mockkVersion = "1.12.0"
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("multiplatform") version "1.7.0"
     id("maven-publish")
 }
 
