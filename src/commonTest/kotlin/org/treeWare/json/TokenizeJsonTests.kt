@@ -9,6 +9,24 @@ import kotlin.test.assertFailsWith
 internal class TokenizeJsonTests {
     private fun doubleQuoted(value: String): String = "\"$value\""
 
+    // region Empty and blank JSON
+
+    @Test
+    fun must_not_emit_tokens_for_empty_json() {
+        val json = ""
+        val expected = emptyList<JsonToken>()
+        testSuccess(json, expected)
+    }
+
+    @Test
+    fun must_not_emit_tokens_for_blank_json() {
+        val json = " \n\t\r\n"
+        val expected = emptyList<JsonToken>()
+        testSuccess(json, expected)
+    }
+
+    // endregion
+
     // region String values
 
     @Test
