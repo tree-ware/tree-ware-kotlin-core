@@ -23,7 +23,7 @@ abstract class MutableElementModel : ElementModel {
     }
 }
 
-class MutableMainModel(override val mainMeta: MainModel?) :
+open class MutableMainModel(override val mainMeta: MainModel?) :
     MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null), MainModel {
     override val parent: MutableBaseEntityModel? = null
 
@@ -295,8 +295,7 @@ class MutablePassword1wayModel(
         if (that !is Password1wayModel) return false
         if (this.unhashed != that.unhashed) return false
         if (this.hashed != that.hashed) return false
-        if (this.hashVersion != that.hashVersion) return false
-        return true
+        return this.hashVersion == that.hashVersion
     }
 
     fun setUnhashed(unhashed: String): Boolean {
@@ -350,8 +349,7 @@ class MutablePassword2wayModel(
         if (that !is Password2wayModel) return false
         if (this.unencrypted != that.unencrypted) return false
         if (this.encrypted != that.encrypted) return false
-        if (this.cipherVersion != that.cipherVersion) return false
-        return true
+        return this.cipherVersion == that.cipherVersion
     }
 
     fun setUnencrypted(unencrypted: String): Boolean {

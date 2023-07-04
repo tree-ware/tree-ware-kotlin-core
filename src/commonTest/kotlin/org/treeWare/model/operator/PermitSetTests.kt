@@ -1,6 +1,7 @@
 package org.treeWare.model.operator
 
 import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.model.AddressBookMutableMainModelFactory
 import org.treeWare.model.addCity
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
@@ -44,7 +45,7 @@ class PermitSetTests {
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory
         )
         assertMatchesJsonString(setModel, setJson, EncodePasswords.ALL, multiAuxEncoder)
-        val actual = permitSet(setModel, rbac)
+        val actual = permitSet(setModel, rbac, AddressBookMutableMainModelFactory)
         if (expectedPermittedJson == null) {
             when (actual) {
                 is FullyPermitted -> assertMatchesJsonString(

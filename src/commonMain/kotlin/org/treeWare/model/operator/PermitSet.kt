@@ -15,15 +15,20 @@ import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
 /** Return a subset of `set` that is permitted by `rbac` */
-fun permitSet(set: MainModel, rbac: MainModel): PermitResponse {
-    val visitor = PermitSetVisitor(rbac)
+fun <I : MainModel, O : MutableMainModel> permitSet(
+    set: I,
+    rbac: I,
+    mutableMainModelFactory: MutableMainModelFactory<O>
+): PermitResponse {
+    val visitor = PermitSetVisitor(rbac, mutableMainModelFactory)
     forEach(set, rbac, visitor, false)
     return visitor.permitResponse
 }
 
-private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(
-    TraversalAction.CONTINUE
-) {
+private class PermitSetVisitor<O : MutableMainModel>(
+    private val rbac: MainModel,
+    private val mutableMainModelFactory: MutableMainModelFactory<O>
+) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {
             val permitted = permittedMain ?: return NotPermitted
@@ -46,7 +51,7 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
         val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
         assertInDevMode(setAuxError == null)
         permitSetAuxStack.push(getPermissionsAux(followerMain1))
-        permittedMainInternal = MutableMainModel(leaderMain1.mainMeta)
+        permittedMainInternal = mutableMainModelFactory.createInstance()
         copySetAux(leaderMain1, permittedMainInternal)
         return if (permitSetAuxStack.isAnySetPermitted()) {
             permittedStack.addFirst(permittedMainInternal)
@@ -194,9 +199,9 @@ private class PermitSetVisitor(private val rbac: MainModel) : AbstractLeader1Fol
         val setAux = setAuxStack.peekActive()
         if (setAux == SetAux.CREATE || setAux == SetAux.UPDATE) {
             // TODO(cleanup): drop valueAsMain & typecast by updating PermitSetVisitor to use root entities as starting points.
-            val target = MutableMainModel(rbac.mainMeta)
+            val target = mutableMainModelFactory.createInstance()
             target.root = leaderValue1.value as MutableEntityModel
-            val targetPermitted = permitGet(target, rbac)
+            val targetPermitted = permitGet(target, rbac, mutableMainModelFactory)
             if (targetPermitted !is FullyPermitted) {
                 partiallyDenied = true
                 if (permittedParent.elementType == ModelElementType.SINGLE_FIELD) permittedParent.detachFromParent()
