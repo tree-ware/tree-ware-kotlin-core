@@ -8,6 +8,7 @@ import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
+import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.operator.union
@@ -69,23 +70,22 @@ fun newMetaModelFromJsonReaders(
     logErrors: Boolean
 ): ValidatedMetaModel {
     val metaMetaModel = newMainMetaMetaModel()
+    val metaModel = MutableMainModel(metaMetaModel)
     // TODO(performance): change MultiAuxDecodingStateMachineFactory() varargs to list to avoid array copies.
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*metaModelAuxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val metaModelParts = metaModelSources.map { source ->
-        val (decodedMetaModel, decodeErrors) = decodeJson(
+    metaModelSources.forEach { source ->
+        val decodeErrors = decodeJson(
             source,
-            metaMetaModel,
+            metaModel,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
-        if (decodedMetaModel == null || decodeErrors.isNotEmpty()) {
+        if (decodeErrors.isNotEmpty()) {
             if (logErrors) decodeErrors.forEach { logger.error { it } }
             return ValidatedMetaModel(null, decodeErrors)
         }
-        decodedMetaModel
     }
-    val metaModel = union(metaModelParts, MetaModelMutableMainModelFactory)
     val baseErrors = validate(metaModel, hasher, cipher, logMetaModelFullNames)
     if (logErrors) baseErrors.forEach { logger.error { it } }
     if (baseErrors.isNotEmpty()) return ValidatedMetaModel(null, baseErrors)

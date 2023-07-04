@@ -57,19 +57,21 @@ private fun assertJsonValidationErrors(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val (metaModel, decodeErrors) = decodeJson(
+    val metaModel = MutableMainModel(metaMetaModel)
+    val decodeErrors = decodeJson(
         bufferedSource,
-        metaMetaModel,
+        metaModel,
         options,
         multiAuxDecodingStateMachineFactory
     )
-    val errors = validate(metaModel, auxPlugins)
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
-    assertEquals(expectedValidationErrors.joinToString("\n"), errors.joinToString("\n"))
+    if (decodeErrors.isEmpty()) {
+        val errors = validate(metaModel, auxPlugins)
+        assertEquals(expectedValidationErrors.joinToString("\n"), errors.joinToString("\n"))
+    }
 }
 
-private fun validate(metaModel: MutableMainModel?, auxPlugins: Array<out MetaModelAuxPlugin>): List<String> {
-    if (metaModel == null) return listOf("Meta-model decoding failed")
+private fun validate(metaModel: MutableMainModel, auxPlugins: Array<out MetaModelAuxPlugin>): List<String> {
     val baseErrors = validate(metaModel, null, null)
     if (baseErrors.isNotEmpty()) return baseErrors
     return auxPlugins.flatMap { it.validate(metaModel) }

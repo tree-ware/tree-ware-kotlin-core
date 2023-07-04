@@ -80,14 +80,14 @@ fun getMainModelFromJson(
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
 ): MutableMainModel {
-    val (mainModel, decodeErrors) = decodeJson(
+    val mainModel = MutableMainModel(meta)
+    val decodeErrors = decodeJson(
         bufferedSource,
-        meta,
+        mainModel,
         options,
         multiAuxDecodingStateMachineFactory
     )
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
-    assertTrue(mainModel != null)
     return mainModel
 }
 

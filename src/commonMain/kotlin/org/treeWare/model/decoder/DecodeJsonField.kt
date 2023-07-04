@@ -6,6 +6,11 @@ import org.treeWare.model.decoder.stateMachine.DelegatingStateMachine
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.decoder.stateMachine.getFieldStateMachine
 
+/**
+ * Decode the JSON in `bufferedSource` into `field`.
+ *
+ * @return list of errors.
+ */
 fun decodeJsonField(
     bufferedSource: BufferedSource,
     field: MutableFieldModel,
