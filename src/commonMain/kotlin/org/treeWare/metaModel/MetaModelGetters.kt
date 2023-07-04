@@ -6,12 +6,20 @@ fun getFullName(elementMeta: ElementModel?): String? = getMetaModelResolved(elem
 
 fun getMainMetaName(mainMeta: MainModel): String = getMetaName(getRootMeta(mainMeta))
 
-fun getVersionMeta(mainMeta: MainModel): EntityModel = getSingleEntity(mainMeta.root, "version")
+fun getVersionMeta(mainMeta: MainModel): EntityModel {
+    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
+    return getSingleEntity(mainMetaRoot, "version")
+}
 
-fun getRootMeta(mainMeta: MainModel): EntityModel = getSingleEntity(mainMeta.root, "root")
+fun getRootMeta(mainMeta: MainModel): EntityModel {
+    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
+    return getSingleEntity(mainMetaRoot, "root")
+}
 
-fun getPackagesMeta(mainMeta: MainModel): CollectionFieldModel =
-    getCollectionField(mainMeta.root, "packages")
+fun getPackagesMeta(mainMeta: MainModel): CollectionFieldModel {
+    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
+    return getCollectionField(mainMetaRoot, "packages")
+}
 
 fun getEnumerationsMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "enumerations") }.getOrNull()

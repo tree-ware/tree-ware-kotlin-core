@@ -24,7 +24,8 @@ class EvaluateExistsIfClauseTests {
 
     private fun getSettingsEntity(modelJson: String): EntityModel {
         val model = getMainModelFromJsonString(addressBookMetaModel, modelJson)
-        return getSingleEntity(model.root, "settings")
+        val modelRoot = model.root ?: throw IllegalStateException("Root has not been set")
+        return getSingleEntity(modelRoot, "settings")
     }
 
     // region errors from missing fields in exists_if clauses

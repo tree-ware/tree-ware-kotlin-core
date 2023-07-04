@@ -12,12 +12,14 @@ fun newMainMetaMeta(): MutableMainModel {
 }
 
 fun newVersionMetaMeta(mainMeta: MutableMainModel, semanticVersion: Version) {
-    val version = newCompositionSingleField(mainMeta.root, "version")
+    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
+    val version = newCompositionSingleField(mainMetaRoot, "version")
     newStringSingleField(version, "semantic", semanticVersion.toString())
 }
 
 fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String, packageName: String) {
-    val root = newCompositionSingleField(mainMeta.root, "root")
+    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
+    val root = newCompositionSingleField(mainMetaRoot, "root")
     newStringSingleField(root, "name", name)
     newEnumerationSingleField(root, "type", "composition")
     val composition = newCompositionSingleField(root, "composition")
@@ -25,8 +27,10 @@ fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String
     newStringSingleField(composition, "package", packageName)
 }
 
-fun newPackagesMetaMeta(mainMeta: MutableMainModel): MutableListFieldModel =
-    newCompositionListField(mainMeta.root, "packages")
+fun newPackagesMetaMeta(mainMeta: MutableMainModel): MutableListFieldModel {
+    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
+    return newCompositionListField(mainMetaRoot, "packages")
+}
 
 fun newPackageMetaMeta(
     packagesMeta: MutableListFieldModel,

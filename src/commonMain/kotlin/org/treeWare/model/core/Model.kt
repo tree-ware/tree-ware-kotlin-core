@@ -21,7 +21,9 @@ interface MainModel : SingleFieldModel {
         get() = ModelElementType.MAIN
 
     val mainMeta: MainModel?
-    val root: EntityModel // Same as SingleFieldModel.value but different type
+    val root: EntityModel? // Same as SingleFieldModel.value but different type
+
+    fun isEmpty(): Boolean = root == null
 }
 
 data class Keys(val available: List<SingleFieldModel>, val missing: List<String>)

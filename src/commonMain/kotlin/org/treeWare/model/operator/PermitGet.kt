@@ -36,7 +36,7 @@ private class PermitGetVisitor<O : MutableMainModel>(
 
     private val permittedMain: MutableMainModel?
         get() = permittedMainInternal.takeIf {
-            val root = runCatching { it.root }.getOrNull()
+            val root = it.root
             root != null && !root.isEmpty()
         }
 

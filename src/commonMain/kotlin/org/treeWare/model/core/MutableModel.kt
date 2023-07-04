@@ -28,8 +28,8 @@ open class MutableMainModel(override val mainMeta: MainModel?) :
     override val parent: MutableBaseEntityModel? = null
 
     override var value: MutableElementModel? = null
-    override var root: MutableEntityModel
-        get() = value as? MutableEntityModel ?: throw IllegalStateException("Root has not been set")
+    override var root: MutableEntityModel?
+        get() = value as MutableEntityModel?
         set(value) {
             this.value = value
         }
