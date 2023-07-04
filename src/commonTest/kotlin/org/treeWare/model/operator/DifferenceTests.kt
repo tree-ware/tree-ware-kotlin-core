@@ -1,6 +1,7 @@
 package org.treeWare.model.operator
 
 import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.model.AddressBookMutableMainModelFactory
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
@@ -23,7 +24,7 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2)
+        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
         val updateOutput = output.updateModel
@@ -45,15 +46,15 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2)
+        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val updateOutput = output.updateModel
 
         assertNotNull(createOutput)
         assertNotNull(updateOutput)
 
-        val mergeCreateOutput = union(listOf(input1, createOutput))
-        val mergeUpdateOutput = union(listOf(mergeCreateOutput, updateOutput))
+        val mergeCreateOutput = union(listOf(input1, createOutput), AddressBookMutableMainModelFactory)
+        val mergeUpdateOutput = union(listOf(mergeCreateOutput, updateOutput), AddressBookMutableMainModelFactory)
         assertMatchesJson(
             mergeUpdateOutput, expectedMergeTestResult, EncodePasswords.ALL, MultiAuxEncoder()
         )
@@ -70,7 +71,7 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input2, input1)
+        val output = difference(input2, input1, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
 
@@ -85,7 +86,7 @@ class DifferenceTests {
         val jsonInput1 = readFile("model/operator/difference/mini_test_book_1.json")
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
-        val output = difference(input1, input1)
+        val output = difference(input1, input1, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
         val updateOutput = output.updateModel
@@ -108,7 +109,7 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2)
+        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
         val updateOutput = output.updateModel

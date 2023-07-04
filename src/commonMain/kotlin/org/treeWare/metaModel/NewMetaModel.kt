@@ -85,7 +85,7 @@ fun newMetaModelFromJsonReaders(
         }
         decodedMetaModel
     }
-    val metaModel = union(metaModelParts)
+    val metaModel = union(metaModelParts, MetaModelMutableMainModelFactory)
     val baseErrors = validate(metaModel, hasher, cipher, logMetaModelFullNames)
     if (logErrors) baseErrors.forEach { logger.error { it } }
     if (baseErrors.isNotEmpty()) return ValidatedMetaModel(null, baseErrors)

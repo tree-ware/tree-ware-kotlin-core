@@ -1,6 +1,7 @@
 package org.treeWare.model.operator
 
 import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.model.AddressBookMutableMainModelFactory
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
@@ -41,7 +42,7 @@ class UnionTests {
             jsonInput2,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
-        val output = union(listOf(input1, input2))
+        val output = union(listOf(input1, input2), AddressBookMutableMainModelFactory)
         assertMatchesJson(
             output, expectedOutputJsonFile, EncodePasswords.ALL, MultiAuxEncoder(
                 aux2 to StringAuxEncoder(),

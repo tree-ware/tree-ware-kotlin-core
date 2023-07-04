@@ -11,13 +11,14 @@ interface GetEntityDelegate
 
 object GetOperatorId : OperatorId<GetEntityDelegate>
 
-fun get(
+fun <O : MutableMainModel> get(
     request: MainModel,
     getDelegate: GetDelegate,
     setEntityDelegates: EntityDelegateRegistry<SetEntityDelegate>?,
-    getEntityDelegates: EntityDelegateRegistry<GetEntityDelegate>?
+    getEntityDelegates: EntityDelegateRegistry<GetEntityDelegate>?,
+    mutableMainModelFactory: MutableMainModelFactory<O>
 ): GetResponse {
-    val response = MutableMainModel(request.mainMeta)
+    val response = mutableMainModelFactory.createInstance()
     response.getOrNewRoot()
     val getVisitor = GetDelegateVisitor(getDelegate, setEntityDelegates)
     forEach(response, request, getVisitor, false, ::followerEntityEquals)

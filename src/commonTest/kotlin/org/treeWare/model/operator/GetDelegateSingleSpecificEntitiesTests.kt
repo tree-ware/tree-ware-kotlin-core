@@ -115,7 +115,7 @@ class GetDelegateSingleSpecificEntitiesTests {
             GetCompositionSetResult.Entities(listOf(newYork))
         }
 
-        val response = get(request, delegate, null, null)
+        val response = get(request, delegate, null, null, AddressBookMutableMainModelFactory)
         verifySequence {
             delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
             delegate.getCompositionSet(

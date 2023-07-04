@@ -6,17 +6,19 @@ import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
-
-/*First input should be original, second input should be new*/
-fun difference(oldModel: MainModel, newModel: MainModel): DifferenceModels {
-    val differenceVisitor = DifferenceVisitor()
+fun <I : MainModel, O : MutableMainModel> difference(
+    oldModel: I,
+    newModel: I,
+    mutableMainModelFactory: MutableMainModelFactory<O>
+): DifferenceModels {
+    val differenceVisitor = DifferenceVisitor(mutableMainModelFactory)
     forEach(listOf(oldModel, newModel), differenceVisitor, false)
     return differenceVisitor.getModels()
 }
 
-private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction>(
-    TraversalAction.CONTINUE
-) {
+private class DifferenceVisitor<O : MutableMainModel>(
+    private val mutableMainModelFactory: MutableMainModelFactory<O>
+) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val createStack = ArrayDeque<MutableElementModel>()
     val deleteStack = ArrayDeque<MutableElementModel>()
     val updateStack = ArrayDeque<MutableElementModel>()
@@ -24,8 +26,6 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
     lateinit var createMainModel: MutableMainModel
     lateinit var deleteMainModel: MutableMainModel
     lateinit var updateMainModel: MutableMainModel
-
-    lateinit var mainMeta: MainModel
 
     fun getModels(giveNullIfEmpty: Boolean = true): DifferenceModels {
         /*If a result tree is empty, then instead make the value of the tree null*/
@@ -45,10 +45,9 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
     }
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        mainMeta = checkNotNull(leaderMainList.last()?.mainMeta)
-        createMainModel = MutableMainModel(mainMeta)//what needs to be created
-        deleteMainModel = MutableMainModel(mainMeta)//what needs to be deleted
-        updateMainModel = MutableMainModel(mainMeta)//what needs to be updated
+        createMainModel = mutableMainModelFactory.createInstance()
+        deleteMainModel = mutableMainModelFactory.createInstance()
+        updateMainModel = mutableMainModelFactory.createInstance()
 
         createStack.addFirst(createMainModel)
         deleteStack.addFirst(deleteMainModel)
@@ -236,14 +235,14 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
 
         /**===== Check if it's absent in the original =====**/
         if (oldField == null) { //if the original doesn't have the entity:
-            elementInclusion.inCreate = true //this should be in the create tree
+            elementInclusion.inCreate = true //this should be in the `create` tree
             copy(checkNotNull(newField), createField)
             return TraversalAction.ABORT_SUB_TREE
         }
 
         /**===== Check if it's absent in the new version =====**/
-        if (newField == null) {//if the new version doesn't have the entity:
-            elementInclusion.inDelete = true //this should be in the delete tree
+        if (newField == null) { //if the new version doesn't have the entity:
+            elementInclusion.inDelete = true //this should be in the `delete` tree
             copy(oldField, deleteField)
             return TraversalAction.ABORT_SUB_TREE
         }
@@ -281,20 +280,20 @@ private class DifferenceVisitor : AbstractLeaderManyModelVisitor<TraversalAction
     }
 
 
-    /**===== Uses the difference operator to compare associations =====**/
+    // Uses the difference operator to compare associations
     private fun associationsEqual(oldAssociation: AssociationModel, newAssociation: AssociationModel): Boolean {
         val oldPathTree = oldAssociation.value
         val newPathTree = newAssociation.value
 
-        val oldModel = MutableMainModel(mainMeta)
+        val oldModel = mutableMainModelFactory.createInstance()
         val oldRoot = oldModel.getOrNewRoot()
         copy(oldPathTree, oldRoot)
 
-        val newModel = MutableMainModel(mainMeta)
+        val newModel = mutableMainModelFactory.createInstance()
         val newRoot = newModel.getOrNewRoot()
         copy(newPathTree, newRoot)
 
-        return !difference(oldModel, newModel).isDifferent()
+        return !difference(oldModel, newModel, mutableMainModelFactory).isDifferent()
     }
 }
 
