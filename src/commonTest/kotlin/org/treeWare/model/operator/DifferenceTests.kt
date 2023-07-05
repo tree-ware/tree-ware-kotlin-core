@@ -7,10 +7,7 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.util.readFile
-import kotlin.test.Test
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
+import kotlin.test.*
 
 class DifferenceTests {
     @Test
@@ -24,17 +21,18 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
+        val output = newDifferenceModels(AddressBookMutableMainModelFactory)
+        difference(input1, input2, output, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
         val updateOutput = output.updateModel
 
-        assertNotNull(createOutput)
+        assertFalse(createOutput.isEmpty())
         assertMatchesJson(createOutput, expectedCreateTestOutput, EncodePasswords.ALL)
 
-        assertNull(deleteOutput)
+        assertTrue(deleteOutput.isEmpty())
 
-        assertNotNull(updateOutput)
+        assertFalse(updateOutput.isEmpty())
         assertMatchesJson(updateOutput, expectedUpdateTestOutput, EncodePasswords.ALL)
     }
 
@@ -46,15 +44,18 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
+        val output = newDifferenceModels(AddressBookMutableMainModelFactory)
+        difference(input1, input2, output, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val updateOutput = output.updateModel
 
-        assertNotNull(createOutput)
-        assertNotNull(updateOutput)
+        assertFalse(createOutput.isEmpty())
+        assertFalse(updateOutput.isEmpty())
 
-        val mergeCreateOutput = union(listOf(input1, createOutput), AddressBookMutableMainModelFactory)
-        val mergeUpdateOutput = union(listOf(mergeCreateOutput, updateOutput), AddressBookMutableMainModelFactory)
+        val mergeCreateOutput = AddressBookMutableMainModelFactory.createInstance()
+        val mergeUpdateOutput = AddressBookMutableMainModelFactory.createInstance()
+        union(listOf(input1, createOutput), mergeCreateOutput)
+        union(listOf(mergeCreateOutput, updateOutput), mergeUpdateOutput)
         assertMatchesJson(
             mergeUpdateOutput, expectedMergeTestResult, EncodePasswords.ALL, MultiAuxEncoder()
         )
@@ -71,14 +72,15 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input2, input1, AddressBookMutableMainModelFactory)
+        val output = newDifferenceModels(AddressBookMutableMainModelFactory)
+        difference(input2, input1, output, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
 
-        assertNotNull(deleteOutput)
+        assertFalse(deleteOutput.isEmpty())
         assertMatchesJson(deleteOutput, expectedCreateTestOutput, EncodePasswords.ALL)
 
-        assertNull(createOutput)
+        assertTrue(createOutput.isEmpty())
     }
 
     @Test
@@ -86,14 +88,15 @@ class DifferenceTests {
         val jsonInput1 = readFile("model/operator/difference/mini_test_book_1.json")
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
-        val output = difference(input1, input1, AddressBookMutableMainModelFactory)
+        val output = newDifferenceModels(AddressBookMutableMainModelFactory)
+        difference(input1, input1, output, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
         val updateOutput = output.updateModel
 
-        assertNull(createOutput)
-        assertNull(deleteOutput)
-        assertNull(updateOutput)
+        assertTrue(createOutput.isEmpty())
+        assertTrue(deleteOutput.isEmpty())
+        assertTrue(updateOutput.isEmpty())
 
     }
 
@@ -109,18 +112,19 @@ class DifferenceTests {
 
         val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
         val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
+        val output = newDifferenceModels(AddressBookMutableMainModelFactory)
+        difference(input1, input2, output, AddressBookMutableMainModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
         val updateOutput = output.updateModel
 
-        assertNotNull(createOutput)
+        assertFalse(createOutput.isEmpty())
         assertMatchesJson(createOutput, expectedCreateTestOutput, EncodePasswords.ALL)
 
-        assertNotNull(deleteOutput)
+        assertFalse(deleteOutput.isEmpty())
         assertMatchesJson(deleteOutput, expectedDeleteTestOutput, EncodePasswords.ALL)
 
-        assertNotNull(updateOutput)
+        assertFalse(updateOutput.isEmpty())
         assertMatchesJson(updateOutput, expectedUpdateTestOutput, EncodePasswords.ALL)
     }
 

@@ -42,7 +42,8 @@ class UnionTests {
             jsonInput2,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
         )
-        val output = union(listOf(input1, input2), AddressBookMutableMainModelFactory)
+        val output = AddressBookMutableMainModelFactory.createInstance()
+        union(listOf(input1, input2), output)
         assertMatchesJson(
             output, expectedOutputJsonFile, EncodePasswords.ALL, MultiAuxEncoder(
                 aux2 to StringAuxEncoder(),

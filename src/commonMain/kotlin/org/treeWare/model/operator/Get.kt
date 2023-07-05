@@ -3,7 +3,6 @@ package org.treeWare.model.operator
 import org.treeWare.model.core.*
 import org.treeWare.model.operator.get.GetDelegate
 import org.treeWare.model.operator.get.GetDelegateVisitor
-import org.treeWare.model.operator.get.GetResponse
 import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
@@ -16,14 +15,13 @@ fun <O : MutableMainModel> get(
     getDelegate: GetDelegate,
     setEntityDelegates: EntityDelegateRegistry<SetEntityDelegate>?,
     getEntityDelegates: EntityDelegateRegistry<GetEntityDelegate>?,
-    mutableMainModelFactory: MutableMainModelFactory<O>
-): GetResponse {
-    val response = mutableMainModelFactory.createInstance()
+    response: O
+): Errors {
     response.getOrNewRoot()
     val getVisitor = GetDelegateVisitor(getDelegate, setEntityDelegates)
     forEach(response, request, getVisitor, false, ::followerEntityEquals)
-    return if (getVisitor.errors.isEmpty()) GetResponse.Model(response)
-    else GetResponse.ErrorList(getVisitor.errorCode, getVisitor.errors)
+    return if (getVisitor.errors.isEmpty()) Errors.None
+    else Errors.ErrorList(getVisitor.errorCode, getVisitor.errors)
 }
 
 private fun followerEntityEquals(

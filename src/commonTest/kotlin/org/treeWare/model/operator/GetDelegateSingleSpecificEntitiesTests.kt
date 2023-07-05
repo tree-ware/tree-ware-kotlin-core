@@ -11,7 +11,6 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.operator.get.GetCompositionResult
 import org.treeWare.model.operator.get.GetCompositionSetResult
 import org.treeWare.model.operator.get.GetDelegate
-import org.treeWare.model.operator.get.GetResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -115,7 +114,8 @@ class GetDelegateSingleSpecificEntitiesTests {
             GetCompositionSetResult.Entities(listOf(newYork))
         }
 
-        val response = get(request, delegate, null, null, AddressBookMutableMainModelFactory)
+        val response = AddressBookMutableMainModelFactory.createInstance()
+        val errors = get(request, delegate, null, null, response)
         verifySequence {
             delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
             delegate.getCompositionSet(
@@ -140,9 +140,9 @@ class GetDelegateSingleSpecificEntitiesTests {
                 ofType()
             )
         }
-        assertTrue(response is GetResponse.Model)
+        assertTrue(errors is Errors.None)
         assertMatchesJson(
-            response.model,
+            response,
             "org/treeWare/model/operator/get_response_single_specific_entities.json",
             EncodePasswords.ALL
         )

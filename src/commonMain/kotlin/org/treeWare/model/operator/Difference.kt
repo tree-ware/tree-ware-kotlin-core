@@ -9,49 +9,44 @@ import org.treeWare.util.assertInDevMode
 fun <I : MainModel, O : MutableMainModel> difference(
     oldModel: I,
     newModel: I,
+    output: DifferenceModels<O>,
     mutableMainModelFactory: MutableMainModelFactory<O>
-): DifferenceModels {
-    val differenceVisitor = DifferenceVisitor(mutableMainModelFactory)
+) {
+    val differenceVisitor = DifferenceVisitor(output, mutableMainModelFactory)
     forEach(listOf(oldModel, newModel), differenceVisitor, false)
-    return differenceVisitor.getModels()
 }
 
 private class DifferenceVisitor<O : MutableMainModel>(
+    private val output: DifferenceModels<O>,
     private val mutableMainModelFactory: MutableMainModelFactory<O>
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val createStack = ArrayDeque<MutableElementModel>()
     val deleteStack = ArrayDeque<MutableElementModel>()
     val updateStack = ArrayDeque<MutableElementModel>()
     val inclusionStack = ArrayDeque<InclusionData>() //holds data which trees each element should be added to
-    lateinit var createMainModel: MutableMainModel
-    lateinit var deleteMainModel: MutableMainModel
-    lateinit var updateMainModel: MutableMainModel
 
-    fun getModels(giveNullIfEmpty: Boolean = true): DifferenceModels {
-        /*If a result tree is empty, then instead make the value of the tree null*/
-        val createModel = when {
-            inclusionStack.first().inCreate || !giveNullIfEmpty -> createMainModel
-            else -> null
-        }
-        val deleteModel = when {
-            inclusionStack.first().inDelete || !giveNullIfEmpty -> deleteMainModel
-            else -> null
-        }
-        val updateModel = when {
-            inclusionStack.first().inUpdate || !giveNullIfEmpty -> updateMainModel
-            else -> null
-        }
-        return DifferenceModels(createModel, deleteModel, updateModel)
-    }
+    // TODO ;;;; remove
+//    fun getModels(giveNullIfEmpty: Boolean = true): DifferenceModels {
+//        /*If a result tree is empty, then instead make the value of the tree null*/
+//        val createModel = when {
+//            inclusionStack.first().inCreate || !giveNullIfEmpty -> createMainModel
+//            else -> null
+//        }
+//        val deleteModel = when {
+//            inclusionStack.first().inDelete || !giveNullIfEmpty -> deleteMainModel
+//            else -> null
+//        }
+//        val updateModel = when {
+//            inclusionStack.first().inUpdate || !giveNullIfEmpty -> updateMainModel
+//            else -> null
+//        }
+//        return DifferenceModels(createModel, deleteModel, updateModel)
+//    }
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        createMainModel = mutableMainModelFactory.createInstance()
-        deleteMainModel = mutableMainModelFactory.createInstance()
-        updateMainModel = mutableMainModelFactory.createInstance()
-
-        createStack.addFirst(createMainModel)
-        deleteStack.addFirst(deleteMainModel)
-        updateStack.addFirst(updateMainModel)
+        createStack.addFirst(output.createModel)
+        deleteStack.addFirst(output.deleteModel)
+        updateStack.addFirst(output.updateModel)
 
         inclusionStack.addFirst(InclusionData())
 
@@ -293,7 +288,9 @@ private class DifferenceVisitor<O : MutableMainModel>(
         val newRoot = newModel.getOrNewRoot()
         copy(newPathTree, newRoot)
 
-        return !difference(oldModel, newModel, mutableMainModelFactory).isDifferent()
+        val associationsDifferenceModels = newDifferenceModels(mutableMainModelFactory)
+        difference(oldModel, newModel, associationsDifferenceModels, mutableMainModelFactory)
+        return !associationsDifferenceModels.isDifferent()
     }
 }
 

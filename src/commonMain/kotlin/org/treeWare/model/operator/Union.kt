@@ -8,23 +8,20 @@ import org.treeWare.util.assertInDevMode
 
 fun <I : MainModel, O : MutableMainModel> union(
     inputs: List<I>,
-    mutableMainModelFactory: MutableMainModelFactory<O>
-): MutableMainModel {
-    val unionVisitor = UnionVisitor(mutableMainModelFactory)
+    output: O
+) {
+    val unionVisitor = UnionVisitor(output)
     forEach(inputs, unionVisitor, false)
-    return unionVisitor.unionMain
 }
 
 private class UnionVisitor<O : MutableMainModel>(
-    private val mutableMainModelFactory: MutableMainModelFactory<O>
+    private val output: O
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
-    lateinit var unionMain: MutableMainModel
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        unionMain = mutableMainModelFactory.createInstance()
-        visitAux(leaderMainList, unionMain)
-        modelStack.addFirst(unionMain)
+        visitAux(leaderMainList, output)
+        modelStack.addFirst(output)
         return TraversalAction.CONTINUE
     }
 
