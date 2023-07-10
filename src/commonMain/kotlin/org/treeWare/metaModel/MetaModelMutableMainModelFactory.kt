@@ -5,7 +5,7 @@ import org.treeWare.model.core.MutableMainModelFactory
 
 private val metaMetaModel = newMainMetaMetaModel()
 
-object MetaModelMutableMainModelFactory : MutableMainModelFactory<MutableMainModel> {
+object MetaModelMutableMainModelFactory : MutableMainModelFactory {
     override fun createInstance(): MutableMainModel {
         return MutableMainModel(metaMetaModel)
     }

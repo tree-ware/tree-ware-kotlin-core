@@ -6,42 +6,24 @@ import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
-fun <I : MainModel, O : MutableMainModel> difference(
-    oldModel: I,
-    newModel: I,
-    output: DifferenceModels<O>,
-    mutableMainModelFactory: MutableMainModelFactory<O>
+fun difference(
+    oldModel: MainModel,
+    newModel: MainModel,
+    output: DifferenceModels,
+    mutableMainModelFactory: MutableMainModelFactory
 ) {
     val differenceVisitor = DifferenceVisitor(output, mutableMainModelFactory)
     forEach(listOf(oldModel, newModel), differenceVisitor, false)
 }
 
-private class DifferenceVisitor<O : MutableMainModel>(
-    private val output: DifferenceModels<O>,
-    private val mutableMainModelFactory: MutableMainModelFactory<O>
+private class DifferenceVisitor(
+    private val output: DifferenceModels,
+    private val mutableMainModelFactory: MutableMainModelFactory
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val createStack = ArrayDeque<MutableElementModel>()
     val deleteStack = ArrayDeque<MutableElementModel>()
     val updateStack = ArrayDeque<MutableElementModel>()
     val inclusionStack = ArrayDeque<InclusionData>() //holds data which trees each element should be added to
-
-    // TODO ;;;; remove
-//    fun getModels(giveNullIfEmpty: Boolean = true): DifferenceModels {
-//        /*If a result tree is empty, then instead make the value of the tree null*/
-//        val createModel = when {
-//            inclusionStack.first().inCreate || !giveNullIfEmpty -> createMainModel
-//            else -> null
-//        }
-//        val deleteModel = when {
-//            inclusionStack.first().inDelete || !giveNullIfEmpty -> deleteMainModel
-//            else -> null
-//        }
-//        val updateModel = when {
-//            inclusionStack.first().inUpdate || !giveNullIfEmpty -> updateMainModel
-//            else -> null
-//        }
-//        return DifferenceModels(createModel, deleteModel, updateModel)
-//    }
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
         createStack.addFirst(output.createModel)

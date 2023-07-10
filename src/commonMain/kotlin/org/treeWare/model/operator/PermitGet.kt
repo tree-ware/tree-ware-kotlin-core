@@ -15,18 +15,18 @@ import org.treeWare.util.assertInDevMode
 // NOTE: wildcards in the get-model do not match explicit keys in the RBAC model.
 
 /** Return a subset of `get` that is permitted by `rbac`. */
-fun <I : MainModel, O : MutableMainModel> permitGet(
-    get: I,
-    rbac: I,
-    mutableMainModelFactory: MutableMainModelFactory<O>
+fun permitGet(
+    get: MainModel,
+    rbac: MainModel,
+    mutableMainModelFactory: MutableMainModelFactory
 ): PermitResponse {
     val visitor = PermitGetVisitor(mutableMainModelFactory)
     forEach(get, rbac, visitor, false)
     return visitor.permitResponse
 }
 
-private class PermitGetVisitor<O : MutableMainModel>(
-    private val mutableMainModelFactory: MutableMainModelFactory<O>
+private class PermitGetVisitor(
+    private val mutableMainModelFactory: MutableMainModelFactory
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {

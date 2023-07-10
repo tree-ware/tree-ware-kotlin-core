@@ -12,9 +12,9 @@ import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFacto
  *
  * @return list of errors.
  */
-fun <O : MutableMainModel> decodeJson(
+fun decodeJson(
     bufferedSource: BufferedSource,
-    mainModel: O,
+    mainModel: MutableMainModel,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
     debug: Boolean = false

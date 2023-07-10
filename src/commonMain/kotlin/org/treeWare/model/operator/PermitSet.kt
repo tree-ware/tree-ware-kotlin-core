@@ -15,19 +15,19 @@ import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
 /** Return a subset of `set` that is permitted by `rbac` */
-fun <I : MainModel, O : MutableMainModel> permitSet(
-    set: I,
-    rbac: I,
-    mutableMainModelFactory: MutableMainModelFactory<O>
+fun permitSet(
+    set: MainModel,
+    rbac: MainModel,
+    mutableMainModelFactory: MutableMainModelFactory
 ): PermitResponse {
     val visitor = PermitSetVisitor(rbac, mutableMainModelFactory)
     forEach(set, rbac, visitor, false)
     return visitor.permitResponse
 }
 
-private class PermitSetVisitor<O : MutableMainModel>(
+private class PermitSetVisitor(
     private val rbac: MainModel,
-    private val mutableMainModelFactory: MutableMainModelFactory<O>
+    private val mutableMainModelFactory: MutableMainModelFactory
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {
