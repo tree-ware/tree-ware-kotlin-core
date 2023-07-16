@@ -59,7 +59,7 @@ private fun populateFields(entity: MutableEntityModel, fieldsMeta: List<EntityMo
     fieldsMeta.forEach { fieldMeta ->
         val field = entity.getOrNewField(getMetaName(fieldMeta))
         if (isCompositionFieldMeta(fieldMeta)) {
-            val childEntity = newChildValue(field) as MutableEntityModel
+            val childEntity = field.getNewValue() as MutableEntityModel
             populateKeyFields(childEntity)
             if (isSetFieldMeta(fieldMeta)) {
                 (field as MutableSetFieldModel).addValue(childEntity)

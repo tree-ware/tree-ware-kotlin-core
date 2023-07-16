@@ -2,12 +2,12 @@ package org.treeWare.model.core
 
 fun getOrNewMutableSingleEntity(entityModel: MutableBaseEntityModel, fieldName: String): MutableEntityModel {
     val singleField = getOrNewMutableSingleField(entityModel, fieldName)
-    return singleField.getOrNewValue() as MutableEntityModel
+    return singleField.getNewValue() as MutableEntityModel
 }
 
 fun getOrNewMutableSingleAssociation(entityModel: MutableBaseEntityModel, fieldName: String): MutableAssociationModel {
     val singleField = getOrNewMutableSingleField(entityModel, fieldName)
-    return singleField.getOrNewValue() as MutableAssociationModel
+    return singleField.getNewValue() as MutableAssociationModel
 }
 
 fun getNewMutableSetEntity(setField: MutableSetFieldModel): MutableEntityModel =
@@ -28,7 +28,7 @@ fun setDoubleSingleField(
     value: Double
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getOrNewValue() as MutablePrimitiveModel
+    val primitive = field.getNewValue() as MutablePrimitiveModel
     primitive.value = value
     return field
 }
@@ -39,7 +39,7 @@ fun setStringSingleField(
     value: String
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getOrNewValue() as MutablePrimitiveModel
+    val primitive = field.getNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
     return field
 }
@@ -52,19 +52,19 @@ fun addStringListFieldElement(listField: MutableListFieldModel, value: String): 
 
 fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: String) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getOrNewValue() as MutablePrimitiveModel
+    val primitive = field.getNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
 }
 
 fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Long) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getOrNewValue() as MutablePrimitiveModel
+    val primitive = field.getNewValue() as MutablePrimitiveModel
     primitive.value = value
 }
 
 fun setBooleanSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Boolean) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getOrNewValue() as MutablePrimitiveModel
+    val primitive = field.getNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
 }
 
@@ -74,7 +74,7 @@ fun setEnumerationSingleField(
     value: String
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val enumeration = field.getOrNewValue() as MutableEnumerationModel
+    val enumeration = field.getNewValue() as MutableEnumerationModel
     enumeration.setValue(value)
     return field
 }

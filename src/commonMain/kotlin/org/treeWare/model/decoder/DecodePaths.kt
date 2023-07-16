@@ -142,7 +142,7 @@ private fun decodeSingleField(
             if (value == null) DecodePathResult.Field(singleField, trailingWildcards)
             else DecodePathResult.Error("Cannot assign a value to composition $fieldId")
         } else {
-            val nextEntity = singleField.getOrNewValue() as MutableEntityModel
+            val nextEntity = singleField.getNewValue() as MutableEntityModel
             decodePath(path, pathParts, partIndex + 1, lastPartIndex, value, nextEntity)
         }
     }

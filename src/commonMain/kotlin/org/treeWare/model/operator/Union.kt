@@ -32,7 +32,7 @@ private class UnionVisitor(
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val parent = modelStack.first()
-        val unionEntity = newChildValue(parent)
+        val unionEntity = parent.getNewValue()
         visitAux(leaderEntityList, unionEntity)
         modelStack.addFirst(unionEntity)
         return TraversalAction.CONTINUE
@@ -70,7 +70,7 @@ private class UnionVisitor(
     override fun visitPrimitive(leaderValueList: List<PrimitiveModel?>): TraversalAction {
         val lastPrimitive = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionPrimitive = newChildValue(parent) as MutablePrimitiveModel
+        val unionPrimitive = parent.getNewValue() as MutablePrimitiveModel
         unionPrimitive.copyValueFrom(lastPrimitive)
         visitAux(leaderValueList, unionPrimitive)
         return TraversalAction.CONTINUE
@@ -79,7 +79,7 @@ private class UnionVisitor(
     override fun visitAlias(leaderValueList: List<AliasModel?>): TraversalAction {
         val lastAlias = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionAlias = newChildValue(parent) as MutableAliasModel
+        val unionAlias = parent.getNewValue() as MutableAliasModel
         unionAlias.copyValueFrom(lastAlias)
         visitAux(leaderValueList, unionAlias)
         return TraversalAction.CONTINUE
@@ -88,7 +88,7 @@ private class UnionVisitor(
     override fun visitPassword1way(leaderValueList: List<Password1wayModel?>): TraversalAction {
         val lastPassword = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionPassword = newChildValue(parent) as MutablePassword1wayModel
+        val unionPassword = parent.getNewValue() as MutablePassword1wayModel
         unionPassword.copyValueFrom(lastPassword)
         visitAux(leaderValueList, unionPassword)
         return TraversalAction.CONTINUE
@@ -97,7 +97,7 @@ private class UnionVisitor(
     override fun visitPassword2way(leaderValueList: List<Password2wayModel?>): TraversalAction {
         val lastPassword = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionPassword = newChildValue(parent) as MutablePassword2wayModel
+        val unionPassword = parent.getNewValue() as MutablePassword2wayModel
         unionPassword.copyValueFrom(lastPassword)
         visitAux(leaderValueList, unionPassword)
         return TraversalAction.CONTINUE
@@ -106,7 +106,7 @@ private class UnionVisitor(
     override fun visitEnumeration(leaderValueList: List<EnumerationModel?>): TraversalAction {
         val lastEnumeration = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionEnumeration = newChildValue(parent) as MutableEnumerationModel
+        val unionEnumeration = parent.getNewValue() as MutableEnumerationModel
         unionEnumeration.copyValueFrom(lastEnumeration)
         visitAux(leaderValueList, unionEnumeration)
         return TraversalAction.CONTINUE
@@ -115,7 +115,7 @@ private class UnionVisitor(
     override fun visitAssociation(leaderValueList: List<AssociationModel?>): TraversalAction {
         val lastAssociation = leaderValueList.lastNotNullOf { it }
         val parent = modelStack.first()
-        val unionAssociation = newChildValue(parent) as MutableAssociationModel
+        val unionAssociation = parent.getNewValue() as MutableAssociationModel
         copy(lastAssociation, unionAssociation)
         visitAux(leaderValueList, unionAssociation)
         return TraversalAction.CONTINUE

@@ -29,7 +29,7 @@ class GetDelegateSingleSpecificEntitiesTests {
             delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
-            val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
+            val addressBook = addressBookField.getNewValue() as MutableEntityModel
             GetCompositionResult.Entity(addressBook)
         }
         every {

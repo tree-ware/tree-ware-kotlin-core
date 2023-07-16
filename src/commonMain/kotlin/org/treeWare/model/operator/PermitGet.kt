@@ -74,7 +74,7 @@ private class PermitGetVisitor(
         // permitted in the sub-tree. On the way up, if there are no permitted fields in the sub-tree, the entity will
         // be removed.
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Entity parent is null")
-        val permittedEntity = newChildValue(permittedParent)
+        val permittedEntity = permittedParent.getNewValue()
         permittedStack.addFirst(permittedEntity)
         return TraversalAction.CONTINUE
     }
@@ -133,14 +133,14 @@ private class PermitGetVisitor(
 
     override fun visitPrimitive(leaderValue1: PrimitiveModel, followerValue1: PrimitiveModel?): TraversalAction {
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Primitive parent is null")
-        val permittedPrimitive = newChildValue(permittedParent) as MutablePrimitiveModel
+        val permittedPrimitive = permittedParent.getNewValue() as MutablePrimitiveModel
         permittedPrimitive.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
     override fun visitAlias(leaderValue1: AliasModel, followerValue1: AliasModel?): TraversalAction {
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Alias parent is null")
-        val permittedAlias = newChildValue(permittedParent) as MutableAliasModel
+        val permittedAlias = permittedParent.getNewValue() as MutableAliasModel
         permittedAlias.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
@@ -150,7 +150,7 @@ private class PermitGetVisitor(
         followerValue1: Password1wayModel?
     ): TraversalAction {
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Password1way parent is null")
-        val permittedPassword = newChildValue(permittedParent) as MutablePassword1wayModel
+        val permittedPassword = permittedParent.getNewValue() as MutablePassword1wayModel
         permittedPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
@@ -160,21 +160,21 @@ private class PermitGetVisitor(
         followerValue1: Password2wayModel?
     ): TraversalAction {
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Password2way parent is null")
-        val permittedPassword = newChildValue(permittedParent) as MutablePassword2wayModel
+        val permittedPassword = permittedParent.getNewValue() as MutablePassword2wayModel
         permittedPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
     override fun visitEnumeration(leaderValue1: EnumerationModel, followerValue1: EnumerationModel?): TraversalAction {
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Enumeration parent is null")
-        val permittedEnumeration = newChildValue(permittedParent) as MutableEnumerationModel
+        val permittedEnumeration = permittedParent.getNewValue() as MutableEnumerationModel
         permittedEnumeration.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
     }
 
     override fun visitAssociation(leaderValue1: AssociationModel, followerValue1: AssociationModel?): TraversalAction {
         val permittedParent = permittedStack.first() ?: throw IllegalStateException("Association parent is null")
-        val permittedAssociation = newChildValue(permittedParent)
+        val permittedAssociation = permittedParent.getNewValue()
         copy(leaderValue1, permittedAssociation)
         return TraversalAction.CONTINUE
     }

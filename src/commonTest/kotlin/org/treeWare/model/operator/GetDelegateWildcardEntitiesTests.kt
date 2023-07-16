@@ -28,7 +28,7 @@ class GetDelegateWildcardEntitiesTests {
             delegate.getComposition("/address_book", ofType(), fieldsWithNames("name", "last_updated"), ofType())
         } answers {
             val addressBookField = arg<MutableSingleFieldModel>(3)
-            val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
+            val addressBook = addressBookField.getNewValue() as MutableEntityModel
             setStringSingleField(addressBook, "name", "Super Heroes")
             setTimestampSingleField(addressBook, "last_updated", 1587147731L)
             GetCompositionResult.Entity(addressBook)
@@ -42,7 +42,7 @@ class GetDelegateWildcardEntitiesTests {
             )
         } answers {
             val settingsField = arg<MutableSingleFieldModel>(3)
-            val settings = settingsField.getOrNewValue() as MutableEntityModel
+            val settings = settingsField.getNewValue() as MutableEntityModel
             setBooleanSingleField(settings, "last_name_first", true)
             val cardColors = getOrNewMutableListField(settings, "card_colors")
             addEnumerationListFieldElement(cardColors, "orange")

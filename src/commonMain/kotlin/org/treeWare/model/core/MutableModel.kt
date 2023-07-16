@@ -21,6 +21,8 @@ abstract class MutableElementModel : ElementModel {
     override fun unsetAux(auxName: String) {
         auxsInternal?.also { it.remove(auxName) }
     }
+
+    open fun getNewValue(): MutableElementModel = throw UnsupportedOperationException()
 }
 
 open class MutableMainModel(override val mainMeta: MainModel?) :
@@ -36,7 +38,7 @@ open class MutableMainModel(override val mainMeta: MainModel?) :
 
     override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
 
-    fun getOrNewRoot(): MutableEntityModel = getOrNewValue() as MutableEntityModel
+    fun getOrNewRoot(): MutableEntityModel = getNewValue() as MutableEntityModel
 }
 
 abstract class MutableBaseEntityModel(
@@ -164,7 +166,8 @@ open class MutableSingleFieldModel(
         return thisValue.matches(thatValue)
     }
 
-    fun getOrNewValue(): MutableElementModel {
+    /** Returns existing value if not null, else creates, sets and returns a new value. */
+    override fun getNewValue(): MutableElementModel {
         val existing = value
         if (existing != null) return existing
         val newValue = newMutableValueModel(meta, this)
@@ -197,7 +200,7 @@ class MutableListFieldModel(
     override fun getValueMatching(that: ElementModel): ElementModel? = values.find { it.matches(that) }
 
     /** Adds a new value to the list and returns the new value. */
-    fun getNewValue(): MutableElementModel {
+    override fun getNewValue(): MutableElementModel {
         val newValue = newMutableValueModel(meta, this)
         addValue(newValue)
         return newValue
@@ -227,7 +230,7 @@ class MutableSetFieldModel(
      * Returns a new value.
      * WARNING: the new value needs to be added to the set after the key fields are set in it.
      */
-    fun getNewValue(): MutableElementModel = newMutableValueModel(meta, this)
+    override fun getNewValue(): MutableElementModel = newMutableValueModel(meta, this)
 
     override fun addValue(value: MutableElementModel) {
         linkedHashMap[newElementModelId(value)] = value
@@ -442,6 +445,8 @@ class MutableAssociationModel(
     // actually works out well since the `value` entity is equivalent to a direct child of the field (the only reason
     // it is not that way in the code is because the direct child needs to have ASSOCIATION as the `elementType`).
     override val value: MutableEntityModel = MutableEntityModel(valueMeta, parent)
+
+    override fun getNewValue(): MutableElementModel = value
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is AssociationModel) return false

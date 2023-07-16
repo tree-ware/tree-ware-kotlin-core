@@ -186,7 +186,7 @@ private class DifferenceVisitor(
     ) {
         val lastElement = leaderValueList.lastNotNullOf { it }
         val parent = treeStack.first()
-        val newElement = newChildValue(parent)
+        val newElement = parent.getNewValue()
         copy(lastElement, newElement)
     }
 

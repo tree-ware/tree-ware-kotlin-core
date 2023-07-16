@@ -8,7 +8,7 @@ import org.treeWare.metaModel.getMultiplicityMeta
 /**===== Create a new child value without attaching from the parent end =====**/
 fun newDisconnectedValue(parent: MutableElementModel): MutableElementModel = when (parent.elementType) {
     ModelElementType.MAIN, ModelElementType.SINGLE_FIELD -> (parent as MutableSingleFieldModel).value
-        ?: (if (isKeyField(parent)) newChildValue(parent) else newMutableValueModel(parent.meta, parent))
+        ?: (if (isKeyField(parent)) parent.getNewValue() else newMutableValueModel(parent.meta, parent))
     ModelElementType.LIST_FIELD -> newMutableValueModel((parent as MutableListFieldModel).meta, parent)
     ModelElementType.SET_FIELD -> newMutableValueModel((parent as MutableSetFieldModel).meta, parent)
     //There is no need to make children of associations disconnected
