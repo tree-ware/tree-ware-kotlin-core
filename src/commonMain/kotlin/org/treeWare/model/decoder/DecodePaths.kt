@@ -85,8 +85,7 @@ private fun decodePath(
             value,
             fieldId,
             field as MutableSingleFieldModel,
-            fieldType,
-            fieldMeta
+            fieldType
         )
         // TODO(deepak-nulu): support list fields; without gaps in the index(?); with aux for each element
         Multiplicity.LIST -> DecodePathResult.Error("Field $fieldId is a list; lists are not yet supported")
@@ -112,7 +111,6 @@ private fun decodeSingleField(
     fieldId: String,
     singleField: MutableSingleFieldModel,
     fieldType: FieldType,
-    fieldMeta: EntityModel
 ): DecodePathResult = when (fieldType) {
     FieldType.BOOLEAN,
     FieldType.UINT8,
@@ -130,11 +128,11 @@ private fun decodeSingleField(
     FieldType.TIMESTAMP,
     FieldType.STRING,
     FieldType.UUID,
-    FieldType.BLOB -> setPrimitive(fieldMeta, singleField, value)
+    FieldType.BLOB -> setPrimitive(singleField, value)
     FieldType.PASSWORD1WAY -> TODO()
     FieldType.PASSWORD2WAY -> TODO()
     FieldType.ALIAS -> TODO()
-    FieldType.ENUMERATION -> setEnumeration(fieldMeta, singleField, value)
+    FieldType.ENUMERATION -> setEnumeration(singleField, value)
     FieldType.ASSOCIATION -> TODO()
     FieldType.COMPOSITION -> {
         val trailingWildcards = getTrailingWildcards(pathParts, partIndex, lastPartIndex)
@@ -149,26 +147,22 @@ private fun decodeSingleField(
 }
 
 private fun setPrimitive(
-    fieldMeta: EntityModel,
     singleField: MutableSingleFieldModel,
     value: String?
 ): DecodePathResult {
     if (value != null) {
-        val primitive = newMutableValueModel(fieldMeta, singleField) as MutablePrimitiveModel
-        singleField.setValue(primitive)
+        val primitive = singleField.getNewValue() as MutablePrimitiveModel
         primitive.setValue(value)
     }
     return DecodePathResult.Field(singleField)
 }
 
 private fun setEnumeration(
-    fieldMeta: EntityModel,
     singleField: MutableSingleFieldModel,
     value: String?
 ): DecodePathResult {
     if (value != null) {
-        val enumeration = newMutableValueModel(fieldMeta, singleField) as MutableEnumerationModel
-        singleField.setValue(enumeration)
+        val enumeration = singleField.getNewValue() as MutableEnumerationModel
         enumeration.setValue(value)
     }
     return DecodePathResult.Field(singleField)
@@ -207,8 +201,7 @@ private fun decodeSetField(
             return DecodePathResult.Error("Sub-tree wildcard $keyId is invalid in the middle of a path")
         }
         if (keyValue == WILDCARD) return@forEachIndexed
-        val keyPrimitive = newMutableValueModel(keyFieldMeta, keyField) as MutablePrimitiveModel
-        keyField.setValue(keyPrimitive)
+        val keyPrimitive = keyField.getNewValue() as MutablePrimitiveModel
         keyPrimitive.setValue(unescapeKey(keyValue))
     }
 
