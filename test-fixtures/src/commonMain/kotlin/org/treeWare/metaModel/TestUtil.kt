@@ -12,8 +12,6 @@ import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFacto
 import org.treeWare.util.getFileSource
 import kotlin.test.assertEquals
 
-private val metaMetaModel = newMainMetaMetaModel()
-
 fun assertJsonStringValidationErrors(
     metaModelJsonString: String,
     expectedValidationErrors: List<String>,
@@ -57,7 +55,7 @@ private fun assertJsonValidationErrors(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val metaModel = MutableMainModel(metaMetaModel)
+    val metaModel = MetaModelMutableMainModelFactory.createInstance()
     val decodeErrors = decodeJson(
         bufferedSource,
         metaModel,

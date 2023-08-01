@@ -69,8 +69,7 @@ fun newMetaModelFromJsonReaders(
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean
 ): ValidatedMetaModel {
-    val metaMetaModel = newMainMetaMetaModel()
-    val metaModel = MutableMainModel(metaMetaModel)
+    val metaModel = MetaModelMutableMainModelFactory.createInstance()
     // TODO(performance): change MultiAuxDecodingStateMachineFactory() varargs to list to avoid array copies.
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*metaModelAuxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
