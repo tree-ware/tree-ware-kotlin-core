@@ -30,6 +30,5 @@ fun decodeJson(
     }
     return if (delegatingStateMachine.errors.isNotEmpty()) delegatingStateMachine.errors
     else if (decodeError != null) return listOf(decodeError)
-    else if (mainModel.value == null) return listOf("Empty JSON")
     else delegatingStateMachine.errors
 }

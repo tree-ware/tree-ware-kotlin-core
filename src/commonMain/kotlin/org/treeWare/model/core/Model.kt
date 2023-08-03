@@ -9,6 +9,7 @@ interface ElementModel {
     fun setAux(auxName: String, aux: Any) // TODO(#77): remove when #77 is implemented
     fun unsetAux(auxName: String)
     fun matches(that: ElementModel): Boolean
+    fun isEmpty(): Boolean = false
 }
 
 inline fun <reified Aux> ElementModel.getAux(auxName: String): Aux? = this.auxs?.let { it[auxName] as? Aux? }
@@ -22,8 +23,6 @@ interface MainModel : SingleFieldModel {
 
     val mainMeta: MainModel?
     val root: EntityModel? // Same as SingleFieldModel.value but different type
-
-    fun isEmpty(): Boolean = root == null
 }
 
 data class Keys(val available: List<SingleFieldModel>, val missing: List<String>)
@@ -37,7 +36,7 @@ interface BaseEntityModel : ElementModel {
 
     val fields: Map<String, FieldModel>
 
-    fun isEmpty(): Boolean = fields.isEmpty()
+    override fun isEmpty(): Boolean = fields.isEmpty()
 
     fun getField(fieldName: String): FieldModel?
     fun getMatchingHashCode(): Int
@@ -66,12 +65,14 @@ interface SingleFieldModel : FieldModel {
         get() = ModelElementType.SINGLE_FIELD
 
     val value: ElementModel?
+
+    override fun isEmpty(): Boolean = value?.isEmpty() ?: (value == null)
 }
 
 interface CollectionFieldModel : FieldModel {
     val values: Collection<ElementModel>
 
-    fun isEmpty(): Boolean = values.isEmpty()
+    override fun isEmpty(): Boolean = values.isEmpty()
     fun firstValue(): ElementModel?
     fun getValueMatching(that: ElementModel): ElementModel?
 }

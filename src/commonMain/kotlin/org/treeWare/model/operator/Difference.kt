@@ -9,71 +9,78 @@ import org.treeWare.util.assertInDevMode
 fun difference(
     oldModel: MainModel,
     newModel: MainModel,
-    output: DifferenceModels,
     mutableMainModelFactory: MutableMainModelFactory
-) {
-    val differenceVisitor = DifferenceVisitor(output, mutableMainModelFactory)
+): DifferenceModels {
+    val differenceVisitor = DifferenceVisitor(mutableMainModelFactory)
     forEach(listOf(oldModel, newModel), differenceVisitor, false)
+    return differenceVisitor.output
 }
 
 private class DifferenceVisitor(
-    private val output: DifferenceModels,
     private val mutableMainModelFactory: MutableMainModelFactory
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
-    val createStack = ArrayDeque<MutableElementModel>()
-    val deleteStack = ArrayDeque<MutableElementModel>()
-    val updateStack = ArrayDeque<MutableElementModel>()
-    val inclusionStack = ArrayDeque<InclusionData>() //holds data which trees each element should be added to
+    val output: DifferenceModels = newDifferenceModels(mutableMainModelFactory)
+
+    private val createStack = ArrayDeque<MutableElementModel?>()
+    private val deleteStack = ArrayDeque<MutableElementModel?>()
+    private val updateStack = ArrayDeque<MutableElementModel?>()
+
+    private val inclusionStack = ArrayDeque<Inclusions>()
 
     override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
         createStack.addFirst(output.createModel)
         deleteStack.addFirst(output.deleteModel)
         updateStack.addFirst(output.updateModel)
-
-        inclusionStack.addFirst(InclusionData())
-
+        inclusionStack.addFirst(Inclusions())
         return TraversalAction.CONTINUE
     }
 
     override fun leaveMain(leaderMainList: List<MainModel?>) {
-        createStack.removeFirst()
+        val createMain = createStack.removeFirst() as MutableMainModel
         assertInDevMode(createStack.isEmpty())
-        deleteStack.removeFirst()
+        if (createMain.isEmpty()) {
+            createMain.setValue(null) // ensure null root instead of empty root
+        }
+
+        val deleteMain = deleteStack.removeFirst() as MutableMainModel
         assertInDevMode(deleteStack.isEmpty())
-        updateStack.removeFirst()
+        if (deleteMain.isEmpty()) {
+            deleteMain.setValue(null) // ensure null root instead of empty root
+        }
+
+        val updateMain = updateStack.removeFirst() as MutableMainModel
         assertInDevMode(updateStack.isEmpty())
+        if (updateMain.isEmpty()) {
+            updateMain.setValue(null) // ensure null root instead of empty root
+        }
     }
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
-
-        val includeEntity = InclusionData()
-        inclusionStack.addFirst(includeEntity)
         val oldEntity = leaderEntityList.first()
         val newEntity = leaderEntityList.last()
 
-        /**===== Build new entities for the trees =====**/
-        val createParent = createStack.first()
-        val createEntity = newDisconnectedValue(createParent)
+        val entityInclusions = Inclusions()
+        inclusionStack.addFirst(entityInclusions)
+
+        val createParent = createStack.first() ?: throw IllegalStateException("Create-entity parent is null")
+        val createEntity = createParent.getNewValue()
         createStack.addFirst(createEntity)
 
-        val deleteParent = deleteStack.first()
-        val deleteEntity = newDisconnectedValue(deleteParent)
+        val deleteParent = deleteStack.first() ?: throw IllegalStateException("Delete-entity parent is null")
+        val deleteEntity = deleteParent.getNewValue()
         deleteStack.addFirst(deleteEntity)
 
-        val updateParent = updateStack.first()
-        val updateEntity = newDisconnectedValue(updateParent)
+        val updateParent = updateStack.first() ?: throw IllegalStateException("Update-entity parent is null")
+        val updateEntity = updateParent.getNewValue()
         updateStack.addFirst(updateEntity)
 
-        /**===== Check if it's absent in the original =====**/
-        if (oldEntity == null) { //if the original doesn't have the entity:
-            includeEntity.inCreate = true
+        if (oldEntity == null) {
+            entityInclusions.inCreate = true
             copy(checkNotNull(newEntity), createEntity)
             return TraversalAction.ABORT_SUB_TREE
         }
-
-        /**===== Check if it's absent in the new version ====**/
-        else if (newEntity == null) {//if the new version doesn't have the entity:
-            includeEntity.inDelete = true
+        if (newEntity == null) {
+            entityInclusions.inDelete = true
             copy(oldEntity, deleteEntity)
             return TraversalAction.ABORT_SUB_TREE
         }
@@ -82,51 +89,33 @@ private class DifferenceVisitor(
     }
 
     override fun leaveEntity(leaderEntityList: List<EntityModel?>) {
-        // NOTE: entities should be created to set-fields only after the entity
-        // has key fields.
+        val entityInclusions = inclusionStack.removeFirst()
 
-        val includeElement = inclusionStack.removeFirst()
+        leaveEntity(createStack, entityInclusions.inCreate)
+        leaveEntity(deleteStack, entityInclusions.inDelete)
+        leaveEntity(updateStack, entityInclusions.inUpdate)
 
-        /**===== Handle the create tree =====**/
-        val createEntity = createStack.removeFirst() as MutableEntityModel
-        if (includeElement.inCreate) { //Case: In or above a created node.
-            val createParent = createStack.first()
-            connectValue(createParent, createEntity)
-        }
-
-        /**===== Handle the delete tree =====**/
-        val deleteEntity = deleteStack.removeFirst() as MutableEntityModel
-        if (includeElement.inDelete) { //Case: In or above a deleted node
-            val deleteParent = deleteStack.first()
-            connectValue(deleteParent, deleteEntity)
-        }
-
-        /**===== Handle the update tree =====**/
-        val updateEntity = updateStack.removeFirst() as MutableEntityModel
-        if (includeElement.inUpdate) { //Case: In or above a deleted node
-            val updateParent = updateStack.first()
-            connectValue(updateParent, updateEntity)
-        }
-        inclusionStack.first().addChildInclusions(includeElement)
+        val parentInclusions = inclusionStack.first()
+        parentInclusions.addChildInclusions(entityInclusions)
     }
 
     override fun visitSingleField(leaderFieldList: List<SingleFieldModel?>): TraversalAction =
         visitField(leaderFieldList)
 
     override fun leaveSingleField(leaderFieldList: List<SingleFieldModel?>) =
-        leaveField(leaderFieldList)
+        leaveField()
 
     override fun visitListField(leaderFieldList: List<ListFieldModel?>): TraversalAction =
         visitField(leaderFieldList)
 
     override fun leaveListField(leaderFieldList: List<ListFieldModel?>) =
-        leaveField(leaderFieldList)
+        leaveField()
 
     override fun visitSetField(leaderFieldList: List<SetFieldModel?>): TraversalAction =
         visitField(leaderFieldList)
 
     override fun leaveSetField(leaderFieldList: List<SetFieldModel?>) =
-        leaveField(leaderFieldList)
+        leaveField()
 
 
     override fun visitPrimitive(leaderValueList: List<PrimitiveModel?>): TraversalAction =
@@ -150,117 +139,154 @@ private class DifferenceVisitor(
 
     // Helpers
 
+    private fun leaveEntity(stack: ArrayDeque<MutableElementModel?>, include: Boolean) {
+        // Even if there are no differences, keys are added on the way down in case there are differences further below
+        // in the tree. On the way up, the entity must be removed if it does not have any other fields. The entity is
+        // indirectly removed by detaching all its field.
+        val outputEntity = stack.removeFirst() as MutableEntityModel
+        if (!include && !isCompositionKey(outputEntity)) {
+            outputEntity.detachAllFields()
+            return
+        }
+        val parent = stack.firstOrNull()
+        if (parent?.elementType == ModelElementType.SET_FIELD) {
+            // Entities must be added to a set-field only after all its key fields have been sent, and so this must
+            // be done in leaveEntity() rather than in visitEntity().
+            runCatching { (parent as MutableSetFieldModel).addValue(outputEntity) }
+        }
+    }
+
     private fun visitValue(
         leaderValueList: List<ElementModel?>
     ): TraversalAction {
-        /* NOTE: This only populates create and delete trees if the parent is a key field */
+        // NOTE: This only populates create and delete trees if the parent is a key field.
 
         val updateParent = updateStack.first() as MutableFieldModel
         val oldValue = leaderValueList.first()
         val newValue = leaderValueList.last()
-        val parentInclusion = inclusionStack.first()
+        val parentInclusions = inclusionStack.first()
 
-        /**===== Check if it's a key field =====**/
         if (isKeyField(updateParent)) {
             addValueToTree(leaderValueList, createStack)
             addValueToTree(leaderValueList, deleteStack)
         }
 
-        /**===== Check if it's been updated =====**/
+        // Check if it's been updated.
         val oldAndNewMatch =
             if (oldValue == null || newValue == null) false
             else if (oldValue.elementType == ModelElementType.ASSOCIATION)
-                associationsEqual(oldValue as AssociationModel, newValue as AssociationModel)
+                associationsMatch(oldValue as AssociationModel, newValue as AssociationModel)
             else oldValue.matches(newValue)
 
         if (!oldAndNewMatch || isKeyField(updateParent)) {
-            if (updateParent.elementType != ModelElementType.LIST_FIELD) addValueToTree(leaderValueList, updateStack)
-            if (!oldAndNewMatch) parentInclusion.inUpdate = true
+            addValueToTree(leaderValueList, updateStack)
+            if (!oldAndNewMatch) parentInclusions.inUpdate = true
         }
         return TraversalAction.CONTINUE
     }
 
     private fun addValueToTree(
         leaderValueList: List<ElementModel?>,
-        treeStack: ArrayDeque<MutableElementModel>
+        treeStack: ArrayDeque<MutableElementModel?>
     ) {
         val lastElement = leaderValueList.lastNotNullOf { it }
-        val parent = treeStack.first()
+        val parent = treeStack.first() ?: throw IllegalStateException("Value parent is null")
         val newElement = parent.getNewValue()
         copy(lastElement, newElement)
     }
 
     private fun visitField(leaderFieldList: List<FieldModel?>): TraversalAction {
         val lastLeaderField = leaderFieldList.lastNotNullOf { it }
-        val lastLeaderFieldName = getFieldName(lastLeaderField)
-        val elementInclusion = InclusionData()
-        inclusionStack.addFirst(elementInclusion)
+        val fieldName = getFieldName(lastLeaderField)
+
         val oldField = leaderFieldList.first()
         val newField = leaderFieldList.last()
+        val fieldInclusions = Inclusions()
+        inclusionStack.addFirst(fieldInclusions)
 
-        val createParent = createStack.first() as MutableBaseEntityModel
-        val createField = newDisconnectedField(createParent, lastLeaderFieldName)
+        val createParent = createStack.first() as MutableBaseEntityModel?
+            ?: throw IllegalStateException("Create-field parent is null")
+        val createField = createParent.getOrNewField(fieldName)
         createStack.addFirst(createField)
 
-        val deleteParent = deleteStack.first() as MutableBaseEntityModel
-        val deleteField = newDisconnectedField(deleteParent, lastLeaderFieldName)
+        val deleteParent = deleteStack.first() as MutableBaseEntityModel?
+            ?: throw IllegalStateException("Delete-field parent is null")
+        val deleteField = deleteParent.getOrNewField(fieldName)
         deleteStack.addFirst(deleteField)
 
-        val updateParent = updateStack.first() as MutableBaseEntityModel
-        val updateField = newDisconnectedField(updateParent, lastLeaderFieldName)
+        val updateParent = updateStack.first() as MutableBaseEntityModel?
+            ?: throw IllegalStateException("Update-field parent is null")
+        val updateField = updateParent.getOrNewField(fieldName)
         updateStack.addFirst(updateField)
 
-        /**===== Check if it's absent in the original =====**/
-        if (oldField == null) { //if the original doesn't have the entity:
-            elementInclusion.inCreate = true //this should be in the `create` tree
+        if (oldField == null) {
+            fieldInclusions.inCreate = true
             copy(checkNotNull(newField), createField)
             return TraversalAction.ABORT_SUB_TREE
         }
-
-        /**===== Check if it's absent in the new version =====**/
-        if (newField == null) { //if the new version doesn't have the entity:
-            elementInclusion.inDelete = true //this should be in the `delete` tree
+        if (newField == null) {
+            fieldInclusions.inDelete = true
             copy(oldField, deleteField)
             return TraversalAction.ABORT_SUB_TREE
+        }
+
+        if (updateField.elementType == ModelElementType.LIST_FIELD) {
+            if (!listsMatch(oldField as ListFieldModel, newField as ListFieldModel)) {
+                fieldInclusions.inUpdate = true
+                copy(newField, updateField)
+                return TraversalAction.ABORT_SUB_TREE
+            }
         }
 
         return TraversalAction.CONTINUE
     }
 
-    private fun leaveField(leaderFieldList: List<FieldModel?>) {
-        val elementInclusion = inclusionStack.removeFirst()
-        val newField = leaderFieldList.last()
+    private fun leaveField() {
+        val fieldInclusions = inclusionStack.removeFirst()
 
-        /**===== Handle the create tree =====**/
-        val createField = createStack.removeFirst() as MutableFieldModel
-        if ((elementInclusion.inCreate) || isKeyField(createField)) { //Case: In or above a created node
-            val createParent = createStack.first() as MutableBaseEntityModel
-            connectField(createParent, createField)
-        }
+        leaveField(createStack, fieldInclusions.inCreate)
+        leaveField(deleteStack, fieldInclusions.inDelete)
+        leaveField(updateStack, fieldInclusions.inUpdate)
 
-        /**===== Handle the delete tree =====**/
-        val deleteField = deleteStack.removeFirst() as MutableFieldModel
-        if ((elementInclusion.inDelete) || isKeyField(deleteField)) { //Case: In or above a deleted node
-            val deleteParent = deleteStack.first() as MutableBaseEntityModel
-            connectField(deleteParent, deleteField)
-        }
-
-        /**===== Handle the update tree =====**/
-        val updateField = updateStack.removeFirst() as MutableFieldModel
-        if ((elementInclusion.inUpdate) || isKeyField(updateField)) { //Case: In or above an updated node
-            val updateParent = updateStack.first() as MutableBaseEntityModel
-            if (updateField.elementType == ModelElementType.LIST_FIELD) copy(checkNotNull(newField), updateField)
-            connectField(updateParent, updateField)
-        }
-
-        inclusionStack.first().addChildInclusions(elementInclusion)
+        val parentInclusions = inclusionStack.first()
+        parentInclusions.addChildInclusions(fieldInclusions)
     }
 
+    private fun leaveField(stack: ArrayDeque<MutableElementModel?>, include: Boolean) {
+        val outputField = stack.removeFirst() as MutableFieldModel
+        if (!include && !isKeyField(outputField)) {
+            val outputParent = stack.first() as MutableBaseEntityModel
+            outputParent.detachField(outputField)
+        }
+    }
 
-    // Uses the difference operator to compare associations
-    private fun associationsEqual(oldAssociation: AssociationModel, newAssociation: AssociationModel): Boolean {
+    private fun listsMatch(oldList: ListFieldModel, newList: ListFieldModel): Boolean {
+        val oldSize = oldList.values.size
+        val newSize = newList.values.size
+        if (oldSize != newSize) return false
+        if (oldSize == 0) return true
+
+        val oldElement = oldList.values[0]
+        return if (oldElement.elementType == ModelElementType.ASSOCIATION) associationListsMatch(oldList, newList)
+        else oldList.matches(newList)
+    }
+
+    private fun associationListsMatch(oldList: ListFieldModel, newList: ListFieldModel): Boolean {
+        if (oldList.values.size != newList.values.size) return false
+        oldList.values.forEachIndexed { index, oldElement ->
+            val oldAssociation = oldElement as AssociationModel
+            val newAssociation = newList.values[index] as AssociationModel
+            if (!associationsMatch(oldAssociation, newAssociation)) return false
+        }
+        return true
+    }
+
+    // Uses the difference operator to compare associations.
+    private fun associationsMatch(oldAssociation: AssociationModel, newAssociation: AssociationModel): Boolean {
         val oldPathTree = oldAssociation.value
         val newPathTree = newAssociation.value
+
+        // TODO(performance): support difference with EntityModel to avoid copying the associations
 
         val oldModel = mutableMainModelFactory.createInstance()
         val oldRoot = oldModel.getOrNewRoot()
@@ -270,18 +296,17 @@ private class DifferenceVisitor(
         val newRoot = newModel.getOrNewRoot()
         copy(newPathTree, newRoot)
 
-        val associationsDifferenceModels = newDifferenceModels(mutableMainModelFactory)
-        difference(oldModel, newModel, associationsDifferenceModels, mutableMainModelFactory)
+        val associationsDifferenceModels = difference(oldModel, newModel, mutableMainModelFactory)
         return !associationsDifferenceModels.isDifferent()
     }
 }
 
-private data class InclusionData(
+private data class Inclusions(
     var inCreate: Boolean = false,
     var inDelete: Boolean = false,
     var inUpdate: Boolean = false
 ) {
-    fun addChildInclusions(child: InclusionData) {
+    fun addChildInclusions(child: Inclusions) {
         this.inCreate = this.inCreate || child.inCreate
         this.inDelete = this.inDelete || child.inDelete
         this.inUpdate = this.inUpdate || child.inUpdate

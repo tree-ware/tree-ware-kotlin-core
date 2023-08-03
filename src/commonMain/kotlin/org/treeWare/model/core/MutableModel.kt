@@ -195,7 +195,16 @@ class MutableListFieldModel(
 ) : MutableCollectionFieldModel(meta, parent), ListFieldModel {
     override val values = mutableListOf<MutableElementModel>()
 
-    override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
+    override fun matches(that: ElementModel): Boolean {
+        if (that !is ListFieldModel) return false
+        if (this.values.size != that.values.size) return false
+        this.values.forEachIndexed { index, thisValue ->
+            val thatValue = that.values[index]
+            if (!thisValue.matches(thatValue)) return false
+        }
+        return true
+    }
+
     override fun firstValue(): ElementModel? = values.firstOrNull()
     override fun getValueMatching(that: ElementModel): ElementModel? = values.find { it.matches(that) }
 
@@ -450,7 +459,7 @@ class MutableAssociationModel(
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is AssociationModel) return false
-        TODO("Requires an equals() model operator")
+        throw UnsupportedOperationException("Use difference() operator")
     }
 
     // NOTE: instead of wrapping the association value to store aux data, the aux data is stored in the root entity of
