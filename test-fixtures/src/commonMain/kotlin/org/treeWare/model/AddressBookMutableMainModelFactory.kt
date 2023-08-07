@@ -5,7 +5,7 @@ import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.core.MutableMainModelFactory
 
 object AddressBookMutableMainModelFactory : MutableMainModelFactory {
-    override fun createInstance(): MutableMainModel {
+    override fun getNewInstance(): MutableMainModel {
         return MutableMainModel(addressBookMetaModel)
     }
 }

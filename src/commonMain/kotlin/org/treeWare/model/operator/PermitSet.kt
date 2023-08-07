@@ -51,7 +51,7 @@ private class PermitSetVisitor(
         val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
         assertInDevMode(setAuxError == null)
         permitSetAuxStack.push(getPermissionsAux(followerMain1))
-        permittedMainInternal = mutableMainModelFactory.createInstance()
+        permittedMainInternal = mutableMainModelFactory.getNewInstance()
         copySetAux(leaderMain1, permittedMainInternal)
         return if (permitSetAuxStack.isAnySetPermitted()) {
             permittedStack.addFirst(permittedMainInternal)
@@ -199,7 +199,7 @@ private class PermitSetVisitor(
         val setAux = setAuxStack.peekActive()
         if (setAux == SetAux.CREATE || setAux == SetAux.UPDATE) {
             // TODO(cleanup): drop valueAsMain & typecast by updating PermitSetVisitor to use root entities as starting points.
-            val target = mutableMainModelFactory.createInstance()
+            val target = mutableMainModelFactory.getNewInstance()
             target.root = leaderValue1.value as MutableEntityModel
             val targetPermitted = permitGet(target, rbac, mutableMainModelFactory)
             if (targetPermitted !is FullyPermitted) {

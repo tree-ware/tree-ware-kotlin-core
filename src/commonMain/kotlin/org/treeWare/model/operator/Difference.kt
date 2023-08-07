@@ -288,11 +288,11 @@ private class DifferenceVisitor(
 
         // TODO(performance): support difference with EntityModel to avoid copying the associations
 
-        val oldModel = mutableMainModelFactory.createInstance()
+        val oldModel = mutableMainModelFactory.getNewInstance()
         val oldRoot = oldModel.getOrNewRoot()
         copy(oldPathTree, oldRoot)
 
-        val newModel = mutableMainModelFactory.createInstance()
+        val newModel = mutableMainModelFactory.getNewInstance()
         val newRoot = newModel.getOrNewRoot()
         copy(newPathTree, newRoot)
 

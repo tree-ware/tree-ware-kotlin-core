@@ -47,7 +47,7 @@ private class PermitGetVisitor(
 
     override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): TraversalAction {
         permitGetAuxStack.push(getPermissionsAux(followerMain1))
-        permittedMainInternal = mutableMainModelFactory.createInstance()
+        permittedMainInternal = mutableMainModelFactory.getNewInstance()
         return if (permitGetAuxStack.isGetPermitted()) {
             permittedStack.addFirst(permittedMainInternal)
             TraversalAction.CONTINUE

@@ -55,7 +55,7 @@ private fun assertJsonValidationErrors(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val metaModel = MetaModelMutableMainModelFactory.createInstance()
+    val metaModel = MetaModelMutableMainModelFactory.getNewInstance()
     val decodeErrors = decodeJson(
         bufferedSource,
         metaModel,

@@ -2163,8 +2163,8 @@ class DifferenceTests {
         assertFalse(createOutput.isEmpty())
         assertFalse(updateOutput.isEmpty())
 
-        val mergeCreateOutput = AddressBookMutableMainModelFactory.createInstance()
-        val mergeUpdateOutput = AddressBookMutableMainModelFactory.createInstance()
+        val mergeCreateOutput = AddressBookMutableMainModelFactory.getNewInstance()
+        val mergeUpdateOutput = AddressBookMutableMainModelFactory.getNewInstance()
         union(listOf(input1, createOutput), mergeCreateOutput)
         union(listOf(mergeCreateOutput, updateOutput), mergeUpdateOutput)
         assertMatchesJson(

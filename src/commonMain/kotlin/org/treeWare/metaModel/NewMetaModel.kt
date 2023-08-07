@@ -8,10 +8,8 @@ import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
-import org.treeWare.model.core.MutableMainModel
 import org.treeWare.model.decoder.decodeJson
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
-import org.treeWare.model.operator.union
 import org.treeWare.util.getFileSource
 
 private val logger = logging()
@@ -69,7 +67,7 @@ fun newMetaModelFromJsonReaders(
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean
 ): ValidatedMetaModel {
-    val metaModel = MetaModelMutableMainModelFactory.createInstance()
+    val metaModel = MetaModelMutableMainModelFactory.getNewInstance()
     // TODO(performance): change MultiAuxDecodingStateMachineFactory() varargs to list to avoid array copies.
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*metaModelAuxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }

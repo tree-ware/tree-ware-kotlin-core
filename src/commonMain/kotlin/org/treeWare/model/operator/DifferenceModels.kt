@@ -15,8 +15,8 @@ data class DifferenceModels(
 
 fun newDifferenceModels(mutableMainModelFactory: MutableMainModelFactory): DifferenceModels {
     return DifferenceModels(
-        mutableMainModelFactory.createInstance(),
-        mutableMainModelFactory.createInstance(),
-        mutableMainModelFactory.createInstance(),
+        mutableMainModelFactory.getNewInstance(),
+        mutableMainModelFactory.getNewInstance(),
+        mutableMainModelFactory.getNewInstance(),
     )
 }

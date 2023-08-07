@@ -182,7 +182,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
             GetCompositionSetResult.Entities(listOf(albany))
         }
 
-        val response = AddressBookMutableMainModelFactory.createInstance()
+        val response = AddressBookMutableMainModelFactory.getNewInstance()
         val errors = get(request, delegate, null, null, response)
         verifySequence {
             delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())

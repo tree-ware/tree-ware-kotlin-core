@@ -148,7 +148,7 @@ class GetDelegateWildcardEntitiesTests {
             GetCompositionSetResult.Entities(listOf(newYork, albany))
         }
 
-        val response = AddressBookMutableMainModelFactory.createInstance()
+        val response = AddressBookMutableMainModelFactory.getNewInstance()
         val errors = get(request, delegate, null, null, response)
 
         verifySequence {
