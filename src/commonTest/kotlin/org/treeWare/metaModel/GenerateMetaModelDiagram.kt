@@ -8,6 +8,6 @@ import kotlin.test.Test
 class GenerateMetaModelDiagram {
     @Test
     fun `Generate address-book meta-model diagram`() {
-        encodeDot(addressBookMetaModel)
+        encodeDot(addressBookMetaModel, "generated/diagram")
     }
 }

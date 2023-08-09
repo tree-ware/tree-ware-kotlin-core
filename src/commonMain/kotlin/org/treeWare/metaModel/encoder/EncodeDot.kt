@@ -9,9 +9,8 @@ import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.getMetaModelResolved
 
-fun encodeDot(mainMeta: MainModel) {
+fun encodeDot(mainMeta: MainModel, directoryName: String) {
     val mainMetaName = getMainMetaName(mainMeta)
-    val directoryName = "generated/diagram"
     FileSystem.SYSTEM.createDirectories(directoryName.toPath())
     val fileName = "$directoryName/${mainMetaName}_meta_model"
     FileSystem.SYSTEM.write("${fileName}.dot".toPath()) { encodeDot(mainMeta, this) }
