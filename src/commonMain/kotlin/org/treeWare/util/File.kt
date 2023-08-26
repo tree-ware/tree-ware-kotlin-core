@@ -1,9 +1,12 @@
 package org.treeWare.util
 
-import okio.*
+import okio.FileSystem
 import okio.Path.Companion.toPath
-import kotlin.io.use
+import okio.Source
+import okio.buffer
 
-fun getFileSource(filePath: String): Source = FileSystem.RESOURCES.source(filePath.toPath())
+fun getFileSource(filePath: String, fileSystem: FileSystem = FileSystem.RESOURCES): Source =
+    fileSystem.source(filePath.toPath())
 
-fun readFile(filePath: String): String = getFileSource(filePath).use { it.buffer().readUtf8() }
+fun readFile(filePath: String, fileSystem: FileSystem = FileSystem.RESOURCES): String =
+    getFileSource(filePath, fileSystem).use { it.buffer().readUtf8() }

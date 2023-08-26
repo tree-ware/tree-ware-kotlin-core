@@ -2,6 +2,7 @@ package org.treeWare.metaModel
 
 import okio.Buffer
 import okio.BufferedSource
+import okio.FileSystem
 import okio.buffer
 import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
@@ -21,9 +22,10 @@ fun newMetaModelFromJsonFiles(
     hasher: Hasher?,
     cipher: Cipher?,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
-    logErrors: Boolean
+    logErrors: Boolean,
+    fileSystem: FileSystem = FileSystem.RESOURCES
 ): ValidatedMetaModel {
-    val sources = metaModelFiles.map { getFileSource(it) }
+    val sources = metaModelFiles.map { getFileSource(it, fileSystem) }
     return try {
         newMetaModelFromJsonReaders(
             sources.map { it.buffer() },
