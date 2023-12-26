@@ -100,6 +100,8 @@ fun getMetaName(meta: BaseEntityModel?): String = meta?.let { getSingleString(it
 
 fun getMetaNumber(meta: BaseEntityModel?): UInt? = meta?.let { getOptionalSingleUint32(it, "number") }
 
+fun getMetaInfo(meta: BaseEntityModel?): String? = meta?.let { getOptionalSingleString(it, "info") }
+
 fun getFieldTypeMeta(fieldMeta: EntityModel?): FieldType? = fieldMeta?.let {
     FieldType.valueOf(getSingleEnumeration(fieldMeta, "type").uppercase())
 }

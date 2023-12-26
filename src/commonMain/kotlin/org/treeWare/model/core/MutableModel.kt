@@ -134,7 +134,7 @@ abstract class MutableBaseEntityModel(
     }
 }
 
-class MutableEntityModel(
+open class MutableEntityModel(
     meta: EntityModel?,
     override val parent: MutableFieldModel
 ) : MutableBaseEntityModel(meta), EntityModel
