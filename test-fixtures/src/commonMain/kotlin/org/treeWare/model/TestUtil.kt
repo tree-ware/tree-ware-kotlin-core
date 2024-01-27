@@ -27,7 +27,8 @@ fun testRoundTrip(
     cipher: Cipher? = null,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
     metaModel: MainModel = newAddressBookMetaModel(hasher, cipher).metaModel
-        ?: throw IllegalStateException("Meta-model has validation errors")
+        ?: throw IllegalStateException("Meta-model has validation errors"),
+    mainModel: MutableMainModel = MutableMainModel(metaModel)
 ) {
     val model =
         getMainModelFromJsonFile(
@@ -35,7 +36,8 @@ fun testRoundTrip(
             inputFilePath,
             options,
             expectedDecodeErrors,
-            multiAuxDecodingStateMachineFactory
+            multiAuxDecodingStateMachineFactory,
+            mainModel
         )
     assertMatchesJson(model, outputFilePath ?: inputFilePath, encodePasswords, multiAuxEncoder)
 }
@@ -45,7 +47,8 @@ fun getMainModelFromJsonString(
     jsonString: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
-    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    mainModel: MutableMainModel = MutableMainModel(meta)
 ): MutableMainModel {
     val bufferedSource = Buffer().writeUtf8(jsonString)
     return getMainModelFromJson(
@@ -53,7 +56,8 @@ fun getMainModelFromJsonString(
         bufferedSource,
         options,
         expectedDecodeErrors,
-        multiAuxDecodingStateMachineFactory
+        multiAuxDecodingStateMachineFactory,
+        mainModel
     )
 }
 
@@ -62,14 +66,16 @@ fun getMainModelFromJsonFile(
     jsonFilePath: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
-    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    mainModel: MutableMainModel = MutableMainModel(meta)
 ): MutableMainModel = getFileSource(jsonFilePath).use {
     getMainModelFromJson(
         meta,
         it.buffer(),
         options,
         expectedDecodeErrors,
-        multiAuxDecodingStateMachineFactory
+        multiAuxDecodingStateMachineFactory,
+        mainModel
     )
 }
 
@@ -78,9 +84,9 @@ fun getMainModelFromJson(
     bufferedSource: BufferedSource,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
-    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory()
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    mainModel: MutableMainModel = MutableMainModel(meta)
 ): MutableMainModel {
-    val mainModel = MutableMainModel(meta)
     val decodeErrors = decodeJson(
         bufferedSource,
         mainModel,
