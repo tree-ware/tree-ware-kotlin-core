@@ -87,12 +87,12 @@ private fun getPassword2wayModel(cipher: CipherV1?): MutablePassword2wayModel {
 
     val dummyMainMeta = MutableMainModel(null)
     val dummyRootMeta = MutableEntityModel(null, dummyMainMeta)
-    val dummyFieldParentMeta = MutableSingleFieldModel(null, dummyRootMeta)
+    val dummyFieldParentMeta = MutableSingleFieldModel(null, dummyRootMeta, ::primitiveFactory)
     val dummyFieldMeta = MutableEntityModel(null, dummyFieldParentMeta)
     dummyFieldMeta.setAux(RESOLVED_AUX, resolved)
 
     val dummyMain = MutableMainModel(null)
     val dummyEntity = MutableEntityModel(null, dummyMain)
-    val dummyField = MutableSingleFieldModel(dummyFieldMeta, dummyEntity)
+    val dummyField = MutableSingleFieldModel(dummyFieldMeta, dummyEntity, ::primitiveFactory)
     return MutablePassword2wayModel(dummyField)
 }

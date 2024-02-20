@@ -26,7 +26,7 @@ abstract class MutableElementModel : ElementModel {
 }
 
 open class MutableMainModel(override val mainMeta: MainModel?) :
-    MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null), MainModel {
+    MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null, ::compositionFactory), MainModel {
     override val parent: MutableBaseEntityModel? = null
 
     override var value: MutableElementModel? = null
@@ -70,14 +70,30 @@ abstract class MutableBaseEntityModel(
         if (existing != null) return existing
         val fieldMeta = meta?.let { getFieldMeta(it, fieldName) }
             ?: throw IllegalStateException("fieldMeta is null when creating mutable field model")
+        val valueFactory = getFieldValueFactory(fieldName, fieldMeta)
         val newField = when (getMultiplicityMeta(fieldMeta)) {
-            Multiplicity.LIST -> MutableListFieldModel(fieldMeta, this)
-            Multiplicity.SET -> MutableSetFieldModel(fieldMeta, this)
-            else -> MutableSingleFieldModel(fieldMeta, this)
+            Multiplicity.LIST -> MutableListFieldModel(fieldMeta, this, valueFactory)
+            Multiplicity.SET -> MutableSetFieldModel(fieldMeta, this, valueFactory)
+            else -> MutableSingleFieldModel(fieldMeta, this, valueFactory)
         }
         fields[fieldName] = newField
         return newField
     }
+
+    private fun getFieldValueFactory(fieldName: String, fieldMeta: EntityModel): FieldValueFactory =
+        when (getFieldTypeMeta(fieldMeta)) {
+            FieldType.PASSWORD1WAY -> ::password1wayFactory
+            FieldType.PASSWORD2WAY -> ::password2wayFactory
+            FieldType.ENUMERATION -> ::enumerationFactory
+            FieldType.ASSOCIATION -> ::associationFactory
+            FieldType.COMPOSITION -> getCompositionFactory(fieldName, fieldMeta)
+            else -> ::primitiveFactory
+        }
+
+    // To be overridden by generated subclasses to return a factory that returns an instance of a generated class.
+    @Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER")
+    protected fun getCompositionFactory(fieldName: String, fieldMeta: EntityModel): FieldValueFactory =
+        ::compositionFactory
 
     fun detachField(field: MutableFieldModel) {
         val fieldName = getMetaName(field.meta)
@@ -152,7 +168,8 @@ abstract class MutableFieldModel(
 
 open class MutableSingleFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel?
+    parent: MutableBaseEntityModel?,
+    val valueFactory: FieldValueFactory,
 ) : MutableFieldModel(meta, parent), SingleFieldModel {
     override var value: MutableElementModel? = null
         internal set
@@ -170,7 +187,8 @@ open class MutableSingleFieldModel(
     override fun getNewValue(): MutableElementModel {
         val existing = value
         if (existing != null) return existing
-        val newValue = newMutableValueModel(meta, this)
+        val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
+        val newValue = valueFactory(fieldMeta, this)
         value = newValue
         return newValue
     }
@@ -191,7 +209,8 @@ abstract class MutableCollectionFieldModel(
 
 class MutableListFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel
+    parent: MutableBaseEntityModel,
+    val valueFactory: FieldValueFactory,
 ) : MutableCollectionFieldModel(meta, parent), ListFieldModel {
     override val values = mutableListOf<MutableElementModel>()
 
@@ -210,7 +229,8 @@ class MutableListFieldModel(
 
     /** Adds a new value to the list and returns the new value. */
     override fun getNewValue(): MutableElementModel {
-        val newValue = newMutableValueModel(meta, this)
+        val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
+        val newValue = valueFactory(fieldMeta, this)
         addValue(newValue)
         return newValue
     }
@@ -226,7 +246,8 @@ class MutableListFieldModel(
 
 class MutableSetFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel
+    parent: MutableBaseEntityModel,
+    val valueFactory: FieldValueFactory,
 ) : MutableCollectionFieldModel(meta, parent), SetFieldModel {
     private val linkedHashMap = LinkedHashMap<ElementModelId, MutableElementModel>()
     override val values get() = linkedHashMap.values
@@ -239,7 +260,10 @@ class MutableSetFieldModel(
      * Returns a new value.
      * WARNING: the new value needs to be added to the set after the key fields are set in it.
      */
-    override fun getNewValue(): MutableElementModel = newMutableValueModel(meta, this)
+    override fun getNewValue(): MutableElementModel {
+        val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
+        return valueFactory(fieldMeta, this)
+    }
 
     override fun addValue(value: MutableElementModel) {
         linkedHashMap[newElementModelId(value)] = value
@@ -470,22 +494,35 @@ class MutableAssociationModel(
     override fun unsetAux(auxName: String) = value.unsetAux(auxName)
 }
 
-// Helpers
+// region Field-value factories
 
-private fun newMutableValueModel(fieldMeta: EntityModel?, parent: MutableFieldModel): MutableElementModel {
-    if (fieldMeta == null) throw IllegalStateException("fieldMeta is null when creating mutable value model")
-    return when (getFieldTypeMeta(fieldMeta)) {
-        FieldType.PASSWORD1WAY -> MutablePassword1wayModel(parent)
-        FieldType.PASSWORD2WAY -> MutablePassword2wayModel(parent)
-        FieldType.ENUMERATION -> MutableEnumerationModel(parent, "")
-        FieldType.ASSOCIATION -> MutableAssociationModel(
-            parent,
-            getMetaModelResolved(fieldMeta)?.associationMeta?.rootEntityMeta
-        )
-        FieldType.COMPOSITION -> MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent)
-        else -> MutablePrimitiveModel(parent, 0)
-    }
-}
+typealias FieldValueFactory = (fieldMeta: EntityModel, parent: MutableFieldModel) -> MutableElementModel
+
+@Suppress("UNUSED_PARAMETER")
+fun primitiveFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
+    MutablePrimitiveModel(parent, 0)
+
+@Suppress("UNUSED_PARAMETER")
+fun password1wayFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
+    MutablePassword1wayModel(parent)
+
+@Suppress("UNUSED_PARAMETER")
+fun password2wayFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
+    MutablePassword2wayModel(parent)
+
+@Suppress("UNUSED_PARAMETER")
+fun enumerationFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
+    MutableEnumerationModel(parent, "")
+
+fun associationFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
+    MutableAssociationModel(parent, getMetaModelResolved(fieldMeta)?.associationMeta?.rootEntityMeta)
+
+fun compositionFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
+    MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent)
+
+// endregion
+
+// region Helpers
 
 typealias ValueSetter = (Any) -> Unit
 
@@ -635,3 +672,5 @@ fun setEnumerationValue(fieldMeta: EntityModel?, value: String, setter: Enumerat
     }
 
 class MissingKeysException(message: String) : Exception(message)
+
+// endregion
