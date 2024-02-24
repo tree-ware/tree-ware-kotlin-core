@@ -25,8 +25,11 @@ abstract class MutableElementModel : ElementModel {
     open fun getNewValue(): MutableElementModel = throw UnsupportedOperationException()
 }
 
-open class MutableMainModel(override val mainMeta: MainModel?) :
-    MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null, ::compositionFactory), MainModel {
+open class MutableMainModel(
+    override val mainMeta: MainModel?,
+    rootFactory: FieldValueFactory = MutableEntityModel.fieldValueFactory
+) :
+    MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null, rootFactory), MainModel {
     override val parent: MutableBaseEntityModel? = null
 
     override var value: MutableElementModel? = null
@@ -82,18 +85,18 @@ abstract class MutableBaseEntityModel(
 
     private fun getFieldValueFactory(fieldName: String, fieldMeta: EntityModel): FieldValueFactory =
         when (getFieldTypeMeta(fieldMeta)) {
-            FieldType.PASSWORD1WAY -> ::password1wayFactory
-            FieldType.PASSWORD2WAY -> ::password2wayFactory
-            FieldType.ENUMERATION -> ::enumerationFactory
-            FieldType.ASSOCIATION -> ::associationFactory
+            FieldType.PASSWORD1WAY -> MutablePassword1wayModel.fieldValueFactory
+            FieldType.PASSWORD2WAY -> MutablePassword2wayModel.fieldValueFactory
+            FieldType.ENUMERATION -> MutableEnumerationModel.fieldValueFactory
+            FieldType.ASSOCIATION -> MutableAssociationModel.fieldValueFactory
             FieldType.COMPOSITION -> getCompositionFactory(fieldName, fieldMeta)
-            else -> ::primitiveFactory
+            else -> MutablePrimitiveModel.fieldValueFactory
         }
 
     // To be overridden by generated subclasses to return a factory that returns an instance of a generated class.
     @Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER")
     protected fun getCompositionFactory(fieldName: String, fieldMeta: EntityModel): FieldValueFactory =
-        ::compositionFactory
+        MutableEntityModel.fieldValueFactory
 
     fun detachField(field: MutableFieldModel) {
         val fieldName = getMetaName(field.meta)
@@ -153,7 +156,12 @@ abstract class MutableBaseEntityModel(
 open class MutableEntityModel(
     meta: EntityModel?,
     override val parent: MutableFieldModel
-) : MutableBaseEntityModel(meta), EntityModel
+) : MutableBaseEntityModel(meta), EntityModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory =
+            { fieldMeta, parent -> MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent) }
+    }
+}
 
 // Fields
 
@@ -283,6 +291,10 @@ class MutablePrimitiveModel(
     parent: MutableFieldModel,
     override var value: Any
 ) : MutableScalarValueModel(parent), PrimitiveModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory = { _, parent -> MutablePrimitiveModel(parent, 0) }
+    }
+
     override fun matches(that: ElementModel): Boolean {
         if (that !is PrimitiveModel) return false
         if (getFieldTypeMeta(this.parent.meta) == FieldType.BLOB)
@@ -318,6 +330,10 @@ class MutableAliasModel(
 class MutablePassword1wayModel(
     override val parent: MutableFieldModel
 ) : MutableElementModel(), Password1wayModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory = { _, parent -> MutablePassword1wayModel(parent) }
+    }
+
     override var unhashed: String? = null
         internal set
 
@@ -372,6 +388,10 @@ class MutablePassword1wayModel(
 class MutablePassword2wayModel(
     override val parent: MutableFieldModel
 ) : MutableElementModel(), Password2wayModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory = { _, parent -> MutablePassword2wayModel(parent) }
+    }
+
     override var unencrypted: String? = null
         internal set
 
@@ -427,6 +447,10 @@ class MutableEnumerationModel(
     parent: MutableFieldModel,
     value: String
 ) : MutableScalarValueModel(parent), EnumerationModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory = { _, parent -> MutableEnumerationModel(parent, "") }
+    }
+
     override var meta: EntityModel? = null
 
     override var value: String = ""
@@ -473,6 +497,15 @@ class MutableAssociationModel(
     override val parent: MutableFieldModel,
     valueMeta: EntityModel?
 ) : MutableElementModel(), AssociationModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory = { fieldMeta, parent ->
+            MutableAssociationModel(
+                parent,
+                getMetaModelResolved(fieldMeta)?.associationMeta?.rootEntityMeta
+            )
+        }
+    }
+
     // NOTE: entities need to have a non-null parent that is a field. So this association cannot be used as the parent
     // of the `value` entity below. Instead, the parent field of this association instance is used as the parent. This
     // actually works out well since the `value` entity is equivalent to a direct child of the field (the only reason
@@ -494,35 +527,9 @@ class MutableAssociationModel(
     override fun unsetAux(auxName: String) = value.unsetAux(auxName)
 }
 
-// region Field-value factories
+// region Helpers
 
 typealias FieldValueFactory = (fieldMeta: EntityModel, parent: MutableFieldModel) -> MutableElementModel
-
-@Suppress("UNUSED_PARAMETER")
-fun primitiveFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
-    MutablePrimitiveModel(parent, 0)
-
-@Suppress("UNUSED_PARAMETER")
-fun password1wayFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
-    MutablePassword1wayModel(parent)
-
-@Suppress("UNUSED_PARAMETER")
-fun password2wayFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
-    MutablePassword2wayModel(parent)
-
-@Suppress("UNUSED_PARAMETER")
-fun enumerationFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
-    MutableEnumerationModel(parent, "")
-
-fun associationFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
-    MutableAssociationModel(parent, getMetaModelResolved(fieldMeta)?.associationMeta?.rootEntityMeta)
-
-fun compositionFactory(fieldMeta: EntityModel, parent: MutableFieldModel): MutableElementModel =
-    MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent)
-
-// endregion
-
-// region Helpers
 
 typealias ValueSetter = (Any) -> Unit
 

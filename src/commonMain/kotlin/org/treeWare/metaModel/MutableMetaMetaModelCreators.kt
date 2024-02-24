@@ -152,7 +152,7 @@ private fun newFieldMetaMeta(
 
 private val dummyMain = MutableMainModel(null)
 private val dummyRoot = MutableEntityModel(null, dummyMain)
-private val dummyField = MutableSingleFieldModel(null, dummyRoot, ::primitiveFactory)
+private val dummyField = MutableSingleFieldModel(null, dummyRoot, MutablePrimitiveModel.fieldValueFactory)
 
 private val stringFieldMeta = getFieldTypeMeta("string")
 private val booleanFieldMeta = getFieldTypeMeta("boolean")
@@ -169,7 +169,7 @@ private fun getFieldTypeMeta(type: String): MutableEntityModel {
 // meta-meta-models.
 
 private fun newCompositionSingleField(entity: MutableBaseEntityModel, name: String): MutableEntityModel {
-    val field = MutableSingleFieldModel(null, entity, ::compositionFactory)
+    val field = MutableSingleFieldModel(null, entity, MutableEntityModel.fieldValueFactory)
     entity.fields[name] = field
     val value = MutableEntityModel(null, field)
     field.value = value
@@ -177,28 +177,28 @@ private fun newCompositionSingleField(entity: MutableBaseEntityModel, name: Stri
 }
 
 private fun newStringSingleField(entity: MutableBaseEntityModel, name: String, value: String) {
-    val field = MutableSingleFieldModel(stringFieldMeta, entity, ::primitiveFactory)
+    val field = MutableSingleFieldModel(stringFieldMeta, entity, MutablePrimitiveModel.fieldValueFactory)
     entity.fields[name] = field
     val primitive = MutablePrimitiveModel(field, value)
     field.value = primitive
 }
 
 private fun newBooleanSingleField(entity: MutableBaseEntityModel, name: String, value: Boolean) {
-    val field = MutableSingleFieldModel(booleanFieldMeta, entity, ::primitiveFactory)
+    val field = MutableSingleFieldModel(booleanFieldMeta, entity, MutablePrimitiveModel.fieldValueFactory)
     entity.fields[name] = field
     val primitive = MutablePrimitiveModel(field, value)
     field.value = primitive
 }
 
 private fun newEnumerationSingleField(entity: MutableBaseEntityModel, name: String, value: String) {
-    val field = MutableSingleFieldModel(null, entity, ::enumerationFactory)
+    val field = MutableSingleFieldModel(null, entity, MutableEnumerationModel.fieldValueFactory)
     entity.fields[name] = field
     val enumeration = MutableEnumerationModel(field, value)
     field.value = enumeration
 }
 
 private fun newStringListField(entity: MutableBaseEntityModel, name: String): MutableListFieldModel {
-    val field = MutableListFieldModel(stringFieldMeta, entity, ::primitiveFactory)
+    val field = MutableListFieldModel(stringFieldMeta, entity, MutablePrimitiveModel.fieldValueFactory)
     entity.fields[name] = field
     return field
 }
@@ -209,7 +209,7 @@ private fun addStringToListField(listField: MutableListFieldModel, value: String
 }
 
 private fun newCompositionListField(entity: MutableBaseEntityModel, name: String): MutableListFieldModel {
-    val field = MutableListFieldModel(null, entity, ::compositionFactory)
+    val field = MutableListFieldModel(null, entity, MutableEntityModel.fieldValueFactory)
     entity.fields[name] = field
     return field
 }
