@@ -94,8 +94,7 @@ abstract class MutableBaseEntityModel(
         }
 
     // To be overridden by generated subclasses to return a factory that returns an instance of a generated class.
-    @Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER")
-    protected fun getCompositionFactory(fieldName: String, fieldMeta: EntityModel): FieldValueFactory =
+    protected open fun getCompositionFactory(fieldName: String, fieldMeta: EntityModel): FieldValueFactory =
         MutableEntityModel.fieldValueFactory
 
     fun detachField(field: MutableFieldModel) {
