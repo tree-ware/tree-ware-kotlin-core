@@ -8,7 +8,7 @@ fun newAddressBook(auxName: String): MainModel {
     main.setAux(auxName, "Aux at address_book level")
     val root = main.getOrNewRoot()
     setStringSingleField(root, "name", "Address Book")
-    setTimestampSingleField(root, "last_updated", 1587147731L)
+    setTimestampSingleField(root, "last_updated", 1587147731UL)
 
     val settingsField = getOrNewMutableSingleField(root, "settings")
     settingsField.setAux(auxName, "Aux for settings")

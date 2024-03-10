@@ -629,7 +629,7 @@ fun setValue(fieldMeta: EntityModel?, value: String, setter: ValueSetter): Boole
             }
         FieldType.TIMESTAMP ->
             try {
-                setter(value.toLong())
+                setter(value.toULong())
                 true
             } catch (e: NumberFormatException) {
                 false

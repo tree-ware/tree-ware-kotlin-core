@@ -56,7 +56,7 @@ fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, v
     primitive.setValue(value)
 }
 
-fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Long) {
+fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: ULong) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getNewValue() as MutablePrimitiveModel
     primitive.value = value

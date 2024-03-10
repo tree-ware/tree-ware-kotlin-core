@@ -31,7 +31,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             val addressBookField = arg<MutableSingleFieldModel>(3)
             val addressBook = addressBookField.getNewValue() as MutableEntityModel
             setStringSingleField(addressBook, "name", "Super Heroes")
-            setTimestampSingleField(addressBook, "last_updated", 1587147731L)
+            setTimestampSingleField(addressBook, "last_updated", 1587147731UL)
             GetCompositionResult.Entity(addressBook)
         }
         every {
