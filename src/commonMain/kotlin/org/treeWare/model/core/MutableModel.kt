@@ -334,13 +334,9 @@ class MutablePassword1wayModel(
     }
 
     override var unhashed: String? = null
-        internal set
 
     override var hashed: String? = null
-        internal set
-
     override var hashVersion: Int = 0
-        internal set
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is Password1wayModel) return false
@@ -392,13 +388,9 @@ class MutablePassword2wayModel(
     }
 
     override var unencrypted: String? = null
-        internal set
 
     override var encrypted: String? = null
-        internal set
-
     override var cipherVersion: Int = 0
-        internal set
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is Password2wayModel) return false

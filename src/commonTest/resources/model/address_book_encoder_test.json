@@ -42,6 +42,12 @@
         "first_name": "Clark",
         "last_name": "Kent",
         "hero_name": "Superman",
+        "password": {
+          "unhashed": "kryptonite"
+        },
+        "main_secret": {
+          "unencrypted": "Alien from Krypton"
+        },
         "relation__aux_": "Aux for Clark's relation list",
         "relation": [
           {
@@ -77,6 +83,14 @@
         "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
         "first_name": "Lois",
         "last_name": "Lane",
+        "password": {
+          "hashed": "test-hashed-lois",
+          "hash_version": 1
+        },
+        "main_secret": {
+          "encrypted": "test-encrypted-main-secret",
+          "cipher_version": 1
+        },
         "relation": [
           {
             "id": "16634916-8f83-4376-ad42-37038e108a0b",

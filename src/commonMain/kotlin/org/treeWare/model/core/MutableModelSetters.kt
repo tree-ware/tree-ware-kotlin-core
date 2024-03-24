@@ -68,6 +68,26 @@ fun setBooleanSingleField(entityModel: MutableBaseEntityModel, fieldName: String
     primitive.setValue(value)
 }
 
+fun setPassword1waySingleField(
+    entityModel: MutableBaseEntityModel,
+    fieldName: String,
+    configure: MutablePassword1wayModel.() -> Unit
+) {
+    val field = getOrNewMutableSingleField(entityModel, fieldName)
+    val password = field.getNewValue() as MutablePassword1wayModel
+    password.configure()
+}
+
+fun setPassword2waySingleField(
+    entityModel: MutableBaseEntityModel,
+    fieldName: String,
+    configure: MutablePassword2wayModel.() -> Unit
+) {
+    val field = getOrNewMutableSingleField(entityModel, fieldName)
+    val password = field.getNewValue() as MutablePassword2wayModel
+    password.configure()
+}
+
 fun setEnumerationSingleField(
     entityModel: MutableBaseEntityModel,
     fieldName: String,

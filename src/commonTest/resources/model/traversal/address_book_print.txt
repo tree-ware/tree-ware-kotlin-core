@@ -35,6 +35,10 @@ Main: address_book
           Primitive: Kent
         Single field: hero_name
           Primitive: Superman
+        Single field: password
+          Password1way: {kryptonite, null, 0}
+        Single field: main_secret
+          Password2way: {Alien from Krypton, null, 0}
         Set field: relation
           Entity: address_book.main/address_book_relation
             Single field: id
@@ -66,6 +70,10 @@ Main: address_book
           Primitive: Lois
         Single field: last_name
           Primitive: Lane
+        Single field: password
+          Password1way: {null, test-hashed-lois, 1}
+        Single field: main_secret
+          Password2way: {null, test-encrypted-main-secret, 1}
         Set field: relation
           Entity: address_book.main/address_book_relation
             Single field: id

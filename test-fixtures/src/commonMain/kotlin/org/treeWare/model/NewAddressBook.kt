@@ -40,6 +40,12 @@ fun newAddressBook(auxName: String): MainModel {
     setStringSingleField(clark, "first_name", "Clark")
     setStringSingleField(clark, "last_name", "Kent")
     setStringSingleField(clark, "hero_name", "Superman")
+    setPassword1waySingleField(clark, "password") {
+        unhashed = "kryptonite"
+    }
+    setPassword2waySingleField(clark, "main_secret") {
+        unencrypted = "Alien from Krypton"
+    }
     val clarkRelations = getOrNewMutableSetField(clark, "relation")
     clarkRelations.setAux(auxName, "Aux for Clark's relation list")
     val clarkRelationToLois = addRelation(
@@ -61,6 +67,14 @@ fun newAddressBook(auxName: String): MainModel {
     setUuidSingleField(lois, "id", "a8aacf55-7810-4b43-afe5-4344f25435fd")
     setStringSingleField(lois, "first_name", "Lois")
     setStringSingleField(lois, "last_name", "Lane")
+    setPassword1waySingleField(lois, "password") {
+        hashed = "test-hashed-lois"
+        hashVersion = 1
+    }
+    setPassword2waySingleField(lois, "main_secret") {
+        encrypted = "test-encrypted-main-secret"
+        cipherVersion = 1
+    }
     val loisRelations = getOrNewMutableSetField(lois, "relation")
     val loisRelationToClark = addRelation(
         loisRelations,
