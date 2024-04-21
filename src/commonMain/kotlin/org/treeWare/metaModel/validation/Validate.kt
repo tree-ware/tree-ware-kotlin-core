@@ -1,8 +1,6 @@
 package org.treeWare.metaModel.validation
 
-import org.treeWare.model.core.Cipher
-import org.treeWare.model.core.Hasher
-import org.treeWare.model.core.MutableMainModel
+import org.treeWare.model.core.*
 
 /**
  * Validates the specified meta-model.
@@ -19,6 +17,7 @@ fun validate(
     mainMeta: MutableMainModel,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory = ::defaultRootEntityFactory,
     logFullNames: Boolean = false,
     mandatoryFieldNumbers: Boolean = true
 ): List<String> {
@@ -33,7 +32,7 @@ fun validate(
     // NOTE: because of "forward-references", this has to be collected from all
     // packages before non-primitive fields can be resolved.
     val nonPrimitiveTypes = getNonPrimitiveTypes(mainMeta)
-    val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, nonPrimitiveTypes)
+    val nonPrimitiveErrors = resolveNonPrimitiveTypes(mainMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
 
     val existsIfErrors = validateExistsIf(mainMeta)
     val granularityErrors = validateGranularity(mainMeta)

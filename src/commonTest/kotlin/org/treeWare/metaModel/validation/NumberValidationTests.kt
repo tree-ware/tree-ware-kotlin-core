@@ -1,6 +1,7 @@
 package org.treeWare.metaModel.validation
 
 import org.treeWare.metaModel.*
+import org.treeWare.model.core.defaultRootEntityFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -395,6 +396,7 @@ private fun newTestMetaModel(testPackageJson: String): ValidatedMetaModel = newM
     false,
     null,
     null,
+    ::defaultRootEntityFactory,
     emptyList(),
     true
 )

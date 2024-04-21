@@ -15,11 +15,12 @@ fun resolveNonPrimitiveTypes(
     mainMeta: MainModel,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val rootErrors = resolveRoot(mainMeta, nonPrimitiveTypes)
     val rootEntityMeta = getMetaModelResolved(getRootMeta(mainMeta))?.compositionMeta
-    val packageErrors = resolvePackages(mainMeta, rootEntityMeta, hasher, cipher, nonPrimitiveTypes)
+    val packageErrors = resolvePackages(mainMeta, rootEntityMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
     return listOf(rootErrors, packageErrors).flatten()
 }
 
@@ -33,10 +34,20 @@ private fun resolvePackages(
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val packagesMeta = getPackagesMeta(mainMeta)
-    return packagesMeta.values.flatMap { resolvePackage(it, rootEntityMeta, hasher, cipher, nonPrimitiveTypes) }
+    return packagesMeta.values.flatMap {
+        resolvePackage(
+            it,
+            rootEntityMeta,
+            hasher,
+            cipher,
+            rootEntityFactory,
+            nonPrimitiveTypes
+        )
+    }
 }
 
 private fun resolvePackage(
@@ -44,10 +55,11 @@ private fun resolvePackage(
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val packageMeta = packageElementMeta as EntityModel
-    return resolveEntities(packageMeta, rootEntityMeta, hasher, cipher, nonPrimitiveTypes)
+    return resolveEntities(packageMeta, rootEntityMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
 }
 
 private fun resolveEntities(
@@ -55,10 +67,20 @@ private fun resolveEntities(
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val entitiesMeta = getEntitiesMeta(packageMeta)
-    return entitiesMeta?.values?.flatMap { resolveEntity(it, rootEntityMeta, hasher, cipher, nonPrimitiveTypes) }
+    return entitiesMeta?.values?.flatMap {
+        resolveEntity(
+            it,
+            rootEntityMeta,
+            hasher,
+            cipher,
+            rootEntityFactory,
+            nonPrimitiveTypes
+        )
+    }
         ?: listOf()
 }
 
@@ -67,12 +89,14 @@ private fun resolveEntity(
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val entityMeta = entityElementMeta as EntityModel
     val entityResolved = getMetaModelResolved(entityMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity")
-    val errors = resolveFields(entityMeta, entityResolved, rootEntityMeta, hasher, cipher, nonPrimitiveTypes)
+    val errors =
+        resolveFields(entityMeta, entityResolved, rootEntityMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
     entityResolved.sortedKeyFieldsMetaInternal.sortBy { getMetaNumber(it) }
     return errors
 }
@@ -83,17 +107,18 @@ private fun resolveFields(
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val fieldsMeta = getFieldsMeta(entityMeta)
     return fieldsMeta.values.flatMap {
         resolveField(
             it,
-            entityMeta,
             entityResolved,
             rootEntityMeta,
             hasher,
             cipher,
+            rootEntityFactory,
             nonPrimitiveTypes
         )
     }
@@ -101,11 +126,11 @@ private fun resolveFields(
 
 private fun resolveField(
     fieldElementMeta: ElementModel,
-    entityMeta: EntityModel,
     entityResolved: Resolved,
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val fieldMeta = fieldElementMeta as EntityModel
@@ -116,7 +141,12 @@ private fun resolveField(
         FieldType.PASSWORD1WAY -> resolvePassword1wayField(fieldMeta, hasher)
         FieldType.PASSWORD2WAY -> resolvePassword2wayField(fieldMeta, cipher)
         FieldType.ENUMERATION -> resolveEnumerationField(fieldMeta, nonPrimitiveTypes)
-        FieldType.ASSOCIATION -> resolveAssociationField(fieldMeta, rootEntityMeta, nonPrimitiveTypes)
+        FieldType.ASSOCIATION -> resolveAssociationField(
+            fieldMeta,
+            rootEntityMeta,
+            rootEntityFactory,
+            nonPrimitiveTypes
+        )
         FieldType.COMPOSITION -> resolveCompositionField(fieldMeta, nonPrimitiveTypes)
         else -> listOf()
     }
@@ -155,6 +185,7 @@ private fun resolveEnumerationField(
 private fun resolveAssociationField(
     fieldMeta: EntityModel,
     rootEntityMeta: EntityModel?,
+    rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val entityInfoMeta = getEntityInfoMeta(fieldMeta, "association")
@@ -168,7 +199,8 @@ private fun resolveAssociationField(
 
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in entity field targeting $targetFullName")
-    resolved.associationMeta = rootEntityMeta?.let { ResolvedAssociationMeta(it, targetEntityMeta, isRecursive) }
+    resolved.associationMeta =
+        rootEntityMeta?.let { ResolvedAssociationMeta(it, targetEntityMeta, isRecursive, rootEntityFactory) }
 
     // Record recursive association fields in the parent entity.
     if (isRecursive) {

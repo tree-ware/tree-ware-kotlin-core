@@ -484,24 +484,22 @@ class MutableEnumerationModel(
     }
 }
 
-class MutableAssociationModel(
-    override val parent: MutableFieldModel,
-    valueMeta: EntityModel?
-) : MutableElementModel(), AssociationModel {
+class MutableAssociationModel(override val parent: MutableFieldModel) : MutableElementModel(), AssociationModel {
     companion object {
-        val fieldValueFactory: FieldValueFactory = { fieldMeta, parent ->
-            MutableAssociationModel(
-                parent,
-                getMetaModelResolved(fieldMeta)?.associationMeta?.rootEntityMeta
-            )
-        }
+        val fieldValueFactory: FieldValueFactory = { fieldMeta, parent -> MutableAssociationModel(parent) }
     }
 
     // NOTE: entities need to have a non-null parent that is a field. So this association cannot be used as the parent
     // of the `value` entity below. Instead, the parent field of this association instance is used as the parent. This
     // actually works out well since the `value` entity is equivalent to a direct child of the field (the only reason
     // it is not that way in the code is because the direct child needs to have ASSOCIATION as the `elementType`).
-    override val value: MutableEntityModel = MutableEntityModel(valueMeta, parent)
+    override val value: MutableEntityModel
+
+    init {
+        val resolvedAssociation = getMetaModelResolved(parent.meta)?.associationMeta
+            ?: throw IllegalStateException("Association has not been resolved")
+        value = resolvedAssociation.rootEntityFactory(resolvedAssociation.rootEntityMeta, parent)
+    }
 
     override fun getNewValue(): MutableElementModel = value
 
@@ -519,6 +517,10 @@ class MutableAssociationModel(
 }
 
 // region Helpers
+
+typealias RootEntityFactory = (rootMeta: EntityModel, parent: MutableFieldModel) -> MutableEntityModel
+
+fun defaultRootEntityFactory(rootMeta: EntityModel, parent: MutableFieldModel) = MutableEntityModel(rootMeta, parent)
 
 typealias FieldValueFactory = (fieldMeta: EntityModel, parent: MutableFieldModel) -> MutableElementModel
 
