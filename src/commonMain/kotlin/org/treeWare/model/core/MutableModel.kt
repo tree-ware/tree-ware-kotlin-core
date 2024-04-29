@@ -2,7 +2,6 @@ package org.treeWare.model.core
 
 import org.treeWare.metaModel.*
 import org.treeWare.util.decodeBase64
-import org.treeWare.util.hash
 import org.treeWare.util.toBigDecimal
 import org.treeWare.util.toBigInteger
 
@@ -39,7 +38,7 @@ open class MutableMainModel(
             this.value = value
         }
 
-    override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
+    override fun matches(that: ElementModel): Boolean = TODO("Not yet needed, so not yet implemented.")
 
     fun getOrNewRoot(): MutableEntityModel = getNewValue() as MutableEntityModel
 }
@@ -62,9 +61,6 @@ abstract class MutableBaseEntityModel(
             thisKeyField.matches(thatKeyField)
         }
     }
-
-    // NOTE: key values cannot be changed after an entity has been added to its parent set.
-    override fun getMatchingHashCode(): Int = hash(getKeyValues())
 
     override fun getField(fieldName: String): MutableFieldModel? = fields[fieldName]
 
@@ -259,9 +255,11 @@ class MutableSetFieldModel(
     private val linkedHashMap = LinkedHashMap<ElementModelId, MutableElementModel>()
     override val values get() = linkedHashMap.values
 
-    override fun matches(that: ElementModel): Boolean = false // Not yet needed, so not yet supported.
+    override fun matches(that: ElementModel): Boolean = TODO("Not yet needed, so not yet implemented.")
     override fun firstValue(): ElementModel? = values.iterator().takeIf { it.hasNext() }?.next()
     override fun getValueMatching(that: ElementModel): ElementModel? = linkedHashMap[newElementModelId(that)]
+
+    fun getValueMatching(elementModelId: ElementModelId): ElementModel? = linkedHashMap[elementModelId]
 
     /**
      * Returns a new value.

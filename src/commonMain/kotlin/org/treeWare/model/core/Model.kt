@@ -29,8 +29,6 @@ data class Keys(val available: List<SingleFieldModel>, val missing: List<String>
 
 val EmptyKeys = Keys(emptyList(), emptyList())
 
-data class RequiredNonKeyFields(val available: List<SingleFieldModel>, val missing: List<String>)
-
 interface BaseEntityModel : ElementModel {
     override val meta: EntityModel?
 
@@ -39,10 +37,12 @@ interface BaseEntityModel : ElementModel {
     override fun isEmpty(): Boolean = fields.isEmpty()
 
     fun getField(fieldName: String): FieldModel?
-    fun getMatchingHashCode(): Int
 
     fun hasOnlyKeyFields(): Boolean = fields.all { (_, field) -> isKeyField(field) }
     fun getKeyFields(flatten: Boolean = false): Keys
+
+    /** Returns key values. Keys are in sorted meta-model order and composite keys are flattened.
+     */
     fun getKeyValues(): List<Any?>
 }
 
