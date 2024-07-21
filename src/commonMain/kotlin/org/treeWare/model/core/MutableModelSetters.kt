@@ -2,16 +2,16 @@ package org.treeWare.model.core
 
 fun getOrNewMutableSingleEntity(entityModel: MutableBaseEntityModel, fieldName: String): MutableEntityModel {
     val singleField = getOrNewMutableSingleField(entityModel, fieldName)
-    return singleField.getNewValue() as MutableEntityModel
+    return singleField.getOrNewValue() as MutableEntityModel
 }
 
 fun getOrNewMutableSingleAssociation(entityModel: MutableBaseEntityModel, fieldName: String): MutableAssociationModel {
     val singleField = getOrNewMutableSingleField(entityModel, fieldName)
-    return singleField.getNewValue() as MutableAssociationModel
+    return singleField.getOrNewValue() as MutableAssociationModel
 }
 
 fun getNewMutableSetEntity(setField: MutableSetFieldModel): MutableEntityModel =
-    setField.getNewValue() as MutableEntityModel
+    setField.getOrNewValue() as MutableEntityModel
 
 fun getOrNewMutableSingleField(entityModel: MutableBaseEntityModel, fieldName: String): MutableSingleFieldModel =
     entityModel.getOrNewField(fieldName) as MutableSingleFieldModel
@@ -28,7 +28,7 @@ fun setDoubleSingleField(
     value: Double
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getNewValue() as MutablePrimitiveModel
+    val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.value = value
     return field
 }
@@ -39,32 +39,32 @@ fun setStringSingleField(
     value: String
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getNewValue() as MutablePrimitiveModel
+    val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
     return field
 }
 
 fun addStringListFieldElement(listField: MutableListFieldModel, value: String): MutablePrimitiveModel {
-    val primitive = listField.getNewValue() as MutablePrimitiveModel
+    val primitive = listField.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
     return primitive
 }
 
 fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: String) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getNewValue() as MutablePrimitiveModel
+    val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
 }
 
 fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: ULong) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getNewValue() as MutablePrimitiveModel
+    val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.value = value
 }
 
 fun setBooleanSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Boolean) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val primitive = field.getNewValue() as MutablePrimitiveModel
+    val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
 }
 
@@ -74,7 +74,7 @@ fun setPassword1waySingleField(
     configure: MutablePassword1wayModel.() -> Unit
 ) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val password = field.getNewValue() as MutablePassword1wayModel
+    val password = field.getOrNewValue() as MutablePassword1wayModel
     password.configure()
 }
 
@@ -84,7 +84,7 @@ fun setPassword2waySingleField(
     configure: MutablePassword2wayModel.() -> Unit
 ) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val password = field.getNewValue() as MutablePassword2wayModel
+    val password = field.getOrNewValue() as MutablePassword2wayModel
     password.configure()
 }
 
@@ -94,13 +94,13 @@ fun setEnumerationSingleField(
     value: String
 ): MutableSingleFieldModel {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
-    val enumeration = field.getNewValue() as MutableEnumerationModel
+    val enumeration = field.getOrNewValue() as MutableEnumerationModel
     enumeration.setValue(value)
     return field
 }
 
 fun addEnumerationListFieldElement(listField: MutableListFieldModel, value: String): MutableEnumerationModel {
-    val enumeration = listField.getNewValue() as MutableEnumerationModel
+    val enumeration = listField.getOrNewValue() as MutableEnumerationModel
     enumeration.setValue(value)
     return enumeration
 }

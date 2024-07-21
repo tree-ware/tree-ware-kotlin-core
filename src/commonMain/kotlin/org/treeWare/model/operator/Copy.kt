@@ -32,7 +32,7 @@ private class CopyVisitor(
         val copyEntity = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         }
         modelStack.addFirst(copyEntity)
         return TraversalAction.CONTINUE
@@ -74,7 +74,7 @@ private class CopyVisitor(
         val copyPrimitive = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         } as MutablePrimitiveModel
         copyPrimitive.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -84,7 +84,7 @@ private class CopyVisitor(
         val copyAlias = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         } as MutableAliasModel
         copyAlias.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -94,7 +94,7 @@ private class CopyVisitor(
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         } as MutablePassword1wayModel
         copyPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -104,7 +104,7 @@ private class CopyVisitor(
         val copyPassword = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         } as MutablePassword2wayModel
         copyPassword.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -114,7 +114,7 @@ private class CopyVisitor(
         val copyEnumeration = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         } as MutableEnumerationModel
         copyEnumeration.copyValueFrom(leaderValue1)
         return TraversalAction.CONTINUE
@@ -124,7 +124,7 @@ private class CopyVisitor(
         val copyAssociation = if (modelStack.isEmpty()) to
         else {
             val copyParent = modelStack.first()
-            copyParent.getNewValue()
+            copyParent.getOrNewValue()
         } as MutableAssociationModel
         modelStack.addFirst(copyAssociation)
         return TraversalAction.CONTINUE

@@ -39,7 +39,7 @@ private fun getScalarStateMachine(
     if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
         val listElementStateMachine = ScalarValueModelStateMachine(
             true,
-            { listFieldModel.getNewValue() as MutableScalarValueModel },
+            { listFieldModel.getOrNewValue() as MutableScalarValueModel },
             stack
         )
         wrapListElementStateMachine(
@@ -53,7 +53,7 @@ private fun getScalarStateMachine(
     } else (field as MutableSingleFieldModel).let { singleFieldModel ->
         ScalarValueModelStateMachine(
             false,
-            { singleFieldModel.getNewValue() as MutableScalarValueModel },
+            { singleFieldModel.getOrNewValue() as MutableScalarValueModel },
             stack
         )
     }
@@ -67,7 +67,7 @@ private fun getPassword1wayStateMachine(
     if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
         val listElementStateMachine = Password1wayModelStateMachine(
             true,
-            { listFieldModel.getNewValue() as MutablePassword1wayModel },
+            { listFieldModel.getOrNewValue() as MutablePassword1wayModel },
             stack,
             multiAuxDecodingStateMachineFactory
         )
@@ -82,7 +82,7 @@ private fun getPassword1wayStateMachine(
     } else (field as MutableSingleFieldModel).let { singleFieldModel ->
         Password1wayModelStateMachine(
             false,
-            { singleFieldModel.getNewValue() as MutablePassword1wayModel },
+            { singleFieldModel.getOrNewValue() as MutablePassword1wayModel },
             stack,
             multiAuxDecodingStateMachineFactory
         )
@@ -98,7 +98,7 @@ private fun getPassword2wayStateMachine(
     if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
         val listElementStateMachine = Password2wayModelStateMachine(
             true,
-            { listFieldModel.getNewValue() as MutablePassword2wayModel },
+            { listFieldModel.getOrNewValue() as MutablePassword2wayModel },
             stack,
             multiAuxDecodingStateMachineFactory
         )
@@ -113,7 +113,7 @@ private fun getPassword2wayStateMachine(
     } else (field as MutableSingleFieldModel).let { singleFieldModel ->
         Password2wayModelStateMachine(
             false,
-            { singleFieldModel.getNewValue() as MutablePassword2wayModel },
+            { singleFieldModel.getOrNewValue() as MutablePassword2wayModel },
             stack,
             multiAuxDecodingStateMachineFactory
         )
@@ -130,7 +130,7 @@ private fun getAssociationStateMachine(
         val listElementStateMachine = BaseEntityStateMachine(
             listFieldModel,
             {
-                val association = listFieldModel.getNewValue() as MutableAssociationModel
+                val association = listFieldModel.getOrNewValue() as MutableAssociationModel
                 association.value
             },
             stack,
@@ -151,7 +151,7 @@ private fun getAssociationStateMachine(
         BaseEntityStateMachine(
             null,
             {
-                val association = singleFieldModel.getNewValue() as MutableAssociationModel
+                val association = singleFieldModel.getOrNewValue() as MutableAssociationModel
                 association.value
             },
             stack,
@@ -172,7 +172,7 @@ private fun getCompositionStateMachine(
     if (isSetField(field)) (field as MutableSetFieldModel).let { setFieldModel ->
         val setElementStateMachine = BaseEntityStateMachine(
             setFieldModel,
-            { setFieldModel.getNewValue() as MutableEntityModel },
+            { setFieldModel.getOrNewValue() as MutableEntityModel },
             stack,
             options,
             errors,
@@ -183,7 +183,7 @@ private fun getCompositionStateMachine(
     } else (field as MutableSingleFieldModel).let { singleFieldModel ->
         BaseEntityStateMachine(
             null,
-            { singleFieldModel.getNewValue() as MutableEntityModel },
+            { singleFieldModel.getOrNewValue() as MutableEntityModel },
             stack,
             options,
             errors,

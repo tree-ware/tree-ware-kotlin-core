@@ -21,7 +21,11 @@ abstract class MutableElementModel : ElementModel {
         auxsInternal?.also { it.remove(auxName) }
     }
 
-    open fun getNewValue(): MutableElementModel = throw UnsupportedOperationException()
+    /**
+     * Returns the current value if not null, else returns a new value.
+     * IMPORTANT: Behavior is slightly different in each subclass.
+     */
+    open fun getOrNewValue(): MutableElementModel = throw UnsupportedOperationException()
 }
 
 open class MutableMainModel(
@@ -40,7 +44,7 @@ open class MutableMainModel(
 
     override fun matches(that: ElementModel): Boolean = TODO("Not yet needed, so not yet implemented.")
 
-    fun getOrNewRoot(): MutableEntityModel = getNewValue() as MutableEntityModel
+    fun getOrNewRoot(): MutableEntityModel = getOrNewValue() as MutableEntityModel
 }
 
 abstract class MutableBaseEntityModel(
@@ -187,7 +191,7 @@ open class MutableSingleFieldModel(
     }
 
     /** Returns existing value if not null, else creates, sets and returns a new value. */
-    override fun getNewValue(): MutableElementModel {
+    override fun getOrNewValue(): MutableElementModel {
         val existing = value
         if (existing != null) return existing
         val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
@@ -231,7 +235,7 @@ class MutableListFieldModel(
     override fun getValueMatching(that: ElementModel): ElementModel? = values.find { it.matches(that) }
 
     /** Adds a new value to the list and returns the new value. */
-    override fun getNewValue(): MutableElementModel {
+    override fun getOrNewValue(): MutableElementModel {
         val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
         val newValue = valueFactory(fieldMeta, this)
         addValue(newValue)
@@ -265,7 +269,7 @@ class MutableSetFieldModel(
      * Returns a new value.
      * WARNING: the new value needs to be added to the set after the key fields are set in it.
      */
-    override fun getNewValue(): MutableElementModel {
+    override fun getOrNewValue(): MutableElementModel {
         val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
         return valueFactory(fieldMeta, this)
     }
@@ -499,7 +503,7 @@ class MutableAssociationModel(override val parent: MutableFieldModel) : MutableE
         value = resolvedAssociation.rootEntityFactory(resolvedAssociation.rootEntityMeta, parent)
     }
 
-    override fun getNewValue(): MutableElementModel = value
+    override fun getOrNewValue(): MutableElementModel = value
 
     override fun matches(that: ElementModel): Boolean {
         if (that !is AssociationModel) return false

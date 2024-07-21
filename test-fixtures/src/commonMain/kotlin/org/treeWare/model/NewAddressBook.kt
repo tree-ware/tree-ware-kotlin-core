@@ -199,7 +199,7 @@ fun addRelatedCity(
     auxName: String,
     aux: String? = null
 ) {
-    val relatedAssociation = relatedList.getNewValue() as MutableAssociationModel
+    val relatedAssociation = relatedList.getOrNewValue() as MutableAssociationModel
     aux?.also { relatedAssociation.setAux(auxName, it) }
     val cityInfoSet = getOrNewMutableSetField(relatedAssociation.value, "city_info")
     val cityInfo = getNewMutableSetEntity(cityInfoSet)

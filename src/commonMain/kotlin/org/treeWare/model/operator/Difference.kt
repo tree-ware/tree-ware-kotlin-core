@@ -63,15 +63,15 @@ private class DifferenceVisitor(
         inclusionStack.addFirst(entityInclusions)
 
         val createParent = createStack.first() ?: throw IllegalStateException("Create-entity parent is null")
-        val createEntity = createParent.getNewValue()
+        val createEntity = createParent.getOrNewValue()
         createStack.addFirst(createEntity)
 
         val deleteParent = deleteStack.first() ?: throw IllegalStateException("Delete-entity parent is null")
-        val deleteEntity = deleteParent.getNewValue()
+        val deleteEntity = deleteParent.getOrNewValue()
         deleteStack.addFirst(deleteEntity)
 
         val updateParent = updateStack.first() ?: throw IllegalStateException("Update-entity parent is null")
-        val updateEntity = updateParent.getNewValue()
+        val updateEntity = updateParent.getOrNewValue()
         updateStack.addFirst(updateEntity)
 
         if (oldEntity == null) {
@@ -191,7 +191,7 @@ private class DifferenceVisitor(
     ) {
         val lastElement = leaderValueList.lastNotNullOf { it }
         val parent = treeStack.first() ?: throw IllegalStateException("Value parent is null")
-        val newElement = parent.getNewValue()
+        val newElement = parent.getOrNewValue()
         copy(lastElement, newElement)
     }
 

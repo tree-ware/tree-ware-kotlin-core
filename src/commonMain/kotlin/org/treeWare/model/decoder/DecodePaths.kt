@@ -140,7 +140,7 @@ private fun decodeSingleField(
             if (value == null) DecodePathResult.Field(singleField, trailingWildcards)
             else DecodePathResult.Error("Cannot assign a value to composition $fieldId")
         } else {
-            val nextEntity = singleField.getNewValue() as MutableEntityModel
+            val nextEntity = singleField.getOrNewValue() as MutableEntityModel
             decodePath(path, pathParts, partIndex + 1, lastPartIndex, value, nextEntity)
         }
     }
@@ -151,7 +151,7 @@ private fun setPrimitive(
     value: String?
 ): DecodePathResult {
     if (value != null) {
-        val primitive = singleField.getNewValue() as MutablePrimitiveModel
+        val primitive = singleField.getOrNewValue() as MutablePrimitiveModel
         primitive.setValue(value)
     }
     return DecodePathResult.Field(singleField)
@@ -162,7 +162,7 @@ private fun setEnumeration(
     value: String?
 ): DecodePathResult {
     if (value != null) {
-        val enumeration = singleField.getNewValue() as MutableEnumerationModel
+        val enumeration = singleField.getOrNewValue() as MutableEnumerationModel
         enumeration.setValue(value)
     }
     return DecodePathResult.Field(singleField)
@@ -181,7 +181,7 @@ private fun decodeSetField(
     if (trailingWildcards != null) return DecodePathResult.Field(setField, trailingWildcards)
 
     val availablePartsCount = lastPartIndex - partIndex
-    val newEntity = setField.getNewValue() as MutableEntityModel
+    val newEntity = setField.getOrNewValue() as MutableEntityModel
     val entityMeta = newEntity.meta ?: throw IllegalStateException("Meta-model is missing for entity of field $fieldId")
     val keyFieldsMeta = getKeyFieldsMeta(entityMeta)
     val keyFieldsCount = keyFieldsMeta.size
@@ -201,7 +201,7 @@ private fun decodeSetField(
             return DecodePathResult.Error("Sub-tree wildcard $keyId is invalid in the middle of a path")
         }
         if (keyValue == WILDCARD) return@forEachIndexed
-        val keyPrimitive = keyField.getNewValue() as MutablePrimitiveModel
+        val keyPrimitive = keyField.getOrNewValue() as MutablePrimitiveModel
         keyPrimitive.setValue(unescapeKey(keyValue))
     }
 
