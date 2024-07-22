@@ -4,10 +4,11 @@ import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.FieldModel
 import org.treeWare.model.core.Keys
 import org.treeWare.model.core.SingleFieldModel
+import org.treeWare.model.operator.Response
 import org.treeWare.model.operator.set.aux.SetAux
 
 interface SetDelegate {
-    fun begin(): SetResponse
+    fun begin(): Response
 
     /** Sets the specified entity.
      *
@@ -25,7 +26,7 @@ interface SetDelegate {
         keys: List<SingleFieldModel>,
         associations: List<FieldModel>,
         other: List<FieldModel>
-    ): SetResponse
+    ): Response
 
-    fun end(): SetResponse
+    fun end(): Response
 }

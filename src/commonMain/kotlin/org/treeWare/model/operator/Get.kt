@@ -16,12 +16,12 @@ fun get(
     setEntityDelegates: EntityDelegateRegistry<SetEntityDelegate>?,
     getEntityDelegates: EntityDelegateRegistry<GetEntityDelegate>?,
     response: MutableMainModel
-): Errors {
+): Response {
     response.getOrNewRoot()
     val getVisitor = GetDelegateVisitor(getDelegate, setEntityDelegates)
     forEach(response, request, getVisitor, false, ::followerEntityEquals)
-    return if (getVisitor.errors.isEmpty()) Errors.None
-    else Errors.ErrorList(getVisitor.errorCode, getVisitor.errors)
+    return if (getVisitor.errors.isEmpty()) Response.Success
+    else Response.ErrorList(getVisitor.errorCode, getVisitor.errors)
 }
 
 private fun followerEntityEquals(

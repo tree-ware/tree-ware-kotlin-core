@@ -229,7 +229,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 ofType()
             )
         }
-        assertTrue(errors is Errors.None)
+        assertTrue(errors is Response.Success)
         assertMatchesJson(
             response,
             "org/treeWare/model/operator/get_response_multiple_specific_entities.json",

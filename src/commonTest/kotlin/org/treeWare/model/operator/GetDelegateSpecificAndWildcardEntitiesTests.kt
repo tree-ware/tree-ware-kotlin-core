@@ -299,7 +299,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 ofType()
             )
         }
-        assertTrue(errors is Errors.None)
+        assertTrue(errors is Response.Success)
         assertMatchesJson(
             response,
             "org/treeWare/model/operator/get_response_specific_and_wildcard_entities.json",

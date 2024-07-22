@@ -2,10 +2,7 @@ package org.treeWare.model.operator.set
 
 import org.treeWare.metaModel.FieldType
 import org.treeWare.model.core.*
-import org.treeWare.model.operator.ElementModelError
-import org.treeWare.model.operator.EntityDelegateRegistry
-import org.treeWare.model.operator.ModelPathStack
-import org.treeWare.model.operator.SetEntityDelegate
+import org.treeWare.model.operator.*
 import org.treeWare.model.operator.set.aux.SetAuxStack
 import org.treeWare.model.operator.set.aux.getSetAux
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
@@ -72,12 +69,13 @@ class SetDelegateVisitor(
             other
         )
         return when (delegateResponse) {
-            SetResponse.Success -> TraversalAction.CONTINUE
-            is SetResponse.ErrorList -> {
+            Response.Success -> TraversalAction.CONTINUE
+            is Response.ErrorList -> {
                 errors.addAll(delegateResponse.errorList)
                 TraversalAction.ABORT_SUB_TREE
             }
-            is SetResponse.ErrorModel -> TODO()
+            is Response.ErrorModel -> TODO()
+            is Response.Model -> TraversalAction.CONTINUE
         }
     }
 
