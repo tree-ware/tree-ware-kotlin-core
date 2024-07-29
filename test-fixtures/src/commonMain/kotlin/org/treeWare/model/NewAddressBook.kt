@@ -1,12 +1,13 @@
 package org.treeWare.model
 
 import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.metaModel.getRootEntityMeta
 import org.treeWare.model.core.*
 
-fun newAddressBook(auxName: String): MainModel {
-    val main = MutableMainModel(addressBookMetaModel)
-    main.setAux(auxName, "Aux at address_book level")
-    val root = main.getOrNewRoot()
+fun newAddressBook(auxName: String): EntityModel {
+    val rootEntityMeta = getRootEntityMeta(addressBookMetaModel)
+    val root = MutableEntityModel(rootEntityMeta, null)
+    root.setAux(auxName, "Aux at address_book level")
     setStringSingleField(root, "name", "Address Book")
     setTimestampSingleField(root, "last_updated", 1587147731UL)
 
@@ -141,7 +142,7 @@ fun newAddressBook(auxName: String): MainModel {
     addCity(sanFranciscoCityInfo, "San Francisco", "California", "United States of America")
     cityInfoSet.addValue(sanFranciscoCityInfo)
 
-    return main
+    return root
 }
 
 fun addRelation(

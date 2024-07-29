@@ -11,6 +11,13 @@ fun getVersionMeta(mainMeta: MainModel): EntityModel {
     return getSingleEntity(mainMetaRoot, "version")
 }
 
+/**
+ * Returns the meta-model to be used for the root entity of the model.
+ * NOTE: this is different than the getRootMeta() function which returns the root entity of the meta-model.
+ */
+fun getRootEntityMeta(mainMeta: MainModel): EntityModel? =
+    getMetaModelResolved(getRootMeta(mainMeta))?.compositionMeta
+
 fun getRootMeta(mainMeta: MainModel): EntityModel {
     val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
     return getSingleEntity(mainMetaRoot, "root")
