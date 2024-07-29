@@ -31,9 +31,9 @@ class ModelEncodingVisitor(
     }
 
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
-        val name = leaderEntity1.parent.meta?.let { getMetaName(it) } ?: ""
+        val name = leaderEntity1.parent?.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)
-        val isCollectionElement = leaderEntity1.parent.meta?.let { isCollectionFieldMeta(it) } ?: false
+        val isCollectionElement = leaderEntity1.parent?.meta?.let { isCollectionFieldMeta(it) } ?: false
         if (isCollectionElement) encodeAuxs(null, leaderEntity1)
         else if (!isEncodingAssociation) encodeAuxs(null, leaderEntity1)
         return TraversalAction.CONTINUE

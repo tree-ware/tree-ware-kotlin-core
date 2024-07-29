@@ -6,11 +6,11 @@ fun getMetaModelFullName(element: ElementModel): String? = getMetaModelResolved(
 
 fun getMainName(mainModel: MainModel): String? = mainModel.meta?.let { getMetaName(it) }
 
-fun isRootEntity(entityModel: EntityModel): Boolean = entityModel.parent.elementType == ModelElementType.MAIN
+fun isRootEntity(entityModel: EntityModel): Boolean = entityModel.parent?.elementType == ModelElementType.MAIN
 
-fun isCompositionKey(entityModel: EntityModel): Boolean = isKeyField(entityModel.parent)
+fun isCompositionKey(entityModel: EntityModel): Boolean = entityModel.parent?.let { isKeyField(it) } ?: false
 
-fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent.meta?.let { getMetaName(it) }
+fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent?.meta?.let { getMetaName(it) }
 
 fun getSingleEntity(entityModel: BaseEntityModel, fieldName: String): EntityModel {
     val singleField = getSingleField(entityModel, fieldName)

@@ -47,7 +47,7 @@ private class PopulateSubTreeGranularityDeleteRequestVisitor :
         val setAux = getSetAux(parentField) ?: getSetAux(leaderEntity1)
         if (setAux != SetAux.DELETE) return TraversalAction.CONTINUE
 
-        val parentFieldMeta = requireNotNull(parentField.meta)
+        val parentFieldMeta = requireNotNull(parentField?.meta)
         val granularityMeta = getGranularityMeta(parentFieldMeta)
         if (granularityMeta != Granularity.SUB_TREE) return TraversalAction.CONTINUE
 

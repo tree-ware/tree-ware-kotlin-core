@@ -22,7 +22,7 @@ private class PopulateSubTreeGranularityGetRequestVisitor :
     AbstractLeader1MutableModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     override fun visitMutableEntity(leaderEntity1: MutableEntityModel): TraversalAction {
         val parentField = leaderEntity1.parent
-        val parentFieldMeta = requireNotNull(parentField.meta)
+        val parentFieldMeta = requireNotNull(parentField?.meta)
         val granularityMeta = getGranularityMeta(parentFieldMeta)
         if (granularityMeta != Granularity.SUB_TREE) return TraversalAction.CONTINUE
 

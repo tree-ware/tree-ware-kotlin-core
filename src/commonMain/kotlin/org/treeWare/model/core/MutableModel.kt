@@ -154,7 +154,7 @@ abstract class MutableBaseEntityModel(
 
 open class MutableEntityModel(
     meta: EntityModel?,
-    override val parent: MutableFieldModel
+    override val parent: MutableFieldModel?
 ) : MutableBaseEntityModel(meta), EntityModel {
     companion object {
         val fieldValueFactory: FieldValueFactory =

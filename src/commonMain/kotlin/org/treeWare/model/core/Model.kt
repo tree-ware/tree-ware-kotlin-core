@@ -50,7 +50,7 @@ interface EntityModel : BaseEntityModel {
     override val elementType: ModelElementType
         get() = ModelElementType.ENTITY
 
-    override val parent: FieldModel
+    override val parent: FieldModel?
 }
 
 // Fields

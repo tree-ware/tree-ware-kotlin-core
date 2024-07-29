@@ -139,7 +139,7 @@ private fun encodeAssociationField(fieldMeta: EntityModel, dotWriter: DotWriter)
     val type = getMetaName(resolvedEntity)
     encodeFieldRow(fieldMeta, type, dotWriter)
 
-    val entityFullName = getMetaModelResolved(fieldMeta.parent.parent)?.fullName
+    val entityFullName = getMetaModelResolved(fieldMeta.parent?.parent)?.fullName
     val fullName = getMetaModelResolved(resolvedEntity)?.fullName
     val name = getMetaName(fieldMeta)
 
@@ -153,7 +153,7 @@ private fun encodeCompositionField(fieldMeta: EntityModel, dotWriter: DotWriter)
     val type = getMetaName(resolvedEntity)
     encodeFieldRow(fieldMeta, type, dotWriter)
 
-    val entityFullName = getMetaModelResolved(fieldMeta.parent.parent)?.fullName
+    val entityFullName = getMetaModelResolved(fieldMeta.parent?.parent)?.fullName
     val fullName = getMetaModelResolved(resolvedEntity)?.fullName
     val name = getMetaName(fieldMeta)
 

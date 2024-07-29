@@ -39,7 +39,7 @@ fun getEnumerationValueMeta(enumerationMeta: EntityModel, number: UInt): EntityM
     } as? EntityModel
 }
 
-fun getParentEnumerationMeta(enumerationValueMeta: EntityModel): BaseEntityModel? = enumerationValueMeta.parent.parent
+fun getParentEnumerationMeta(enumerationValueMeta: EntityModel): BaseEntityModel? = enumerationValueMeta.parent?.parent
 
 fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
@@ -47,7 +47,7 @@ fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
 fun isEntityMeta(entityMeta: BaseEntityModel): Boolean =
     getMetaModelFullName(entityMeta) == "/tree_ware_meta_model.main/entity"
 
-fun getPackageName(entityMeta: EntityModel): String = getMetaName(entityMeta.parent.parent)
+fun getPackageName(entityMeta: EntityModel): String = getMetaName(entityMeta.parent?.parent)
 
 fun getFieldNames(entityMeta: EntityModel): List<String> =
     getFieldsMeta(entityMeta).values.map { getMetaName(it as EntityModel) }
@@ -106,7 +106,7 @@ fun getFieldTypeMeta(fieldMeta: EntityModel?): FieldType? = fieldMeta?.let {
     FieldType.valueOf(getSingleEnumeration(fieldMeta, "type").uppercase())
 }
 
-fun getParentEntityMeta(fieldMeta: EntityModel): BaseEntityModel? = fieldMeta.parent.parent
+fun getParentEntityMeta(fieldMeta: EntityModel): BaseEntityModel? = fieldMeta.parent?.parent
 
 fun getEnumerationInfoMeta(fieldMeta: EntityModel): EntityModel =
     getSingleEntity(fieldMeta, "enumeration")

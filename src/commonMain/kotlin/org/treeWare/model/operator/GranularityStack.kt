@@ -10,7 +10,7 @@ class GranularityStack {
     fun isEmpty(): Boolean = currentGranularityStack.isEmpty()
 
     fun push(entity: EntityModel) {
-        val parentFieldMeta = entity.parent.meta ?: throw IllegalStateException("Field meta is missing")
+        val parentFieldMeta = entity.parent?.meta ?: throw IllegalStateException("Field meta is missing")
         val granularity = getGranularityMeta(parentFieldMeta) ?: Granularity.FIELD // unspecified defaults to FIELD
         push(granularity)
     }
