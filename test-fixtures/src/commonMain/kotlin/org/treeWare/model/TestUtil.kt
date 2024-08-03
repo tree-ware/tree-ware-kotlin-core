@@ -3,10 +3,12 @@ package org.treeWare.model
 import okio.Buffer
 import okio.BufferedSource
 import okio.buffer
+import org.treeWare.metaModel.getRootEntityMeta
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.decodeJson
+import org.treeWare.model.decoder.decodeJsonEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
@@ -95,6 +97,85 @@ fun getMainModelFromJson(
     )
     assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
     return mainModel
+}
+
+fun testEntityRoundTrip(
+    inputFilePath: String,
+    outputFilePath: String? = null,
+    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
+    encodePasswords: EncodePasswords = EncodePasswords.NONE,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    expectedDecodeErrors: List<String> = listOf(),
+    hasher: Hasher? = null,
+    cipher: Cipher? = null,
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    entityMeta: EntityModel = newAddressBookMetaModel(hasher, cipher).metaModel?.let { getRootEntityMeta(it) }
+        ?: throw IllegalStateException("Meta-model has validation errors"),
+    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+) {
+    getEntityFromJsonFile(
+        entityMeta,
+        inputFilePath,
+        options,
+        expectedDecodeErrors,
+        multiAuxDecodingStateMachineFactory,
+        entity
+    )
+    assertMatchesJson(entity, outputFilePath ?: inputFilePath, encodePasswords, multiAuxEncoder)
+}
+
+fun getEntityFromJsonString(
+    entityMeta: EntityModel,
+    jsonString: String,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    expectedDecodeErrors: List<String> = listOf(),
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+) {
+    val bufferedSource = Buffer().writeUtf8(jsonString)
+    return getEntityFromJson(
+        entityMeta,
+        bufferedSource,
+        options,
+        expectedDecodeErrors,
+        multiAuxDecodingStateMachineFactory,
+        entity
+    )
+}
+
+fun getEntityFromJsonFile(
+    entityMeta: EntityModel,
+    jsonFilePath: String,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    expectedDecodeErrors: List<String> = listOf(),
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+) = getFileSource(jsonFilePath).use {
+    getEntityFromJson(
+        entityMeta,
+        it.buffer(),
+        options,
+        expectedDecodeErrors,
+        multiAuxDecodingStateMachineFactory,
+        entity
+    )
+}
+
+fun getEntityFromJson(
+    entityMeta: EntityModel,
+    bufferedSource: BufferedSource,
+    options: ModelDecoderOptions = ModelDecoderOptions(),
+    expectedDecodeErrors: List<String> = listOf(),
+    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
+    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+) {
+    val decodeErrors = decodeJsonEntity(
+        bufferedSource,
+        entity,
+        options,
+        multiAuxDecodingStateMachineFactory
+    )
+    assertEquals(expectedDecodeErrors.joinToString("\n"), decodeErrors.joinToString("\n"))
 }
 
 /** Encode the model element to JSON and assert that it matches the specified JSON file. */

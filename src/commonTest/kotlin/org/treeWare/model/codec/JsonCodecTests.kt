@@ -5,6 +5,7 @@ import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.StringAuxEncoder
+import org.treeWare.model.testEntityRoundTrip
 import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
 
@@ -15,9 +16,9 @@ class JsonCodecTests {
     }
 
     @Test
-    fun `JSON codec error-model round trip must be lossless`() {
+    fun json_codec_error_model_round_trip_must_be_lossless() {
         val auxName = "error"
-        testRoundTrip(
+        testEntityRoundTrip(
             "model/address_book_error_all_model.json",
             multiAuxEncoder = MultiAuxEncoder(auxName to StringAuxEncoder()),
             encodePasswords = EncodePasswords.ALL,
@@ -28,10 +29,10 @@ class JsonCodecTests {
     }
 
     @Test
-    fun `JSON codec multiple-aux round trip must be lossless`() {
+    fun json_codec_multiple_aux_round_trip_must_be_lossless() {
         val auxType1 = "aux1"
         val auxType2 = "aux2"
-        testRoundTrip(
+        testEntityRoundTrip(
             "model/address_book_multi_aux.json",
             multiAuxEncoder = MultiAuxEncoder(
                 auxType1 to StringAuxEncoder(),
