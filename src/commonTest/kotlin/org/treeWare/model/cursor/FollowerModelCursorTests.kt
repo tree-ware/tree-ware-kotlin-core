@@ -17,12 +17,12 @@ import kotlin.test.*
 class FollowerModelCursorTests {
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor without association traversal`() {
-        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1.json", false)
+        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1_main_model.json", false)
     }
 
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor with association traversal`() {
-        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1.json", true)
+        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1_main_model.json", true)
     }
 
     @Test
@@ -43,18 +43,18 @@ class FollowerModelCursorTests {
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor without association traversal`() {
-        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1.json", false)
+        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1_main_model.json", false)
     }
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor with association traversal`() {
-        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1.json", true)
+        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1_main_model.json", true)
     }
 
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor without association traversal`() {
         org.treeWare.model.cursor.testFollowerWildcardModelInstance(
-            "model/address_book_1.json",
+            "model/address_book_1_main_model.json",
             "model/address_book_empty_root.json",
             false,
             "model/address_book_1_no_associations.json"
@@ -64,7 +64,7 @@ class FollowerModelCursorTests {
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor with association traversal`() {
         org.treeWare.model.cursor.testFollowerWildcardModelInstance(
-            "model/address_book_1.json",
+            "model/address_book_1_main_model.json",
             "model/address_book_empty_root.json",
             true
         )

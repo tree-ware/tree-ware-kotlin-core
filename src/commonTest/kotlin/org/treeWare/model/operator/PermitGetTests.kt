@@ -19,7 +19,7 @@ import kotlin.test.assertIs
 private const val CLARK_KENT_ID = "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
 private const val LOIS_LANE_ID = "a8aacf55-7810-4b43-afe5-4344f25435fd"
 
-private val nonWildcardGetJson = readFile("model/address_book_1.json")
+private val nonWildcardGetJson = readFile("model/address_book_1_main_model.json")
 private val nonWildcardClarkKentGetJson = readFile("model/address_book_clark_kent.json")
 
 private val wildcardGetJson = readFile("org/treeWare/model/operator/get_request_specific_and_wildcard_entities.json")

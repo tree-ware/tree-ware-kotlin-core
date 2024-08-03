@@ -10,7 +10,7 @@ import kotlin.test.Test
 class CopyTests {
     @Test
     fun `Copy operator must copy all elements of its input`() {
-        val modelJsonFile = "model/address_book_1.json"
+        val modelJsonFile = "model/address_book_1_main_model.json"
         val input = getMainModelFromJsonFile(addressBookMetaModel, modelJsonFile)
         val clone = MutableMainModel(addressBookMetaModel)
         copy(input, clone)

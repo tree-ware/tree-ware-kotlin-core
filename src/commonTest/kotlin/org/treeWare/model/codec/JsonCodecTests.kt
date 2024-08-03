@@ -11,8 +11,8 @@ import kotlin.test.Test
 
 class JsonCodecTests {
     @Test
-    fun `JSON codec data round trip must be lossless`() {
-        testRoundTrip("model/address_book_1.json", encodePasswords = EncodePasswords.ALL)
+    fun json_codec_data_round_trip_must_be_lossless() {
+        testEntityRoundTrip("model/address_book_1.json", encodePasswords = EncodePasswords.ALL)
     }
 
     @Test

@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 class JsonBlobDecodeTest {
     @Test
     fun `JSON decoder decodes blob values`() {
-        val model = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1.json")
+        val model = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1_main_model.json")
         val persons = model.root?.fields?.get("person") as MutableSetFieldModel
 
         val clarkKent = persons.values.first() as MutableEntityModel

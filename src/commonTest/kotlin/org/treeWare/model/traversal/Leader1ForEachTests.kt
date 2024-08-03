@@ -24,7 +24,7 @@ class Leader1ForEachTests {
 
     @Test
     fun `Leader1ForEach must visit and leave all elements of a decoded model`() {
-        val addressBook = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1.json")
+        val addressBook = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1_main_model.json")
 
         val buffer = Buffer()
         val printVisitor = Leader1PrintVisitor(buffer)
