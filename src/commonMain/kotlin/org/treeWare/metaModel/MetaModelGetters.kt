@@ -15,7 +15,7 @@ fun getVersionMeta(mainMeta: MainModel): EntityModel {
  * Returns the meta-model to be used for the root entity of the model.
  * NOTE: this is different than the getRootMeta() function which returns the root entity of the meta-model.
  */
-fun getRootEntityMeta(mainMeta: MainModel): EntityModel? =
+fun getModelRootEntityMeta(mainMeta: MainModel): EntityModel? =
     getMetaModelResolved(getRootMeta(mainMeta))?.compositionMeta
 
 fun getRootMeta(mainMeta: MainModel): EntityModel {

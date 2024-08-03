@@ -3,7 +3,7 @@ package org.treeWare.model
 import okio.Buffer
 import okio.BufferedSource
 import okio.buffer
-import org.treeWare.metaModel.getRootEntityMeta
+import org.treeWare.metaModel.getModelRootEntityMeta
 import org.treeWare.metaModel.newAddressBookMetaModel
 import org.treeWare.model.core.*
 import org.treeWare.model.decoder.ModelDecoderOptions
@@ -109,7 +109,7 @@ fun testEntityRoundTrip(
     hasher: Hasher? = null,
     cipher: Cipher? = null,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
-    entityMeta: EntityModel = newAddressBookMetaModel(hasher, cipher).metaModel?.let { getRootEntityMeta(it) }
+    entityMeta: EntityModel = newAddressBookMetaModel(hasher, cipher).metaModel?.let { getModelRootEntityMeta(it) }
         ?: throw IllegalStateException("Meta-model has validation errors"),
     entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
 ) {
