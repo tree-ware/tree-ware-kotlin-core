@@ -113,8 +113,7 @@ fun testEntityRoundTrip(
         ?: throw IllegalStateException("Meta-model has validation errors"),
     entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
 ) {
-    getEntityFromJsonFile(
-        entityMeta,
+    decodeJsonFileIntoEntity(
         inputFilePath,
         options,
         expectedDecodeErrors,
@@ -124,17 +123,15 @@ fun testEntityRoundTrip(
     assertMatchesJson(entity, outputFilePath ?: inputFilePath, encodePasswords, multiAuxEncoder)
 }
 
-fun getEntityFromJsonString(
-    entityMeta: EntityModel,
+fun decodeJsonStringIntoEntity(
     jsonString: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
-    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+    entity: MutableEntityModel
 ) {
     val bufferedSource = Buffer().writeUtf8(jsonString)
-    return getEntityFromJson(
-        entityMeta,
+    decodeJsonIntoEntity(
         bufferedSource,
         options,
         expectedDecodeErrors,
@@ -143,16 +140,14 @@ fun getEntityFromJsonString(
     )
 }
 
-fun getEntityFromJsonFile(
-    entityMeta: EntityModel,
+fun decodeJsonFileIntoEntity(
     jsonFilePath: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
-    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+    entity: MutableEntityModel
 ) = getFileSource(jsonFilePath).use {
-    getEntityFromJson(
-        entityMeta,
+    decodeJsonIntoEntity(
         it.buffer(),
         options,
         expectedDecodeErrors,
@@ -161,13 +156,12 @@ fun getEntityFromJsonFile(
     )
 }
 
-fun getEntityFromJson(
-    entityMeta: EntityModel,
+fun decodeJsonIntoEntity(
     bufferedSource: BufferedSource,
     options: ModelDecoderOptions = ModelDecoderOptions(),
     expectedDecodeErrors: List<String> = listOf(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
-    entity: MutableEntityModel = MutableEntityModel(entityMeta, null)
+    entity: MutableEntityModel
 ) {
     val decodeErrors = decodeJsonEntity(
         bufferedSource,
