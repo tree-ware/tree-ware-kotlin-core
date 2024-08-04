@@ -1,8 +1,9 @@
 package org.treeWare.model.traversal
 
 import okio.Buffer
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.getMainModelFromJsonFile
+import org.treeWare.metaModel.addressBookRootEntityMeta
+import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.decodeJsonFileIntoEntity
 import org.treeWare.model.newAddressBook
 import org.treeWare.util.readFile
 import kotlin.test.Test
@@ -24,7 +25,8 @@ class Leader1ForEachTests {
 
     @Test
     fun `Leader1ForEach must visit and leave all elements of a decoded model`() {
-        val addressBook = getMainModelFromJsonFile(addressBookMetaModel, "model/address_book_1_main_model.json")
+        val addressBook = MutableEntityModel(addressBookRootEntityMeta, null)
+        decodeJsonFileIntoEntity("model/address_book_1.json", entity = addressBook)
 
         val buffer = Buffer()
         val printVisitor = Leader1PrintVisitor(buffer)

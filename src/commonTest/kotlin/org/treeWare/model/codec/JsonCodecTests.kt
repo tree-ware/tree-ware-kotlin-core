@@ -6,7 +6,6 @@ import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.StringAuxEncoder
 import org.treeWare.model.testEntityRoundTrip
-import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
 
 class JsonCodecTests {
@@ -47,17 +46,17 @@ class JsonCodecTests {
     }
 
     @Test
-    fun `JSON codec empty root round trip must be lossless`() {
-        testRoundTrip("model/address_book_empty_root.json")
+    fun json_codec_empty_root_round_trip_must_be_lossless() {
+        testEntityRoundTrip("model/address_book_empty_root.json")
     }
 
     @Test
-    fun `JSON codec empty composition round trip must be lossless`() {
-        testRoundTrip("model/address_book_empty_composition.json")
+    fun json_codec_empty_composition_round_trip_must_be_lossless() {
+        testEntityRoundTrip("model/address_book_empty_composition.json")
     }
 
     @Test
-    fun `JSON codec empty list round trip must be lossless`() {
-        testRoundTrip("model/address_book_empty_list.json")
+    fun json_codec_empty_list_round_trip_must_be_lossless() {
+        testEntityRoundTrip("model/address_book_empty_list.json")
     }
 }

@@ -1,13 +1,14 @@
 package org.treeWare.model.cursor
 
 import okio.Buffer
-import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.metaModel.addressBookRootEntityMeta
 import org.treeWare.model.core.ElementModel
+import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.getMetaResolved
+import org.treeWare.model.decodeJsonFileIntoEntity
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.encoder.ModelEncodingVisitor
-import org.treeWare.model.getMainModelFromJsonFile
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.dispatchLeave
 import org.treeWare.model.traversal.dispatchVisit
@@ -17,12 +18,12 @@ import kotlin.test.*
 class FollowerModelCursorTests {
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor without association traversal`() {
-        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1_main_model.json", false)
+        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1.json", false)
     }
 
     @Test
     fun `Follower-cursor on same data-model follows leader-cursor with association traversal`() {
-        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1_main_model.json", true)
+        org.treeWare.model.cursor.testFollowerSameModelInstance("model/address_book_1.json", true)
     }
 
     @Test
@@ -43,18 +44,18 @@ class FollowerModelCursorTests {
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor without association traversal`() {
-        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1_main_model.json", false)
+        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1.json", false)
     }
 
     @Test
     fun `Follower-cursor on different data-model follows leader-cursor with association traversal`() {
-        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1_main_model.json", true)
+        org.treeWare.model.cursor.testFollowerDifferentModelInstances("model/address_book_1.json", true)
     }
 
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor without association traversal`() {
         org.treeWare.model.cursor.testFollowerWildcardModelInstance(
-            "model/address_book_1_main_model.json",
+            "model/address_book_1.json",
             "model/address_book_empty_root.json",
             false,
             "model/address_book_1_no_associations.json"
@@ -64,7 +65,7 @@ class FollowerModelCursorTests {
     @Test
     fun `Follower-cursor on wildcard model follows leader-cursor with association traversal`() {
         org.treeWare.model.cursor.testFollowerWildcardModelInstance(
-            "model/address_book_1_main_model.json",
+            "model/address_book_1.json",
             "model/address_book_empty_root.json",
             true
         )
@@ -72,7 +73,8 @@ class FollowerModelCursorTests {
 }
 
 private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssociations: Boolean) {
-    val model = getMainModelFromJsonFile(addressBookMetaModel, inputFilePath)
+    val model = MutableEntityModel(addressBookRootEntityMeta, null)
+    decodeJsonFileIntoEntity(inputFilePath, entity = model)
 
     val leaderCursor = Leader1ModelCursor(model, traverseAssociations)
     val followerCursor = FollowerModelCursor(model)
@@ -93,8 +95,10 @@ private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssocia
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String, traverseAssociations: Boolean) {
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = getMainModelFromJsonFile(addressBookMetaModel, inputFilePath)
-    val followerModel = getMainModelFromJsonFile(addressBookMetaModel, inputFilePath)
+    val leaderModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    decodeJsonFileIntoEntity(inputFilePath, entity = leaderModel)
+    val followerModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    decodeJsonFileIntoEntity(inputFilePath, entity = followerModel)
 
     assertNotSame(leaderModel, followerModel)
 
@@ -124,8 +128,10 @@ private fun testFollowerWildcardModelInstance(
     traverseAssociations: Boolean,
     expectedFilePath: String? = null
 ) {
-    val leaderModel = getMainModelFromJsonFile(addressBookMetaModel, leaderFilePath)
-    val followerModel = getMainModelFromJsonFile(addressBookMetaModel, wildcardFilePath)
+    val leaderModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    decodeJsonFileIntoEntity(leaderFilePath, entity = leaderModel)
+    val followerModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    decodeJsonFileIntoEntity(wildcardFilePath, entity = followerModel)
 
     val leaderCursor = Leader1ModelCursor(leaderModel, traverseAssociations)
     val followerCursor = FollowerModelCursor(followerModel)
