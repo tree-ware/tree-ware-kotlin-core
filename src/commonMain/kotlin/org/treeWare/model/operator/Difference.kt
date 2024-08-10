@@ -7,19 +7,19 @@ import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
 fun difference(
-    oldModel: MainModel,
-    newModel: MainModel,
-    mutableMainModelFactory: MutableMainModelFactory
+    oldModel: EntityModel,
+    newModel: EntityModel,
+    mutableEntityModelFactory: MutableEntityModelFactory
 ): DifferenceModels {
-    val differenceVisitor = DifferenceVisitor(mutableMainModelFactory)
+    val differenceVisitor = DifferenceVisitor(mutableEntityModelFactory)
     forEach(listOf(oldModel, newModel), differenceVisitor, false)
     return differenceVisitor.output
 }
 
 private class DifferenceVisitor(
-    private val mutableMainModelFactory: MutableMainModelFactory
+    private val mutableEntityModelFactory: MutableEntityModelFactory
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
-    val output: DifferenceModels = newDifferenceModels(mutableMainModelFactory)
+    val output: DifferenceModels = newDifferenceModels(mutableEntityModelFactory)
 
     private val createStack = ArrayDeque<MutableElementModel?>()
     private val deleteStack = ArrayDeque<MutableElementModel?>()
@@ -62,16 +62,16 @@ private class DifferenceVisitor(
         val entityInclusions = Inclusions()
         inclusionStack.addFirst(entityInclusions)
 
-        val createParent = createStack.first() ?: throw IllegalStateException("Create-entity parent is null")
-        val createEntity = createParent.getOrNewValue()
+        val createParent = createStack.firstOrNull()
+        val createEntity = createParent?.getOrNewValue() ?: output.createModel
         createStack.addFirst(createEntity)
 
-        val deleteParent = deleteStack.first() ?: throw IllegalStateException("Delete-entity parent is null")
-        val deleteEntity = deleteParent.getOrNewValue()
+        val deleteParent = deleteStack.firstOrNull()
+        val deleteEntity = deleteParent?.getOrNewValue() ?: output.deleteModel
         deleteStack.addFirst(deleteEntity)
 
-        val updateParent = updateStack.first() ?: throw IllegalStateException("Update-entity parent is null")
-        val updateEntity = updateParent.getOrNewValue()
+        val updateParent = updateStack.firstOrNull()
+        val updateEntity = updateParent?.getOrNewValue() ?: output.updateModel
         updateStack.addFirst(updateEntity)
 
         if (oldEntity == null) {
@@ -95,8 +95,8 @@ private class DifferenceVisitor(
         leaveEntity(deleteStack, entityInclusions.inDelete)
         leaveEntity(updateStack, entityInclusions.inUpdate)
 
-        val parentInclusions = inclusionStack.first()
-        parentInclusions.addChildInclusions(entityInclusions)
+        val parentInclusions = inclusionStack.firstOrNull()
+        parentInclusions?.addChildInclusions(entityInclusions)
     }
 
     override fun visitSingleField(leaderFieldList: List<SingleFieldModel?>): TraversalAction =
@@ -288,15 +288,13 @@ private class DifferenceVisitor(
 
         // TODO(performance): support difference with EntityModel to avoid copying the associations
 
-        val oldModel = mutableMainModelFactory.getNewInstance()
-        val oldRoot = oldModel.getOrNewRoot()
-        copy(oldPathTree, oldRoot)
+        val oldModel = mutableEntityModelFactory.create()
+        copy(oldPathTree, oldModel)
 
-        val newModel = mutableMainModelFactory.getNewInstance()
-        val newRoot = newModel.getOrNewRoot()
-        copy(newPathTree, newRoot)
+        val newModel = mutableEntityModelFactory.create()
+        copy(newPathTree, newModel)
 
-        val associationsDifferenceModels = difference(oldModel, newModel, mutableMainModelFactory)
+        val associationsDifferenceModels = difference(oldModel, newModel, mutableEntityModelFactory)
         return !associationsDifferenceModels.isDifferent()
     }
 }

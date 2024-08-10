@@ -1,13 +1,12 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.AddressBookMutableMainModelFactory
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.assertMatchesJsonString
-import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.EntityModel
+import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
-import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.util.readFile
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -22,17 +21,13 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
@@ -46,17 +41,13 @@ class DifferenceTests {
             old = "{}",
             new = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -68,22 +59,16 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book"
-            |  }
+            |  "name": "Test Book"
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731"
-            |  }
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -95,19 +80,15 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             new = "{}",
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -118,23 +99,17 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book"
-            |  }
+            |  "name": "Test Book"
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731"
-            |  }
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -145,26 +120,20 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book 1",
-            |    "last_updated": "1587147733"
-            |  }
+            |  "name": "Test Book 1",
+            |  "last_updated": "1587147733"
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book 1",
-            |    "last_updated": "1587147733"
-            |  }
+            |  "name": "Test Book 1",
+            |  "last_updated": "1587147733"
             |}""".trimMargin(),
         )
     }
@@ -174,25 +143,19 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147731"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "name": "Test Book",
-            |    "last_updated": "1587147733"
-            |  }
+            |  "name": "Test Book",
+            |  "last_updated": "1587147733"
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147733"
-            |  }
+            |  "last_updated": "1587147733"
             |}""".trimMargin(),
         )
     }
@@ -206,32 +169,28 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
@@ -245,39 +204,33 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |    }
+            |  "settings": {
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedDelete = null,
@@ -290,41 +243,35 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": true
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedDelete = null,
@@ -337,25 +284,19 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |    }
+            |  "settings": {
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": []
-            |    }
+            |  "settings": {
+            |    "card_colors": []
             |  }
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": []
-            |    }
+            |  "settings": {
+            |    "card_colors": []
             |  }
             |}""".trimMargin(),
             expectedDelete = null,
@@ -368,40 +309,34 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |    }
+            |  "settings": {
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedUpdate = null,
@@ -413,42 +348,36 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": true
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedUpdate = null,
@@ -460,26 +389,20 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": []
-            |    }
+            |  "settings": {
+            |    "card_colors": []
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |    }
+            |  "settings": {
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": []
-            |    }
+            |  "settings": {
+            |    "card_colors": []
             |  }
             |}""".trimMargin(),
             expectedUpdate = null,
@@ -491,49 +414,43 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "indigo"
-            |        },
-            |        {
-            |          "value": "white"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "indigo"
+            |      },
+            |      {
+            |        "value": "white"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "indigo"
-            |        },
-            |        {
-            |          "value": "white"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "indigo"
+            |      },
+            |      {
+            |        "value": "white"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
         )
@@ -544,57 +461,51 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "card_colors": [
-            |        {
-            |          "value": "indigo"
-            |        },
-            |        {
-            |          "value": "white"
-            |        },
-            |        {
-            |          "value": "violet"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "card_colors": [
+            |      {
+            |        "value": "indigo"
+            |      },
+            |      {
+            |        "value": "white"
+            |      },
+            |      {
+            |        "value": "violet"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "indigo"
-            |        },
-            |        {
-            |          "value": "white"
-            |        },
-            |        {
-            |          "value": "violet"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "indigo"
+            |      },
+            |      {
+            |        "value": "white"
+            |      },
+            |      {
+            |        "value": "violet"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
         )
@@ -605,35 +516,29 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": [
-            |        {
-            |          "value": "orange"
-            |        },
-            |        {
-            |          "value": "indigo"
-            |        }
-            |      ]
-            |    }
+            |  "settings": {
+            |    "card_colors": [
+            |      {
+            |        "value": "orange"
+            |      },
+            |      {
+            |        "value": "indigo"
+            |      }
+            |    ]
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": []
-            |    }
+            |  "settings": {
+            |    "card_colors": []
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": []
-            |    }
+            |  "settings": {
+            |    "card_colors": []
             |  }
             |}""".trimMargin(),
         )
@@ -648,21 +553,17 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
             |    "settings": {
             |      "last_name_first": true,
             |      "encrypt_hero_name": false
             |    }
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
             |    "settings": {
             |      "last_name_first": true,
             |      "encrypt_hero_name": false
             |    }
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
@@ -675,25 +576,19 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             expectedDelete = null,
@@ -706,27 +601,21 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731"
-            |  }
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731",
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "last_updated": "1587147731",
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             expectedDelete = null,
@@ -739,26 +628,20 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             expectedUpdate = null,
@@ -770,28 +653,22 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731",
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "last_updated": "1587147731",
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731"
-            |  }
+            |  "last_updated": "1587147731"
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             expectedUpdate = null,
@@ -803,31 +680,25 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": false,
-            |      "encrypt_hero_name": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": false,
+            |    "encrypt_hero_name": true
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": false,
-            |      "encrypt_hero_name": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": false,
+            |    "encrypt_hero_name": true
             |  }
             |}""".trimMargin(),
         )
@@ -838,33 +709,27 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731",
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "last_updated": "1587147731",
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
             |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "last_updated": "1587147731",
-            |    "settings": {
-            |      "last_name_first": false,
-            |      "encrypt_hero_name": true
-            |    }
+            |  "last_updated": "1587147731",
+            |  "settings": {
+            |    "last_name_first": false,
+            |    "encrypt_hero_name": true
             |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": false,
-            |      "encrypt_hero_name": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": false,
+            |    "encrypt_hero_name": true
             |  }
             |}""".trimMargin(),
         )
@@ -879,25 +744,21 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark"
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark"
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
@@ -910,30 +771,24 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -945,32 +800,26 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |    ]
-            |  }
+            |  "person": [
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -982,20 +831,14 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": []
-            |  }
+            |  "person": []
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "person": []
-            |  }
+            |  "person": []
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -1007,40 +850,34 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      },
-            |      {
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    },
+            |    {
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -1052,31 +889,25 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1087,33 +918,27 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |    ]
-            |  }
+            |  "person": [
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1124,21 +949,15 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": []
-            |  }
+            |  "person": []
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "person": []
-            |  }
+            |  "person": []
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1149,41 +968,35 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      },
-            |      {
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    },
+            |    {
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1194,38 +1007,32 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clarke"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clarke"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clarke"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clarke"
+            |    }
+            |  ]
             |}""".trimMargin(),
         )
     }
@@ -1235,46 +1042,40 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark"
-            |      },
-            |      {
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark"
+            |    },
+            |    {
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clarke"
-            |      },
-            |      {
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clarke"
+            |    },
+            |    {
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clarke"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clarke"
+            |    }
+            |  ]
             |}""".trimMargin(),
         )
     }
@@ -1288,7 +1089,6 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
             |    "city_info": [
             |      {
             |        "city": {
@@ -1298,11 +1098,9 @@ class DifferenceTests {
             |        }
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
             |    "city_info": [
             |      {
             |        "city": {
@@ -1312,7 +1110,6 @@ class DifferenceTests {
             |        }
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
@@ -1325,38 +1122,32 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |    ]
-            |  }
+            |  "city_info": [
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City B",
-            |          "state": "Test State B",
-            |          "country": "Test Country B"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City B",
+            |        "state": "Test State B",
+            |        "country": "Test Country B"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City B",
-            |          "state": "Test State B",
-            |          "country": "Test Country B"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City B",
+            |        "state": "Test State B",
+            |        "country": "Test Country B"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -1368,39 +1159,33 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City B",
-            |          "state": "Test State B",
-            |          "country": "Test Country B"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City B",
+            |        "state": "Test State B",
+            |        "country": "Test Country B"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |    ]
-            |  }
+            |  "city_info": [
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City B",
-            |          "state": "Test State B",
-            |          "country": "Test Country B"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City B",
+            |        "state": "Test State B",
+            |        "country": "Test Country B"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1415,7 +1200,6 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -1433,11 +1217,9 @@ class DifferenceTests {
             |        }
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
             |    "person": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -1455,7 +1237,6 @@ class DifferenceTests {
             |        }
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
@@ -1468,52 +1249,46 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 1",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 1 sub 1"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 1",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 1 sub 1"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 1",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 1 sub 1"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 1",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 1 sub 1"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -1525,53 +1300,47 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 1",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 1 sub 1"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 1",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 1 sub 1"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 1",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 1 sub 1"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 1",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 1 sub 1"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1582,71 +1351,65 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 1",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 1 sub 1"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 1",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 1 sub 1"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 2",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 2 sub 2"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 2",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 2 sub 2"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "group": {
-            |          "groups": [
-            |            {
-            |              "name": "Group 2",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Group 2 sub 2"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "Group 2",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Group 2 sub 2"
+            |              }
+            |            ]
+            |          }
+            |        ]
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
         )
     }
@@ -1660,7 +1423,6 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
             |    "city_info": [
             |      {
             |        "city": {
@@ -1683,11 +1445,9 @@ class DifferenceTests {
             |        ]
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
             |    "city_info": [
             |      {
             |        "city": {
@@ -1710,7 +1470,6 @@ class DifferenceTests {
             |        ]
             |      }
             |    ]
-            |  }
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
@@ -1723,71 +1482,65 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City B",
-            |                  "state": "Test State B",
-            |                  "country": "Test Country B"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City B",
+            |                "state": "Test State B",
+            |                "country": "Test Country B"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City B",
-            |                  "state": "Test State B",
-            |                  "country": "Test Country B"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City B",
+            |                "state": "Test State B",
+            |                "country": "Test Country B"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -1799,47 +1552,41 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -1851,72 +1598,66 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City B",
-            |                  "state": "Test State B",
-            |                  "country": "Test Country B"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City B",
+            |                "state": "Test State B",
+            |                "country": "Test Country B"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City B",
-            |                  "state": "Test State B",
-            |                  "country": "Test Country B"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City B",
+            |                "state": "Test State B",
+            |                "country": "Test Country B"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1927,48 +1668,42 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -1979,86 +1714,80 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City B",
-            |                  "state": "Test State B",
-            |                  "country": "Test Country B"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City B",
+            |                "state": "Test State B",
+            |                "country": "Test Country B"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City C",
-            |                  "state": "Test State C",
-            |                  "country": "Test Country C"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City C",
+            |                "state": "Test State C",
+            |                "country": "Test Country C"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City C",
-            |                  "state": "Test State C",
-            |                  "country": "Test Country C"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City C",
+            |                "state": "Test State C",
+            |                "country": "Test Country C"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
         )
     }
@@ -2068,62 +1797,56 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": [
-            |          {
-            |            "city_info": [
-            |              {
-            |                "city": {
-            |                  "name": "Test City B",
-            |                  "state": "Test State B",
-            |                  "country": "Test Country B"
-            |                }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": [
+            |        {
+            |          "city_info": [
+            |            {
+            |              "city": {
+            |                "name": "Test City B",
+            |                "state": "Test State B",
+            |                "country": "Test Country B"
             |              }
-            |            ]
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |            }
+            |          ]
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Test City A",
-            |          "state": "Test State A",
-            |          "country": "Test Country A"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Test City A",
+            |        "state": "Test State A",
+            |        "country": "Test Country A"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}""".trimMargin(),
         )
     }
@@ -2154,17 +1877,19 @@ class DifferenceTests {
         val jsonInput2 = readFile("model/operator/difference/mini_test_book_2.json")
         val expectedMergeTestResult = "model/operator/difference/mini_test_book_2_reordered.json"
 
-        val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
-        val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input1, input2, AddressBookMutableMainModelFactory)
+        val input1 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(jsonInput1, entity = input1)
+        val input2 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(jsonInput2, entity = input2)
+        val output = difference(input1, input2, AddressBookMutableEntityModelFactory)
         val createOutput = output.createModel
         val updateOutput = output.updateModel
 
         assertFalse(createOutput.isEmpty())
         assertFalse(updateOutput.isEmpty())
 
-        val mergeCreateOutput = AddressBookMutableMainModelFactory.getNewInstance()
-        val mergeUpdateOutput = AddressBookMutableMainModelFactory.getNewInstance()
+        val mergeCreateOutput = AddressBookMutableEntityModelFactory.create()
+        val mergeUpdateOutput = AddressBookMutableEntityModelFactory.create()
         union(listOf(input1, createOutput), mergeCreateOutput)
         union(listOf(mergeCreateOutput, updateOutput), mergeUpdateOutput)
         assertMatchesJson(
@@ -2181,9 +1906,11 @@ class DifferenceTests {
         assertNotEquals(jsonInput1, jsonInput2)
 
 
-        val input1 = getMainModelFromJsonString(addressBookMetaModel, jsonInput1)
-        val input2 = getMainModelFromJsonString(addressBookMetaModel, jsonInput2)
-        val output = difference(input2, input1, AddressBookMutableMainModelFactory)
+        val input1 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(jsonInput1, entity = input1)
+        val input2 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(jsonInput2, entity = input2)
+        val output = difference(input2, input1, AddressBookMutableEntityModelFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
 
@@ -2231,17 +1958,19 @@ private fun verifyDifference(
     expectedDelete: String?,
     expectedUpdate: String?
 ) {
-    val oldModel = getMainModelFromJsonString(addressBookMetaModel, old)
-    val newModel = getMainModelFromJsonString(addressBookMetaModel, new)
+    val oldModel = AddressBookMutableEntityModelFactory.create()
+    decodeJsonStringIntoEntity(old, entity = oldModel)
+    val newModel = AddressBookMutableEntityModelFactory.create()
+    decodeJsonStringIntoEntity(new, entity = newModel)
 
-    val difference = difference(oldModel, newModel, AddressBookMutableMainModelFactory)
+    val difference = difference(oldModel, newModel, AddressBookMutableEntityModelFactory)
 
     verifyDifferenceModel("create", expectedCreate, difference.createModel)
     verifyDifferenceModel("delete", expectedDelete, difference.deleteModel)
     verifyDifferenceModel("update", expectedUpdate, difference.updateModel)
 }
 
-private fun verifyDifferenceModel(differenceType: String, expected: String?, actual: MainModel) {
+private fun verifyDifferenceModel(differenceType: String, expected: String?, actual: EntityModel) {
     if (expected == null) {
         if (!actual.isEmpty()) {
             println("Expected $differenceType model to be empty, but was:")

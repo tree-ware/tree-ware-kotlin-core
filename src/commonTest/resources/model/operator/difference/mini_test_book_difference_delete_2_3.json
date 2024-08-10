@@ -1,14 +1,12 @@
 {
-  "address_book": {
-    "groups": [
-      {
-        "name": "Group 2",
-        "sub_groups": [
-          {
-            "name": "Group 2 sub 2"
-          }
-        ]
-      }
-    ]
-  }
+  "groups": [
+    {
+      "name": "Group 2",
+      "sub_groups": [
+        {
+          "name": "Group 2 sub 2"
+        }
+      ]
+    }
+  ]
 }

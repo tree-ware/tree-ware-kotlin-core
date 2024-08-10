@@ -7,15 +7,15 @@ import org.treeWare.model.traversal.forEach
 import org.treeWare.util.assertInDevMode
 
 fun union(
-    inputs: List<MainModel>,
-    output: MutableMainModel
+    inputs: List<EntityModel>,
+    output: MutableEntityModel
 ) {
     val unionVisitor = UnionVisitor(output)
     forEach(inputs, unionVisitor, false)
 }
 
 private class UnionVisitor(
-    private val output: MutableMainModel
+    private val output: MutableEntityModel
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
 
@@ -31,8 +31,8 @@ private class UnionVisitor(
     }
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
-        val parent = modelStack.first()
-        val unionEntity = parent.getOrNewValue()
+        val parent = modelStack.firstOrNull()
+        val unionEntity = parent?.getOrNewValue() ?: output
         visitAux(leaderEntityList, unionEntity)
         modelStack.addFirst(unionEntity)
         return TraversalAction.CONTINUE
@@ -42,8 +42,8 @@ private class UnionVisitor(
         val unionEntity = modelStack.removeFirst() as MutableEntityModel
         // NOTE: entities should be added to set-fields only after the entity
         // has key fields.
-        val parent = modelStack.first()
-        if (parent.elementType == ModelElementType.SET_FIELD) (parent as MutableSetFieldModel).addValue(unionEntity)
+        val parent = modelStack.firstOrNull()
+        if (parent?.elementType == ModelElementType.SET_FIELD) (parent as MutableSetFieldModel).addValue(unionEntity)
     }
 
     override fun visitSingleField(leaderFieldList: List<SingleFieldModel?>): TraversalAction =

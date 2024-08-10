@@ -1,214 +1,213 @@
-Main: address_book, address_book
-  Entity: address_book.main/address_book_root, address_book.main/address_book_root
-    Single field: name, name
-      Primitive: Super Heroes, Super Heroes
-    Single field: last_updated, last_updated
-      Primitive: 1587147730, 1587147731
-    Single field: settings, settings
-      Entity: address_book.main/address_book_settings, address_book.main/address_book_settings
-        Single field: last_name_first, last_name_first
-          Primitive: false, true
-        Single field: null, encrypt_hero_name
-          Primitive: null, false
-        List field: card_colors, card_colors
-          Enumeration: yellow, orange
-          Enumeration: orange, green
-          Enumeration: blue, null
-    Set field: person, person
-      Entity: address_book.main/address_book_person, address_book.main/address_book_person
-        Single field: id, id
-          Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f, cc477201-48ec-4367-83a4-7fdbd92f8a6f
-        Single field: null, first_name
-          Primitive: null, Clark
-        Single field: null, last_name
-          Primitive: null, Kent
-        Single field: null, hero_name
-          Primitive: null, Superman
-        List field: email, null
-          Primitive: clark.kent@dailyplanet.com, null
-          Primitive: superman@dc.com, null
-        Single field: picture, null
-          Primitive: UGljdHVyZSBvZiBDbGFyayBLZW50, null
-        Set field: relation, null
-          Entity: address_book.main/address_book_relation, null
-            Single field: id, null
-              Primitive: 05ade278-4b44-43da-a0cc-14463854e397, null
-            Single field: relationship, null
-              Enumeration: colleague, null
-            Single field: person, null
-              Association: ...
-                Entity: address_book.main/address_book_root, null
-                  Set field: person, null
-                    Entity: address_book.main/address_book_person, null
-                      Single field: id, null
-                        Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd, null
-        Single field: password, password
-          Password1way: {hello123, null, 0}, {kryptonite, null, 0}
-        List field: previous_passwords, previous_passwords
-          Password1way: {null, test-hashed-superman, 1}, {hello123, null, 0}
-          Password1way: null, {null, test-hashed-superman, 1}
-        Single field: main_secret, null
-          Password2way: {Alien from Krypton, null, 0}, null
-        List field: null, other_secrets
-          Password2way: null, {secret1, null, 0}
-          Password2way: null, {null, test-encrypted-secret2, 1}
-        Single field: group, null
-          Association: ...
-            Entity: address_book.main/address_book_root, null
-              Set field: groups, null
-                Entity: address_book.main/group, null
-                  Single field: name, null
-                    Primitive: DC, null
-                  Set field: sub_groups, null
-                    Entity: address_book.main/group, null
-                      Single field: name, null
-                        Primitive: Superman, null
-      Entity: null, address_book.main/address_book_person
-        Single field: null, id
-          Primitive: null, a8aacf55-7810-4b43-afe5-4344f25435fd
-        Single field: null, first_name
-          Primitive: null, Lois
-        Single field: null, last_name
-          Primitive: null, Lane
-        List field: null, email
-          Primitive: null, lois.lane@dailyplanet.com
-        Single field: null, picture
-          Primitive: null, UGljdHVyZSBvZiBMb2lzIExhbmU=
-        Set field: null, relation
-          Entity: null, address_book.main/address_book_relation
-            Single field: null, id
-              Primitive: null, 16634916-8f83-4376-ad42-37038e108a0b
-            Single field: null, relationship
-              Enumeration: null, colleague
-            Single field: null, person
-              Association: ...
-                Entity: null, address_book.main/address_book_root
-                  Set field: null, person
-                    Entity: null, address_book.main/address_book_person
-                      Single field: null, id
-                        Primitive: null, cc477201-48ec-4367-83a4-7fdbd92f8a6f
-        Single field: null, password
-          Password1way: null, {null, test-hashed-lois, 1}
-        List field: null, previous_passwords
-          Password1way: null, {password1, null, 0}
-          Password1way: null, {null, test-hashed-password2, 1}
-        Single field: null, main_secret
-          Password2way: null, {null, test-encrypted-main-secret, 1}
-        List field: null, other_secrets
-          Password2way: null, {secret1, null, 0}
-          Password2way: null, {null, test-encrypted-secret2, 1}
-        Single field: null, group
-          Association: ...
-            Entity: null, address_book.main/address_book_root
-              Set field: null, groups
-                Entity: null, address_book.main/group
-                  Single field: null, name
-                    Primitive: null, DC
-                  Set field: null, sub_groups
-                    Entity: null, address_book.main/group
-                      Single field: null, name
-                        Primitive: null, Superman
-    Set field: city_info, city_info
-      Entity: address_book.city/address_book_city_info, address_book.city/address_book_city_info
-        Single field: city, city
-          Entity: address_book.city/address_book_city, address_book.city/address_book_city
-            Single field: name, name
-              Primitive: New York City, New York City
-            Single field: state, state
-              Primitive: New York, New York
-            Single field: country, country
-              Primitive: United States of America, United States of America
-        Single field: info, info
-          Primitive: One of the most populous and most densely populated major city in USA, One of the most populous and most densely populated major city in USA
-        List field: related_city_info, related_city_info
-          Association: ...
-            Entity: address_book.main/address_book_root, address_book.main/address_book_root
-              Set field: city_info, city_info
-                Entity: address_book.city/address_book_city_info, null
-                  Single field: city, null
-                    Entity: address_book.city/address_book_city, null
-                      Single field: name, null
-                        Primitive: Princeton, null
-                      Single field: state, null
-                        Primitive: New Jersey, null
-                      Single field: country, null
-                        Primitive: United States of America, null
-                Entity: null, address_book.city/address_book_city_info
-                  Single field: null, city
-                    Entity: null, address_book.city/address_book_city
-                      Single field: null, name
-                        Primitive: null, Albany
-                      Single field: null, state
-                        Primitive: null, New York
-                      Single field: null, country
-                        Primitive: null, United States of America
-          Association: ...
-            Entity: null, address_book.main/address_book_root
-              Set field: null, city_info
-                Entity: null, address_book.city/address_book_city_info
-                  Single field: null, city
-                    Entity: null, address_book.city/address_book_city
-                      Single field: null, name
-                        Primitive: null, Princeton
-                      Single field: null, state
-                        Primitive: null, New Jersey
-                      Single field: null, country
-                        Primitive: null, United States of America
-      Entity: address_book.city/address_book_city_info, null
-        Single field: city, null
-          Entity: address_book.city/address_book_city, null
-            Single field: name, null
-              Primitive: Albany, null
-            Single field: state, null
-              Primitive: New York, null
-            Single field: country, null
-              Primitive: United States of America, null
-        Single field: info, null
-          Primitive: Capital of New York state, null
-        List field: related_city_info, null
-          Association: ...
-            Entity: address_book.main/address_book_root, null
-              Set field: city_info, null
-                Entity: address_book.city/address_book_city_info, null
-                  Single field: city, null
-                    Entity: address_book.city/address_book_city, null
-                      Single field: name, null
-                        Primitive: New York City, null
-                      Single field: state, null
-                        Primitive: New York, null
-                      Single field: country, null
-                        Primitive: United States of America, null
-      Entity: address_book.city/address_book_city_info, address_book.city/address_book_city_info
-        Single field: city, city
-          Entity: address_book.city/address_book_city, address_book.city/address_book_city
-            Single field: name, name
-              Primitive: San Francisco, San Francisco
-            Single field: state, state
-              Primitive: California, California
-            Single field: country, country
-              Primitive: United States of America, United States of America
-        Single field: info, info
-          Primitive: The cultural and financial center of Northern California, The cultural and financial center of Northern California
-      Entity: null, address_book.city/address_book_city_info
-        Single field: null, city
-          Entity: null, address_book.city/address_book_city
-            Single field: null, name
-              Primitive: null, Princeton
-            Single field: null, state
-              Primitive: null, New Jersey
-            Single field: null, country
-              Primitive: null, United States of America
-        Single field: null, info
-          Primitive: null, Home of Princeton University
-        List field: null, related_city_info
-    Set field: groups, groups
-      Entity: address_book.main/group, address_book.main/group
-        Single field: name, name
-          Primitive: DC, DC
-        Set field: null, sub_groups
-          Entity: null, address_book.main/group
-            Single field: null, name
-              Primitive: null, Superman
-      Entity: address_book.main/group, null
-        Single field: name, null
-          Primitive: Marvel, null
+Entity: address_book.main/address_book_root, address_book.main/address_book_root
+  Single field: name, name
+    Primitive: Super Heroes, Super Heroes
+  Single field: last_updated, last_updated
+    Primitive: 1587147730, 1587147731
+  Single field: settings, settings
+    Entity: address_book.main/address_book_settings, address_book.main/address_book_settings
+      Single field: last_name_first, last_name_first
+        Primitive: false, true
+      Single field: null, encrypt_hero_name
+        Primitive: null, false
+      List field: card_colors, card_colors
+        Enumeration: yellow, orange
+        Enumeration: orange, green
+        Enumeration: blue, null
+  Set field: person, person
+    Entity: address_book.main/address_book_person, address_book.main/address_book_person
+      Single field: id, id
+        Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f, cc477201-48ec-4367-83a4-7fdbd92f8a6f
+      Single field: null, first_name
+        Primitive: null, Clark
+      Single field: null, last_name
+        Primitive: null, Kent
+      Single field: null, hero_name
+        Primitive: null, Superman
+      List field: email, null
+        Primitive: clark.kent@dailyplanet.com, null
+        Primitive: superman@dc.com, null
+      Single field: picture, null
+        Primitive: UGljdHVyZSBvZiBDbGFyayBLZW50, null
+      Set field: relation, null
+        Entity: address_book.main/address_book_relation, null
+          Single field: id, null
+            Primitive: 05ade278-4b44-43da-a0cc-14463854e397, null
+          Single field: relationship, null
+            Enumeration: colleague, null
+          Single field: person, null
+            Association: ...
+              Entity: address_book.main/address_book_root, null
+                Set field: person, null
+                  Entity: address_book.main/address_book_person, null
+                    Single field: id, null
+                      Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd, null
+      Single field: password, password
+        Password1way: {hello123, null, 0}, {kryptonite, null, 0}
+      List field: previous_passwords, previous_passwords
+        Password1way: {null, test-hashed-superman, 1}, {hello123, null, 0}
+        Password1way: null, {null, test-hashed-superman, 1}
+      Single field: main_secret, null
+        Password2way: {Alien from Krypton, null, 0}, null
+      List field: null, other_secrets
+        Password2way: null, {secret1, null, 0}
+        Password2way: null, {null, test-encrypted-secret2, 1}
+      Single field: group, null
+        Association: ...
+          Entity: address_book.main/address_book_root, null
+            Set field: groups, null
+              Entity: address_book.main/group, null
+                Single field: name, null
+                  Primitive: DC, null
+                Set field: sub_groups, null
+                  Entity: address_book.main/group, null
+                    Single field: name, null
+                      Primitive: Superman, null
+    Entity: null, address_book.main/address_book_person
+      Single field: null, id
+        Primitive: null, a8aacf55-7810-4b43-afe5-4344f25435fd
+      Single field: null, first_name
+        Primitive: null, Lois
+      Single field: null, last_name
+        Primitive: null, Lane
+      List field: null, email
+        Primitive: null, lois.lane@dailyplanet.com
+      Single field: null, picture
+        Primitive: null, UGljdHVyZSBvZiBMb2lzIExhbmU=
+      Set field: null, relation
+        Entity: null, address_book.main/address_book_relation
+          Single field: null, id
+            Primitive: null, 16634916-8f83-4376-ad42-37038e108a0b
+          Single field: null, relationship
+            Enumeration: null, colleague
+          Single field: null, person
+            Association: ...
+              Entity: null, address_book.main/address_book_root
+                Set field: null, person
+                  Entity: null, address_book.main/address_book_person
+                    Single field: null, id
+                      Primitive: null, cc477201-48ec-4367-83a4-7fdbd92f8a6f
+      Single field: null, password
+        Password1way: null, {null, test-hashed-lois, 1}
+      List field: null, previous_passwords
+        Password1way: null, {password1, null, 0}
+        Password1way: null, {null, test-hashed-password2, 1}
+      Single field: null, main_secret
+        Password2way: null, {null, test-encrypted-main-secret, 1}
+      List field: null, other_secrets
+        Password2way: null, {secret1, null, 0}
+        Password2way: null, {null, test-encrypted-secret2, 1}
+      Single field: null, group
+        Association: ...
+          Entity: null, address_book.main/address_book_root
+            Set field: null, groups
+              Entity: null, address_book.main/group
+                Single field: null, name
+                  Primitive: null, DC
+                Set field: null, sub_groups
+                  Entity: null, address_book.main/group
+                    Single field: null, name
+                      Primitive: null, Superman
+  Set field: city_info, city_info
+    Entity: address_book.city/address_book_city_info, address_book.city/address_book_city_info
+      Single field: city, city
+        Entity: address_book.city/address_book_city, address_book.city/address_book_city
+          Single field: name, name
+            Primitive: New York City, New York City
+          Single field: state, state
+            Primitive: New York, New York
+          Single field: country, country
+            Primitive: United States of America, United States of America
+      Single field: info, info
+        Primitive: One of the most populous and most densely populated major city in USA, One of the most populous and most densely populated major city in USA
+      List field: related_city_info, related_city_info
+        Association: ...
+          Entity: address_book.main/address_book_root, address_book.main/address_book_root
+            Set field: city_info, city_info
+              Entity: address_book.city/address_book_city_info, null
+                Single field: city, null
+                  Entity: address_book.city/address_book_city, null
+                    Single field: name, null
+                      Primitive: Princeton, null
+                    Single field: state, null
+                      Primitive: New Jersey, null
+                    Single field: country, null
+                      Primitive: United States of America, null
+              Entity: null, address_book.city/address_book_city_info
+                Single field: null, city
+                  Entity: null, address_book.city/address_book_city
+                    Single field: null, name
+                      Primitive: null, Albany
+                    Single field: null, state
+                      Primitive: null, New York
+                    Single field: null, country
+                      Primitive: null, United States of America
+        Association: ...
+          Entity: null, address_book.main/address_book_root
+            Set field: null, city_info
+              Entity: null, address_book.city/address_book_city_info
+                Single field: null, city
+                  Entity: null, address_book.city/address_book_city
+                    Single field: null, name
+                      Primitive: null, Princeton
+                    Single field: null, state
+                      Primitive: null, New Jersey
+                    Single field: null, country
+                      Primitive: null, United States of America
+    Entity: address_book.city/address_book_city_info, null
+      Single field: city, null
+        Entity: address_book.city/address_book_city, null
+          Single field: name, null
+            Primitive: Albany, null
+          Single field: state, null
+            Primitive: New York, null
+          Single field: country, null
+            Primitive: United States of America, null
+      Single field: info, null
+        Primitive: Capital of New York state, null
+      List field: related_city_info, null
+        Association: ...
+          Entity: address_book.main/address_book_root, null
+            Set field: city_info, null
+              Entity: address_book.city/address_book_city_info, null
+                Single field: city, null
+                  Entity: address_book.city/address_book_city, null
+                    Single field: name, null
+                      Primitive: New York City, null
+                    Single field: state, null
+                      Primitive: New York, null
+                    Single field: country, null
+                      Primitive: United States of America, null
+    Entity: address_book.city/address_book_city_info, address_book.city/address_book_city_info
+      Single field: city, city
+        Entity: address_book.city/address_book_city, address_book.city/address_book_city
+          Single field: name, name
+            Primitive: San Francisco, San Francisco
+          Single field: state, state
+            Primitive: California, California
+          Single field: country, country
+            Primitive: United States of America, United States of America
+      Single field: info, info
+        Primitive: The cultural and financial center of Northern California, The cultural and financial center of Northern California
+    Entity: null, address_book.city/address_book_city_info
+      Single field: null, city
+        Entity: null, address_book.city/address_book_city
+          Single field: null, name
+            Primitive: null, Princeton
+          Single field: null, state
+            Primitive: null, New Jersey
+          Single field: null, country
+            Primitive: null, United States of America
+      Single field: null, info
+        Primitive: null, Home of Princeton University
+      List field: null, related_city_info
+  Set field: groups, groups
+    Entity: address_book.main/group, address_book.main/group
+      Single field: name, name
+        Primitive: DC, DC
+      Set field: null, sub_groups
+        Entity: null, address_book.main/group
+          Single field: null, name
+            Primitive: null, Superman
+    Entity: address_book.main/group, null
+      Single field: name, null
+        Primitive: Marvel, null

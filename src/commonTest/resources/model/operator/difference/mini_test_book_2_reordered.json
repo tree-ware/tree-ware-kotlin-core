@@ -1,272 +1,270 @@
 {
-  "address_book": {
-    "name": "Test Book",
-    "last_updated": "1587147731",
-    "settings": {
-      "last_name_first": true,
-      "encrypt_hero_name": false,
-      "card_colors": [
+  "name": "Test Book",
+  "last_updated": "1587147731",
+  "settings": {
+    "last_name_first": true,
+    "encrypt_hero_name": false,
+    "card_colors": [
+      {
+        "value": "orange"
+      },
+      {
+        "value": "green"
+      },
+      {
+        "value": "blue"
+      },
+      {
+        "value": "red"
+      }
+    ]
+  },
+  "person": [
+    {
+      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+      "first_name": "Person 1 first",
+      "last_name": "Person 1 last",
+      "hero_name": "Person 1 hero name",
+      "email": [
         {
-          "value": "orange"
+          "value": "p1e1@test.com"
         },
         {
-          "value": "green"
+          "value": "p1e2@test.com"
+        }
+      ],
+      "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
+      "relation": [
+        {
+          "id": "40448d9c-14ed-4abc-b751-9b0ef4d9f602",
+          "relationship": "unknown",
+          "person": {
+            "person": [
+              {
+                "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+              }
+            ]
+          }
         },
         {
-          "value": "blue"
+          "id": "05ade278-4b44-43da-a0cc-14463854e397",
+          "relationship": "colleague",
+          "person": {
+            "person": [
+              {
+                "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
+              }
+            ]
+          }
+        }
+      ],
+      "password": {
+        "unhashed": "p1CurrentPassword"
+      },
+      "previous_passwords": [
+        {
+          "unhashed": "p1PreviousPassword1"
         },
         {
-          "value": "red"
+          "hashed": "test-hashed-previousPassword",
+          "hash_version": 1
+        }
+      ],
+      "main_secret": {
+        "unencrypted": "p1 Main secret"
+      },
+      "other_secrets": [
+        {
+          "unencrypted": "p1 secret1"
+        },
+        {
+          "encrypted": "p1 test-encrypted-secret2",
+          "cipher_version": 1
+        }
+      ],
+      "group": {
+        "groups": [
+          {
+            "name": "Group 1",
+            "sub_groups": [
+              {
+                "name": "Group 1 sub 2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+      "first_name": "Person 2 first",
+      "last_name": "Person 2 last",
+      "email": [
+        {
+          "value": "p2e1@test.com"
+        }
+      ],
+      "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
+      "relation": [
+        {
+          "id": "16634916-8f83-4376-ad42-37038e108a0b",
+          "relationship": "colleague",
+          "person": {
+            "person": [
+              {
+                "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+              }
+            ]
+          }
+        }
+      ],
+      "password": {
+        "hashed": "test-hashed-p2",
+        "hash_version": 1
+      },
+      "previous_passwords": [
+        {
+          "unhashed": "p2password1"
+        },
+        {
+          "hashed": "p2-test-hashed-password2",
+          "hash_version": 1
+        }
+      ],
+      "main_secret": {
+        "encrypted": "p2-test-encrypted-main-secret",
+        "cipher_version": 1
+      },
+      "other_secrets": [
+        {
+          "unencrypted": "p2 secret1"
+        },
+        {
+          "encrypted": "p2- test-encrypted-secret2",
+          "cipher_version": 1
+        }
+      ],
+      "group": {
+        "groups": [
+          {
+            "name": "Group 1",
+            "sub_groups": [
+              {
+                "name": "Group 1 sub 1"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "city_info": [
+    {
+      "city": {
+        "name": "Test City A",
+        "state": "Test State A",
+        "country": "Test Country A"
+      },
+      "info": "City A info",
+      "related_city_info": [
+        {
+          "city_info": [
+            {
+              "city": {
+                "name": "Test City B",
+                "state": "Test State B",
+                "country": "Test Country B"
+              }
+            }
+          ]
+        },
+        {
+          "city_info": [
+            {
+              "city": {
+                "name": "Test City C",
+                "state": "Test State C",
+                "country": "Test Country C"
+              }
+            }
+          ]
         }
       ]
     },
-    "person": [
-      {
-        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-        "first_name": "Person 1 first",
-        "last_name": "Person 1 last",
-        "hero_name": "Person 1 hero name",
-        "email": [
-          {
-            "value": "p1e1@test.com"
-          },
-          {
-            "value": "p1e2@test.com"
-          }
-        ],
-        "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
-        "relation": [
-          {
-            "id": "40448d9c-14ed-4abc-b751-9b0ef4d9f602",
-            "relationship": "unknown",
-            "person": {
-              "person": [
-                {
-                  "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
-                }
-              ]
-            }
-          },
-          {
-            "id": "05ade278-4b44-43da-a0cc-14463854e397",
-            "relationship": "colleague",
-            "person": {
-              "person": [
-                {
-                  "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
-                }
-              ]
-            }
-          }
-        ],
-        "password": {
-          "unhashed": "p1CurrentPassword"
-        },
-        "previous_passwords": [
-          {
-            "unhashed": "p1PreviousPassword1"
-          },
-          {
-            "hashed": "test-hashed-previousPassword",
-            "hash_version": 1
-          }
-        ],
-        "main_secret": {
-          "unencrypted": "p1 Main secret"
-        },
-        "other_secrets": [
-          {
-            "unencrypted": "p1 secret1"
-          },
-          {
-            "encrypted": "p1 test-encrypted-secret2",
-            "cipher_version": 1
-          }
-        ],
-        "group": {
-          "groups": [
+    {
+      "city": {
+        "name": "Test City B",
+        "state": "Test State B",
+        "country": "Test Country B"
+      },
+      "info": "Test City B info",
+      "related_city_info": [
+        {
+          "city_info": [
             {
-              "name": "Group 1",
-              "sub_groups": [
-                {
-                  "name": "Group 1 sub 2"
-                }
-              ]
+              "city": {
+                "name": "Test City A",
+                "state": "Test State A",
+                "country": "Test Country A"
+              }
             }
           ]
         }
+      ]
+    },
+    {
+      "city": {
+        "name": "Test City C",
+        "state": "Test State C",
+        "country": "Test Country C"
       },
-      {
-        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-        "first_name": "Person 2 first",
-        "last_name": "Person 2 last",
-        "email": [
-          {
-            "value": "p2e1@test.com"
-          }
-        ],
-        "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
-        "relation": [
-          {
-            "id": "16634916-8f83-4376-ad42-37038e108a0b",
-            "relationship": "colleague",
-            "person": {
-              "person": [
-                {
-                  "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
-                }
-              ]
-            }
-          }
-        ],
-        "password": {
-          "hashed": "test-hashed-p2",
-          "hash_version": 1
-        },
-        "previous_passwords": [
-          {
-            "unhashed": "p2password1"
-          },
-          {
-            "hashed": "p2-test-hashed-password2",
-            "hash_version": 1
-          }
-        ],
-        "main_secret": {
-          "encrypted": "p2-test-encrypted-main-secret",
-          "cipher_version": 1
-        },
-        "other_secrets": [
-          {
-            "unencrypted": "p2 secret1"
-          },
-          {
-            "encrypted": "p2- test-encrypted-secret2",
-            "cipher_version": 1
-          }
-        ],
-        "group": {
-          "groups": [
+      "info": "Test City C info",
+      "related_city_info": []
+    },
+    {
+      "city": {
+        "name": "Test City D",
+        "state": "Test State D",
+        "country": "Test Country D"
+      },
+      "info": "Test City D info",
+      "related_city_info": [
+        {
+          "city_info": [
             {
-              "name": "Group 1",
-              "sub_groups": [
-                {
-                  "name": "Group 1 sub 1"
-                }
-              ]
+              "city": {
+                "name": "Test City A",
+                "state": "Test State A",
+                "country": "Test Country A"
+              }
             }
           ]
         }
-      }
-    ],
-    "city_info": [
-      {
-        "city": {
-          "name": "Test City A",
-          "state": "Test State A",
-          "country": "Test Country A"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "Group 1",
+      "sub_groups": [
+        {
+          "name": "Group 1 sub 1"
         },
-        "info": "City A info",
-        "related_city_info": [
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Test City B",
-                  "state": "Test State B",
-                  "country": "Test Country B"
-                }
-              }
-            ]
-          },
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Test City C",
-                  "state": "Test State C",
-                  "country": "Test Country C"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "city": {
-          "name": "Test City B",
-          "state": "Test State B",
-          "country": "Test Country B"
+        {
+          "name": "Group 1 sub 2"
+        }
+      ]
+    },
+    {
+      "name": "Group 2",
+      "sub_groups": [
+        {
+          "name": "Group 2 sub 1"
         },
-        "info": "Test City B info",
-        "related_city_info": [
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Test City A",
-                  "state": "Test State A",
-                  "country": "Test Country A"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "city": {
-          "name": "Test City C",
-          "state": "Test State C",
-          "country": "Test Country C"
-        },
-        "info": "Test City C info",
-        "related_city_info": []
-      },
-      {
-        "city": {
-          "name": "Test City D",
-          "state": "Test State D",
-          "country": "Test Country D"
-        },
-        "info": "Test City D info",
-        "related_city_info": [
-          {
-            "city_info": [
-              {
-                "city": {
-                  "name": "Test City A",
-                  "state": "Test State A",
-                  "country": "Test Country A"
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "groups": [
-      {
-        "name": "Group 1",
-        "sub_groups": [
-          {
-            "name": "Group 1 sub 1"
-          },
-          {
-            "name": "Group 1 sub 2"
-          }
-        ]
-      },
-      {
-        "name": "Group 2",
-        "sub_groups": [
-          {
-            "name": "Group 2 sub 1"
-          },
-          {
-            "name": "Group 2 sub 2"
-          }
-        ]
-      }
-    ]
-  }
+        {
+          "name": "Group 2 sub 2"
+        }
+      ]
+    }
+  ]
 }

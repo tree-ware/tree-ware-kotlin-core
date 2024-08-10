@@ -1,8 +1,8 @@
 package org.treeWare.model.traversal
 
 import okio.Buffer
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.getMainModelFromJsonString
+import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.util.readFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,8 +16,10 @@ class LeaderManyForEachTests {
         val jsonAddressBook3 = readFile("model/address_book_3.json")
         assertNotEquals(jsonAddressBook2, jsonAddressBook3)
 
-        val addressBook2 = getMainModelFromJsonString(addressBookMetaModel, jsonAddressBook2)
-        val addressBook3 = getMainModelFromJsonString(addressBookMetaModel, jsonAddressBook3)
+        val addressBook2 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(jsonAddressBook2, entity = addressBook2)
+        val addressBook3 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(jsonAddressBook3, entity = addressBook3)
 
         val buffer = Buffer()
         val printVisitor = LeaderManyPrintVisitor(buffer)

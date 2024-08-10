@@ -1,14 +1,13 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.AddressBookMutableMainModelFactory
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.assertMatchesJson
+import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.decoder.stateMachine.StringAuxStateMachine
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
 import org.treeWare.model.encoder.StringAuxEncoder
-import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.util.readFile
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
@@ -32,17 +31,19 @@ class UnionTests {
             aux3 to { StringAuxStateMachine(it) }
         )
 
-        val input1 = getMainModelFromJsonString(
-            addressBookMetaModel,
+        val input1 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(
             jsonInput1,
-            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory,
+            entity = input1
         )
-        val input2 = getMainModelFromJsonString(
-            addressBookMetaModel,
+        val input2 = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(
             jsonInput2,
-            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory,
+            entity = input2
         )
-        val output = AddressBookMutableMainModelFactory.getNewInstance()
+        val output = AddressBookMutableEntityModelFactory.create()
         union(listOf(input1, input2), output)
         assertMatchesJson(
             output, expectedOutputJsonFile, EncodePasswords.ALL, MultiAuxEncoder(

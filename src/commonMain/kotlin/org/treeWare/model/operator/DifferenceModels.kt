@@ -1,22 +1,22 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.core.MutableMainModel
-import org.treeWare.model.core.MutableMainModelFactory
+import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.core.MutableEntityModelFactory
 
 data class DifferenceModels(
-    val createModel: MutableMainModel,
-    val deleteModel: MutableMainModel,
-    val updateModel: MutableMainModel
+    val createModel: MutableEntityModel,
+    val deleteModel: MutableEntityModel,
+    val updateModel: MutableEntityModel
 ) {
     /**===== Returns true if the original and new were not identical =====**/
     fun isDifferent(): Boolean =
         !createModel.isEmpty() || !deleteModel.isEmpty() || !updateModel.isEmpty()
 }
 
-fun newDifferenceModels(mutableMainModelFactory: MutableMainModelFactory): DifferenceModels {
+fun newDifferenceModels(mutableEntityModelFactory: MutableEntityModelFactory): DifferenceModels {
     return DifferenceModels(
-        mutableMainModelFactory.getNewInstance(),
-        mutableMainModelFactory.getNewInstance(),
-        mutableMainModelFactory.getNewInstance(),
+        mutableEntityModelFactory.create(),
+        mutableEntityModelFactory.create(),
+        mutableEntityModelFactory.create(),
     )
 }
