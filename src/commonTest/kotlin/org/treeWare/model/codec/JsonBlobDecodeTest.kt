@@ -1,6 +1,6 @@
 package org.treeWare.model.codec
 
-import org.treeWare.metaModel.addressBookRootEntityMeta
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutablePrimitiveModel
 import org.treeWare.model.core.MutableSetFieldModel
@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 class JsonBlobDecodeTest {
     @Test
     fun `JSON decoder decodes blob values`() {
-        val addressBook = MutableEntityModel(addressBookRootEntityMeta, null)
+        val addressBook = AddressBookMutableEntityModelFactory.create()
         decodeJsonFileIntoEntity("model/address_book_1.json", entity = addressBook)
         val persons = addressBook.fields["person"] as MutableSetFieldModel
 

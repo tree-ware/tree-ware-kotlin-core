@@ -1,9 +1,8 @@
 package org.treeWare.model.cursor
 
 import okio.Buffer
-import org.treeWare.metaModel.addressBookRootEntityMeta
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.core.ElementModel
-import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.getMetaResolved
 import org.treeWare.model.decodeJsonFileIntoEntity
 import org.treeWare.model.encoder.EncodePasswords
@@ -73,7 +72,7 @@ class FollowerModelCursorTests {
 }
 
 private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssociations: Boolean) {
-    val model = MutableEntityModel(addressBookRootEntityMeta, null)
+    val model = AddressBookMutableEntityModelFactory.create()
     decodeJsonFileIntoEntity(inputFilePath, entity = model)
 
     val leaderCursor = Leader1ModelCursor(model, traverseAssociations)
@@ -95,9 +94,9 @@ private fun testFollowerSameModelInstance(inputFilePath: String, traverseAssocia
 
 private fun testFollowerDifferentModelInstances(inputFilePath: String, traverseAssociations: Boolean) {
     // Create different instances of the model from the same JSON input file.
-    val leaderModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    val leaderModel = AddressBookMutableEntityModelFactory.create()
     decodeJsonFileIntoEntity(inputFilePath, entity = leaderModel)
-    val followerModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    val followerModel = AddressBookMutableEntityModelFactory.create()
     decodeJsonFileIntoEntity(inputFilePath, entity = followerModel)
 
     assertNotSame(leaderModel, followerModel)
@@ -128,9 +127,9 @@ private fun testFollowerWildcardModelInstance(
     traverseAssociations: Boolean,
     expectedFilePath: String? = null
 ) {
-    val leaderModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    val leaderModel = AddressBookMutableEntityModelFactory.create()
     decodeJsonFileIntoEntity(leaderFilePath, entity = leaderModel)
-    val followerModel = MutableEntityModel(addressBookRootEntityMeta, null)
+    val followerModel = AddressBookMutableEntityModelFactory.create()
     decodeJsonFileIntoEntity(wildcardFilePath, entity = followerModel)
 
     val leaderCursor = Leader1ModelCursor(leaderModel, traverseAssociations)
