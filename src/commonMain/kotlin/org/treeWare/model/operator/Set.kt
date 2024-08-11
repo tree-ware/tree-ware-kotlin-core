@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.core.MainModel
+import org.treeWare.model.core.EntityModel
 import org.treeWare.model.operator.set.SetDelegate
 import org.treeWare.model.operator.set.SetDelegateVisitor
 import org.treeWare.model.traversal.forEach
@@ -12,7 +12,7 @@ interface SetEntityDelegate {
 object SetOperatorId : OperatorId<SetEntityDelegate>
 
 fun set(
-    main: MainModel,
+    model: EntityModel,
     setDelegate: SetDelegate,
     entityDelegates: EntityDelegateRegistry<SetEntityDelegate>?
 ): Response {
@@ -20,7 +20,7 @@ fun set(
     if (!beginResponse.isOk()) return beginResponse
 
     val setVisitor = SetDelegateVisitor(setDelegate, entityDelegates)
-    forEach(main, setVisitor, false)
+    forEach(model, setVisitor, false)
     if (setVisitor.errors.isNotEmpty()) return Response.ErrorList(ErrorCode.CLIENT_ERROR, setVisitor.errors)
 
     val endResponse = setDelegate.end()
