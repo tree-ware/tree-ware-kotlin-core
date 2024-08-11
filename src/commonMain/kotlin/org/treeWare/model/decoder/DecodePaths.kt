@@ -12,13 +12,12 @@ private const val ESCAPE_CHARACTER = '\\'
 private const val WILDCARD = "*"
 private const val SUB_TREE_WILDCARD = "**"
 
-fun decodePaths(source: BufferedSource, mainModel: MutableMainModel, pathValueSeparator: String = " = "): List<String> {
-    val mainName = requireNotNull(getMainName(mainModel))
+fun decodePaths(source: BufferedSource, model: MutableEntityModel, pathValueSeparator: String = " = "): List<String> {
     val errors = mutableListOf<String>()
     var line = source.readUtf8Line()
     while (line != null) {
         val (path, value) = line.split(pathValueSeparator, limit = 2)
-        when (val result = decodePath(path, value, mainModel, mainName)) {
+        when (val result = decodePath(path, value, model)) {
             is DecodePathResult.Error -> errors.add(result.error)
             else -> {}
         }
@@ -33,10 +32,7 @@ sealed interface DecodePathResult {
         val trailingWildcards: Int
     }
 
-    /**
-     * A field pointed to by the path.
-     * NOTE: A root path points to the main-model (since it is a field).
-     */
+    /** A field pointed to by the path. */
     data class Field(override val element: MutableFieldModel, override val trailingWildcards: Int = 0) : Element
 
     /** A set-field entity pointed to by the path. */
@@ -45,17 +41,16 @@ sealed interface DecodePathResult {
     data class Error(val error: String) : DecodePathResult
 }
 
-fun decodePath(path: String, value: String?, mainModel: MutableMainModel, mainName: String): DecodePathResult {
+fun decodePath(path: String, value: String?, model: MutableEntityModel): DecodePathResult {
     if (!path.startsWith(PATH_SEPARATOR)) return DecodePathResult.Error("$path must be an absolute path")
+    if (path.length == 1) return DecodePathResult.Entity(model, 0) // path is "/"
+    if (path.endsWith(PATH_SEPARATOR)) return DecodePathResult.Error("`$path` must not end with $PATH_SEPARATOR")
     val pathParts = splitEscapedPath(path)
     val firstPartIndex = 1  // index 0 is the empty string before the first separator
-    val firstPart = pathParts[firstPartIndex]
-    if (firstPart != mainName) return DecodePathResult.Error("$path does not start with $PATH_SEPARATOR$mainName")
     val lastPartIndex = pathParts.size - 1
-    val root = mainModel.getOrNewRoot()
-    val trailingWildcards = getTrailingWildcards(pathParts, 1, lastPartIndex)
-    return if (trailingWildcards != null) DecodePathResult.Field(mainModel, trailingWildcards)
-    else decodePath(path, pathParts, firstPartIndex + 1, lastPartIndex, value, root)
+    val trailingWildcards = getTrailingWildcards(pathParts, 0, lastPartIndex)
+    return if (trailingWildcards != null) DecodePathResult.Entity(model, trailingWildcards)
+    else decodePath(path, pathParts, firstPartIndex, lastPartIndex, value, model)
 }
 
 private fun decodePath(
