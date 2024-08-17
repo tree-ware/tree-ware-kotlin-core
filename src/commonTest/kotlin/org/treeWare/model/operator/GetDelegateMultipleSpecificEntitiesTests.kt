@@ -25,7 +25,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.getRoot("", ofType(), fieldsWithNames(), ofType())
+            delegate.getRoot("/", ofType(), fieldsWithNames(), ofType())
         } answers {
             val responseRootEntity = arg<MutableEntityModel>(3)
             GetCompositionResult.Entity(responseRootEntity)
@@ -183,7 +183,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
         val response = AddressBookMutableEntityModelFactory.create()
         val errors = get(request, delegate, null, null, response)
         verifySequence {
-            delegate.getRoot("", ofType(), fieldsWithNames(), ofType())
+            delegate.getRoot("/", ofType(), fieldsWithNames(), ofType())
             delegate.getCompositionSet(
                 "/person",
                 ofType(),

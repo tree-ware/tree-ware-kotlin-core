@@ -24,7 +24,7 @@ class GetDelegateWildcardEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.getRoot("", ofType(), fieldsWithNames("name", "last_updated"), ofType())
+            delegate.getRoot("/", ofType(), fieldsWithNames("name", "last_updated"), ofType())
         } answers {
             val addressBook = arg<MutableEntityModel>(3)
             setStringSingleField(addressBook, "name", "Super Heroes")
@@ -150,7 +150,7 @@ class GetDelegateWildcardEntitiesTests {
         val errors = get(request, delegate, null, null, response)
 
         verifySequence {
-            delegate.getRoot("", ofType(), fieldsWithNames("name", "last_updated"), ofType())
+            delegate.getRoot("/", ofType(), fieldsWithNames("name", "last_updated"), ofType())
             delegate.getComposition(
                 "/settings",
                 ofType(),

@@ -23,7 +23,7 @@ class ModelPathStack {
         }
         val parentPath = pathStack.firstOrNull() ?: ""
         val newPart = getFieldPathPart(field, listFieldIndex)
-        val newPath = "$parentPath$newPart"
+        val newPath = if (parentPath == "/") newPart else "$parentPath$newPart"
         pathStack.addFirst(newPath)
     }
 
@@ -43,7 +43,12 @@ class ModelPathStack {
             pathStack.addFirst("")
             return
         }
-        val parentPath = pathStack.firstOrNull() ?: ""
+        val parentPath = pathStack.firstOrNull()
+        if (parentPath == null) { // root entity
+            keysStack.addFirst(EmptyKeys)
+            pathStack.addFirst("/")
+            return
+        }
         val keys = if (isCompositionKey) EmptyKeys else entity.getKeyFields(true)
         val newPart = getEntityPathPart(entity, keys.available)
         val newPath = "$parentPath$newPart"
