@@ -1,14 +1,13 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.AddressBookMutableMainModelFactory
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.addCity
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
+import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.encoder.MultiAuxEncoder
-import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.model.operator.rbac.FullyPermitted
 import org.treeWare.model.operator.rbac.NotPermitted
 import org.treeWare.model.operator.rbac.PartiallyPermitted
@@ -35,17 +34,18 @@ private val multiAuxEncoder = MultiAuxEncoder(SET_AUX_NAME to SetAuxEncoder())
 class PermitSetTests {
     private fun testPermitSet(
         setJson: String,
-        rbac: MainModel,
+        rbac: EntityModel,
         expectedPermittedJson: String?,
         isFullyPermitted: Boolean
     ) {
-        val setModel = getMainModelFromJsonString(
-            addressBookMetaModel,
+        val setModel = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(
             setJson,
-            multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory
+            multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
+            entity = setModel
         )
         assertMatchesJsonString(setModel, setJson, EncodePasswords.ALL, multiAuxEncoder)
-        val actual = permitSet(setModel, rbac, AddressBookMutableMainModelFactory)
+        val actual = permitSet(setModel, rbac, AddressBookMutableEntityModelFactory)
         if (expectedPermittedJson == null) {
             when (actual) {
                 is FullyPermitted -> assertMatchesJsonString(
@@ -77,9 +77,7 @@ class PermitSetTests {
     fun `Empty single-compositions in set-model will be pruned by the permitSet operator`() {
         val singleCompositionSetJson = """
             |{
-            |  "address_book": {
-            |    "settings": {}
-            |  }
+            |  "settings": {}
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
@@ -91,24 +89,22 @@ class PermitSetTests {
         // Since keys cannot be updated and there is nothing else in the entity to be updated.
         val updateEntitiesSetJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "update",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |  "person": [
+            |    {
+            |      "set_": "update",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |    }
+            |  ],
+            |  "city_info": [
+            |    {
+            |      "set_": "update",
+            |      "city": {
+            |        "name": "New York City",
+            |        "state": "New York",
+            |        "country": "United States of America"
             |      }
-            |    ],
-            |    "city_info": [
-            |      {
-            |        "set_": "update",
-            |        "city": {
-            |          "name": "New York City",
-            |          "state": "New York",
-            |          "country": "United States of America"
-            |        }
-            |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
@@ -119,24 +115,22 @@ class PermitSetTests {
     fun `CREATE entities with only key fields in set-model must not be pruned by the permitSet operator`() {
         val createEntitiesSetJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |    }
+            |  ],
+            |  "city_info": [
+            |    {
+            |      "set_": "create",
+            |      "city": {
+            |        "name": "New York City",
+            |        "state": "New York",
+            |        "country": "United States of America"
             |      }
-            |    ],
-            |    "city_info": [
-            |      {
-            |        "set_": "create",
-            |        "city": {
-            |          "name": "New York City",
-            |          "state": "New York",
-            |          "country": "United States of America"
-            |        }
-            |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
@@ -147,24 +141,22 @@ class PermitSetTests {
     fun `DELETE entities with only key fields in set-model must not be pruned by the permitSet operator`() {
         val deleteEntitiesSetJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "delete",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |  "person": [
+            |    {
+            |      "set_": "delete",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |    }
+            |  ],
+            |  "city_info": [
+            |    {
+            |      "set_": "delete",
+            |      "city": {
+            |        "name": "New York City",
+            |        "state": "New York",
+            |        "country": "United States of America"
             |      }
-            |    ],
-            |    "city_info": [
-            |      {
-            |        "set_": "delete",
-            |        "city": {
-            |          "name": "New York City",
-            |          "state": "New York",
-            |          "country": "United States of America"
-            |        }
-            |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
@@ -175,17 +167,15 @@ class PermitSetTests {
     fun `DELETE keyless entities without any fields in set-model must not be pruned by the permitSet operator`() {
         val deleteEntitiesSetJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "delete",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "hero_details": {
-            |          "set_": "delete"
-            |        }
+            |  "person": [
+            |    {
+            |      "set_": "delete",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "hero_details": {
+            |        "set_": "delete"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val rbac = newRootRbac(PermissionsAux(crud = PermissionScope.SUB_TREE))
@@ -196,9 +186,8 @@ class PermitSetTests {
 
     // region No-level RBAC tests
 
-    private fun newNoLevelRbac(): MainModel {
-        val rbac = MutableMainModel(addressBookMetaModel)
-        rbac.getOrNewRoot()
+    private fun newNoLevelRbac(): EntityModel {
+        val rbac = AddressBookMutableEntityModelFactory.create()
         return rbac
     }
 
@@ -212,10 +201,9 @@ class PermitSetTests {
 
     // region Root-level RBAC tests
 
-    private fun newRootRbac(permissions: PermissionsAux): MainModel {
-        val rbac = MutableMainModel(addressBookMetaModel)
+    private fun newRootRbac(permissions: PermissionsAux): EntityModel {
+        val rbac = AddressBookMutableEntityModelFactory.create()
         setPermissionsAux(rbac, permissions)
-        rbac.getOrNewRoot()
         return rbac
     }
 
@@ -367,10 +355,9 @@ class PermitSetTests {
         personId: String,
         personPermissions: PermissionsAux,
         personsPermissions: PermissionsAux? = null
-    ): MainModel {
-        val rbac = MutableMainModel(addressBookMetaModel)
-        val rbacRoot = rbac.getOrNewRoot()
-        val rbacPersons = getOrNewMutableSetField(rbacRoot, "person")
+    ): EntityModel {
+        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbacPersons = getOrNewMutableSetField(rbac, "person")
         personsPermissions?.also { setPermissionsAux(rbacPersons, it) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
         setUuidSingleField(rbacPerson, "id", personId)
@@ -729,43 +716,41 @@ class PermitSetTests {
 
     private fun newAssociationSetJson(setAux: SetAux): String = """
         |{
-        |  "address_book__set_": "${setAux.name.lowercase()}",
-        |  "address_book": {
-        |    "person": [
-        |      {
-        |        "id": "$CLARK_KENT_ID",
-        |        "group": {
-        |          "groups": [
-        |            {
-        |              "name": "DC"
-        |            }
-        |          ]
-        |        }
-        |      }
-        |    ],
-        |    "city_info": [
-        |      {
-        |        "city": {
-        |          "name": "Albany",
-        |          "state": "New York",
-        |          "country": "United States of America"
-        |        },
-        |        "related_city_info": [
+        |  "set_": "${setAux.name.lowercase()}",
+        |  "person": [
+        |    {
+        |      "id": "$CLARK_KENT_ID",
+        |      "group": {
+        |        "groups": [
         |          {
-        |            "city_info": [
-        |              {
-        |                "city": {
-        |                  "name": "New York City",
-        |                  "state": "New York",
-        |                  "country": "United States of America"
-        |                }
-        |              }
-        |            ]
+        |            "name": "DC"
         |          }
         |        ]
         |      }
-        |    ]
-        |  }
+        |    }
+        |  ],
+        |  "city_info": [
+        |    {
+        |      "city": {
+        |        "name": "Albany",
+        |        "state": "New York",
+        |        "country": "United States of America"
+        |      },
+        |      "related_city_info": [
+        |        {
+        |          "city_info": [
+        |            {
+        |              "city": {
+        |                "name": "New York City",
+        |                "state": "New York",
+        |                "country": "United States of America"
+        |              }
+        |            }
+        |          ]
+        |        }
+        |      ]
+        |    }
+        |  ]
         |}
     """.trimMargin()
 
@@ -773,24 +758,23 @@ class PermitSetTests {
      * Create an RBAC model with CRUD permissions for the association sources in the above set-request.
      * If `permitTargets` is `true`, also grant permissions for the association targets.
      */
-    private fun newAssociationRbac(permitTargets: Boolean): MainModel {
-        val rbac = MutableMainModel(addressBookMetaModel)
-        val root = rbac.getOrNewRoot()
+    private fun newAssociationRbac(permitTargets: Boolean): EntityModel {
+        val rbac = AddressBookMutableEntityModelFactory.create()
 
-        val personSet = getOrNewMutableSetField(root, "person")
+        val personSet = getOrNewMutableSetField(rbac, "person")
         val clarkKent = getNewMutableSetEntity(personSet)
         setUuidSingleField(clarkKent, "id", CLARK_KENT_ID)
         setPermissionsAux(clarkKent, PermissionsAux(crud = PermissionScope.SUB_TREE))
         personSet.addValue(clarkKent)
 
-        val cityInfoSet = getOrNewMutableSetField(root, "city_info")
+        val cityInfoSet = getOrNewMutableSetField(rbac, "city_info")
         val albanyCityInfo = getNewMutableSetEntity(cityInfoSet)
         addCity(albanyCityInfo, "Albany", "New York", "United States of America")
         setPermissionsAux(albanyCityInfo, PermissionsAux(crud = PermissionScope.SUB_TREE))
         cityInfoSet.addValue(albanyCityInfo)
 
         if (permitTargets) {
-            val groups = getOrNewMutableSetField(root, "groups")
+            val groups = getOrNewMutableSetField(rbac, "groups")
             val dc = getNewMutableSetEntity(groups)
             setStringSingleField(dc, "name", "DC")
             setPermissionsAux(dc, PermissionsAux(read = PermissionScope.SUB_TREE))
@@ -813,24 +797,22 @@ class PermitSetTests {
         // `related_city_info` is expected as an empty list since empty lists are meaningful and are not pruned.
         val expectedPermittedJson = """
             |{
-            |  "address_book__set_": "create",
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
-            |      }
-            |    ],
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Albany",
-            |          "state": "New York",
-            |          "country": "United States of America"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "set_": "create",
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+            |    }
+            |  ],
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Albany",
+            |        "state": "New York",
+            |        "country": "United States of America"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}
         """.trimMargin()
         testPermitSet(createAssociationJson, rbac, expectedPermittedJson, false)
@@ -850,19 +832,17 @@ class PermitSetTests {
         // `related_city_info` is expected as an empty list since empty lists are meaningful and are not pruned.
         val expectedPermittedJson = """
             |{
-            |  "address_book__set_": "update",
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": "Albany",
-            |          "state": "New York",
-            |          "country": "United States of America"
-            |        },
-            |        "related_city_info": []
-            |      }
-            |    ]
-            |  }
+            |  "set_": "update",
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": "Albany",
+            |        "state": "New York",
+            |        "country": "United States of America"
+            |      },
+            |      "related_city_info": []
+            |    }
+            |  ]
             |}
         """.trimMargin()
         testPermitSet(updateAssociationJson, rbac, expectedPermittedJson, false)

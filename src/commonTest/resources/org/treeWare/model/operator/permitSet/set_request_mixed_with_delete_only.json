@@ -1,50 +1,48 @@
 {
-  "address_book__set_": "update",
-  "address_book": {
-    "person": [
-      {
-        "set_": "update",
-        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-        "group__set_": "delete",
-        "group": {
-          "groups": [
-            {
-              "name": "DC",
-              "sub_groups": [
-                {
-                  "name": "Superman"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      {
-        "set_": "delete",
-        "id": "ec983c56-320f-4d66-9dde-f180e8ac3807"
+  "set_": "update",
+  "person": [
+    {
+      "set_": "update",
+      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+      "group__set_": "delete",
+      "group": {
+        "groups": [
+          {
+            "name": "DC",
+            "sub_groups": [
+              {
+                "name": "Superman"
+              }
+            ]
+          }
+        ]
       }
-    ],
-    "city_info": [
-      {
-        "set_": "delete",
-        "city": {
-          "name": "Albany",
-          "state": "New York",
-          "country": "United States of America"
-        }
-      },
-      {
-        "city": {
-          "name": "San Francisco",
-          "state": "California",
-          "country": "United States of America"
-        },
-        "city_center__set_": "delete",
-        "city_center": {
-          "latitude": 37.779379,
-          "longitude": -122.418433
-        }
+    },
+    {
+      "set_": "delete",
+      "id": "ec983c56-320f-4d66-9dde-f180e8ac3807"
+    }
+  ],
+  "city_info": [
+    {
+      "set_": "delete",
+      "city": {
+        "name": "Albany",
+        "state": "New York",
+        "country": "United States of America"
       }
-    ]
-  }
+    },
+    {
+      "city": {
+        "name": "San Francisco",
+        "state": "California",
+        "country": "United States of America"
+      },
+      "city_center__set_": "delete",
+      "city_center": {
+        "latitude": 37.779379,
+        "longitude": -122.418433
+      }
+    }
+  ]
 }

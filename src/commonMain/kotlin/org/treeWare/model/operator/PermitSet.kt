@@ -16,63 +16,33 @@ import org.treeWare.util.assertInDevMode
 
 /** Return a subset of `set` that is permitted by `rbac` */
 fun permitSet(
-    set: MainModel,
-    rbac: MainModel,
-    mutableMainModelFactory: MutableMainModelFactory
+    set: EntityModel,
+    rbac: EntityModel,
+    mutableEntityModelFactory: MutableEntityModelFactory
 ): PermitResponse {
-    val visitor = PermitSetVisitor(rbac, mutableMainModelFactory)
+    val visitor = PermitSetVisitor(rbac, mutableEntityModelFactory)
     forEach(set, rbac, visitor, false)
     return visitor.permitResponse
 }
 
 private class PermitSetVisitor(
-    private val rbac: MainModel,
-    private val mutableMainModelFactory: MutableMainModelFactory
+    private val rbac: EntityModel,
+    private val mutableEntityModelFactory: MutableEntityModelFactory
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {
-            val permitted = permittedMain ?: return NotPermitted
-            return if (partiallyDenied) PartiallyPermitted(permitted) else FullyPermitted(permitted)
+            val permitted = permittedRoot ?: return NotPermitted
+            return if (permitted.isEmpty()) NotPermitted
+            else if (partiallyDenied) PartiallyPermitted(permitted)
+            else FullyPermitted(permitted)
         }
 
-    private val permittedMain: MutableMainModel?
-        get() = permittedMainInternal.takeIf {
-            val root = it.root
-            root != null && !root.isEmpty()
-        }
+    private var permittedRoot: MutableEntityModel? = null
 
-    private lateinit var permittedMainInternal: MutableMainModel
     private val permittedStack = ArrayDeque<MutableElementModel?>()
     private val setAuxStack = SetAuxStack()
     private val permitSetAuxStack = PermitSetAuxStack()
     private var partiallyDenied = false
-
-    override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): TraversalAction {
-        val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
-        assertInDevMode(setAuxError == null)
-        permitSetAuxStack.push(getPermissionsAux(followerMain1))
-        permittedMainInternal = mutableMainModelFactory.getNewInstance()
-        copySetAux(leaderMain1, permittedMainInternal)
-        return if (permitSetAuxStack.isAnySetPermitted()) {
-            permittedStack.addFirst(permittedMainInternal)
-            TraversalAction.CONTINUE
-        } else if (followerMain1 != null) {
-            permittedStack.addFirst(permittedMainInternal)
-            TraversalAction.CONTINUE
-        } else {
-            partiallyDenied = true
-            permittedStack.addFirst(null)
-            TraversalAction.ABORT_SUB_TREE
-        }
-    }
-
-    override fun leaveMain(leaderMain1: MainModel, followerMain1: MainModel?) {
-        permittedStack.removeFirst()
-        assertInDevMode(permittedStack.isEmpty())
-        permitSetAuxStack.pop()
-        setAuxStack.pop()
-        assertInDevMode(setAuxStack.isEmpty())
-    }
 
     override fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): TraversalAction {
         val setAuxError = setAuxStack.push(getSetAux(leaderEntity1))
@@ -81,8 +51,10 @@ private class PermitSetVisitor(
         // Permissions are not checked for an entity because the entity will be needed for any fields that might be
         // permitted in the sub-tree. On the way up, if there are no permitted fields in the sub-tree, the entity will
         // be removed.
-        val permittedParent = permittedStack.first() ?: throw IllegalStateException("Entity parent is null")
-        val permittedEntity = permittedParent.getOrNewValue()
+        val permittedParent = permittedStack.firstOrNull()
+        val permittedEntity =
+            if (permittedParent == null) mutableEntityModelFactory.create().also { permittedRoot = it }
+            else permittedParent.getOrNewValue()
         copySetAux(leaderEntity1, permittedEntity)
         permittedStack.addFirst(permittedEntity)
         return TraversalAction.CONTINUE
@@ -198,10 +170,8 @@ private class PermitSetVisitor(
         // Read permission is required for the association target in the case of CREATE and UPDATE.
         val setAux = setAuxStack.peekActive()
         if (setAux == SetAux.CREATE || setAux == SetAux.UPDATE) {
-            // TODO(cleanup): drop valueAsMain & typecast by updating PermitSetVisitor to use root entities as starting points.
-            val target = mutableMainModelFactory.getNewInstance()
-            target.root = leaderValue1.value as MutableEntityModel
-            val targetPermitted = permitGet(target, rbac, mutableMainModelFactory)
+            val target = leaderValue1.value
+            val targetPermitted = permitGet(target, rbac, mutableEntityModelFactory)
             if (targetPermitted !is FullyPermitted) {
                 partiallyDenied = true
                 if (permittedParent.elementType == ModelElementType.SINGLE_FIELD) permittedParent.detachFromParent()

@@ -1,24 +1,22 @@
 {
-  "address_book__set_": "update",
-  "address_book": {
-    "person": [
-      {
-        "set_": "update",
-        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-        "group__set_": "delete",
-        "group": {
-          "groups": [
-            {
-              "name": "DC",
-              "sub_groups": [
-                {
-                  "name": "Superman"
-                }
-              ]
-            }
-          ]
-        }
+  "set_": "update",
+  "person": [
+    {
+      "set_": "update",
+      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+      "group__set_": "delete",
+      "group": {
+        "groups": [
+          {
+            "name": "DC",
+            "sub_groups": [
+              {
+                "name": "Superman"
+              }
+            ]
+          }
+        ]
       }
-    ]
-  }
+    }
+  ]
 }

@@ -10,71 +10,47 @@ import org.treeWare.model.operator.rbac.aux.getPermissionsAux
 import org.treeWare.model.traversal.AbstractLeader1Follower1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
-import org.treeWare.util.assertInDevMode
 
-// NOTE: wildcards in the get-model do not match explicit keys in the RBAC model.
-
-/** Return a subset of `get` that is permitted by `rbac`. */
+/**
+ *  Return a subset of `get` that is permitted by `rbac`.
+ *  NOTE: wildcards in `get` do not match explicit keys in `rbac`.
+ */
 fun permitGet(
-    get: MainModel,
-    rbac: MainModel,
-    mutableMainModelFactory: MutableMainModelFactory
+    get: EntityModel,
+    rbac: EntityModel,
+    mutableEntityModelFactory: MutableEntityModelFactory
 ): PermitResponse {
-    val visitor = PermitGetVisitor(mutableMainModelFactory)
+    val visitor = PermitGetVisitor(mutableEntityModelFactory)
     forEach(get, rbac, visitor, false)
     return visitor.permitResponse
 }
 
 private class PermitGetVisitor(
-    private val mutableMainModelFactory: MutableMainModelFactory
+    private val mutableEntityModelFactory: MutableEntityModelFactory
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {
-            val permitted = permittedMain ?: return NotPermitted
-            return if (partiallyDenied) PartiallyPermitted(permitted) else FullyPermitted(permitted)
+            val permitted = permittedRoot ?: return NotPermitted
+            return if (permitted.isEmpty()) NotPermitted
+            else if (partiallyDenied) PartiallyPermitted(permitted)
+            else FullyPermitted(permitted)
         }
 
-    private val permittedMain: MutableMainModel?
-        get() = permittedMainInternal.takeIf {
-            val root = it.root
-            root != null && !root.isEmpty()
-        }
+    private var permittedRoot: MutableEntityModel? = null
 
-    private lateinit var permittedMainInternal: MutableMainModel
     private val permittedStack = ArrayDeque<MutableElementModel?>()
     private val permitGetAuxStack = PermitGetAuxStack()
     private var partiallyDenied = false
-
-    override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): TraversalAction {
-        permitGetAuxStack.push(getPermissionsAux(followerMain1))
-        permittedMainInternal = mutableMainModelFactory.getNewInstance()
-        return if (permitGetAuxStack.isGetPermitted()) {
-            permittedStack.addFirst(permittedMainInternal)
-            TraversalAction.CONTINUE
-        } else if (followerMain1 != null) {
-            permittedStack.addFirst(permittedMainInternal)
-            TraversalAction.CONTINUE
-        } else {
-            partiallyDenied = true
-            permittedStack.addFirst(null)
-            TraversalAction.ABORT_SUB_TREE
-        }
-    }
-
-    override fun leaveMain(leaderMain1: MainModel, followerMain1: MainModel?) {
-        permittedStack.removeFirst()
-        assertInDevMode(permittedStack.isEmpty())
-        permitGetAuxStack.pop()
-        assertInDevMode(permitGetAuxStack.isEmpty())
-    }
 
     override fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): TraversalAction {
         permitGetAuxStack.push(getPermissionsAux(followerEntity1))
         // Permissions are not checked for an entity because the entity will be needed for any fields that might be
         // permitted in the sub-tree. On the way up, if there are no permitted fields in the sub-tree, the entity will
         // be removed.
-        val permittedParent = permittedStack.first() ?: throw IllegalStateException("Entity parent is null")
-        val permittedEntity = permittedParent.getOrNewValue()
+        val permittedParent = permittedStack.firstOrNull()
+        val permittedEntity =
+            if (permittedParent == null) mutableEntityModelFactory.create().also { permittedRoot = it }
+            else permittedParent.getOrNewValue()
         permittedStack.addFirst(permittedEntity)
         return TraversalAction.CONTINUE
     }
