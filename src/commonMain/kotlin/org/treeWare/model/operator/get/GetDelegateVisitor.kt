@@ -27,12 +27,39 @@ class GetDelegateVisitor(
     }
 
     override fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): TraversalAction {
+        if (followerEntity1?.parent == null) return visitRootEntity(leaderEntity1, followerEntity1)
         modelPathStack.pushEntity(leaderEntity1)
         return TraversalAction.CONTINUE
     }
 
     override fun leaveEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?) {
         modelPathStack.popEntity()
+    }
+
+    private fun visitRootEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): TraversalAction {
+        val requestCompositionEntity = followerEntity1 ?: return TraversalAction.ABORT_TREE
+        modelPathStack.pushEntity(leaderEntity1)
+        val (requestCompositionFields, requestFields) = requestCompositionEntity.fields.values.partition {
+            isComposition(it)
+        }
+        val responseRootEntity = leaderEntity1 as MutableEntityModel
+        val fetchResult = getDelegate.getRoot(
+            modelPathStack.peekModelPath(),
+            modelPathStack.ancestorKeys(),
+            requestFields,
+            responseRootEntity
+        )
+        return when (fetchResult) {
+            is GetCompositionResult.Entity -> {
+                createResponseCompositionFields(requestCompositionFields, fetchResult.entity)
+                TraversalAction.CONTINUE
+            }
+            is GetCompositionResult.ErrorList -> {
+                errorCode = fetchResult.errorCode
+                errors.addAll(fetchResult.errorList)
+                TraversalAction.ABORT_SUB_TREE
+            }
+        }
     }
 
     override fun visitSingleField(leaderField1: SingleFieldModel, followerField1: SingleFieldModel?): TraversalAction {

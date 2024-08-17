@@ -17,11 +17,18 @@ sealed class GetCompositionSetResult(open val errorCode: ErrorCode) {
 }
 
 interface GetDelegate {
+    fun getRoot(
+        fieldPath: String,
+        ancestorKeys: List<Keys>,
+        requestFields: List<FieldModel>,
+        responseRootEntity: MutableEntityModel
+    ): GetCompositionResult
+
     fun getComposition(
         fieldPath: String,
         ancestorKeys: List<Keys>,
         requestFields: List<FieldModel>,
-        responseParentField: MutableSingleFieldModel
+        responseParentField: MutableSingleFieldModel?
     ): GetCompositionResult
 
     fun getCompositionSet(

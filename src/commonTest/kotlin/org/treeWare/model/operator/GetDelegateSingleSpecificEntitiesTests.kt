@@ -3,7 +3,6 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
-import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.mockk.fieldsWithNames
 import org.treeWare.model.*
 import org.treeWare.model.core.*
@@ -18,23 +17,22 @@ import kotlin.test.assertTrue
 class GetDelegateSingleSpecificEntitiesTests {
     @Test
     fun `get() must call its delegate for single specific entities in a request`() {
-        val request =
-            getMainModelFromJsonFile(
-                addressBookMetaModel,
-                "org/treeWare/model/operator/get_request_single_specific_entities.json"
-            )
+        val request = AddressBookMutableEntityModelFactory.create()
+        decodeJsonFileIntoEntity(
+            "org/treeWare/model/operator/get_request_single_specific_entities.json",
+            entity = request
+        )
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
+            delegate.getRoot("", ofType(), fieldsWithNames(), ofType())
         } answers {
-            val addressBookField = arg<MutableSingleFieldModel>(3)
-            val addressBook = addressBookField.getOrNewValue() as MutableEntityModel
-            GetCompositionResult.Entity(addressBook)
+            val responseRootEntity = arg<MutableEntityModel>(3)
+            GetCompositionResult.Entity(responseRootEntity)
         }
         every {
             delegate.getCompositionSet(
-                "/address_book/person",
+                "/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
@@ -56,7 +54,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
+                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -79,7 +77,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/address_book/city_info",
+                "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),
@@ -114,26 +112,26 @@ class GetDelegateSingleSpecificEntitiesTests {
             GetCompositionSetResult.Entities(listOf(newYork))
         }
 
-        val response = AddressBookMutableMainModelFactory.getNewInstance()
+        val response = AddressBookMutableEntityModelFactory.create()
         val errors = get(request, delegate, null, null, response)
         verifySequence {
-            delegate.getComposition("/address_book", ofType(), fieldsWithNames(), ofType())
+            delegate.getRoot("", ofType(), fieldsWithNames(), ofType())
             delegate.getCompositionSet(
-                "/address_book/person",
+                "/person",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
+                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/address_book/city_info",
+                "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info", "related_city_info"),

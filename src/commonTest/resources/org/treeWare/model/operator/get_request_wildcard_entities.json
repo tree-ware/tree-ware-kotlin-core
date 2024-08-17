@@ -1,37 +1,35 @@
 {
-  "address_book": {
-    "name": null,
-    "last_updated": null,
-    "settings": {
-      "last_name_first": null,
-      "card_colors": []
-    },
-    "person": [
-      {
-        "id": null,
-        "first_name": null,
-        "last_name": null,
-        "hero_name": null,
-        "relation": [
-          {
-            "id": null,
-            "relationship": null,
-            "person": null
-          }
-        ],
-        "picture": null
-      }
-    ],
-    "city_info": [
-      {
-        "city": {
-          "name": null,
-          "state": null,
-          "country": null
-        },
-        "info": null,
-        "related_city_info": []
-      }
-    ]
-  }
+  "name": null,
+  "last_updated": null,
+  "settings": {
+    "last_name_first": null,
+    "card_colors": []
+  },
+  "person": [
+    {
+      "id": null,
+      "first_name": null,
+      "last_name": null,
+      "hero_name": null,
+      "relation": [
+        {
+          "id": null,
+          "relationship": null,
+          "person": null
+        }
+      ],
+      "picture": null
+    }
+  ],
+  "city_info": [
+    {
+      "city": {
+        "name": null,
+        "state": null,
+        "country": null
+      },
+      "info": null,
+      "related_city_info": []
+    }
+  ]
 }

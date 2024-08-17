@@ -11,13 +11,12 @@ interface GetEntityDelegate
 object GetOperatorId : OperatorId<GetEntityDelegate>
 
 fun get(
-    request: MainModel,
+    request: EntityModel,
     getDelegate: GetDelegate,
     setEntityDelegates: EntityDelegateRegistry<SetEntityDelegate>?,
     getEntityDelegates: EntityDelegateRegistry<GetEntityDelegate>?,
-    response: MutableMainModel
+    response: MutableEntityModel
 ): Response {
-    response.getOrNewRoot()
     val getVisitor = GetDelegateVisitor(getDelegate, setEntityDelegates)
     forEach(response, request, getVisitor, false, ::followerEntityEquals)
     return if (getVisitor.errors.isEmpty()) Response.Success
