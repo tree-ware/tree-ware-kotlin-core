@@ -8,13 +8,10 @@ class VersionValidationTests {
     fun `Version entity must be specified in the meta-model`() {
         val metaModelJson = """
             {
+              "name": "test_meta_model",
               "root": {
-                "name": "root",
-                "type": "composition",
-                "composition": {
-                  "entity": "entity1",
-                  "package": "test.common"
-                }
+                "entity": "entity1",
+                "package": "test.common"
               },
               "packages": []
             }
@@ -27,14 +24,11 @@ class VersionValidationTests {
     fun `Semantic-version field must be specified in the meta-model`() {
         val metaModelJson = """
             {
+              "name": "test_meta_model",
               "version": {},
               "root": {
-                "name": "root",
-                "type": "composition",
-                "composition": {
-                  "entity": "entity1",
-                  "package": "test.common"
-                }
+                "entity": "entity1",
+                "package": "test.common"
               },
               "packages": []
             }
@@ -47,16 +41,13 @@ class VersionValidationTests {
     fun `Semantic-version in the meta-model must be strictly valid`() {
         val metaModelJson = """
             {
+              "name": "test_meta_model",
               "version": {
                 "semantic": "1"
               },
               "root": {
-                "name": "root",
-                "type": "composition",
-                "composition": {
-                  "entity": "entity1",
-                  "package": "test.common"
-                }
+                "entity": "entity1",
+                "package": "test.common"
               },
               "packages": []
             }

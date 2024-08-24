@@ -19,14 +19,13 @@ fun resolveNonPrimitiveTypes(
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
     val rootErrors = resolveRoot(meta, nonPrimitiveTypes)
-    val rootEntityMeta = getMetaModelResolved(getRootMeta(meta))?.compositionMeta
+    val rootEntityMeta = getMetaModelResolved(meta)?.compositionMeta
     val packageErrors = resolvePackages(meta, rootEntityMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
     return listOf(rootErrors, packageErrors).flatten()
 }
 
 private fun resolveRoot(meta: EntityModel, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
-    val rootMeta = getRootMeta(meta)
-    return resolveCompositionField(rootMeta, nonPrimitiveTypes)
+    return resolveCompositionField(meta, nonPrimitiveTypes, "root")
 }
 
 private fun resolvePackages(
@@ -214,9 +213,10 @@ private fun resolveAssociationField(
 
 private fun resolveCompositionField(
     fieldMeta: EntityModel,
-    nonPrimitiveTypes: NonPrimitiveTypes
+    nonPrimitiveTypes: NonPrimitiveTypes,
+    entityInfoFor: String = "composition"
 ): List<String> {
-    val entityInfoMeta = getEntityInfoMeta(fieldMeta, "composition")
+    val entityInfoMeta = getEntityInfoMeta(fieldMeta, entityInfoFor)
     val packageName = getSingleString(entityInfoMeta, "package")
     val entityName = getSingleString(entityInfoMeta, "entity")
     val targetFullName = "/$packageName/$entityName"

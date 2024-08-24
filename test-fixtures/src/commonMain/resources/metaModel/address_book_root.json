@@ -1,14 +1,11 @@
 {
+  "name": "address_book",
   "version": {
     "semantic": "1.0.0",
     "name": "pacific-ocean"
   },
   "root": {
-    "name": "address_book",
-    "type": "composition",
-    "composition": {
-      "entity": "address_book_root",
-      "package": "address_book.main"
-    }
+    "entity": "address_book_root",
+    "package": "address_book.main"
   }
 }

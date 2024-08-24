@@ -100,7 +100,7 @@ class UniquesValidationTests {
         """.trimMargin()
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
-        val expectedDecodeErrors = listOf("JSON decoding failed at line 111 column 20, 2103 characters from the start")
+        val expectedDecodeErrors = listOf("JSON decoding failed at line 108 column 20, 2056 characters from the start")
         val expectedValidationErrors = listOf("Meta-model decoding failed")
         assertJsonStringValidationErrors(metaModelJson, expectedValidationErrors, expectedDecodeErrors)
     }

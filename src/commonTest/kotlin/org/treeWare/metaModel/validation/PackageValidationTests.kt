@@ -11,17 +11,14 @@ class PackageValidationTests {
     fun `Packages list must be specified`() {
         val metaModelJson = """
             | {
+            |   "name": "test_meta_model",
             |   "version": {
             |     "semantic": "1.0.0",
             |     "name": "pacific-ocean"
             |   },
             |   "root": {
-            |     "name": "root",
-            |     "type": "composition",
-            |     "composition": {
-            |       "entity": "entity1",
-            |       "package": "test.common"
-            |     }
+            |     "entity": "entity1",
+            |     "package": "test.common"
             |   }
             | }
         """.trimMargin()
@@ -33,17 +30,14 @@ class PackageValidationTests {
     fun `Packages list must not be empty`() {
         val metaModelJson = """
             | {
+            |   "name": "test_meta_model",
             |   "version": {
             |     "semantic": "1.0.0",
             |     "name": "pacific-ocean"
             |   },
             |   "root": {
-            |     "name": "root",
-            |     "type": "composition",
-            |     "composition": {
-            |       "entity": "entity1",
-            |       "package": "test.common"
-            |     }
+            |     "entity": "entity1",
+            |     "package": "test.common"
             |   },
             |   "packages": []
             | }
@@ -56,17 +50,14 @@ class PackageValidationTests {
     fun `Package must have a name`() {
         val metaModelJson = """
             | {
+            |   "name": "test_meta_model",
             |   "version": {
             |     "semantic": "1.0.0",
             |     "name": "pacific-ocean"
             |   },
             |   "root": {
-            |     "name": "root",
-            |     "type": "composition",
-            |     "composition": {
-            |       "entity": "entity1",
-            |       "package": "test.common"
-            |     }
+            |     "entity": "entity1",
+            |     "package": "test.common"
             |   },
             |   "packages": [
             |     {},

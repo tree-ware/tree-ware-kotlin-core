@@ -18,7 +18,7 @@ fun validateNames(meta: MutableEntityModel, logFullNames: Boolean): List<String>
     val state = State()
 
     meta.setAux(RESOLVED_AUX, Resolved("/"))
-    validateRootName(meta, state)
+    validateMetaModelName(meta, state)
     validatePackagesNames(meta, state)
 
     if (logFullNames) {
@@ -51,9 +51,8 @@ private class State {
     }
 }
 
-private fun validateRootName(meta: MutableEntityModel, state: State) {
-    val rootMeta = getMutableRootMeta(meta)
-    state.pushName(rootMeta, ELEMENT_NAME_REGEX)
+private fun validateMetaModelName(meta: MutableEntityModel, state: State) {
+    state.pushName(meta, ELEMENT_NAME_REGEX)
     state.popName()
 }
 

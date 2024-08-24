@@ -17,7 +17,7 @@ import org.treeWare.model.core.*
  */
 fun validateStructure(meta: EntityModel) = listOf(
     validateVersion(meta),
-    validateRoot(meta),
+    validateEntityInfo(meta, "Meta-model", "root"),
     validatePackages(meta)
 ).flatten()
 
@@ -35,17 +35,8 @@ fun validateVersion(meta: EntityModel): List<String> {
 private fun validateRoot(meta: EntityModel): List<String> {
     val rootMeta = runCatching { getRootMeta(meta) }.getOrNull() ?: return listOf("Root is missing")
     return listOf(
-        validateSingleStringField(rootMeta, "name", "Root"),
-        validateRootType(rootMeta),
         validateEntityInfo(rootMeta, "Root", "composition")
     ).flatten()
-}
-
-private fun validateRootType(rootMeta: EntityModel): List<String> {
-    val fieldTypeMeta = runCatching { getFieldTypeMeta(rootMeta) }.getOrNull()
-        ?: return listOf("Root type is missing")
-    return if (fieldTypeMeta == FieldType.COMPOSITION) emptyList()
-    else listOf("""Root type must be "composition"""")
 }
 
 private fun validatePackages(meta: EntityModel): List<String> {

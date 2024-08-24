@@ -16,6 +16,7 @@ fun getMultiplicityJson(multiplicity: String?): String =
     else """, "multiplicity": "$multiplicity""""
 
 val testMetaModelCommonVersionJson = """
+    "name": "test_meta_model",
     "version": {
       "semantic": "1.0.0",
       "name": "pacific-ocean"
@@ -24,12 +25,8 @@ val testMetaModelCommonVersionJson = """
 
 val testMetaModelCommonRootJson = """
     | "root": {
-    |   "name": "root",
-    |   "type": "composition",
-    |   "composition": {
-    |     "entity": "entity1",
-    |     "package": "test.common"
-    |   }
+    |   "entity": "entity1",
+    |   "package": "test.common"
     | }
 """.trimMargin()
 

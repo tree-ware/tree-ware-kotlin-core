@@ -29,15 +29,16 @@ class Leader1MetaModelPrintVisitor(bufferedSink: BufferedSink) : Leader1MetaMode
 
     override fun visitMetaModel(leaderMeta1: EntityModel): TraversalAction {
         startObject("")
+        startObject("meta_model", leaderMeta1)
         return TraversalAction.CONTINUE
     }
 
     override fun leaveMetaModel(leaderMeta1: EntityModel) {
         endObject()
+        endObject()
     }
 
     override fun visitVersionMeta(leaderVersionMeta1: EntityModel): TraversalAction {
-        println("#### visitVersionMeta()")
         startObject("version", leaderVersionMeta1)
         return TraversalAction.CONTINUE
     }
@@ -47,7 +48,7 @@ class Leader1MetaModelPrintVisitor(bufferedSink: BufferedSink) : Leader1MetaMode
     }
 
     override fun visitRootMeta(leaderRootMeta1: EntityModel): TraversalAction {
-        startObject("root", leaderRootMeta1)
+        startObject("root")
         return TraversalAction.CONTINUE
     }
 

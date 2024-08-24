@@ -4,7 +4,7 @@ import org.treeWare.model.core.*
 
 fun getFullName(elementMeta: ElementModel?): String? = getMetaModelResolved(elementMeta)?.fullName
 
-fun getMetaModelName(meta: EntityModel): String = getMetaName(getRootMeta(meta))
+fun getMetaModelName(meta: EntityModel): String = getMetaName(meta)
 
 fun getVersionMeta(meta: EntityModel): EntityModel {
     return getSingleEntity(meta, "version")
@@ -15,7 +15,7 @@ fun getVersionMeta(meta: EntityModel): EntityModel {
  * NOTE: this is different than the getRootMeta() function which returns the root entity of the meta-model.
  */
 fun getModelRootEntityMeta(meta: EntityModel): EntityModel =
-    getMetaModelResolved(getRootMeta(meta))?.compositionMeta ?: throw IllegalStateException("Root entity not found")
+    getMetaModelResolved(meta)?.compositionMeta ?: throw IllegalStateException("Root entity not found")
 
 fun getRootMeta(meta: EntityModel): EntityModel {
     return getSingleEntity(meta, "root")

@@ -45,7 +45,7 @@ enum class Granularity { FIELD, ENTITY, SUB_TREE }
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
 fun newMetaMetaModel(): MutableEntityModel {
-    val metaMeta = newMetaMeta()
+    val metaMeta = newMetaMeta("meta_model")
     populateMetaMeta(metaMeta)
     val errors = validate(metaMeta, null, null, mandatoryFieldNumbers = false)
     if (errors.isNotEmpty()) {
@@ -58,7 +58,7 @@ fun newMetaMetaModel(): MutableEntityModel {
 
 private fun populateMetaMeta(metaMeta: MutableEntityModel) {
     newVersionMetaMeta(metaMeta, Version(1, 0, 0))
-    newRootMetaMeta(metaMeta, "meta_model", "meta_model", META_MODEL_MAIN_PACKAGE)
+    newRootMetaMeta(metaMeta, "meta_model", META_MODEL_MAIN_PACKAGE)
     val packagesMeta = newPackagesMetaMeta(metaMeta)
     populatePackages(packagesMeta)
 }
@@ -104,8 +104,9 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
 
 private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(metaModelEntityMeta)
+    newPrimitiveFieldMetaMeta(fields, "name", null, "string", "required")
     newCompositionFieldMetaMeta(fields, "version", null, "version", META_MODEL_MAIN_PACKAGE)
-    newCompositionFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE)
+    newCompositionFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE, "required")
     newCompositionFieldMetaMeta(fields, "packages", null, "package", META_MODEL_MAIN_PACKAGE, "set")
 }
 
@@ -117,10 +118,8 @@ fun populateVersionEntity(versionEntityMeta: MutableEntityModel) {
 
 private fun populateRootEntity(rootEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(rootEntityMeta)
-    newPrimitiveFieldMetaMeta(fields, "name", null, "string")
-    newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
-    newEnumerationFieldMetaMeta(fields, "type", null, "field_type", META_MODEL_MAIN_PACKAGE, "optional")
-    newCompositionFieldMetaMeta(fields, "composition", null, "entity_info", META_MODEL_MAIN_PACKAGE, "required")
+    newPrimitiveFieldMetaMeta(fields, "entity", null, "string")
+    newPrimitiveFieldMetaMeta(fields, "package", null, "string")
 }
 
 private fun populatePackageEntity(packageEntityMeta: MutableEntityModel) {

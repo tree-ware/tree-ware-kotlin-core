@@ -1,96 +1,98 @@
 {
-  "version:pacific-ocean": {},
-  "root:address_book": {},
-  "package:address_book.main": {
-    "enumeration:address_book_color": [
-      "white",
-      "violet",
-      "indigo",
-      "blue",
-      "green",
-      "yellow",
-      "orange",
-      "red"
-    ],
-    "enumeration:address_book_relationship": [
-      "unknown",
-      "parent",
-      "child",
-      "spouse",
-      "sibling",
-      "family",
-      "friend",
-      "colleague"
-    ],
-    "entity:address_book_root": {
-      "field:name": {},
-      "field:last_updated": {},
-      "field:settings": {},
-      "field:person": {},
-      "field:city_info": {},
-      "field:groups": {},
-      "field:sub_tree_persons": {}
+  "meta_model:address_book": {
+    "version:pacific-ocean": {},
+    "root": {},
+    "package:address_book.main": {
+      "enumeration:address_book_color": [
+        "white",
+        "violet",
+        "indigo",
+        "blue",
+        "green",
+        "yellow",
+        "orange",
+        "red"
+      ],
+      "enumeration:address_book_relationship": [
+        "unknown",
+        "parent",
+        "child",
+        "spouse",
+        "sibling",
+        "family",
+        "friend",
+        "colleague"
+      ],
+      "entity:address_book_root": {
+        "field:name": {},
+        "field:last_updated": {},
+        "field:settings": {},
+        "field:person": {},
+        "field:city_info": {},
+        "field:groups": {},
+        "field:sub_tree_persons": {}
+      },
+      "entity:address_book_settings": {
+        "field:last_name_first": {},
+        "field:encrypt_hero_name": {},
+        "field:card_colors": {},
+        "field:background_color": {},
+        "field:advanced": {}
+      },
+      "entity:advanced_settings": {
+        "field:border_color": {}
+      },
+      "entity:address_book_person": {
+        "field:id": {},
+        "field:first_name": {},
+        "field:last_name": {},
+        "field:hero_name": {},
+        "field:email": {},
+        "field:picture": {},
+        "field:relation": {},
+        "field:password": {},
+        "field:previous_passwords": {},
+        "field:main_secret": {},
+        "field:other_secrets": {},
+        "field:group": {},
+        "field:is_hero": {},
+        "field:hero_details": {}
+      },
+      "entity:group": {
+        "field:name": {},
+        "field:info": {},
+        "field:sub_groups": {}
+      },
+      "entity:address_book_relation": {
+        "field:id": {},
+        "field:relationship": {},
+        "field:person": {}
+      },
+      "entity:hero_details": {
+        "field:strengths": {},
+        "field:weaknesses": {}
+      }
     },
-    "entity:address_book_settings": {
-      "field:last_name_first": {},
-      "field:encrypt_hero_name": {},
-      "field:card_colors": {},
-      "field:background_color": {},
-      "field:advanced": {}
+    "package:address_book.city": {
+      "entity:address_book_city": {
+        "field:name": {},
+        "field:state": {},
+        "field:country": {}
+      },
+      "entity:address_book_city_info": {
+        "field:city": {},
+        "field:info": {},
+        "field:city_center": {},
+        "field:is_coastal_city": {},
+        "field:water_body_name": {},
+        "field:related_city_info": {}
+      }
     },
-    "entity:advanced_settings": {
-      "field:border_color": {}
-    },
-    "entity:address_book_person": {
-      "field:id": {},
-      "field:first_name": {},
-      "field:last_name": {},
-      "field:hero_name": {},
-      "field:email": {},
-      "field:picture": {},
-      "field:relation": {},
-      "field:password": {},
-      "field:previous_passwords": {},
-      "field:main_secret": {},
-      "field:other_secrets": {},
-      "field:group": {},
-      "field:is_hero": {},
-      "field:hero_details": {}
-    },
-    "entity:group": {
-      "field:name": {},
-      "field:info": {},
-      "field:sub_groups": {}
-    },
-    "entity:address_book_relation": {
-      "field:id": {},
-      "field:relationship": {},
-      "field:person": {}
-    },
-    "entity:hero_details": {
-      "field:strengths": {},
-      "field:weaknesses": {}
-    }
-  },
-  "package:address_book.city": {
-    "entity:address_book_city": {
-      "field:name": {},
-      "field:state": {},
-      "field:country": {}
-    },
-    "entity:address_book_city_info": {
-      "field:city": {},
-      "field:info": {},
-      "field:city_center": {},
-      "field:is_coastal_city": {},
-      "field:water_body_name": {},
-      "field:related_city_info": {}
-    }
-  },
-  "package:org.tree_ware.meta_model.geo": {
-    "entity:point": {
-      "field:latitude": {},
-      "field:longitude": {}
+    "package:org.tree_ware.meta_model.geo": {
+      "entity:point": {
+        "field:latitude": {},
+        "field:longitude": {}
+      }
     }
   }
 }

@@ -9,9 +9,9 @@ import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.getMetaModelResolved
 
 fun encodeDot(meta: EntityModel, directoryName: String) {
-    val mainMetaName = getMetaModelName(meta)
+    val metaName = getMetaModelName(meta)
     FileSystem.SYSTEM.createDirectories(directoryName.toPath())
-    val fileName = "$directoryName/${mainMetaName}_meta_model"
+    val fileName = "$directoryName/${metaName}_meta_model"
     FileSystem.SYSTEM.write("${fileName}.dot".toPath()) { encodeDot(meta, this) }
     try {
         Runtime.getRuntime().exec("dot -Tpdf ${fileName}.dot -o ${fileName}.pdf").waitFor()
@@ -24,7 +24,7 @@ fun encodeDot(meta: EntityModel, directoryName: String) {
 fun encodeDot(meta: EntityModel, sink: Sink) {
     val dotWriter = DotWriter()
     dotWriter.nodesIndent()
-    // TODO(deepak-nulu): rewrite with `forEach()` and `AbstractLeader1MetaModelVisitor`
+    // TODO(cleanup): rewrite with `forEach()` and `AbstractLeader1MetaModelVisitor`
     encodePackages(meta, dotWriter)
     dotWriter.nodesUnindent()
     dotWriter.writeAll(sink)

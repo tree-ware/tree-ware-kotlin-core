@@ -309,12 +309,8 @@ class CompositionValidationTests {
 
 private fun testHelperRootJson() = """
     | "root": {
-    |   "name": "root",
-    |   "type": "composition",
-    |   "composition": {
-    |     "entity": "entity_with_no_keys",
-    |     "package": "test.helper"
-    |   }
+    |   "entity": "entity_with_no_keys",
+    |   "package": "test.helper"
     | }
 """.trimMargin()
 

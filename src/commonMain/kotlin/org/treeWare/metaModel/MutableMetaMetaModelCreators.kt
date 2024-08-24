@@ -5,20 +5,21 @@ import org.treeWare.model.core.*
 
 // Functions for creating the meta-meta-model.
 
-fun newMetaMeta(): MutableEntityModel = MutableEntityModel(null, null)
+fun newMetaMeta(name: String): MutableEntityModel {
+    val metaMeta = MutableEntityModel(null, null)
+    newStringSingleField(metaMeta, "name", name)
+    return metaMeta
+}
 
 fun newVersionMetaMeta(metaMeta: MutableEntityModel, semanticVersion: Version) {
     val version = newCompositionSingleField(metaMeta, "version")
     newStringSingleField(version, "semantic", semanticVersion.toString())
 }
 
-fun newRootMetaMeta(metaMeta: MutableEntityModel, name: String, entityName: String, packageName: String) {
+fun newRootMetaMeta(metaMeta: MutableEntityModel, entityName: String, packageName: String) {
     val root = newCompositionSingleField(metaMeta, "root")
-    newStringSingleField(root, "name", name)
-    newEnumerationSingleField(root, "type", "composition")
-    val composition = newCompositionSingleField(root, "composition")
-    newStringSingleField(composition, "entity", entityName)
-    newStringSingleField(composition, "package", packageName)
+    newStringSingleField(root, "entity", entityName)
+    newStringSingleField(root, "package", packageName)
 }
 
 fun newPackagesMetaMeta(metaMeta: MutableEntityModel): MutableListFieldModel {

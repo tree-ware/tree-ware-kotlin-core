@@ -31,12 +31,8 @@ class NameValidationTests {
 
 private fun testHelperRootJson() = """
     | "root": {
-    |   "name": "root",
-    |   "type": "composition",
-    |   "composition": {
-    |     "entity": "valid_entity_name",
-    |     "package": "hyphens-not-allowed-for-packages"
-    |   }
+    |   "entity": "valid_entity_name",
+    |   "package": "hyphens-not-allowed-for-packages"
     | }
 """.trimMargin()
 
