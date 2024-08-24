@@ -5,7 +5,7 @@ import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnMissingKeys
 import org.treeWare.model.decoder.decodeJsonEntity
-import org.treeWare.model.testEntityRoundTrip
+import org.treeWare.model.testRoundTrip
 import org.treeWare.util.getFileSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,7 +20,7 @@ class DecoderMissingKeysTests {
             "Missing key fields [name, state, country] in instance of /address_book.city/address_book_city",
             "Missing key fields [state, country] in instance of /address_book.city/address_book_city",
         )
-        testEntityRoundTrip(
+        testRoundTrip(
             "model/address_book_missing_keys.json",
             "model/address_book_missing_keys_skipped.json",
             options = ModelDecoderOptions(onMissingKeys = OnMissingKeys.SKIP_WITH_ERRORS),

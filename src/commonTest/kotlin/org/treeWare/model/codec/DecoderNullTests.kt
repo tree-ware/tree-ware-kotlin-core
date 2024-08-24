@@ -2,7 +2,7 @@ package org.treeWare.model.codec
 
 import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.decodeJsonStringIntoEntity
-import org.treeWare.model.testEntityRoundTrip
+import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
 
 class DecoderNullTests {
@@ -64,6 +64,6 @@ class DecoderNullTests {
     @Test
     fun `Decoding must succeed for null single fields`() {
         val model = AddressBookMutableEntityModelFactory.create()
-        testEntityRoundTrip("model/address_book_null_fields.json", entity = model)
+        testRoundTrip("model/address_book_null_fields.json", entity = model)
     }
 }

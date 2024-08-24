@@ -17,7 +17,7 @@ import org.treeWare.util.readFile
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-fun testEntityRoundTrip(
+fun testRoundTrip(
     inputFilePath: String,
     outputFilePath: String? = null,
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),

@@ -2,7 +2,7 @@ package org.treeWare.model.codec
 
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnDuplicateKeys
-import org.treeWare.model.testEntityRoundTrip
+import org.treeWare.model.testRoundTrip
 import kotlin.test.Test
 
 class DecoderDuplicateKeysTests {
@@ -13,7 +13,7 @@ class DecoderDuplicateKeysTests {
             "Entity with duplicate keys: /address_book.main/address_book_person: [cc477201-48ec-4367-83a4-7fdbd92f8a6f]",
             "Entity with duplicate keys: /address_book.city/address_book_city_info: [New York City, New York, United States of America]"
         )
-        testEntityRoundTrip(
+        testRoundTrip(
             "model/address_book_duplicate_keys.json",
             "model/address_book_duplicate_keys_skipped.json",
             options = ModelDecoderOptions(onDuplicateKeys = OnDuplicateKeys.SKIP_WITH_ERRORS),
@@ -24,7 +24,7 @@ class DecoderDuplicateKeysTests {
     @Test
     fun `OnDuplicateKeys OVERWRITE must overwrite existing entities`() {
         val expectedDecodeErrors = listOf("")
-        testEntityRoundTrip(
+        testRoundTrip(
             "model/address_book_duplicate_keys.json",
             "model/address_book_duplicate_keys_overwritten.json",
             options = ModelDecoderOptions(onDuplicateKeys = OnDuplicateKeys.OVERWRITE),
