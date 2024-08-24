@@ -3,7 +3,6 @@ package org.treeWare.metaModel.traversal
 import okio.BufferedSink
 import org.treeWare.metaModel.getMetaName
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.MainModel
 import org.treeWare.model.encoder.JsonWireFormatEncoder
 import org.treeWare.model.traversal.TraversalAction
 
@@ -28,18 +27,17 @@ class Leader1MetaModelPrintVisitor(bufferedSink: BufferedSink) : Leader1MetaMode
         jsonEncoder.encodeListEnd()
     }
 
-    override fun visitMainMeta(leaderMainMeta1: MainModel): TraversalAction {
+    override fun visitMetaModel(leaderMeta1: EntityModel): TraversalAction {
         startObject("")
-        startObject("meta_model")
         return TraversalAction.CONTINUE
     }
 
-    override fun leaveMainMeta(leaderMainMeta1: MainModel) {
-        endObject()
+    override fun leaveMetaModel(leaderMeta1: EntityModel) {
         endObject()
     }
 
     override fun visitVersionMeta(leaderVersionMeta1: EntityModel): TraversalAction {
+        println("#### visitVersionMeta()")
         startObject("version", leaderVersionMeta1)
         return TraversalAction.CONTINUE
     }

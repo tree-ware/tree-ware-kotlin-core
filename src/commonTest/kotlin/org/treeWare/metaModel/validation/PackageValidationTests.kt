@@ -11,18 +11,16 @@ class PackageValidationTests {
     fun `Packages list must be specified`() {
         val metaModelJson = """
             | {
-            |   "meta_model": {
-            |     "version": {
-            |       "semantic": "1.0.0",
-            |       "name": "pacific-ocean"
-            |     },
-            |     "root": {
-            |       "name": "root",
-            |       "type": "composition",
-            |       "composition": {
-            |         "entity": "entity1",
-            |         "package": "test.common"
-            |       }
+            |   "version": {
+            |     "semantic": "1.0.0",
+            |     "name": "pacific-ocean"
+            |   },
+            |   "root": {
+            |     "name": "root",
+            |     "type": "composition",
+            |     "composition": {
+            |       "entity": "entity1",
+            |       "package": "test.common"
             |     }
             |   }
             | }
@@ -35,21 +33,19 @@ class PackageValidationTests {
     fun `Packages list must not be empty`() {
         val metaModelJson = """
             | {
-            |   "meta_model": {
-            |     "version": {
-            |       "semantic": "1.0.0",
-            |       "name": "pacific-ocean"
-            |     },
-            |     "root": {
-            |       "name": "root",
-            |       "type": "composition",
-            |       "composition": {
-            |         "entity": "entity1",
-            |         "package": "test.common"
-            |       }
-            |     },
-            |     "packages": []
-            |   }
+            |   "version": {
+            |     "semantic": "1.0.0",
+            |     "name": "pacific-ocean"
+            |   },
+            |   "root": {
+            |     "name": "root",
+            |     "type": "composition",
+            |     "composition": {
+            |       "entity": "entity1",
+            |       "package": "test.common"
+            |     }
+            |   },
+            |   "packages": []
             | }
         """.trimMargin()
         val expectedErrors = listOf("Entity /test.common/entity1 cannot be resolved")
@@ -60,25 +56,23 @@ class PackageValidationTests {
     fun `Package must have a name`() {
         val metaModelJson = """
             | {
-            |   "meta_model": {
-            |     "version": {
-            |       "semantic": "1.0.0",
-            |       "name": "pacific-ocean"
-            |     },
-            |     "root": {
-            |       "name": "root",
-            |       "type": "composition",
-            |       "composition": {
-            |         "entity": "entity1",
-            |         "package": "test.common"
-            |       }
-            |     },
-            |     "packages": [
-            |       {},
-            |       {"name": "package1"},
-            |       {}
-            |     ]
-            |   }
+            |   "version": {
+            |     "semantic": "1.0.0",
+            |     "name": "pacific-ocean"
+            |   },
+            |   "root": {
+            |     "name": "root",
+            |     "type": "composition",
+            |     "composition": {
+            |       "entity": "entity1",
+            |       "package": "test.common"
+            |     }
+            |   },
+            |   "packages": [
+            |     {},
+            |     {"name": "package1"},
+            |     {}
+            |   ]
             | }
         """.trimMargin()
         val expectedDecodeErrors = listOf(

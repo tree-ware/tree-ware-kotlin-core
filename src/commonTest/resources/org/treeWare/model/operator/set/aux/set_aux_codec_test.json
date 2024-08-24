@@ -1,42 +1,40 @@
 {
-  "address_book__set_": "update",
-  "address_book": {
-    "name": "Super Heroes",
-    "person": [
-      {
-        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-        "group": {
-          "person": [],
-          "groups": [
-            {
-              "name": "DC",
-              "sub_groups": [
-                {
-                  "name": "Superman"
-                }
-              ]
-            }
-          ]
-        }
+  "set_": "update",
+  "name": "Super Heroes",
+  "person": [
+    {
+      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+      "group": {
+        "person": [],
+        "groups": [
+          {
+            "name": "DC",
+            "sub_groups": [
+              {
+                "name": "Superman"
+              }
+            ]
+          }
+        ]
       }
-    ],
-    "city_info": [
-      {
-        "set_": "create",
-        "city": {
-          "name": "New York City",
-          "state": "New York",
-          "country": "United States of America"
-        }
-      },
-      {
-        "set_": "delete",
-        "city": {
-          "name": "Albany",
-          "state": "New York",
-          "country": "United States of America"
-        }
+    }
+  ],
+  "city_info": [
+    {
+      "set_": "create",
+      "city": {
+        "name": "New York City",
+        "state": "New York",
+        "country": "United States of America"
       }
-    ]
-  }
+    },
+    {
+      "set_": "delete",
+      "city": {
+        "name": "Albany",
+        "state": "New York",
+        "country": "United States of America"
+      }
+    }
+  ]
 }

@@ -9,10 +9,11 @@ class Leader1Adapter<Return>(
     private val adaptee: Leader1MetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
 ) : Leader1ModelVisitor<Return> {
-    override fun visitMain(leaderMain1: MainModel): Return = adaptee.visitMainMeta(leaderMain1)
-    override fun leaveMain(leaderMain1: MainModel) = adaptee.leaveMainMeta(leaderMain1)
+    override fun visitMain(leaderMain1: MainModel): Return = defaultVisitReturn
+    override fun leaveMain(leaderMain1: MainModel) {}
 
     override fun visitEntity(leaderEntity1: EntityModel): Return {
+        if (isRootEntity(leaderEntity1)) return adaptee.visitMetaModel(leaderEntity1)
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/meta_model" -> defaultVisitReturn
             "/tree_ware_meta_model.main/version" -> adaptee.visitVersionMeta(leaderEntity1)
@@ -32,6 +33,7 @@ class Leader1Adapter<Return>(
     }
 
     override fun leaveEntity(leaderEntity1: EntityModel) {
+        if (isRootEntity(leaderEntity1)) return adaptee.leaveMetaModel(leaderEntity1)
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/meta_model" -> Unit
             "/tree_ware_meta_model.main/version" -> adaptee.leaveVersionMeta(leaderEntity1)

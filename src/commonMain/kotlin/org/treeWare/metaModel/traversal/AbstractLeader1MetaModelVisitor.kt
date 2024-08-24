@@ -1,13 +1,12 @@
 package org.treeWare.metaModel.traversal
 
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.MainModel
 
 abstract class AbstractLeader1MetaModelVisitor<Return>(
     private val defaultVisitReturn: Return
 ) : Leader1MetaModelVisitor<Return> {
-    override fun visitMainMeta(leaderMainMeta1: MainModel): Return = defaultVisitReturn
-    override fun leaveMainMeta(leaderMainMeta1: MainModel) {}
+    override fun visitMetaModel(leaderMeta1: EntityModel): Return = defaultVisitReturn
+    override fun leaveMetaModel(leaderMeta1: EntityModel) {}
 
     override fun visitVersionMeta(leaderVersionMeta1: EntityModel): Return = defaultVisitReturn
     override fun leaveVersionMeta(leaderVersionMeta1: EntityModel) {}

@@ -1,6 +1,6 @@
 package org.treeWare.metaModel.aux
 
-import org.treeWare.model.core.MutableMainModel
+import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.decoder.stateMachine.AuxDecodingStateMachineFactory
 import org.treeWare.model.encoder.AuxEncoder
 
@@ -13,5 +13,5 @@ interface MetaModelAuxPlugin {
     // TODO(deepak-nulu): is this useful only for meta-models or for models as well?
     // TODO(deepak-nulu): if this is useful for models, might need to compose multiple in a single model traversal.
     /** Validates the specified meta-model and returns a list of errors. */
-    fun validate(mainMeta: MutableMainModel): List<String>
+    fun validate(metaModel: MutableEntityModel): List<String>
 }

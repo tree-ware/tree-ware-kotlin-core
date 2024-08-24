@@ -6,14 +6,13 @@ import okio.Sink
 import org.treeWare.metaModel.*
 import org.treeWare.model.core.ElementModel
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.getMetaModelResolved
 
-fun encodeDot(mainMeta: MainModel, directoryName: String) {
-    val mainMetaName = getMainMetaName(mainMeta)
+fun encodeDot(meta: EntityModel, directoryName: String) {
+    val mainMetaName = getMetaModelName(meta)
     FileSystem.SYSTEM.createDirectories(directoryName.toPath())
     val fileName = "$directoryName/${mainMetaName}_meta_model"
-    FileSystem.SYSTEM.write("${fileName}.dot".toPath()) { encodeDot(mainMeta, this) }
+    FileSystem.SYSTEM.write("${fileName}.dot".toPath()) { encodeDot(meta, this) }
     try {
         Runtime.getRuntime().exec("dot -Tpdf ${fileName}.dot -o ${fileName}.pdf").waitFor()
     } catch (e: Exception) {
@@ -22,17 +21,17 @@ fun encodeDot(mainMeta: MainModel, directoryName: String) {
 }
 
 
-fun encodeDot(mainMeta: MainModel, sink: Sink) {
+fun encodeDot(meta: EntityModel, sink: Sink) {
     val dotWriter = DotWriter()
     dotWriter.nodesIndent()
     // TODO(deepak-nulu): rewrite with `forEach()` and `AbstractLeader1MetaModelVisitor`
-    encodePackages(mainMeta, dotWriter)
+    encodePackages(meta, dotWriter)
     dotWriter.nodesUnindent()
     dotWriter.writeAll(sink)
 }
 
-private fun encodePackages(mainMeta: MainModel, dotWriter: DotWriter) {
-    val packagesMeta = getPackagesMeta(mainMeta)
+private fun encodePackages(meta: EntityModel, dotWriter: DotWriter) {
+    val packagesMeta = getPackagesMeta(meta)
     packagesMeta.values.forEach { encodePackage(it, dotWriter) }
 }
 

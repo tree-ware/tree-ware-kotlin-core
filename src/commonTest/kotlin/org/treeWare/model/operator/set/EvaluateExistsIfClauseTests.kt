@@ -1,10 +1,10 @@
 package org.treeWare.model.operator.set
 
-import org.treeWare.metaModel.addressBookMetaModel
 import org.treeWare.metaModel.aux.ExistsIfClause
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.getSingleEntity
-import org.treeWare.model.getMainModelFromJsonString
+import org.treeWare.model.decodeJsonStringIntoEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,18 +23,16 @@ class EvaluateExistsIfClauseTests {
     )
 
     private fun getSettingsEntity(modelJson: String): EntityModel {
-        val model = getMainModelFromJsonString(addressBookMetaModel, modelJson)
-        val modelRoot = model.root ?: throw IllegalStateException("Root has not been set")
-        return getSingleEntity(modelRoot, "settings")
+        val model = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(modelJson, entity = model)
+        return getSingleEntity(model, "settings")
     }
 
     // region errors from missing fields in exists_if clauses
 
     private val missingFieldsJson = """
         |{
-        |  "address_book": {
-        |    "settings": {
-        |    }
+        |  "settings": {
         |  }
         |}
     """.trimMargin()
@@ -91,12 +89,10 @@ class EvaluateExistsIfClauseTests {
 
     private val trueFieldsJson = """
         |{
-        |  "address_book": {
-        |    "settings": {
-        |      "last_name_first": true,
-        |      "encrypt_hero_name": false,
-        |      "background_color": "blue"
-        |    }
+        |  "settings": {
+        |    "last_name_first": true,
+        |    "encrypt_hero_name": false,
+        |    "background_color": "blue"
         |  }
         |}
     """.trimMargin()
@@ -143,12 +139,10 @@ class EvaluateExistsIfClauseTests {
 
     private val falseFieldsJson = """
         |{
-        |  "address_book": {
-        |    "settings": {
-        |      "last_name_first": false,
-        |      "encrypt_hero_name": true,
-        |      "background_color": "white"
-        |    }
+        |  "settings": {
+        |    "last_name_first": false,
+        |    "encrypt_hero_name": true,
+        |    "background_color": "white"
         |  }
         |}
     """.trimMargin()
@@ -200,11 +194,9 @@ class EvaluateExistsIfClauseTests {
     fun `And clause must evaluate second argument if first argument is true`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true,
-            |      "encrypt_hero_name": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": true
             |  }
             |}
         """.trimMargin()
@@ -218,10 +210,8 @@ class EvaluateExistsIfClauseTests {
     fun `And clause must return an error if second argument is missing and first argument is true`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": true
             |  }
             |}
         """.trimMargin()
@@ -237,10 +227,8 @@ class EvaluateExistsIfClauseTests {
     fun `And clause must short-circuit second argument if first argument is false`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": false
             |  }
             |}
         """.trimMargin()
@@ -254,11 +242,9 @@ class EvaluateExistsIfClauseTests {
     fun `Or clause must evaluate second argument if first argument is false`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": false,
-            |      "encrypt_hero_name": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": false,
+            |    "encrypt_hero_name": false
             |  }
             |}
         """.trimMargin()
@@ -272,10 +258,8 @@ class EvaluateExistsIfClauseTests {
     fun `Or clause must return an error if second argument is missing and first argument is false`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": false
-            |    }
+            |  "settings": {
+            |    "last_name_first": false
             |  }
             |}
         """.trimMargin()
@@ -291,10 +275,8 @@ class EvaluateExistsIfClauseTests {
     fun `Or clause must short-circuit second argument if first argument is true`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "last_name_first": true
-            |    }
+            |  "settings": {
+            |    "last_name_first": true
             |  }
             |}
         """.trimMargin()

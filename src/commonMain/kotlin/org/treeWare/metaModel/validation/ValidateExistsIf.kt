@@ -14,9 +14,9 @@ import org.treeWare.model.traversal.TraversalAction
  *
  * Side effects: none
  */
-fun validateExistsIf(mainMeta: MainModel): List<String> {
+fun validateExistsIf(meta: EntityModel): List<String> {
     val visitor = ValidateExistsIfVisitor()
-    metaModelForEach(mainMeta, visitor)
+    metaModelForEach(meta, visitor)
     return visitor.errors
 }
 

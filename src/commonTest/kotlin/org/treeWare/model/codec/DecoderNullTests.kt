@@ -1,82 +1,69 @@
 package org.treeWare.model.codec
 
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.getMainModelFromJsonString
-import org.treeWare.model.testRoundTrip
+import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.model.decodeJsonStringIntoEntity
+import org.treeWare.model.testEntityRoundTrip
 import kotlin.test.Test
 
 class DecoderNullTests {
-    @Test
-    fun `Decoding must fail for null root`() {
-        val modelJson = """
-            |{
-            |  "address_book": null
-            |}
-        """.trimMargin()
-        val expectedDecodeErrors = listOf("Root entities must not be null; use empty object {} instead")
-        getMainModelFromJsonString(addressBookMetaModel, modelJson, expectedDecodeErrors = expectedDecodeErrors)
-    }
 
     @Test
     fun `Decoding must fail for null objects`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": null
-            |  }
+            |  "settings": null
             |}
         """.trimMargin()
         val expectedDecodeErrors = listOf("Entities must not be null; use empty object {} instead")
-        getMainModelFromJsonString(addressBookMetaModel, modelJson, expectedDecodeErrors = expectedDecodeErrors)
+        val model = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(modelJson, expectedDecodeErrors = expectedDecodeErrors, entity = model)
     }
 
     @Test
     fun `Decoding must fail for null composition-keys`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "city": null
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "city": null
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val expectedDecodeErrors = listOf("Entities must not be null; use empty object {} instead")
-        getMainModelFromJsonString(addressBookMetaModel, modelJson, expectedDecodeErrors = expectedDecodeErrors)
+        val model = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(modelJson, expectedDecodeErrors = expectedDecodeErrors, entity = model)
     }
 
     @Test
     fun `Decoding must fail for null primitive-lists`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "settings": {
-            |      "card_colors": null
-            |    }
+            |  "settings": {
+            |    "card_colors": null
             |  }
             |}
         """.trimMargin()
         val expectedDecodeErrors = listOf("Lists must not be null; use empty array [] instead")
-        getMainModelFromJsonString(addressBookMetaModel, modelJson, expectedDecodeErrors = expectedDecodeErrors)
+        val model = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(modelJson, expectedDecodeErrors = expectedDecodeErrors, entity = model)
     }
 
     @Test
     fun `Decoding must fail for null composition-lists`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": null
-            |  }
+            |  "person": null
             |}
         """.trimMargin()
         val expectedDecodeErrors = listOf("Lists must not be null; use empty array [] instead")
-        getMainModelFromJsonString(addressBookMetaModel, modelJson, expectedDecodeErrors = expectedDecodeErrors)
+        val model = AddressBookMutableEntityModelFactory.create()
+        decodeJsonStringIntoEntity(modelJson, expectedDecodeErrors = expectedDecodeErrors, entity = model)
     }
 
     @Test
     fun `Decoding must succeed for null single fields`() {
-        testRoundTrip("model/address_book_null_fields.json", metaModel = addressBookMetaModel)
+        val model = AddressBookMutableEntityModelFactory.create()
+        testEntityRoundTrip("model/address_book_null_fields.json", entity = model)
     }
 }

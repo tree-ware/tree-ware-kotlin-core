@@ -12,32 +12,32 @@ import org.treeWare.model.core.*
  * 2. Key fields are memoized in field-number sorted order.
  */
 fun resolveNonPrimitiveTypes(
-    mainMeta: MainModel,
+    meta: EntityModel,
     hasher: Hasher?,
     cipher: Cipher?,
     rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
-    val rootErrors = resolveRoot(mainMeta, nonPrimitiveTypes)
-    val rootEntityMeta = getMetaModelResolved(getRootMeta(mainMeta))?.compositionMeta
-    val packageErrors = resolvePackages(mainMeta, rootEntityMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
+    val rootErrors = resolveRoot(meta, nonPrimitiveTypes)
+    val rootEntityMeta = getMetaModelResolved(getRootMeta(meta))?.compositionMeta
+    val packageErrors = resolvePackages(meta, rootEntityMeta, hasher, cipher, rootEntityFactory, nonPrimitiveTypes)
     return listOf(rootErrors, packageErrors).flatten()
 }
 
-private fun resolveRoot(mainMeta: MainModel, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
-    val rootMeta = getRootMeta(mainMeta)
+private fun resolveRoot(meta: EntityModel, nonPrimitiveTypes: NonPrimitiveTypes): List<String> {
+    val rootMeta = getRootMeta(meta)
     return resolveCompositionField(rootMeta, nonPrimitiveTypes)
 }
 
 private fun resolvePackages(
-    mainMeta: MainModel,
+    meta: EntityModel,
     rootEntityMeta: EntityModel?,
     hasher: Hasher?,
     cipher: Cipher?,
     rootEntityFactory: RootEntityFactory,
     nonPrimitiveTypes: NonPrimitiveTypes
 ): List<String> {
-    val packagesMeta = getPackagesMeta(mainMeta)
+    val packagesMeta = getPackagesMeta(meta)
     return packagesMeta.values.flatMap {
         resolvePackage(
             it,

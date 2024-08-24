@@ -1,12 +1,11 @@
 package org.treeWare.model.codec
 
 import okio.buffer
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.core.MutableMainModel
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnMissingKeys
-import org.treeWare.model.decoder.decodeJson
-import org.treeWare.model.testRoundTrip
+import org.treeWare.model.decoder.decodeJsonEntity
+import org.treeWare.model.testEntityRoundTrip
 import org.treeWare.util.getFileSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,7 +20,7 @@ class DecoderMissingKeysTests {
             "Missing key fields [name, state, country] in instance of /address_book.city/address_book_city",
             "Missing key fields [state, country] in instance of /address_book.city/address_book_city",
         )
-        testRoundTrip(
+        testEntityRoundTrip(
             "model/address_book_missing_keys.json",
             "model/address_book_missing_keys_skipped.json",
             options = ModelDecoderOptions(onMissingKeys = OnMissingKeys.SKIP_WITH_ERRORS),
@@ -31,12 +30,12 @@ class DecoderMissingKeysTests {
 
     @Test
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
-        val addressBook = MutableMainModel(addressBookMetaModel)
+        val addressBook = AddressBookMutableEntityModelFactory.create()
         val decodeErrors = getFileSource("model/address_book_missing_keys.json").use {
-            decodeJson(
+            decodeJsonEntity(
                 it.buffer(),
                 addressBook,
-                ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR)
+                ModelDecoderOptions(onMissingKeys = OnMissingKeys.ABORT_WITH_ERROR),
             )
         }
 

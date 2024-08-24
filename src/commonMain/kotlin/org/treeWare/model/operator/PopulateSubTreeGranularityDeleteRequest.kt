@@ -16,7 +16,7 @@ import org.treeWare.util.assertInDevMode
  *
  * @return a list of errors, if any. If there are errors, any sub-trees populated without errors will remain populated.
  */
-fun populateSubTreeGranularityDeleteRequest(setRequest: MutableMainModel): List<ElementModelError> {
+fun populateSubTreeGranularityDeleteRequest(setRequest: MutableEntityModel): List<ElementModelError> {
     val visitor = PopulateSubTreeGranularityDeleteRequestVisitor()
     mutableForEach(setRequest, visitor, false)
     return visitor.errors

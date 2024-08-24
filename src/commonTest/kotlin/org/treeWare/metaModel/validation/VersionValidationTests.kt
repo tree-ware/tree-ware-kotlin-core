@@ -8,17 +8,15 @@ class VersionValidationTests {
     fun `Version entity must be specified in the meta-model`() {
         val metaModelJson = """
             {
-              "meta_model": {
-                "root": {
-                  "name": "root",
-                  "type": "composition",
-                  "composition": {
-                    "entity": "entity1",
-                    "package": "test.common"
-                  }
-                },
-                "packages": []
-              }
+              "root": {
+                "name": "root",
+                "type": "composition",
+                "composition": {
+                  "entity": "entity1",
+                  "package": "test.common"
+                }
+              },
+              "packages": []
             }
         """.trimIndent()
         val expectedErrors = listOf("Version is missing")
@@ -29,18 +27,16 @@ class VersionValidationTests {
     fun `Semantic-version field must be specified in the meta-model`() {
         val metaModelJson = """
             {
-              "meta_model": {
-                "version": {},
-                "root": {
-                  "name": "root",
-                  "type": "composition",
-                  "composition": {
-                    "entity": "entity1",
-                    "package": "test.common"
-                  }
-                },
-                "packages": []
-              }
+              "version": {},
+              "root": {
+                "name": "root",
+                "type": "composition",
+                "composition": {
+                  "entity": "entity1",
+                  "package": "test.common"
+                }
+              },
+              "packages": []
             }
         """.trimIndent()
         val expectedErrors = listOf("Semantic version is missing")
@@ -51,20 +47,18 @@ class VersionValidationTests {
     fun `Semantic-version in the meta-model must be strictly valid`() {
         val metaModelJson = """
             {
-              "meta_model": {
-                "version": {
-                  "semantic": "1"
-                },
-                "root": {
-                  "name": "root",
-                  "type": "composition",
-                  "composition": {
-                    "entity": "entity1",
-                    "package": "test.common"
-                  }
-                },
-                "packages": []
-              }
+              "version": {
+                "semantic": "1"
+              },
+              "root": {
+                "name": "root",
+                "type": "composition",
+                "composition": {
+                  "entity": "entity1",
+                  "package": "test.common"
+                }
+              },
+              "packages": []
             }
         """.trimIndent()
         val expectedErrors = listOf("Strictly invalid semantic version: 1")

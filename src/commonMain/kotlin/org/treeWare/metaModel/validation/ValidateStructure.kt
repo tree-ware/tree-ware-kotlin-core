@@ -13,27 +13,27 @@ import org.treeWare.model.core.*
  * Returns a list of errors. Returns an empty list if there are no errors.
  *
  * Side effects:
- * 1. ResolvedVersionAux is set on `mainMeta` if the version can be resolved
+ * 1. ResolvedVersionAux is set on `meta` if the version can be resolved
  */
-fun validateStructure(mainMeta: MainModel) = listOf(
-    validateVersion(mainMeta),
-    validateRoot(mainMeta),
-    validatePackages(mainMeta)
+fun validateStructure(meta: EntityModel) = listOf(
+    validateVersion(meta),
+    validateRoot(meta),
+    validatePackages(meta)
 ).flatten()
 
-fun validateVersion(mainMeta: MainModel): List<String> {
-    val versionMeta = runCatching { getVersionMeta(mainMeta) }.getOrNull() ?: return listOf("Version is missing")
+fun validateVersion(meta: EntityModel): List<String> {
+    val versionMeta = runCatching { getVersionMeta(meta) }.getOrNull() ?: return listOf("Version is missing")
     val semanticVersionString = runCatching { getSingleString(versionMeta, "semantic") }.getOrNull()
         ?: return listOf("Semantic version is missing")
     val semanticVersion = semanticVersionString.toVersionOrNull()
         ?: return listOf("Strictly invalid semantic version: $semanticVersionString")
     val name = getOptionalSingleString(versionMeta, "name")
-    setResolvedVersionAux(mainMeta, ResolvedVersionAux(semanticVersion, name))
+    setResolvedVersionAux(meta, ResolvedVersionAux(semanticVersion, name))
     return emptyList()
 }
 
-private fun validateRoot(mainMeta: MainModel): List<String> {
-    val rootMeta = runCatching { getRootMeta(mainMeta) }.getOrNull() ?: return listOf("Root is missing")
+private fun validateRoot(meta: EntityModel): List<String> {
+    val rootMeta = runCatching { getRootMeta(meta) }.getOrNull() ?: return listOf("Root is missing")
     return listOf(
         validateSingleStringField(rootMeta, "name", "Root"),
         validateRootType(rootMeta),
@@ -48,9 +48,9 @@ private fun validateRootType(rootMeta: EntityModel): List<String> {
     else listOf("""Root type must be "composition"""")
 }
 
-private fun validatePackages(mainMeta: MainModel): List<String> {
+private fun validatePackages(meta: EntityModel): List<String> {
     val packagesMeta =
-        runCatching { getPackagesMeta(mainMeta) }.getOrNull() ?: return listOf("Packages are missing")
+        runCatching { getPackagesMeta(meta) }.getOrNull() ?: return listOf("Packages are missing")
     return packagesMeta.values.flatMapIndexed { index, packageMeta -> validatePackage(packageMeta, index) }
 }
 

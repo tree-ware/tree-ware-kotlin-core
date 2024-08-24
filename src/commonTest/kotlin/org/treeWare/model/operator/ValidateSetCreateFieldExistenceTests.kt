@@ -1,9 +1,9 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.model.core.MainModel
+import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.model.core.EntityModel
+import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
-import org.treeWare.model.getMainModelFromJsonString
 import org.treeWare.model.operator.set.aux.SET_AUX_NAME
 import org.treeWare.model.operator.set.aux.SetAuxStateMachine
 import kotlin.test.Test
@@ -19,35 +19,33 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if exists_if fields are not found`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent"
-            |      }
-            |    ],
-            |    "city_info": [
-            |      {
-            |        "set_": "create",
-            |        "city": {
-            |          "name": "San Francisco",
-            |          "state": "CA",
-            |          "country": "USA"
-            |        },
-            |        "info": "Popular city in northern California"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent"
+            |    }
+            |  ],
+            |  "city_info": [
+            |    {
+            |      "set_": "create",
+            |      "city": {
+            |        "name": "San Francisco",
+            |        "state": "CA",
+            |        "country": "USA"
+            |      },
+            |      "info": "Popular city in northern California"
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: field is_hero not found; it is needed for validating other fields",
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: is_hero",
-            "/address_book/city_info/San Francisco/CA/USA: field is_coastal_city not found; it is needed for validating other fields",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: field is_hero not found; it is needed for validating other fields",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: is_hero",
+            "/city_info/San Francisco/CA/USA: field is_coastal_city not found; it is needed for validating other fields",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -57,21 +55,19 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if exists_if fields are not found in an ancestor that is not being set`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "hero_name": "Superman",
-            |        "relation": [
-            |          {
-            |            "set_": "create",
-            |            "id": "05ade278-4b44-43da-a0cc-14463854e397",
-            |            "relationship": "colleague"
-            |          }
-            |        ]
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "hero_name": "Superman",
+            |      "relation": [
+            |        {
+            |          "set_": "create",
+            |          "id": "05ade278-4b44-43da-a0cc-14463854e397",
+            |          "relationship": "colleague"
+            |        }
+            |      ]
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -89,26 +85,24 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if conditionally-required fields do not exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "set_": "create",
-            |        "city": {
-            |          "name": "San Francisco",
-            |          "state": "CA",
-            |          "country": "USA"
-            |        },
-            |        "info": "Popular city in northern California",
-            |        "is_coastal_city": true
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "set_": "create",
+            |      "city": {
+            |        "name": "San Francisco",
+            |        "state": "CA",
+            |        "country": "USA"
+            |      },
+            |      "info": "Popular city in northern California",
+            |      "is_coastal_city": true
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/city_info/San Francisco/CA/USA: conditions are met for required conditional-field water_body_name, but field is not found",
+            "/city_info/San Francisco/CA/USA: conditions are met for required conditional-field water_body_name, but field is not found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -118,21 +112,19 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-required fields exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "set_": "create",
-            |        "city": {
-            |          "name": "San Francisco",
-            |          "state": "CA",
-            |          "country": "USA"
-            |        },
-            |        "info": "Popular city in northern California",
-            |        "is_coastal_city": true,
-            |        "water_body_name": "Pacific Ocean"
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "set_": "create",
+            |      "city": {
+            |        "name": "San Francisco",
+            |        "state": "CA",
+            |        "country": "USA"
+            |      },
+            |      "info": "Popular city in northern California",
+            |      "is_coastal_city": true,
+            |      "water_body_name": "Pacific Ocean"
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -146,17 +138,15 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields do not exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent",
-            |        "is_hero": true
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "is_hero": true
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -170,18 +160,16 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent",
-            |        "is_hero": true,
-            |        "hero_name": "Superman"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "is_hero": true,
+            |      "hero_name": "Superman"
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -195,25 +183,23 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if required fields in a conditionally-optional entity do not exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent",
-            |        "is_hero": true,
-            |        "hero_details": {}
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "is_hero": true,
+            |      "hero_details": {}
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: strengths",
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: weaknesses",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: strengths",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: weaknesses",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -223,21 +209,19 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if required fields in a conditionally-optional entity exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent",
-            |        "is_hero": true,
-            |        "hero_details": {
-            |          "strengths": "super-strength",
-            |          "weaknesses": "kryptonite"
-            |        }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "is_hero": true,
+            |      "hero_details": {
+            |        "strengths": "super-strength",
+            |        "weaknesses": "kryptonite"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -255,27 +239,25 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if conditionally-required fields exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "set_": "create",
-            |        "city": {
-            |          "name": "Sacramento",
-            |          "state": "CA",
-            |          "country": "USA"
-            |        },
-            |        "info": "Capital of California",
-            |        "is_coastal_city": false,
-            |        "water_body_name": "Pacific Ocean"
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "set_": "create",
+            |      "city": {
+            |        "name": "Sacramento",
+            |        "state": "CA",
+            |        "country": "USA"
+            |      },
+            |      "info": "Capital of California",
+            |      "is_coastal_city": false,
+            |      "water_body_name": "Pacific Ocean"
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/city_info/Sacramento/CA/USA: conditions are not met for conditional-field water_body_name, but field is found",
+            "/city_info/Sacramento/CA/USA: conditions are not met for conditional-field water_body_name, but field is found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -285,20 +267,18 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-required fields do not exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "city_info": [
-            |      {
-            |        "set_": "create",
-            |        "city": {
-            |          "name": "Sacramento",
-            |          "state": "CA",
-            |          "country": "USA"
-            |        },
-            |        "info": "Capital of California",
-            |        "is_coastal_city": false
-            |      }
-            |    ]
-            |  }
+            |  "city_info": [
+            |    {
+            |      "set_": "create",
+            |      "city": {
+            |        "name": "Sacramento",
+            |        "state": "CA",
+            |        "country": "USA"
+            |      },
+            |      "info": "Capital of California",
+            |      "is_coastal_city": false
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -312,24 +292,22 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if conditionally-optional fields exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois",
-            |        "last_name": "Lane",
-            |        "is_hero": false,
-            |        "hero_name": "SuperLois"
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois",
+            |      "last_name": "Lane",
+            |      "is_hero": false,
+            |      "hero_name": "SuperLois"
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person/a8aacf55-7810-4b43-afe5-4344f25435fd: conditions are not met for conditional-field hero_name, but field is found",
+            "/person/a8aacf55-7810-4b43-afe5-4344f25435fd: conditions are not met for conditional-field hero_name, but field is found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -339,17 +317,15 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields do not exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-            |        "first_name": "Lois",
-            |        "last_name": "Lane",
-            |        "is_hero": false
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
+            |      "first_name": "Lois",
+            |      "last_name": "Lane",
+            |      "is_hero": false
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
@@ -363,27 +339,25 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if required fields in a conditionally-optional entity exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent",
-            |        "is_hero": false,
-            |        "hero_details": {
-            |          "strengths": "super-strength",
-            |          "weaknesses": "kryptonite"
-            |        }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "is_hero": false,
+            |      "hero_details": {
+            |        "strengths": "super-strength",
+            |        "weaknesses": "kryptonite"
             |      }
-            |    ]
-            |  }
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: conditions are not met for conditional-field hero_details, but field is found",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: conditions are not met for conditional-field hero_details, but field is found",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -393,26 +367,24 @@ class ValidateSetCreateFieldExistenceTests {
     fun `validateSet() must return errors if required fields in a conditionally-optional entity do not exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "address_book": {
-            |    "person": [
-            |      {
-            |        "set_": "create",
-            |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |        "first_name": "Clark",
-            |        "last_name": "Kent",
-            |        "is_hero": false,
-            |        "hero_details": {}
-            |      }
-            |    ]
-            |  }
+            |  "person": [
+            |    {
+            |      "set_": "create",
+            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "is_hero": false,
+            |      "hero_details": {}
+            |    }
+            |  ]
             |}
         """.trimMargin()
         val model = getModel(modelJson)
 
         val expectedErrors = listOf(
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: conditions are not met for conditional-field hero_details, but field is found",
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: strengths",
-            "/address_book/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: weaknesses",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: conditions are not met for conditional-field hero_details, but field is found",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: strengths",
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details: required field not found: weaknesses",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -423,8 +395,12 @@ class ValidateSetCreateFieldExistenceTests {
 
 private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
 
-private fun getModel(modelJson: String): MainModel = getMainModelFromJsonString(
-    addressBookMetaModel,
-    modelJson,
-    multiAuxDecodingStateMachineFactory = auxDecodingFactory
-)
+private fun getModel(modelJson: String): EntityModel {
+    val model = AddressBookMutableEntityModelFactory.create()
+    decodeJsonStringIntoEntity(
+        modelJson,
+        multiAuxDecodingStateMachineFactory = auxDecodingFactory,
+        entity = model
+    )
+    return model
+}

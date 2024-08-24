@@ -5,9 +5,9 @@ import okio.BufferedSource
 import okio.buffer
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
-import org.treeWare.model.core.MutableMainModel
+import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.decoder.ModelDecoderOptions
-import org.treeWare.model.decoder.decodeJson
+import org.treeWare.model.decoder.decodeJsonEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.util.getFileSource
 import kotlin.test.assertEquals
@@ -55,8 +55,8 @@ private fun assertJsonValidationErrors(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val metaModel = MetaModelMutableMainModelFactory.getNewInstance()
-    val decodeErrors = decodeJson(
+    val metaModel = MetaModelMutableEntityModelFactory.create()
+    val decodeErrors = decodeJsonEntity(
         bufferedSource,
         metaModel,
         options,
@@ -69,7 +69,7 @@ private fun assertJsonValidationErrors(
     }
 }
 
-private fun validate(metaModel: MutableMainModel, auxPlugins: Array<out MetaModelAuxPlugin>): List<String> {
+private fun validate(metaModel: MutableEntityModel, auxPlugins: Array<out MetaModelAuxPlugin>): List<String> {
     val baseErrors = validate(metaModel, null, null)
     if (baseErrors.isNotEmpty()) return baseErrors
     return auxPlugins.flatMap { it.validate(metaModel) }

@@ -32,7 +32,7 @@ open class MutableMainModel(
     override val mainMeta: MainModel?,
     rootFactory: FieldValueFactory = MutableEntityModel.fieldValueFactory
 ) :
-    MutableSingleFieldModel(mainMeta?.let { getRootMeta(it) }, null, rootFactory), MainModel {
+    MutableSingleFieldModel(null, null, rootFactory), MainModel {
     override val parent: MutableBaseEntityModel? = null
 
     override var value: MutableElementModel? = null

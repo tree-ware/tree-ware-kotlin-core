@@ -10,7 +10,7 @@ import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.Cipher
 import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.RootEntityFactory
-import org.treeWare.model.decoder.decodeJson
+import org.treeWare.model.decoder.decodeJsonEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.util.getFileSource
 
@@ -75,13 +75,13 @@ fun newMetaModelFromJsonReaders(
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean,
 ): ValidatedMetaModel {
-    val metaModel = MetaModelMutableMainModelFactory.getNewInstance()
+    val metaModel = MetaModelMutableEntityModelFactory.create()
     // TODO(performance): change MultiAuxDecodingStateMachineFactory() varargs to list to avoid array copies.
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*metaModelAuxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
     metaModelSources.forEach { source ->
-        val decodeErrors = decodeJson(
+        val decodeErrors = decodeJsonEntity(
             source,
             metaModel,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory

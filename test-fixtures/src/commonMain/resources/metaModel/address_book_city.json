@@ -1,98 +1,96 @@
 {
-  "meta_model": {
-    "packages": [
-      {
-        "name": "address_book.city",
-        "info": "Schema for storing city information",
-        "entities": [
-          {
-            "name": "address_book_city",
-            "fields": [
-              {
-                "name": "name",
-                "number": 1,
-                "info": "City name",
-                "type": "string",
-                "is_key": true
+  "packages": [
+    {
+      "name": "address_book.city",
+      "info": "Schema for storing city information",
+      "entities": [
+        {
+          "name": "address_book_city",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "info": "City name",
+              "type": "string",
+              "is_key": true
+            },
+            {
+              "name": "state",
+              "number": 2,
+              "info": "Name of the state in which the city is",
+              "type": "string",
+              "is_key": true
+            },
+            {
+              "name": "country",
+              "number": 3,
+              "info": "Name of the country in which the city is",
+              "type": "string",
+              "is_key": true,
+              "min_size": 2
+            }
+          ]
+        },
+        {
+          "name": "address_book_city_info",
+          "fields": [
+            {
+              "name": "city",
+              "number": 1,
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_city",
+                "package": "address_book.city"
               },
-              {
-                "name": "state",
-                "number": 2,
-                "info": "Name of the state in which the city is",
-                "type": "string",
-                "is_key": true
+              "is_key": true
+            },
+            {
+              "name": "info",
+              "number": 2,
+              "info": "Information about the city",
+              "type": "string"
+            },
+            {
+              "name": "city_center",
+              "number": 3,
+              "type": "composition",
+              "composition": {
+                "entity": "point",
+                "package": "org.tree_ware.meta_model.geo"
               },
-              {
-                "name": "country",
-                "number": 3,
-                "info": "Name of the country in which the city is",
-                "type": "string",
-                "is_key": true,
-                "min_size": 2
+              "multiplicity": "optional"
+            },
+            {
+              "name": "is_coastal_city",
+              "number": 4,
+              "info": "Is this city a coastal city?",
+              "type": "boolean",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "water_body_name",
+              "number": 5,
+              "info": "The name of the ocean/sea/large-lake if this is a coastal city",
+              "type": "string",
+              "exists_if": {
+                "operator": "equals",
+                "field": "is_coastal_city",
+                "value": "true"
               }
-            ]
-          },
-          {
-            "name": "address_book_city_info",
-            "fields": [
-              {
-                "name": "city",
-                "number": 1,
-                "type": "composition",
-                "composition": {
-                  "entity": "address_book_city",
-                  "package": "address_book.city"
-                },
-                "is_key": true
+            },
+            {
+              "name": "related_city_info",
+              "number": 30,
+              "type": "association",
+              "association": {
+                "entity": "address_book_city_info",
+                "package": "address_book.city"
               },
-              {
-                "name": "info",
-                "number": 2,
-                "info": "Information about the city",
-                "type": "string"
-              },
-              {
-                "name": "city_center",
-                "number": 3,
-                "type": "composition",
-                "composition": {
-                  "entity": "point",
-                  "package": "org.tree_ware.meta_model.geo"
-                },
-                "multiplicity": "optional"
-              },
-              {
-                "name": "is_coastal_city",
-                "number": 4,
-                "info": "Is this city a coastal city?",
-                "type": "boolean",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "water_body_name",
-                "number": 5,
-                "info": "The name of the ocean/sea/large-lake if this is a coastal city",
-                "type": "string",
-                "exists_if": {
-                  "operator": "equals",
-                  "field": "is_coastal_city",
-                  "value": "true"
-                }
-              },
-              {
-                "name": "related_city_info",
-                "number": 30,
-                "type": "association",
-                "association": {
-                  "entity": "address_book_city_info",
-                  "package": "address_book.city"
-                },
-                "multiplicity": "list"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+              "multiplicity": "list"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

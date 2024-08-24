@@ -2,14 +2,12 @@ package org.treeWare.metaModel
 
 fun newTestMetaModelJson(rootJson: String?, vararg packageJsonList: String): String = """
     | {
-    |   "meta_model": {
-    |     $testMetaModelCommonVersionJson,
-    |     ${rootJson ?: ""}
-    |     ${if (rootJson == null) "" else ","}
-    |     "packages": [
-    |       ${packageJsonList.joinToString(",\n")}
-    |     ]
-    |   }
+    |   $testMetaModelCommonVersionJson,
+    |   ${rootJson ?: ""}
+    |   ${if (rootJson == null) "" else ","}
+    |   "packages": [
+    |     ${packageJsonList.joinToString(",\n")}
+    |   ]
     | }
 """.trimMargin()
 

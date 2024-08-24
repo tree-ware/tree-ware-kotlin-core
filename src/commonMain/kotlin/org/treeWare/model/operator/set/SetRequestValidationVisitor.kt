@@ -93,6 +93,14 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         setAuxStack.pop()
         granularityStack.pop()
         modelPathStack.popEntity()
+        if (isRootEntity(leaderEntity1)) {
+            assertInDevMode(setAuxStack.isEmpty())
+            assertInDevMode(granularityStack.isEmpty())
+            assertInDevMode(modelPathStack.isEmpty())
+            if (setAuxStack.nothingToSet) errors.add(
+                ElementModelError("/", "set_ aux not attached to any composition field or entity")
+            )
+        }
     }
 
     override fun visitSingleField(leaderField1: SingleFieldModel): TraversalAction {

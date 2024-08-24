@@ -5,21 +5,15 @@ import org.treeWare.model.core.*
 
 // Functions for creating the meta-meta-model.
 
-fun newMainMetaMeta(): MutableMainModel {
-    val mainMeta = MutableMainModel(null)
-    mainMeta.root = MutableEntityModel(null, mainMeta)
-    return mainMeta
-}
+fun newMetaMeta(): MutableEntityModel = MutableEntityModel(null, null)
 
-fun newVersionMetaMeta(mainMeta: MutableMainModel, semanticVersion: Version) {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    val version = newCompositionSingleField(mainMetaRoot, "version")
+fun newVersionMetaMeta(metaMeta: MutableEntityModel, semanticVersion: Version) {
+    val version = newCompositionSingleField(metaMeta, "version")
     newStringSingleField(version, "semantic", semanticVersion.toString())
 }
 
-fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String, packageName: String) {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    val root = newCompositionSingleField(mainMetaRoot, "root")
+fun newRootMetaMeta(metaMeta: MutableEntityModel, name: String, entityName: String, packageName: String) {
+    val root = newCompositionSingleField(metaMeta, "root")
     newStringSingleField(root, "name", name)
     newEnumerationSingleField(root, "type", "composition")
     val composition = newCompositionSingleField(root, "composition")
@@ -27,9 +21,8 @@ fun newRootMetaMeta(mainMeta: MutableMainModel, name: String, entityName: String
     newStringSingleField(composition, "package", packageName)
 }
 
-fun newPackagesMetaMeta(mainMeta: MutableMainModel): MutableListFieldModel {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    return newCompositionListField(mainMetaRoot, "packages")
+fun newPackagesMetaMeta(metaMeta: MutableEntityModel): MutableListFieldModel {
+    return newCompositionListField(metaMeta, "packages")
 }
 
 fun newPackageMetaMeta(
@@ -150,8 +143,7 @@ private fun newFieldMetaMeta(
 // need to be passed to the model constructors. So dummy parent instances are
 // created and used.
 
-private val dummyMain = MutableMainModel(null)
-private val dummyRoot = MutableEntityModel(null, dummyMain)
+private val dummyRoot = MutableEntityModel(null, null)
 private val dummyField = MutableSingleFieldModel(null, dummyRoot, MutablePrimitiveModel.fieldValueFactory)
 
 private val stringFieldMeta = getFieldTypeMeta("string")

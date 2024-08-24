@@ -5,7 +5,6 @@ import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutableListFieldModel
-import org.treeWare.model.core.MutableMainModel
 
 enum class Multiplicity { REQUIRED, OPTIONAL, LIST, SET }
 
@@ -45,22 +44,22 @@ enum class Granularity { FIELD, ENTITY, SUB_TREE }
 
 private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
 
-fun newMainMetaMetaModel(): MutableMainModel {
-    val mainMeta = newMainMetaMeta()
-    populateMain(mainMeta)
-    val errors = validate(mainMeta, null, null, mandatoryFieldNumbers = false)
+fun newMetaMetaModel(): MutableEntityModel {
+    val metaMeta = newMetaMeta()
+    populateMetaMeta(metaMeta)
+    val errors = validate(metaMeta, null, null, mandatoryFieldNumbers = false)
     if (errors.isNotEmpty()) {
         val logger = logging()
         errors.forEach { logger.error { it } }
         throw IllegalStateException("Meta-meta-model is not valid")
     }
-    return mainMeta
+    return metaMeta
 }
 
-private fun populateMain(mainMeta: MutableMainModel) {
-    newVersionMetaMeta(mainMeta, Version(1, 0, 0))
-    newRootMetaMeta(mainMeta, "meta_model", "meta_model", "tree_ware_meta_model.main")
-    val packagesMeta = newPackagesMetaMeta(mainMeta)
+private fun populateMetaMeta(metaMeta: MutableEntityModel) {
+    newVersionMetaMeta(metaMeta, Version(1, 0, 0))
+    newRootMetaMeta(metaMeta, "meta_model", "meta_model", META_MODEL_MAIN_PACKAGE)
+    val packagesMeta = newPackagesMetaMeta(metaMeta)
     populatePackages(packagesMeta)
 }
 

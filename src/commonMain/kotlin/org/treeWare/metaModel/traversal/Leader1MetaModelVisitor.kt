@@ -1,11 +1,10 @@
 package org.treeWare.metaModel.traversal
 
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.MainModel
 
 interface Leader1MetaModelVisitor<Return> {
-    fun visitMainMeta(leaderMainMeta1: MainModel): Return
-    fun leaveMainMeta(leaderMainMeta1: MainModel)
+    fun visitMetaModel(leaderMeta1: EntityModel): Return
+    fun leaveMetaModel(leaderMeta1: EntityModel)
 
     fun visitVersionMeta(leaderVersionMeta1: EntityModel): Return
     fun leaveVersionMeta(leaderVersionMeta1: EntityModel)

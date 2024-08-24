@@ -1,15 +1,16 @@
 package org.treeWare.metaModel
 
-import org.treeWare.model.core.*
+import org.treeWare.model.core.MutableCollectionFieldModel
+import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.core.getMutableCollectionField
+import org.treeWare.model.core.getMutableSingleEntity
 
-fun getMutableRootMeta(mainMeta: MutableMainModel): MutableEntityModel {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    return getMutableSingleEntity(mainMetaRoot, "root")
+fun getMutableRootMeta(meta: MutableEntityModel): MutableEntityModel {
+    return getMutableSingleEntity(meta, "root")
 }
 
-fun getMutablePackagesMeta(mainMeta: MutableMainModel): MutableCollectionFieldModel {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    return getMutableCollectionField(mainMetaRoot, "packages")
+fun getMutablePackagesMeta(meta: MutableEntityModel): MutableCollectionFieldModel {
+    return getMutableCollectionField(meta, "packages")
 }
 
 fun getMutableEnumerationsMeta(packageMeta: MutableEntityModel): MutableCollectionFieldModel? =

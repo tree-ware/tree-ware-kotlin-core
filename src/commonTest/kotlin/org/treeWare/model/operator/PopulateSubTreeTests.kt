@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.metaModel.addressBookMetaModel
+import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.assertContainsJsonString
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
@@ -12,9 +12,8 @@ import kotlin.test.assertTrue
 class PopulateSubTreeTests {
     @Test
     fun `populateSubTree() must not succeed if sub-tree root in a single-field has non-key fields`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val settings = getOrNewMutableSingleEntity(root, "settings")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val settings = getOrNewMutableSingleEntity(model, "settings")
         setBooleanSingleField(settings, "last_name_first", true) // non-key field
 
         val success = populateSubTree(settings, true)
@@ -23,9 +22,8 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must not succeed if sub-tree root in a set-field has non-key fields`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val persons = getOrNewMutableSetField(root, "person")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val persons = getOrNewMutableSetField(model, "person")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         setStringSingleField(clark, "first_name", "Clark") // non-key field
@@ -37,23 +35,20 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate all fields in a single-field entity when populateNonKeyNonCompositionFields is true`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val settings = getOrNewMutableSingleEntity(root, "settings")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val settings = getOrNewMutableSingleEntity(model, "settings")
 
         val success = populateSubTree(settings, true)
 
         val expectedJson = """
             {
-              "address_book": {
-                "settings": {
-                  "last_name_first": null,
-                  "encrypt_hero_name": null,
-                  "card_colors": [],
-                  "background_color": null,
-                  "advanced": {
-                    "border_color": null
-                  }
+              "settings": {
+                "last_name_first": null,
+                "encrypt_hero_name": null,
+                "card_colors": [],
+                "background_color": null,
+                "advanced": {
+                  "border_color": null
                 }
               }
             }
@@ -64,18 +59,15 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate only composition fields in a single-field entity when populateNonKeyNonCompositionFields is false`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val settings = getOrNewMutableSingleEntity(root, "settings")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val settings = getOrNewMutableSingleEntity(model, "settings")
 
         val success = populateSubTree(settings, false)
 
         val expectedJson = """
             {
-              "address_book": {
-                "settings": {
-                  "advanced": {}
-                }
+              "settings": {
+                "advanced": {}
               }
             }
         """.trimIndent()
@@ -85,9 +77,8 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate all fields in a set-field entity when populateNonKeyNonCompositionFields is true`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val persons = getOrNewMutableSetField(root, "person")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val persons = getOrNewMutableSetField(model, "person")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
@@ -96,35 +87,33 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "address_book": {
-                "person": [
-                  {
-                    "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                    "first_name": null,
-                    "last_name": null,
-                    "hero_name": null,
-                    "email": [],
-                    "picture": null,
-                    "relation": [
-                      {
-                        "id": null,
-                        "relationship": null,
-                        "person": null
-                      }
-                    ],
-                    "password": null,
-                    "previous_passwords": [],
-                    "main_secret": null,
-                    "other_secrets": [],
-                    "group": null,
-                    "is_hero": null,
-                    "hero_details": {
-                      "strengths": null,
-                      "weaknesses": null
+              "person": [
+                {
+                  "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+                  "first_name": null,
+                  "last_name": null,
+                  "hero_name": null,
+                  "email": [],
+                  "picture": null,
+                  "relation": [
+                    {
+                      "id": null,
+                      "relationship": null,
+                      "person": null
                     }
+                  ],
+                  "password": null,
+                  "previous_passwords": [],
+                  "main_secret": null,
+                  "other_secrets": [],
+                  "group": null,
+                  "is_hero": null,
+                  "hero_details": {
+                    "strengths": null,
+                    "weaknesses": null
                   }
-                ]
-              }
+                }
+              ]
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
@@ -133,9 +122,8 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate only key & composition fields in a set-field entity when populateNonKeyNonCompositionFields is false`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val persons = getOrNewMutableSetField(root, "person")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val persons = getOrNewMutableSetField(model, "person")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
@@ -144,19 +132,17 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "address_book": {
-                "person": [
-                  {
-                    "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                    "relation": [
-                      {
-                        "id": null
-                      }
-                    ],
-                    "hero_details": {}
-                  }
-                ]
-              }
+              "person": [
+                {
+                  "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+                  "relation": [
+                    {
+                      "id": null
+                    }
+                  ],
+                  "hero_details": {}
+                }
+              ]
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
@@ -165,9 +151,8 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate all fields in a composite-keyed sub-tree root when populateNonKeyNonCompositionFields is true`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val cities = getOrNewMutableSetField(root, "city_info")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val cities = getOrNewMutableSetField(model, "city_info")
         val sanFrancisco = getNewMutableSetEntity(cities)
         val keys = getOrNewMutableSingleEntity(sanFrancisco, "city")
         setStringSingleField(keys, "name", "San Francisco")
@@ -179,25 +164,23 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "address_book": {
-                "city_info": [
-                  {
-                    "city": {
-                      "name": "San Francisco",
-                      "state": "California",
-                      "country": "USA"
-                    },
-                    "info": null,
-                    "city_center": {
-                      "latitude": null,
-                      "longitude": null
-                    },
-                    "is_coastal_city": null,
-                    "water_body_name": null,
-                    "related_city_info": []
-                  }
-                ]
-              }
+              "city_info": [
+                {
+                  "city": {
+                    "name": "San Francisco",
+                    "state": "California",
+                    "country": "USA"
+                  },
+                  "info": null,
+                  "city_center": {
+                    "latitude": null,
+                    "longitude": null
+                  },
+                  "is_coastal_city": null,
+                  "water_body_name": null,
+                  "related_city_info": []
+                }
+              ]
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
@@ -206,9 +189,8 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate only key & composition fields in a composite-keyed sub-tree root when populateNonKeyNonCompositionFields is false`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
-        val cities = getOrNewMutableSetField(root, "city_info")
+        val model = AddressBookMutableEntityModelFactory.create()
+        val cities = getOrNewMutableSetField(model, "city_info")
         val sanFrancisco = getNewMutableSetEntity(cities)
         val keys = getOrNewMutableSingleEntity(sanFrancisco, "city")
         setStringSingleField(keys, "name", "San Francisco")
@@ -220,18 +202,16 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "address_book": {
-                "city_info": [
-                  {
-                    "city": {
-                      "name": "San Francisco",
-                      "state": "California",
-                      "country": "USA"
-                    },
-                    "city_center": {}
-                  }
-                ]
-              }
+              "city_info": [
+                {
+                  "city": {
+                    "name": "San Francisco",
+                    "state": "California",
+                    "country": "USA"
+                  },
+                  "city_center": {}
+                }
+              ]
             }
         """.trimIndent()
         assertMatchesJsonString(model, expectedJson, EncodePasswords.NONE)
@@ -240,19 +220,18 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate sub-trees that have composite-keyed entities in them when populateNonKeyNonCompositionFields is true`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
+        val model = AddressBookMutableEntityModelFactory.create()
 
-        val success = populateSubTree(root, true)
+        val success = populateSubTree(model, true)
 
         val expectedJsonSnippet = """
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": null,
-            |          "state": null,
-            |          "country": null
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": null,
+            |        "state": null,
+            |        "country": null
+            |      }
         """.trimMargin()
         assertContainsJsonString(model, expectedJsonSnippet, EncodePasswords.NONE)
         assertTrue(success)
@@ -260,19 +239,18 @@ class PopulateSubTreeTests {
 
     @Test
     fun `populateSubTree() must populate sub-trees that have composite-keyed entities in them when populateNonKeyNonCompositionFields is false`() {
-        val model = MutableMainModel(addressBookMetaModel)
-        val root = model.getOrNewRoot()
+        val model = AddressBookMutableEntityModelFactory.create()
 
-        val success = populateSubTree(root, false)
+        val success = populateSubTree(model, false)
 
         val expectedJsonSnippet = """
-            |    "city_info": [
-            |      {
-            |        "city": {
-            |          "name": null,
-            |          "state": null,
-            |          "country": null
-            |        }
+            |  "city_info": [
+            |    {
+            |      "city": {
+            |        "name": null,
+            |        "state": null,
+            |        "country": null
+            |      }
         """.trimMargin()
         assertContainsJsonString(model, expectedJsonSnippet, EncodePasswords.NONE)
         assertTrue(success)

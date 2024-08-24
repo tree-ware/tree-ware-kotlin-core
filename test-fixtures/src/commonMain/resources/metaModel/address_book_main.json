@@ -1,407 +1,405 @@
 {
-  "meta_model": {
-    "packages": [
-      {
-        "name": "address_book.main",
-        "info": "Schema for storing address book information",
-        "enumerations": [
-          {
-            "name": "address_book_color",
-            "values": [
-              {
-                "name": "white",
-                "number": 0
+  "packages": [
+    {
+      "name": "address_book.main",
+      "info": "Schema for storing address book information",
+      "enumerations": [
+        {
+          "name": "address_book_color",
+          "values": [
+            {
+              "name": "white",
+              "number": 0
+            },
+            {
+              "name": "violet",
+              "number": 1
+            },
+            {
+              "name": "indigo",
+              "number": 2
+            },
+            {
+              "name": "blue",
+              "number": 3
+            },
+            {
+              "name": "green",
+              "number": 4
+            },
+            {
+              "name": "yellow",
+              "number": 5
+            },
+            {
+              "name": "orange",
+              "number": 6
+            },
+            {
+              "name": "red",
+              "number": 7
+            }
+          ]
+        },
+        {
+          "name": "address_book_relationship",
+          "values": [
+            {
+              "name": "unknown",
+              "number": 0
+            },
+            {
+              "name": "parent",
+              "number": 1
+            },
+            {
+              "name": "child",
+              "number": 2
+            },
+            {
+              "name": "spouse",
+              "number": 3
+            },
+            {
+              "name": "sibling",
+              "number": 4
+            },
+            {
+              "name": "family",
+              "number": 5
+            },
+            {
+              "name": "friend",
+              "number": 6
+            },
+            {
+              "name": "colleague",
+              "number": 7
+            }
+          ]
+        }
+      ],
+      "entities": [
+        {
+          "name": "address_book_root",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "info": "A name for the address book",
+              "type": "string",
+              "min_size": 2
+            },
+            {
+              "name": "last_updated",
+              "number": 2,
+              "type": "timestamp",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "settings",
+              "number": 3,
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_settings",
+                "package": "address_book.main"
               },
-              {
-                "name": "violet",
-                "number": 1
+              "multiplicity": "optional"
+            },
+            {
+              "name": "person",
+              "number": 4,
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_person",
+                "package": "address_book.main"
               },
-              {
-                "name": "indigo",
-                "number": 2
+              "multiplicity": "set"
+            },
+            {
+              "name": "city_info",
+              "number": 5,
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_city_info",
+                "package": "address_book.city"
               },
-              {
-                "name": "blue",
-                "number": 3
+              "multiplicity": "set"
+            },
+            {
+              "name": "groups",
+              "number": 6,
+              "type": "composition",
+              "composition": {
+                "entity": "group",
+                "package": "address_book.main"
               },
-              {
-                "name": "green",
-                "number": 4
+              "multiplicity": "set"
+            },
+            {
+              "name": "sub_tree_persons",
+              "number": 7,
+              "info": "For testing sub_tree granularity",
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_person",
+                "package": "address_book.main"
               },
-              {
-                "name": "yellow",
-                "number": 5
+              "granularity": "sub_tree",
+              "multiplicity": "set"
+            }
+          ]
+        },
+        {
+          "name": "address_book_settings",
+          "fields": [
+            {
+              "name": "last_name_first",
+              "number": 1,
+              "type": "boolean"
+            },
+            {
+              "name": "encrypt_hero_name",
+              "number": 2,
+              "type": "boolean",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "card_colors",
+              "number": 3,
+              "type": "enumeration",
+              "enumeration": {
+                "name": "address_book_color",
+                "package": "address_book.main"
               },
-              {
-                "name": "orange",
-                "number": 6
+              "multiplicity": "list"
+            },
+            {
+              "name": "background_color",
+              "number": 4,
+              "type": "enumeration",
+              "enumeration": {
+                "name": "address_book_color",
+                "package": "address_book.main"
               },
-              {
-                "name": "red",
-                "number": 7
+              "multiplicity": "optional"
+            },
+            {
+              "name": "advanced",
+              "number": 5,
+              "type": "composition",
+              "composition": {
+                "entity": "advanced_settings",
+                "package": "address_book.main"
+              },
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "advanced_settings",
+          "fields": [
+            {
+              "name": "border_color",
+              "number": 1,
+              "type": "enumeration",
+              "enumeration": {
+                "name": "address_book_color",
+                "package": "address_book.main"
+              },
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "address_book_person",
+          "fields": [
+            {
+              "name": "id",
+              "number": 1,
+              "type": "uuid",
+              "is_key": true
+            },
+            {
+              "name": "first_name",
+              "number": 2,
+              "type": "string"
+            },
+            {
+              "name": "last_name",
+              "number": 3,
+              "type": "string"
+            },
+            {
+              "name": "hero_name",
+              "number": 4,
+              "type": "string",
+              "exists_if": {
+                "operator": "equals",
+                "field": "is_hero",
+                "value": "true"
+              },
+              "multiplicity": "optional"
+            },
+            {
+              "name": "email",
+              "number": 5,
+              "type": "string",
+              "multiplicity": "list",
+              "regex": "[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+"
+            },
+            {
+              "name": "picture",
+              "number": 6,
+              "type": "blob",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "relation",
+              "number": 7,
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_relation",
+                "package": "address_book.main"
+              },
+              "multiplicity": "set"
+            },
+            {
+              "name": "password",
+              "number": 8,
+              "type": "password1way",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "previous_passwords",
+              "number": 9,
+              "type": "password1way",
+              "multiplicity": "list"
+            },
+            {
+              "name": "main_secret",
+              "number": 10,
+              "type": "password2way",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "other_secrets",
+              "number": 11,
+              "type": "password2way",
+              "multiplicity": "list"
+            },
+            {
+              "name": "group",
+              "number": 12,
+              "type": "association",
+              "association": {
+                "entity": "group",
+                "package": "address_book.main"
+              },
+              "multiplicity": "optional"
+            },
+            {
+              "name": "is_hero",
+              "number": 13,
+              "info": "",
+              "type": "boolean"
+            },
+            {
+              "name": "hero_details",
+              "number": 14,
+              "info": "",
+              "type": "composition",
+              "composition": {
+                "entity": "hero_details",
+                "package": "address_book.main"
+              },
+              "exists_if": {
+                "operator": "equals",
+                "field": "is_hero",
+                "value": "true"
+              },
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "group",
+          "info": "",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "type": "string",
+              "is_key": true,
+              "max_size": 10
+            },
+            {
+              "name": "info",
+              "number": 2,
+              "type": "string",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "sub_groups",
+              "number": 3,
+              "type": "composition",
+              "composition": {
+                "entity": "group",
+                "package": "address_book.main"
+              },
+              "multiplicity": "set"
+            }
+          ]
+        },
+        {
+          "name": "address_book_relation",
+          "fields": [
+            {
+              "name": "id",
+              "number": 1,
+              "type": "uuid",
+              "is_key": true
+            },
+            {
+              "name": "relationship",
+              "number": 2,
+              "type": "enumeration",
+              "enumeration": {
+                "name": "address_book_relationship",
+                "package": "address_book.main"
               }
-            ]
-          },
-          {
-            "name": "address_book_relationship",
-            "values": [
-              {
-                "name": "unknown",
-                "number": 0
+            },
+            {
+              "name": "person",
+              "number": 3,
+              "type": "association",
+              "association": {
+                "entity": "address_book_person",
+                "package": "address_book.main"
               },
-              {
-                "name": "parent",
-                "number": 1
-              },
-              {
-                "name": "child",
-                "number": 2
-              },
-              {
-                "name": "spouse",
-                "number": 3
-              },
-              {
-                "name": "sibling",
-                "number": 4
-              },
-              {
-                "name": "family",
-                "number": 5
-              },
-              {
-                "name": "friend",
-                "number": 6
-              },
-              {
-                "name": "colleague",
-                "number": 7
-              }
-            ]
-          }
-        ],
-        "entities": [
-          {
-            "name": "address_book_root",
-            "fields": [
-              {
-                "name": "name",
-                "number": 1,
-                "info": "A name for the address book",
-                "type": "string",
-                "min_size": 2
-              },
-              {
-                "name": "last_updated",
-                "number": 2,
-                "type": "timestamp",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "settings",
-                "number": 3,
-                "type": "composition",
-                "composition": {
-                  "entity": "address_book_settings",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "optional"
-              },
-              {
-                "name": "person",
-                "number": 4,
-                "type": "composition",
-                "composition": {
-                  "entity": "address_book_person",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "set"
-              },
-              {
-                "name": "city_info",
-                "number": 5,
-                "type": "composition",
-                "composition": {
-                  "entity": "address_book_city_info",
-                  "package": "address_book.city"
-                },
-                "multiplicity": "set"
-              },
-              {
-                "name": "groups",
-                "number": 6,
-                "type": "composition",
-                "composition": {
-                  "entity": "group",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "set"
-              },
-              {
-                "name": "sub_tree_persons",
-                "number": 7,
-                "info": "For testing sub_tree granularity",
-                "type": "composition",
-                "composition": {
-                  "entity": "address_book_person",
-                  "package": "address_book.main"
-                },
-                "granularity": "sub_tree",
-                "multiplicity": "set"
-              }
-            ]
-          },
-          {
-            "name": "address_book_settings",
-            "fields": [
-              {
-                "name": "last_name_first",
-                "number": 1,
-                "type": "boolean"
-              },
-              {
-                "name": "encrypt_hero_name",
-                "number": 2,
-                "type": "boolean",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "card_colors",
-                "number": 3,
-                "type": "enumeration",
-                "enumeration": {
-                  "name": "address_book_color",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "list"
-              },
-              {
-                "name": "background_color",
-                "number": 4,
-                "type": "enumeration",
-                "enumeration": {
-                  "name": "address_book_color",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "optional"
-              },
-              {
-                "name": "advanced",
-                "number": 5,
-                "type": "composition",
-                "composition": {
-                  "entity": "advanced_settings",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "optional"
-              }
-            ]
-          },
-          {
-            "name": "advanced_settings",
-            "fields": [
-              {
-                "name": "border_color",
-                "number": 1,
-                "type": "enumeration",
-                "enumeration": {
-                  "name": "address_book_color",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "optional"
-              }
-            ]
-          },
-          {
-            "name": "address_book_person",
-            "fields": [
-              {
-                "name": "id",
-                "number": 1,
-                "type": "uuid",
-                "is_key": true
-              },
-              {
-                "name": "first_name",
-                "number": 2,
-                "type": "string"
-              },
-              {
-                "name": "last_name",
-                "number": 3,
-                "type": "string"
-              },
-              {
-                "name": "hero_name",
-                "number": 4,
-                "type": "string",
-                "exists_if": {
-                  "operator": "equals",
-                  "field": "is_hero",
-                  "value": "true"
-                },
-                "multiplicity": "optional"
-              },
-              {
-                "name": "email",
-                "number": 5,
-                "type": "string",
-                "multiplicity": "list",
-                "regex": "[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+"
-              },
-              {
-                "name": "picture",
-                "number": 6,
-                "type": "blob",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "relation",
-                "number": 7,
-                "type": "composition",
-                "composition": {
-                  "entity": "address_book_relation",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "set"
-              },
-              {
-                "name": "password",
-                "number": 8,
-                "type": "password1way",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "previous_passwords",
-                "number": 9,
-                "type": "password1way",
-                "multiplicity": "list"
-              },
-              {
-                "name": "main_secret",
-                "number": 10,
-                "type": "password2way",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "other_secrets",
-                "number": 11,
-                "type": "password2way",
-                "multiplicity": "list"
-              },
-              {
-                "name": "group",
-                "number": 12,
-                "type": "association",
-                "association": {
-                  "entity": "group",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "optional"
-              },
-              {
-                "name": "is_hero",
-                "number": 13,
-                "info": "",
-                "type": "boolean"
-              },
-              {
-                "name": "hero_details",
-                "number": 14,
-                "info": "",
-                "type": "composition",
-                "composition": {
-                  "entity": "hero_details",
-                  "package": "address_book.main"
-                },
-                "exists_if": {
-                  "operator": "equals",
-                  "field": "is_hero",
-                  "value": "true"
-                },
-                "multiplicity": "optional"
-              }
-            ]
-          },
-          {
-            "name": "group",
-            "info": "",
-            "fields": [
-              {
-                "name": "name",
-                "number": 1,
-                "type": "string",
-                "is_key": true,
-                "max_size": 10
-              },
-              {
-                "name": "info",
-                "number": 2,
-                "type": "string",
-                "multiplicity": "optional"
-              },
-              {
-                "name": "sub_groups",
-                "number": 3,
-                "type": "composition",
-                "composition": {
-                  "entity": "group",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "set"
-              }
-            ]
-          },
-          {
-            "name": "address_book_relation",
-            "fields": [
-              {
-                "name": "id",
-                "number": 1,
-                "type": "uuid",
-                "is_key": true
-              },
-              {
-                "name": "relationship",
-                "number": 2,
-                "type": "enumeration",
-                "enumeration": {
-                  "name": "address_book_relationship",
-                  "package": "address_book.main"
-                }
-              },
-              {
-                "name": "person",
-                "number": 3,
-                "type": "association",
-                "association": {
-                  "entity": "address_book_person",
-                  "package": "address_book.main"
-                },
-                "multiplicity": "optional"
-              }
-            ]
-          },
-          {
-            "name": "hero_details",
-            "info": "",
-            "fields": [
-              {
-                "name": "strengths",
-                "number": 1,
-                "info": "",
-                "type": "string"
-              },
-              {
-                "name": "weaknesses",
-                "number": 2,
-                "info": "",
-                "type": "string"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "hero_details",
+          "info": "",
+          "fields": [
+            {
+              "name": "strengths",
+              "number": 1,
+              "info": "",
+              "type": "string"
+            },
+            {
+              "name": "weaknesses",
+              "number": 2,
+              "info": "",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

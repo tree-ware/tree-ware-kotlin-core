@@ -4,28 +4,25 @@ import org.treeWare.model.core.*
 
 fun getFullName(elementMeta: ElementModel?): String? = getMetaModelResolved(elementMeta)?.fullName
 
-fun getMainMetaName(mainMeta: MainModel): String = getMetaName(getRootMeta(mainMeta))
+fun getMetaModelName(meta: EntityModel): String = getMetaName(getRootMeta(meta))
 
-fun getVersionMeta(mainMeta: MainModel): EntityModel {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    return getSingleEntity(mainMetaRoot, "version")
+fun getVersionMeta(meta: EntityModel): EntityModel {
+    return getSingleEntity(meta, "version")
 }
 
 /**
  * Returns the meta-model to be used for the root entity of the model.
  * NOTE: this is different than the getRootMeta() function which returns the root entity of the meta-model.
  */
-fun getModelRootEntityMeta(mainMeta: MainModel): EntityModel =
-    getMetaModelResolved(getRootMeta(mainMeta))?.compositionMeta ?: throw IllegalStateException("Root entity not found")
+fun getModelRootEntityMeta(meta: EntityModel): EntityModel =
+    getMetaModelResolved(getRootMeta(meta))?.compositionMeta ?: throw IllegalStateException("Root entity not found")
 
-fun getRootMeta(mainMeta: MainModel): EntityModel {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    return getSingleEntity(mainMetaRoot, "root")
+fun getRootMeta(meta: EntityModel): EntityModel {
+    return getSingleEntity(meta, "root")
 }
 
-fun getPackagesMeta(mainMeta: MainModel): CollectionFieldModel {
-    val mainMetaRoot = mainMeta.root ?: throw IllegalStateException("Root has not been set")
-    return getCollectionField(mainMetaRoot, "packages")
+fun getPackagesMeta(meta: EntityModel): CollectionFieldModel {
+    return getCollectionField(meta, "packages")
 }
 
 fun getEnumerationsMeta(packageMeta: EntityModel): CollectionFieldModel? =

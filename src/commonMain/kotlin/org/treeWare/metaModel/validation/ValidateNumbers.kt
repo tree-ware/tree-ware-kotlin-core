@@ -4,7 +4,6 @@ import org.treeWare.metaModel.getMetaNumber
 import org.treeWare.metaModel.traversal.AbstractLeader1MetaModelVisitor
 import org.treeWare.metaModel.traversal.metaModelForEach
 import org.treeWare.model.core.EntityModel
-import org.treeWare.model.core.MainModel
 import org.treeWare.model.core.getMetaModelResolved
 import org.treeWare.model.traversal.TraversalAction
 
@@ -14,9 +13,9 @@ import org.treeWare.model.traversal.TraversalAction
  *
  * Side effects: none
  */
-fun validateNumbers(mainMeta: MainModel): List<String> {
+fun validateNumbers(meta: EntityModel): List<String> {
     val visitor = ValidateNumbersVisitor()
-    metaModelForEach(mainMeta, visitor)
+    metaModelForEach(meta, visitor)
     return visitor.errors
 }
 
