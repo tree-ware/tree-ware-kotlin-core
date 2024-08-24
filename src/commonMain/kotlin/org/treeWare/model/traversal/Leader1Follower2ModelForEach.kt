@@ -47,19 +47,6 @@ fun <Return> dispatchVisit(
     follower2: ElementModel?,
     visitor: Leader1Follower2ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
-    ModelElementType.MAIN -> {
-        if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.MAIN)
-        if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.MAIN)
-        if (
-            (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
-            (follower2 == null || follower2.elementType == ModelElementType.MAIN)
-        ) visitor.visitMain(
-            leader as MainModel,
-            follower1 as MainModel?,
-            follower2 as MainModel?,
-        )
-        else null
-    }
     ModelElementType.ENTITY -> {
         if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.ENTITY)
         if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.ENTITY)
@@ -199,18 +186,6 @@ fun <Return> dispatchLeave(
     visitor: Leader1Follower2ModelVisitor<Return>
 ) {
     when (leader.elementType) {
-        ModelElementType.MAIN -> {
-            if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.MAIN)
-            if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.MAIN)
-            if (
-                (follower1 == null || follower1.elementType == ModelElementType.MAIN) &&
-                (follower2 == null || follower2.elementType == ModelElementType.MAIN)
-            ) visitor.leaveMain(
-                leader as MainModel,
-                follower1 as MainModel?,
-                follower2 as MainModel?,
-            )
-        }
         ModelElementType.ENTITY -> {
             if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.ENTITY)
             if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.ENTITY)

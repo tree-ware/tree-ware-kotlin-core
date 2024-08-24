@@ -9,7 +9,6 @@ import org.treeWare.model.operator.set.aux.setSetAux
 import org.treeWare.model.traversal.AbstractLeader1MutableModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.mutableForEach
-import org.treeWare.util.assertInDevMode
 
 /**
  * Populate the sub-trees of sub-tree granularity entities that are being deleted.
@@ -30,16 +29,6 @@ private class PopulateSubTreeGranularityDeleteRequestVisitor :
     val errors = mutableListOf<ElementModelError>()
 
     private val modelPathStack = ModelPathStack()
-
-    override fun visitMutableMain(leaderMain1: MutableMainModel): TraversalAction {
-        modelPathStack.pushField(leaderMain1)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMutableMain(leaderMain1: MutableMainModel) {
-        modelPathStack.popField()
-        assertInDevMode(modelPathStack.isEmpty())
-    }
 
     override fun visitMutableEntity(leaderEntity1: MutableEntityModel): TraversalAction {
         modelPathStack.pushEntity(leaderEntity1, isCompositionKey(leaderEntity1))

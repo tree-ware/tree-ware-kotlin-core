@@ -19,17 +19,6 @@ class ModelEncodingVisitor(
         element.auxs?.forEach { (auxName, aux) -> multiAuxEncoder.encode(name, auxName, aux, wireFormatEncoder) }
     }
 
-    override fun visitMain(leaderMain1: MainModel): TraversalAction {
-        wireFormatEncoder.encodeObjectStart(null)
-        val mainName = getMainName(leaderMain1)
-        encodeAuxs(mainName, leaderMain1)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMain1: MainModel) {
-        wireFormatEncoder.encodeObjectEnd()
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val name = leaderEntity1.parent?.meta?.let { getMetaName(it) } ?: ""
         wireFormatEncoder.encodeObjectStart(name)

@@ -74,14 +74,12 @@ private fun getPassword1wayModel(hasher: HasherV1?): MutablePassword1wayModel {
     val resolved = Resolved("dummy/field")
     resolved.password1wayHasher = hasher
 
-    val dummyMainMeta = MutableMainModel(null)
-    val dummyRootMeta = MutableEntityModel(null, dummyMainMeta)
+    val dummyRootMeta = MutableEntityModel(null, null)
     val dummyFieldParentMeta = MutableSingleFieldModel(null, dummyRootMeta, MutablePrimitiveModel.fieldValueFactory)
     val dummyFieldMeta = MutableEntityModel(null, dummyFieldParentMeta)
     dummyFieldMeta.setAux(RESOLVED_AUX, resolved)
 
-    val dummyMain = MutableMainModel(null)
-    val dummyEntity = MutableEntityModel(null, dummyMain)
+    val dummyEntity = MutableEntityModel(null, null)
     val dummyField = MutableSingleFieldModel(dummyFieldMeta, dummyEntity, MutablePrimitiveModel.fieldValueFactory)
     return MutablePassword1wayModel(dummyField)
 }

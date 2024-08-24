@@ -1,7 +1,6 @@
 package org.treeWare.model.core
 
 enum class ModelElementType {
-    MAIN,
     ENTITY,
     SINGLE_FIELD,
     LIST_FIELD,

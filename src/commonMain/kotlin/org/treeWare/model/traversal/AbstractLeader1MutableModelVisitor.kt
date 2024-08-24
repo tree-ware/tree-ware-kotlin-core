@@ -7,12 +7,6 @@ abstract class AbstractLeader1MutableModelVisitor<Return>(
 ) : Leader1MutableModelVisitor<Return> {
     // Abstract elements are not visited
 
-    override fun visitMutableMain(leaderMain1: MutableMainModel): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveMutableMain(leaderMain1: MutableMainModel) {}
-
     override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return {
         return defaultVisitReturn
     }

@@ -32,24 +32,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
     private val granularityStack = GranularityStack()
     private val setAuxStack = SetAuxStack()
 
-    override fun visitMain(leaderMain1: MainModel): TraversalAction {
-        modelPathStack.pushField(leaderMain1)
-        val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
-        assertInDevMode(setAuxError == null)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMain1: MainModel) {
-        setAuxStack.pop()
-        modelPathStack.popField()
-        assertInDevMode(setAuxStack.isEmpty())
-        assertInDevMode(granularityStack.isEmpty())
-        assertInDevMode(modelPathStack.isEmpty())
-        if (setAuxStack.nothingToSet) errors.add(
-            ElementModelError("/", "set_ aux not attached to any composition field or entity")
-        )
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         if (isCompositionKey(leaderEntity1)) {
             modelPathStack.pushEntity(leaderEntity1, true)

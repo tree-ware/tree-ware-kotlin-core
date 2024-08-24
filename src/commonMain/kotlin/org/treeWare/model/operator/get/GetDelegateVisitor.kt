@@ -5,7 +5,6 @@ import org.treeWare.model.operator.*
 import org.treeWare.model.traversal.AbstractLeader1Follower1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.util.mergeAddToSet
-import org.treeWare.util.assertInDevMode
 
 // TODO(cleanup): create a mutable-leader version of forEach and visitor to avoid the typecasts in this file.
 
@@ -17,14 +16,6 @@ class GetDelegateVisitor(
     val errors = mutableListOf<ElementModelError>()
 
     private val modelPathStack = ModelPathStack()
-
-    override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): TraversalAction =
-        visitSingleField(leaderMain1, followerMain1)
-
-    override fun leaveMain(leaderMain1: MainModel, followerMain1: MainModel?) {
-        modelPathStack.popField()
-        assertInDevMode(modelPathStack.isEmpty())
-    }
 
     override fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): TraversalAction {
         if (followerEntity1?.parent == null) return visitRootEntity(leaderEntity1, followerEntity1)

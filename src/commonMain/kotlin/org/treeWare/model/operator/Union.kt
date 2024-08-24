@@ -4,7 +4,6 @@ import org.treeWare.model.core.*
 import org.treeWare.model.traversal.AbstractLeaderManyModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
-import org.treeWare.util.assertInDevMode
 
 fun union(
     inputs: List<EntityModel>,
@@ -18,17 +17,6 @@ private class UnionVisitor(
     private val output: MutableEntityModel
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
-
-    override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        visitAux(leaderMainList, output)
-        modelStack.addFirst(output)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMainList: List<MainModel?>) {
-        modelStack.removeFirst()
-        assertInDevMode(modelStack.isEmpty())
-    }
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val parent = modelStack.firstOrNull()

@@ -55,26 +55,6 @@ private abstract class LeaderState(val element: ElementModel, val stateStack: Le
     }
 }
 
-private class MainLeaderState(
-    main: MainModel,
-    stateStack: LeaderStateStack,
-    stateFactoryVisitor: LeaderStateFactoryVisitor
-) : LeaderState(main, stateStack) {
-    override val visitCursorMove = Leader1ModelCursorMove(CursorMoveDirection.VISIT, main)
-    override val leaveCursorMove = Leader1ModelCursorMove(CursorMoveDirection.LEAVE, main)
-    override val actionIterator: Iterator<LeaderStateAction>
-
-    init {
-        val actionList = listOf<LeaderStateAction>({
-            val rootState = main.value?.let { dispatchVisit(it, stateFactoryVisitor) }
-                ?: throw IllegalStateException("null root state")
-            stateStack.addFirst(rootState)
-            rootState.visitCursorMove
-        })
-        actionIterator = actionList.iterator()
-    }
-}
-
 private abstract class BaseEntityLeaderState(
     baseEntity: BaseEntityModel,
     stack: LeaderStateStack,
@@ -211,7 +191,6 @@ private class LeaderStateFactoryVisitor(
     private val traverseAssociations: Boolean,
     private val stateStack: LeaderStateStack
 ) : AbstractLeader1ModelVisitor<LeaderState?>(null) {
-    override fun visitMain(leaderMain1: MainModel) = MainLeaderState(leaderMain1, stateStack, this)
     override fun visitEntity(leaderEntity1: EntityModel) = EntityLeaderState(leaderEntity1, stateStack, this)
 
     // Fields

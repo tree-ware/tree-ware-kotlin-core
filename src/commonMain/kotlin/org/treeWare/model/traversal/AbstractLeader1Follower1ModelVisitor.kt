@@ -5,10 +5,6 @@ import org.treeWare.model.core.*
 abstract class AbstractLeader1Follower1ModelVisitor<Return>(
     private val defaultVisitReturn: Return
 ) : Leader1Follower1ModelVisitor<Return> {
-    override fun visitMain(leaderMain1: MainModel, followerMain1: MainModel?): Return = defaultVisitReturn
-
-    override fun leaveMain(leaderMain1: MainModel, followerMain1: MainModel?) {}
-
     override fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): Return = defaultVisitReturn
 
     override fun leaveEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?) {}

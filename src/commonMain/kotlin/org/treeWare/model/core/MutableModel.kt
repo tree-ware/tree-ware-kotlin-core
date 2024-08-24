@@ -28,25 +28,6 @@ abstract class MutableElementModel : ElementModel {
     open fun getOrNewValue(): MutableElementModel = throw UnsupportedOperationException()
 }
 
-open class MutableMainModel(
-    override val mainMeta: MainModel?,
-    rootFactory: FieldValueFactory = MutableEntityModel.fieldValueFactory
-) :
-    MutableSingleFieldModel(null, null, rootFactory), MainModel {
-    override val parent: MutableBaseEntityModel? = null
-
-    override var value: MutableElementModel? = null
-    override var root: MutableEntityModel?
-        get() = value as MutableEntityModel?
-        set(value) {
-            this.value = value
-        }
-
-    override fun matches(that: ElementModel): Boolean = TODO("Not yet needed, so not yet implemented.")
-
-    fun getOrNewRoot(): MutableEntityModel = getOrNewValue() as MutableEntityModel
-}
-
 abstract class MutableBaseEntityModel(
     override val meta: EntityModel?
 ) : MutableElementModel(), BaseEntityModel {

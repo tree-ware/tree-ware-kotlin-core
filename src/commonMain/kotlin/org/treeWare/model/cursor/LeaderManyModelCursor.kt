@@ -51,25 +51,6 @@ private abstract class LeaderManyState(leaders: Leaders, val stateStack: LeaderM
     }
 }
 
-private class MainLeaderManyState(
-    leaders: Leaders,
-    traverseAssociations: Boolean,
-    stateStack: LeaderManyStateStack
-) : LeaderManyState(leaders, stateStack) {
-    override val actionIterator: Iterator<LeaderManyStateAction>
-
-    init {
-        val actionList = listOf({
-            val rootList = (leaders.elements).map { (it as MainModel?)?.value }
-            val rootLeaders = Leaders(rootList)
-            val rootState = newLeaderManyState(rootLeaders, traverseAssociations, stateStack)
-            stateStack.addFirst(rootState)
-            rootState.visitCursorMove
-        })
-        actionIterator = actionList.iterator()
-    }
-}
-
 private abstract class BaseEntityLeaderManyState(
     leaders: Leaders,
     traverseAssociations: Boolean,
@@ -232,7 +213,6 @@ private fun newLeaderManyState(
     traverseAssociations: Boolean,
     stateStack: LeaderManyStateStack
 ): LeaderManyState = when (leaders.elementType) {
-    ModelElementType.MAIN -> MainLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.ENTITY -> EntityLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.SINGLE_FIELD -> SingleFieldLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.LIST_FIELD -> ListFieldLeaderManyState(leaders, traverseAssociations, stateStack)

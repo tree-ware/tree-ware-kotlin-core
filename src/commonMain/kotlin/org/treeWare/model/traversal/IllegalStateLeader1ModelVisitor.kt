@@ -5,14 +5,6 @@ import org.treeWare.model.core.*
 abstract class IllegalStateLeader1ModelVisitor<Return> : Leader1ModelVisitor<Return> {
     // region visit/leave top elements
 
-    override fun visitMain(leaderMain1: MainModel): Return {
-        throw IllegalStateException()
-    }
-
-    override fun leaveMain(leaderMain1: MainModel) {
-        throw IllegalStateException()
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): Return {
         throw IllegalStateException()
     }

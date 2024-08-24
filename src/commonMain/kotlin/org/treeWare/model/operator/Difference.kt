@@ -4,7 +4,6 @@ import org.treeWare.model.core.*
 import org.treeWare.model.traversal.AbstractLeaderManyModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
-import org.treeWare.util.assertInDevMode
 
 fun difference(
     oldModel: EntityModel,
@@ -26,34 +25,6 @@ private class DifferenceVisitor(
     private val updateStack = ArrayDeque<MutableElementModel?>()
 
     private val inclusionStack = ArrayDeque<Inclusions>()
-
-    override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        createStack.addFirst(output.createModel)
-        deleteStack.addFirst(output.deleteModel)
-        updateStack.addFirst(output.updateModel)
-        inclusionStack.addFirst(Inclusions())
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMainList: List<MainModel?>) {
-        val createMain = createStack.removeFirst() as MutableMainModel
-        assertInDevMode(createStack.isEmpty())
-        if (createMain.isEmpty()) {
-            createMain.setValue(null) // ensure null root instead of empty root
-        }
-
-        val deleteMain = deleteStack.removeFirst() as MutableMainModel
-        assertInDevMode(deleteStack.isEmpty())
-        if (deleteMain.isEmpty()) {
-            deleteMain.setValue(null) // ensure null root instead of empty root
-        }
-
-        val updateMain = updateStack.removeFirst() as MutableMainModel
-        assertInDevMode(updateStack.isEmpty())
-        if (updateMain.isEmpty()) {
-            updateMain.setValue(null) // ensure null root instead of empty root
-        }
-    }
 
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val oldEntity = leaderEntityList.first()

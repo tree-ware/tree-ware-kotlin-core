@@ -32,9 +32,6 @@ fun <Return> dispatchVisit(
     visitor: Leader1ModelVisitor<Return>,
     logPrefix: String? = null // logs if not null
 ): Return? = when (leader.elementType.also { if (logPrefix != null) logDispatch(logPrefix, "->", leader) }) {
-    ModelElementType.MAIN -> {
-        visitor.visitMain(leader as MainModel)
-    }
     ModelElementType.ENTITY -> {
         visitor.visitEntity(leader as EntityModel)
     }
@@ -73,9 +70,6 @@ fun <Return> dispatchLeave(
     logPrefix: String? = null // logs if not null
 ) {
     when (leader.elementType.also { if (logPrefix != null) logDispatch(logPrefix, "<-", leader) }) {
-        ModelElementType.MAIN -> {
-            visitor.leaveMain(leader as MainModel)
-        }
         ModelElementType.ENTITY -> {
             visitor.leaveEntity(leader as EntityModel)
         }

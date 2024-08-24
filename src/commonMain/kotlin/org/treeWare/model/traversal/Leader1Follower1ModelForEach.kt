@@ -39,14 +39,6 @@ fun <Return> dispatchVisit(
     follower: ElementModel?,
     visitor: Leader1Follower1ModelVisitor<Return>
 ): Return? = when (leader.elementType) {
-    ModelElementType.MAIN -> {
-        if (follower != null) assertInDevMode(follower.elementType == ModelElementType.MAIN)
-        if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.visitMain(
-            leader as MainModel,
-            follower as MainModel?
-        )
-        else null
-    }
     ModelElementType.ENTITY -> {
         if (follower != null) assertInDevMode(follower.elementType == ModelElementType.ENTITY)
         if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.visitEntity(
@@ -135,13 +127,6 @@ fun <Return> dispatchLeave(
     visitor: Leader1Follower1ModelVisitor<Return>
 ) {
     when (leader.elementType) {
-        ModelElementType.MAIN -> {
-            if (follower != null) assertInDevMode(follower.elementType == ModelElementType.MAIN)
-            if (follower == null || follower.elementType == ModelElementType.MAIN) visitor.leaveMain(
-                leader as MainModel,
-                follower as MainModel?
-            )
-        }
         ModelElementType.ENTITY -> {
             if (follower != null) assertInDevMode(follower.elementType == ModelElementType.ENTITY)
             if (follower == null || follower.elementType == ModelElementType.ENTITY) visitor.leaveEntity(

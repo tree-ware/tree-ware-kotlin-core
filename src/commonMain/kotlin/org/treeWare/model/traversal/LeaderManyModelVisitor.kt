@@ -5,9 +5,6 @@ import org.treeWare.model.core.*
 interface LeaderManyModelVisitor<Return> {
     // Abstract elements are not visited
 
-    fun visitMain(leaderMainList: List<MainModel?>): Return
-    fun leaveMain(leaderMainList: List<MainModel?>)
-
     fun visitEntity(leaderEntityList: List<EntityModel?>): Return
     fun leaveEntity(leaderEntityList: List<EntityModel?>)
 

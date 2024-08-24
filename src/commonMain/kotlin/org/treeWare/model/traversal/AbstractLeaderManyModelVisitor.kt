@@ -5,12 +5,6 @@ import org.treeWare.model.core.*
 abstract class AbstractLeaderManyModelVisitor<Return>(
     private val defaultVisitReturn: Return
 ) : LeaderManyModelVisitor<Return> {
-    override fun visitMain(leaderMainList: List<MainModel?>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveMain(leaderMainList: List<MainModel?>) {}
-
     override fun visitEntity(leaderEntityList: List<EntityModel?>): Return {
         return defaultVisitReturn
     }

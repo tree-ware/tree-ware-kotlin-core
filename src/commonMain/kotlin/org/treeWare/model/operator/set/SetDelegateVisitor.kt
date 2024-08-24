@@ -19,20 +19,6 @@ class SetDelegateVisitor(
     private val modelPathStack = ModelPathStack()
     private val setAuxStack = SetAuxStack()
 
-    override fun visitMain(leaderMain1: MainModel): TraversalAction {
-        modelPathStack.pushField(leaderMain1)
-        val setAuxError = setAuxStack.push(getSetAux(leaderMain1))
-        assertInDevMode(setAuxError == null)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMain1: MainModel) {
-        modelPathStack.popField()
-        setAuxStack.pop()
-        assertInDevMode(modelPathStack.isEmpty())
-        assertInDevMode(setAuxStack.isEmpty())
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         if (isCompositionKey(leaderEntity1)) {
             modelPathStack.pushEntity(null)

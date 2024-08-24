@@ -5,18 +5,6 @@ import org.treeWare.model.core.*
 interface Leader1Follower2ModelVisitor<Return> {
     // Abstract elements are not visited
 
-    fun visitMain(
-        leaderMain1: MainModel,
-        followerMain1: MainModel?,
-        followerMain2: MainModel?
-    ): Return
-
-    fun leaveMain(
-        leaderMain1: MainModel,
-        followerMain1: MainModel?,
-        followerMain2: MainModel?
-    )
-
     fun visitEntity(
         leaderEntity1: EntityModel,
         followerEntity1: EntityModel?,

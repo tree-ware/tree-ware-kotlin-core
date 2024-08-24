@@ -4,7 +4,6 @@ import org.treeWare.model.core.*
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.model.traversal.forEach
-import org.treeWare.util.assertInDevMode
 
 fun copy(from: ElementModel, to: MutableElementModel, replaceLists: Boolean = false) {
     if (from.elementType != to.elementType) throw IllegalArgumentException("Types of from and to are different: ${from.elementType}, ${to.elementType}")
@@ -17,16 +16,6 @@ private class CopyVisitor(
     private val replaceLists: Boolean
 ) : AbstractLeader1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val modelStack = ArrayDeque<MutableElementModel>()
-
-    override fun visitMain(leaderMain1: MainModel): TraversalAction {
-        assertInDevMode(modelStack.isEmpty())
-        modelStack.addFirst(to)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMain1: MainModel) {
-        modelStack.removeFirst()
-    }
 
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val copyEntity = if (modelStack.isEmpty()) to

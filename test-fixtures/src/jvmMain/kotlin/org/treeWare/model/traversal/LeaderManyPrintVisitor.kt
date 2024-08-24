@@ -26,17 +26,6 @@ class LeaderManyPrintVisitor(private val bufferedSink: BufferedSink) :
         print(key, fieldNames)
     }
 
-    override fun visitMain(leaderMainList: List<MainModel?>): TraversalAction {
-        val mainNames = leaderMainList.map { main -> main?.meta?.let { getMetaName(it) } }
-        print("Main", mainNames)
-        prettyPrinter.indent()
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMainList: List<MainModel?>) {
-        prettyPrinter.unindent()
-    }
-
     override fun visitEntity(leaderEntityList: List<EntityModel?>): TraversalAction {
         val entityNames = leaderEntityList.map { entity ->
             entity?.meta?.let {

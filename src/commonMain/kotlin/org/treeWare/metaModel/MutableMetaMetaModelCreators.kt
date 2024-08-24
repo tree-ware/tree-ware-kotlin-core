@@ -136,7 +136,7 @@ private fun newFieldMetaMeta(
 
 // Meta-meta-meta-models for field types.
 //
-// While a full-blow meta-meta-meta-model is not needed, there is still a need
+// While a full-blown meta-meta-meta-model is not needed, there is still a need
 // for meta-meta-meta-models for primitive field types.
 //
 // To create meta-meta-meta-model instances for field types, parent instances

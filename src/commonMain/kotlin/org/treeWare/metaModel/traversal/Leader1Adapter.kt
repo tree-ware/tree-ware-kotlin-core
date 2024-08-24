@@ -9,9 +9,6 @@ class Leader1Adapter<Return>(
     private val adaptee: Leader1MetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
 ) : Leader1ModelVisitor<Return> {
-    override fun visitMain(leaderMain1: MainModel): Return = defaultVisitReturn
-    override fun leaveMain(leaderMain1: MainModel) {}
-
     override fun visitEntity(leaderEntity1: EntityModel): Return {
         if (isRootEntity(leaderEntity1)) return adaptee.visitMetaModel(leaderEntity1)
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {

@@ -4,8 +4,6 @@ import org.treeWare.metaModel.*
 
 fun getMetaModelFullName(element: ElementModel): String? = getMetaModelResolved(element.meta)?.fullName
 
-fun getMainName(mainModel: MainModel): String? = mainModel.meta?.let { getMetaName(it) }
-
 fun isRootEntity(entityModel: EntityModel): Boolean = entityModel.parent == null
 
 fun isCompositionKey(entityModel: EntityModel): Boolean = entityModel.parent?.let { isKeyField(it) } ?: false

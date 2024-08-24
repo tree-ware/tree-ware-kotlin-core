@@ -26,17 +26,6 @@ class Leader1PrintVisitor(private val bufferedSink: BufferedSink) :
         print(key, fieldName)
     }
 
-    override fun visitMain(leaderMain1: MainModel): TraversalAction {
-        val mainName = leaderMain1.meta?.let { getMetaName(it) }
-        print("Main", mainName)
-        prettyPrinter.indent()
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMain(leaderMain1: MainModel) {
-        prettyPrinter.unindent()
-    }
-
     override fun visitEntity(leaderEntity1: EntityModel): TraversalAction {
         val entityName = leaderEntity1.meta?.let {
             val packageName = getPackageName(it)

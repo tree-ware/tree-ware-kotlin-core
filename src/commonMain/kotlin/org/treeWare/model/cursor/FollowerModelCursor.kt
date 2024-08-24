@@ -64,28 +64,6 @@ private class NullFollowerState(
         }
 }
 
-private class MainFollowerState(
-    private val main: MainModel,
-    stateStack: FollowerStateStack,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor
-) : FollowerState(main, stateStack) {
-    override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, main)
-
-    override fun follow(move: Leader1ModelCursorMove) = when {
-        move.direction == CursorMoveDirection.LEAVE && move.element.elementType == ModelElementType.MAIN -> {
-            stateStack.removeFirst()
-            FollowerModelCursorMove(CursorMoveDirection.LEAVE, main)
-        }
-        move.direction == CursorMoveDirection.VISIT && move.element.elementType == ModelElementType.ENTITY -> {
-            val rootState = main.value?.let { dispatchVisit(it, stateFactoryVisitor) }
-                ?: throw IllegalStateException("null root state")
-            stateStack.addFirst(rootState)
-            rootState.visitCursorMove
-        }
-        else -> super.follow(move)
-    }
-}
-
 private abstract class BaseEntityFollowerState(
     private val baseEntity: BaseEntityModel,
     stack: FollowerStateStack,
@@ -300,7 +278,6 @@ private class FollowerStateFactoryVisitor(
     private val stateStack: FollowerStateStack,
     private val followerEntityEquals: EntityEquals?
 ) : AbstractLeader1ModelVisitor<FollowerState?>(null) {
-    override fun visitMain(leaderMain1: MainModel) = MainFollowerState(leaderMain1, stateStack, this)
     override fun visitEntity(leaderEntity1: EntityModel) = EntityFollowerState(leaderEntity1, stateStack, this)
 
     // Fields

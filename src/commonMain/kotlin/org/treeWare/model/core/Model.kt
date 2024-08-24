@@ -16,15 +16,6 @@ inline fun <reified Aux> ElementModel.getAux(auxName: String): Aux? = this.auxs?
 
 fun ElementModel.getMetaResolved(): Resolved? = this.meta?.getAux<Resolved>(RESOLVED_AUX)
 
-/** The entire model (from the root entity). */
-interface MainModel : SingleFieldModel {
-    override val elementType: ModelElementType
-        get() = ModelElementType.MAIN
-
-    val mainMeta: MainModel?
-    val root: EntityModel? // Same as SingleFieldModel.value but different type
-}
-
 data class Keys(val available: List<SingleFieldModel>, val missing: List<String>)
 
 val EmptyKeys = Keys(emptyList(), emptyList())
