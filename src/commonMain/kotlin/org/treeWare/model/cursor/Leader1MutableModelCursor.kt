@@ -111,27 +111,6 @@ private class SingleFieldLeaderMutableModelState(
     }
 }
 
-private class ListFieldLeaderMutableModelState(
-    field: MutableListFieldModel,
-    stack: LeaderMutableModelStateStack,
-    stateFactoryVisitor: LeaderMutableModelStateFactoryVisitor
-) : LeaderMutableModelState(field, stack) {
-    override val visitCursorMove = Leader1MutableModelCursorMove(CursorMoveDirection.VISIT, field)
-    override val leaveCursorMove = Leader1MutableModelCursorMove(CursorMoveDirection.LEAVE, field)
-    override val actionIterator: Iterator<LeaderMutableModelStateAction>
-
-    init {
-        actionIterator = IteratorAdapter({ field.values.iterator() }) { value ->
-            {
-                val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null list-field state")
-                stateStack.addFirst(valueState)
-                valueState.visitCursorMove
-            }
-        }
-    }
-}
-
 private class SetFieldLeaderMutableModelState(
     field: MutableSetFieldModel,
     stack: LeaderMutableModelStateStack,
@@ -203,9 +182,6 @@ private class LeaderMutableModelStateFactoryVisitor(
 
     override fun visitMutableSingleField(leaderField1: MutableSingleFieldModel) =
         SingleFieldLeaderMutableModelState(leaderField1, stateStack, this)
-
-    override fun visitMutableListField(leaderField1: MutableListFieldModel) =
-        ListFieldLeaderMutableModelState(leaderField1, stateStack, this)
 
     override fun visitMutableSetField(leaderField1: MutableSetFieldModel) =
         SetFieldLeaderMutableModelState(leaderField1, stateStack, this)

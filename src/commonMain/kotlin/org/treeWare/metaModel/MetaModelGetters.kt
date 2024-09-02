@@ -123,7 +123,7 @@ fun getMultiplicityMeta(fieldMeta: EntityModel): Multiplicity =
 
 fun isCollectionFieldMeta(fieldMeta: EntityModel?): Boolean = fieldMeta?.let {
     val multiplicity = getMultiplicityMeta(fieldMeta)
-    multiplicity == Multiplicity.LIST || multiplicity == Multiplicity.SET
+    multiplicity == Multiplicity.SET
 } ?: false
 
 fun isRequiredFieldMeta(fieldMeta: EntityModel?): Boolean =
@@ -134,9 +134,6 @@ fun isConditionalFieldMeta(fieldMeta: EntityModel?): Boolean =
 
 fun isUnconditionallyRequiredFieldMeta(fieldMeta: EntityModel?): Boolean =
     isRequiredFieldMeta(fieldMeta) && !isConditionalFieldMeta(fieldMeta)
-
-fun isListFieldMeta(fieldMeta: EntityModel?): Boolean =
-    fieldMeta?.let { getMultiplicityMeta(fieldMeta) == Multiplicity.LIST } ?: false
 
 fun isSetFieldMeta(fieldMeta: EntityModel?): Boolean =
     fieldMeta?.let { getMultiplicityMeta(fieldMeta) == Multiplicity.SET } ?: false

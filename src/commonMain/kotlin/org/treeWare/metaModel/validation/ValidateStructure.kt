@@ -242,9 +242,6 @@ private fun validateFieldMultiplicity(fieldMeta: EntityModel, fieldId: String): 
     }
     val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull() ?: return listOf()
     return when (multiplicityMeta) {
-        Multiplicity.LIST ->
-            if (fieldTypeMeta != FieldType.COMPOSITION) listOf()
-            else listOf("$fieldId is a composition field and they cannot be lists")
         Multiplicity.SET ->
             if (fieldTypeMeta == FieldType.COMPOSITION) listOf()
             else listOf("$fieldId cannot be a 'set'. Only compositions can be sets.")

@@ -41,13 +41,6 @@ private class UnionVisitor(
         modelStack.removeFirst()
     }
 
-    override fun visitListField(leaderFieldList: List<ListFieldModel?>): TraversalAction =
-        visitField(leaderFieldList)
-
-    override fun leaveListField(leaderFieldList: List<ListFieldModel?>) {
-        modelStack.removeFirst()
-    }
-
     override fun visitSetField(leaderFieldList: List<SetFieldModel?>): TraversalAction =
         visitField(leaderFieldList)
 

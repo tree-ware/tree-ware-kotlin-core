@@ -68,13 +68,6 @@ interface CollectionFieldModel : FieldModel {
     fun getValueMatching(that: ElementModel): ElementModel?
 }
 
-interface ListFieldModel : CollectionFieldModel {
-    override val elementType: ModelElementType
-        get() = ModelElementType.LIST_FIELD
-
-    override val values: List<ElementModel>
-}
-
 interface SetFieldModel : CollectionFieldModel {
     override val elementType: ModelElementType
         get() = ModelElementType.SET_FIELD

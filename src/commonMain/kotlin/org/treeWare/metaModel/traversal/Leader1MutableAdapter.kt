@@ -46,22 +46,6 @@ class Leader1MutableAdapter<Return>(
     override fun visitMutableSingleField(leaderField1: MutableSingleFieldModel): Return = defaultVisitReturn
     override fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel) {}
 
-    override fun visitMutableListField(leaderField1: MutableListFieldModel): Return {
-        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/field/association" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/unique/fields" -> defaultVisitReturn
-            else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
-        }
-    }
-
-    override fun leaveMutableListField(leaderField1: MutableListFieldModel) {
-        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/field/association" -> Unit
-            "/tree_ware_meta_model.main/unique/fields" -> Unit
-            else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
-        }
-    }
-
     override fun visitMutableSetField(leaderField1: MutableSetFieldModel): Return {
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/meta_model/packages" -> defaultVisitReturn

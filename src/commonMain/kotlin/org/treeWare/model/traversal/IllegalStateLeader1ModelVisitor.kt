@@ -25,14 +25,6 @@ abstract class IllegalStateLeader1ModelVisitor<Return> : Leader1ModelVisitor<Ret
         throw IllegalStateException()
     }
 
-    override fun visitListField(leaderField1: ListFieldModel): Return {
-        throw IllegalStateException()
-    }
-
-    override fun leaveListField(leaderField1: ListFieldModel) {
-        throw IllegalStateException()
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel): Return {
         throw IllegalStateException()
     }

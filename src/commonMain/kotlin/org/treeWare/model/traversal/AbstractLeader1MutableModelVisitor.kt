@@ -21,12 +21,6 @@ abstract class AbstractLeader1MutableModelVisitor<Return>(
 
     override fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel) {}
 
-    override fun visitMutableListField(leaderField1: MutableListFieldModel): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveMutableListField(leaderField1: MutableListFieldModel) {}
-
     override fun visitMutableSetField(leaderField1: MutableSetFieldModel): Return {
         return defaultVisitReturn
     }

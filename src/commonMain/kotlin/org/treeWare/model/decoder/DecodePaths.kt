@@ -82,8 +82,6 @@ private fun decodePath(
             field as MutableSingleFieldModel,
             fieldType
         )
-        // TODO(deepak-nulu): support list fields; without gaps in the index(?); with aux for each element
-        Multiplicity.LIST -> DecodePathResult.Error("Field $fieldId is a list; lists are not yet supported")
         Multiplicity.SET -> decodeSetField(
             path,
             pathParts,

@@ -106,28 +106,6 @@ private class SingleFieldLeaderManyState(
     }
 }
 
-private class ListFieldLeaderManyState(
-    leaders: Leaders,
-    traverseAssociations: Boolean,
-    stateStack: LeaderManyStateStack
-) : LeaderManyState(leaders, stateStack) {
-    override val actionIterator: Iterator<LeaderManyStateAction>
-
-    init {
-        // Traverse list elements at each index together.
-        val lists = leaders.elements
-        val maxSize = lists.maxOf { (it as ListFieldModel?)?.values?.size ?: 0 }
-        actionIterator = IteratorAdapter({ (0 until maxSize).iterator() }) { index ->
-            {
-                val indexElements = lists.map { (it as ListFieldModel?)?.values?.getOrNull(index) }
-                val indexState = newLeaderManyState(Leaders(indexElements), traverseAssociations, stateStack)
-                stateStack.addFirst(indexState)
-                indexState.visitCursorMove
-            }
-        }
-    }
-}
-
 private class SetFieldLeaderManyState(
     leaders: Leaders,
     traverseAssociations: Boolean,
@@ -215,7 +193,6 @@ private fun newLeaderManyState(
 ): LeaderManyState = when (leaders.elementType) {
     ModelElementType.ENTITY -> EntityLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.SINGLE_FIELD -> SingleFieldLeaderManyState(leaders, traverseAssociations, stateStack)
-    ModelElementType.LIST_FIELD -> ListFieldLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.SET_FIELD -> SetFieldLeaderManyState(leaders, traverseAssociations, stateStack)
     ModelElementType.PRIMITIVE -> ScalarValueLeaderManyState(leaders, stateStack)
     ModelElementType.ALIAS -> ScalarValueLeaderManyState(leaders, stateStack)

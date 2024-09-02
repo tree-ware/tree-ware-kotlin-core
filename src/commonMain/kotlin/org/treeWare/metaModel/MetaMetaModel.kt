@@ -4,9 +4,9 @@ import io.github.z4kn4fein.semver.Version
 import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
-import org.treeWare.model.core.MutableListFieldModel
+import org.treeWare.model.core.MutableSetFieldModel
 
-enum class Multiplicity { REQUIRED, OPTIONAL, LIST, SET }
+enum class Multiplicity { REQUIRED, OPTIONAL, SET }
 
 enum class FieldType {
     BOOLEAN,
@@ -63,7 +63,7 @@ private fun populateMetaMeta(metaMeta: MutableEntityModel) {
     populatePackages(packagesMeta)
 }
 
-private fun populatePackages(packagesMeta: MutableListFieldModel) {
+private fun populatePackages(packagesMeta: MutableSetFieldModel) {
     val mainPackage = newPackageMetaMeta(packagesMeta, META_MODEL_MAIN_PACKAGE)
     populateMainPackage(mainPackage)
 }
@@ -75,7 +75,7 @@ private fun populateMainPackage(mainPackage: MutableEntityModel) {
     populateMainEnumerations(enumerationsMeta)
 }
 
-private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
+private fun populateMainEntities(entitiesMeta: MutableSetFieldModel) {
     val metaModelEntityMeta = newEntityMetaMeta(entitiesMeta, "meta_model")
     populateMetaModelEntity(metaModelEntityMeta)
     val versionEntityMeta = newEntityMetaMeta(entitiesMeta, "version")
@@ -92,8 +92,9 @@ private fun populateMainEntities(entitiesMeta: MutableListFieldModel) {
     populateEntityEntity(entityEntityMeta)
     val fieldEntityMeta = newEntityMetaMeta(entitiesMeta, "field")
     populateFieldEntity(fieldEntityMeta)
-    val uniqueEntityMeta = newEntityMetaMeta(entitiesMeta, "unique")
-    populateUniqueEntity(uniqueEntityMeta)
+    // TODO #### revert following commented-out code
+//    val uniqueEntityMeta = newEntityMetaMeta(entitiesMeta, "unique")
+//    populateUniqueEntity(uniqueEntityMeta)
     val enumerationInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "enumeration_info")
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
     val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")
@@ -149,7 +150,8 @@ private fun populateEntityEntity(entityEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newCompositionFieldMetaMeta(fields, "fields", null, "field", META_MODEL_MAIN_PACKAGE, "set")
-    newCompositionFieldMetaMeta(fields, "uniques", null, "unique", META_MODEL_MAIN_PACKAGE, "set")
+    // TODO #### revert following commented-out code
+//    newCompositionFieldMetaMeta(fields, "uniques", null, "unique", META_MODEL_MAIN_PACKAGE, "set")
 }
 
 private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
@@ -175,7 +177,9 @@ private fun populateUniqueEntity(uniqueEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(uniqueEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newEnumerationFieldMetaMeta(fields, "type", null, "unique_type", META_MODEL_MAIN_PACKAGE, "optional")
-    newPrimitiveFieldMetaMeta(fields, "fields", null, "string", "list")
+    // TODO #### change the following from a list of strings, to a set of entities where each entity has a "name"
+    //           string field
+    newPrimitiveFieldMetaMeta(fields, "fields", null, "string", "set")
 }
 
 private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEntityModel) {
@@ -199,7 +203,7 @@ fun populateExistsIfClauseEntity(existsIfEntityMeta: MutableEntityModel) {
     newCompositionFieldMetaMeta(fields, "arg2", null, "exists_if_clause", META_MODEL_MAIN_PACKAGE, "optional")
 }
 
-private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel) {
+private fun populateMainEnumerations(enumerationsMeta: MutableSetFieldModel) {
     populateFieldTypeEnumeration(enumerationsMeta)
     populateMultiplicityEnumeration(enumerationsMeta)
     populateUniqueTypeEnumeration(enumerationsMeta)
@@ -207,7 +211,7 @@ private fun populateMainEnumerations(enumerationsMeta: MutableListFieldModel) {
     populateGranularityEnumeration(enumerationsMeta)
 }
 
-fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
+fun populateFieldTypeEnumeration(enumerationsMeta: MutableSetFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "field_type",
@@ -215,7 +219,7 @@ fun populateFieldTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
         FieldType.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
 
-private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldModel) {
+private fun populateMultiplicityEnumeration(enumerationsMeta: MutableSetFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "multiplicity",
@@ -223,7 +227,7 @@ private fun populateMultiplicityEnumeration(enumerationsMeta: MutableListFieldMo
         Multiplicity.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
 
-fun populateUniqueTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
+fun populateUniqueTypeEnumeration(enumerationsMeta: MutableSetFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "unique_type",
@@ -231,7 +235,7 @@ fun populateUniqueTypeEnumeration(enumerationsMeta: MutableListFieldModel) {
         UniqueType.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
 
-fun populateExistsIfOperatorEnumeration(enumerationsMeta: MutableListFieldModel) {
+fun populateExistsIfOperatorEnumeration(enumerationsMeta: MutableSetFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "exists_if_operator",
@@ -239,7 +243,7 @@ fun populateExistsIfOperatorEnumeration(enumerationsMeta: MutableListFieldModel)
         ExistsIfOperator.values().map { EnumerationValueMetaMeta(it.name.lowercase()) })
 }
 
-fun populateGranularityEnumeration(enumerationsMeta: MutableListFieldModel) {
+fun populateGranularityEnumeration(enumerationsMeta: MutableSetFieldModel) {
     newEnumerationMetaMeta(
         enumerationsMeta,
         "granularity",

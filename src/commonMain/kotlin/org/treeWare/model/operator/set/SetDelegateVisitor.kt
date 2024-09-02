@@ -134,14 +134,6 @@ private class NonKeysVisitor(
         return TraversalAction.ABORT_SUB_TREE
     }
 
-    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
-        when (getFieldType(leaderField1)) {
-            FieldType.ASSOCIATION -> associations.add(leaderField1)
-            else -> other.add(leaderField1)
-        }
-        return TraversalAction.ABORT_SUB_TREE
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel): TraversalAction {
         return TraversalAction.ABORT_SUB_TREE
     }

@@ -14,11 +14,6 @@ abstract class AbstractLeader1Follower1ModelVisitor<Return>(
 
     override fun leaveSingleField(leaderField1: SingleFieldModel, followerField1: SingleFieldModel?) {}
 
-    override fun visitListField(leaderField1: ListFieldModel, followerField1: ListFieldModel?): Return =
-        defaultVisitReturn
-
-    override fun leaveListField(leaderField1: ListFieldModel, followerField1: ListFieldModel?) {}
-
     override fun visitSetField(leaderField1: SetFieldModel, followerField1: SetFieldModel?): Return = defaultVisitReturn
 
     override fun leaveSetField(leaderField1: SetFieldModel, followerField1: SetFieldModel?) {}

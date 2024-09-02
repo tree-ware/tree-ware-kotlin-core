@@ -42,8 +42,6 @@ class GetDelegateWildcardEntitiesTests {
             val settingsField = arg<MutableSingleFieldModel>(3)
             val settings = settingsField.getOrNewValue() as MutableEntityModel
             setBooleanSingleField(settings, "last_name_first", true)
-            val cardColors = getOrNewMutableListField(settings, "card_colors")
-            addEnumerationListFieldElement(cardColors, "orange")
             GetCompositionResult.Entity(settings)
         }
         every {
@@ -128,20 +126,10 @@ class GetDelegateWildcardEntitiesTests {
                 "info",
                 "One of the most populous and most densely populated major city in USA"
             )
-            val newYorkRelated = getOrNewMutableListField(newYork, "related_city_info")
-            addRelatedCity(
-                newYorkRelated,
-                "Albany",
-                "New York",
-                "United States of America",
-                ""
-            )
 
             val albany = getNewMutableSetEntity(cityInfo)
             addCity(albany, "Albany", "New York", "United States of America")
             setStringSingleField(albany, "info", "Capital of New York state")
-            val albanyRelated = getOrNewMutableListField(albany, "related_city_info")
-            addRelatedCity(albanyRelated, "New York City", "New York", "United States of America", "")
 
             GetCompositionSetResult.Entities(listOf(newYork, albany))
         }

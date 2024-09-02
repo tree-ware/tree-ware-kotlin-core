@@ -56,7 +56,6 @@ abstract class MutableBaseEntityModel(
             ?: throw IllegalStateException("fieldMeta is null when creating mutable field model")
         val valueFactory = getFieldValueFactory(fieldName, fieldMeta)
         val newField = when (getMultiplicityMeta(fieldMeta)) {
-            Multiplicity.LIST -> MutableListFieldModel(fieldMeta, this, valueFactory)
             Multiplicity.SET -> MutableSetFieldModel(fieldMeta, this, valueFactory)
             else -> MutableSingleFieldModel(fieldMeta, this, valueFactory)
         }
@@ -193,43 +192,6 @@ abstract class MutableCollectionFieldModel(
     abstract override val values: MutableCollection<MutableElementModel>
 
     abstract fun addValue(value: MutableElementModel)
-}
-
-class MutableListFieldModel(
-    meta: EntityModel?,
-    parent: MutableBaseEntityModel,
-    val valueFactory: FieldValueFactory,
-) : MutableCollectionFieldModel(meta, parent), ListFieldModel {
-    override val values = mutableListOf<MutableElementModel>()
-
-    override fun matches(that: ElementModel): Boolean {
-        if (that !is ListFieldModel) return false
-        if (this.values.size != that.values.size) return false
-        this.values.forEachIndexed { index, thisValue ->
-            val thatValue = that.values[index]
-            if (!thisValue.matches(thatValue)) return false
-        }
-        return true
-    }
-
-    override fun firstValue(): ElementModel? = values.firstOrNull()
-    override fun getValueMatching(that: ElementModel): ElementModel? = values.find { it.matches(that) }
-
-    /** Adds a new value to the list and returns the new value. */
-    override fun getOrNewValue(): MutableElementModel {
-        val fieldMeta = meta ?: throw IllegalStateException("Field meta is null when creating mutable value model")
-        val newValue = valueFactory(fieldMeta, this)
-        addValue(newValue)
-        return newValue
-    }
-
-    override fun addValue(value: MutableElementModel) {
-        values.add(value)
-    }
-
-    fun clear() {
-        values.clear()
-    }
 }
 
 class MutableSetFieldModel(

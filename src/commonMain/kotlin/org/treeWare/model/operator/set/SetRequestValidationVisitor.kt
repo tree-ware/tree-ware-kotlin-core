@@ -100,16 +100,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         if (getFieldType(leaderField1) == FieldType.COMPOSITION) setAuxStack.pop()
     }
 
-    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
-        return when (getFieldType(leaderField1)) {
-            FieldType.STRING -> validateListStringConstraints(leaderField1)
-            FieldType.ASSOCIATION -> validateListAssociation(leaderField1)
-            else -> TraversalAction.CONTINUE
-        }
-    }
-
-    override fun leaveListField(leaderField1: ListFieldModel) {}
-
     override fun visitSetField(leaderField1: SetFieldModel): TraversalAction {
         modelPathStack.pushField(leaderField1)
         return validateCompositionField(leaderField1)
@@ -134,26 +124,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         if (primitive == null) {
             errors.add(ElementModelError(fieldPath, "string values must not be null in set-requests"))
         } else validateStringValue(fieldPath, primitive.value as String, minSize, maxSize, regex)
-
-        return TraversalAction.CONTINUE
-    }
-
-    private fun validateListStringConstraints(field: ListFieldModel): TraversalAction {
-        // Skip if there are no constraints.
-        val fieldMeta = field.meta ?: throw IllegalStateException("Meta-model is missing for field")
-        // TODO(performance): need a single flag to avoid individual checks
-        val minSize = getMinSizeConstraint(fieldMeta)?.toInt()
-        val maxSize = getMaxSizeConstraint(fieldMeta)?.toInt()
-        val regex = getRegexConstraint(fieldMeta)
-        if (minSize == null && maxSize == null && regex == null) return TraversalAction.CONTINUE
-
-        field.values.forEachIndexed { index, elementModel ->
-            modelPathStack.pushField(field, index)
-            val fieldPath = modelPathStack.peekModelPath()
-            val value = (elementModel as PrimitiveModel).value as String
-            validateStringValue(fieldPath, value, minSize, maxSize, regex)
-            modelPathStack.popField()
-        }
 
         return TraversalAction.CONTINUE
     }
@@ -187,20 +157,6 @@ class SetRequestValidationVisitor : AbstractLeader1ModelVisitor<TraversalAction>
         error?.also {
             val fieldPath = modelPathStack.peekModelPath()
             errors.add(ElementModelError(fieldPath, it))
-        }
-        return TraversalAction.CONTINUE
-    }
-
-    private fun validateListAssociation(field: ListFieldModel): TraversalAction {
-        field.values.forEachIndexed { index, elementModel ->
-            modelPathStack.pushField(field, index)
-            val fieldPath = modelPathStack.peekModelPath()
-            val value = elementModel as AssociationModel
-            val error = validateAssociation(value)
-            error?.also {
-                errors.add(ElementModelError(fieldPath, it))
-            }
-            modelPathStack.popField()
         }
         return TraversalAction.CONTINUE
     }

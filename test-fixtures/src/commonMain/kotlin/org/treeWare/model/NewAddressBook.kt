@@ -16,10 +16,6 @@ fun newAddressBook(auxName: String): EntityModel {
     val settings = getOrNewMutableSingleEntity(root, "settings")
     setBooleanSingleField(settings, "last_name_first", true)
     setBooleanSingleField(settings, "encrypt_hero_name", false)
-    val cardColors = getOrNewMutableListField(settings, "card_colors")
-    addEnumerationListFieldElement(cardColors, "orange").setAux(auxName, "Aux for scalar element in list")
-    addEnumerationListFieldElement(cardColors, "green").setAux(auxName, "Aux for list element green")
-    addEnumerationListFieldElement(cardColors, "blue").setAux(auxName, "Aux for another scalar list element")
 
     val groups = getOrNewMutableSetField(root, "groups")
     val dc = getNewMutableSetEntity(groups)
@@ -103,37 +99,15 @@ fun newAddressBook(auxName: String): EntityModel {
         "info",
         "One of the most populous and most densely populated major city in USA"
     ).setAux(auxName, "Aux for info")
-    val newYorkRelated = getOrNewMutableListField(newYorkCityInfo, "related_city_info")
-    newYorkRelated.setAux(auxName, "Aux for related city list")
-    addRelatedCity(
-        newYorkRelated,
-        "Albany",
-        "New York",
-        "United States of America",
-        auxName,
-        "Aux for association element in list"
-    )
-    addRelatedCity(newYorkRelated, "Princeton", "New Jersey", "United States of America", auxName)
-    addRelatedCity(
-        newYorkRelated,
-        "San Francisco",
-        "California",
-        "United States of America",
-        auxName,
-        "Aux for association element in list after an element without aux"
-    )
     cityInfoSet.addValue(newYorkCityInfo)
 
     val albanyCityInfo = getNewMutableSetEntity(cityInfoSet)
     setStringSingleField(albanyCityInfo, "info", "Capital of New York state")
     addCity(albanyCityInfo, "Albany", "New York", "United States of America")
-    val albanyRelated = getOrNewMutableListField(albanyCityInfo, "related_city_info")
-    addRelatedCity(albanyRelated, "New York City", "New York", "United States of America", auxName)
     cityInfoSet.addValue(albanyCityInfo)
 
     val princetonCityInfo = getNewMutableSetEntity(cityInfoSet)
     setStringSingleField(princetonCityInfo, "info", "Home of Princeton University")
-    getOrNewMutableListField(princetonCityInfo, "related_city_info")
     addCity(princetonCityInfo, "Princeton", "New Jersey", "United States of America")
     cityInfoSet.addValue(princetonCityInfo)
 
@@ -193,7 +167,7 @@ fun addCity(parentEntity: MutableEntityModel, name: String, state: String, count
 }
 
 fun addRelatedCity(
-    relatedList: MutableListFieldModel,
+    relatedList: MutableSetFieldModel,
     name: String,
     state: String,
     country: String,

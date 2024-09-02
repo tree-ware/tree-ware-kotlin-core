@@ -76,12 +76,6 @@ private class DifferenceVisitor(
     override fun leaveSingleField(leaderFieldList: List<SingleFieldModel?>) =
         leaveField()
 
-    override fun visitListField(leaderFieldList: List<ListFieldModel?>): TraversalAction =
-        visitField(leaderFieldList)
-
-    override fun leaveListField(leaderFieldList: List<ListFieldModel?>) =
-        leaveField()
-
     override fun visitSetField(leaderFieldList: List<SetFieldModel?>): TraversalAction =
         visitField(leaderFieldList)
 
@@ -201,14 +195,6 @@ private class DifferenceVisitor(
             return TraversalAction.ABORT_SUB_TREE
         }
 
-        if (updateField.elementType == ModelElementType.LIST_FIELD) {
-            if (!listsMatch(oldField as ListFieldModel, newField as ListFieldModel)) {
-                fieldInclusions.inUpdate = true
-                copy(newField, updateField)
-                return TraversalAction.ABORT_SUB_TREE
-            }
-        }
-
         return TraversalAction.CONTINUE
     }
 
@@ -229,27 +215,6 @@ private class DifferenceVisitor(
             val outputParent = stack.first() as MutableBaseEntityModel
             outputParent.detachField(outputField)
         }
-    }
-
-    private fun listsMatch(oldList: ListFieldModel, newList: ListFieldModel): Boolean {
-        val oldSize = oldList.values.size
-        val newSize = newList.values.size
-        if (oldSize != newSize) return false
-        if (oldSize == 0) return true
-
-        val oldElement = oldList.values[0]
-        return if (oldElement.elementType == ModelElementType.ASSOCIATION) associationListsMatch(oldList, newList)
-        else oldList.matches(newList)
-    }
-
-    private fun associationListsMatch(oldList: ListFieldModel, newList: ListFieldModel): Boolean {
-        if (oldList.values.size != newList.values.size) return false
-        oldList.values.forEachIndexed { index, oldElement ->
-            val oldAssociation = oldElement as AssociationModel
-            val newAssociation = newList.values[index] as AssociationModel
-            if (!associationsMatch(oldAssociation, newAssociation)) return false
-        }
-        return true
     }
 
     // Uses the difference operator to compare associations.

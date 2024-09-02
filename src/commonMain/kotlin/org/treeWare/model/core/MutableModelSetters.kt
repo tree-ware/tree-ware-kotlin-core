@@ -16,9 +16,6 @@ fun getNewMutableSetEntity(setField: MutableSetFieldModel): MutableEntityModel =
 fun getOrNewMutableSingleField(entityModel: MutableBaseEntityModel, fieldName: String): MutableSingleFieldModel =
     entityModel.getOrNewField(fieldName) as MutableSingleFieldModel
 
-fun getOrNewMutableListField(entityModel: MutableBaseEntityModel, fieldName: String): MutableListFieldModel =
-    entityModel.getOrNewField(fieldName) as MutableListFieldModel
-
 fun getOrNewMutableSetField(entityModel: MutableBaseEntityModel, fieldName: String): MutableSetFieldModel =
     entityModel.getOrNewField(fieldName) as MutableSetFieldModel
 
@@ -42,12 +39,6 @@ fun setStringSingleField(
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
     return field
-}
-
-fun addStringListFieldElement(listField: MutableListFieldModel, value: String): MutablePrimitiveModel {
-    val primitive = listField.getOrNewValue() as MutablePrimitiveModel
-    primitive.setValue(value)
-    return primitive
 }
 
 fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: String) {
@@ -97,10 +88,4 @@ fun setEnumerationSingleField(
     val enumeration = field.getOrNewValue() as MutableEnumerationModel
     enumeration.setValue(value)
     return field
-}
-
-fun addEnumerationListFieldElement(listField: MutableListFieldModel, value: String): MutableEnumerationModel {
-    val enumeration = listField.getOrNewValue() as MutableEnumerationModel
-    enumeration.setValue(value)
-    return enumeration
 }

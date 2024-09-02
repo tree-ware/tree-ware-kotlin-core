@@ -31,18 +31,6 @@ interface Leader1Follower2ModelVisitor<Return> {
         followerField2: SingleFieldModel?
     )
 
-    fun visitListField(
-        leaderField1: ListFieldModel,
-        followerField1: ListFieldModel?,
-        followerField2: ListFieldModel?
-    ): Return
-
-    fun leaveListField(
-        leaderField1: ListFieldModel,
-        followerField1: ListFieldModel?,
-        followerField2: ListFieldModel?
-    )
-
     fun visitSetField(
         leaderField1: SetFieldModel,
         followerField1: SetFieldModel?,

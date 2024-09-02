@@ -144,14 +144,6 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 "info",
                 "One of the most populous and most densely populated major city in USA"
             )
-            val newYorkRelated = getOrNewMutableListField(newYork, "related_city_info")
-            addRelatedCity(
-                newYorkRelated,
-                "Albany",
-                "New York",
-                "United States of America",
-                ""
-            )
 
             GetCompositionSetResult.Entities(listOf(newYork))
         }

@@ -13,9 +13,6 @@ interface Leader1ModelVisitor<Return> {
     fun visitSingleField(leaderField1: SingleFieldModel): Return
     fun leaveSingleField(leaderField1: SingleFieldModel)
 
-    fun visitListField(leaderField1: ListFieldModel): Return
-    fun leaveListField(leaderField1: ListFieldModel)
-
     fun visitSetField(leaderField1: SetFieldModel): Return
     fun leaveSetField(leaderField1: SetFieldModel)
 

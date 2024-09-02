@@ -128,7 +128,6 @@ class BaseEntityStateMachine(
                     options.onMissingKeys == OnMissingKeys.SKIP_WITH_ERRORS
                 }
             } ?: true
-            ModelElementType.LIST_FIELD -> true
             else -> {
                 // Remove self from stack
                 stack.removeFirst()

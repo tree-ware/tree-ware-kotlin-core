@@ -16,13 +16,13 @@ class ModelPathStack {
      * Pass null to add a dummy entry. This is useful when aborting the sub-tree; the leave method will get called
      * and the leave method can pop the stack without needing to check if the visit method aborted the sub-tree.
      */
-    fun pushField(field: FieldModel?, listFieldIndex: Int? = null) {
+    fun pushField(field: FieldModel?) {
         if (field == null) {
             pathStack.addFirst("")
             return
         }
         val parentPath = pathStack.firstOrNull() ?: ""
-        val newPart = getFieldPathPart(field, listFieldIndex)
+        val newPart = getFieldPathPart(field)
         val newPath = if (parentPath == "/") newPart else "$parentPath$newPart"
         pathStack.addFirst(newPath)
     }
@@ -65,11 +65,10 @@ class ModelPathStack {
     private val pathStack = ArrayDeque<String>()
 }
 
-private fun getFieldPathPart(field: FieldModel, listFieldIndex: Int?): String {
+private fun getFieldPathPart(field: FieldModel): String {
     val partBuilder = StringBuilder("/")
     val fieldName = getFieldName(field)
     partBuilder.append(fieldName)
-    listFieldIndex?.also { partBuilder.append("/").append(it) }
     return partBuilder.toString()
 }
 

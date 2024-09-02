@@ -14,13 +14,6 @@ class GranularityValidationTests {
     }
 
     @Test
-    fun `Granularity must be optional for non-composition list-fields`() {
-        val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.LIST, null)
-        val expectedErrors = emptyList<String>()
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
     fun `Granularity must be optional for composition single-fields`() {
         val metaModelJson = getCompositionMetaModelJson(Multiplicity.OPTIONAL, null)
         val expectedErrors = emptyList<String>()
@@ -41,13 +34,6 @@ class GranularityValidationTests {
     @Test
     fun `Field granularity must pass for non-composition single-fields`() {
         val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.OPTIONAL, Granularity.FIELD)
-        val expectedErrors = emptyList<String>()
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
-    fun `Field granularity must pass for non-composition list-fields`() {
-        val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.LIST, Granularity.FIELD)
         val expectedErrors = emptyList<String>()
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -82,17 +68,6 @@ class GranularityValidationTests {
     }
 
     @Test
-    fun `Entity granularity must fail for non-composition list-fields`() {
-        val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.LIST, Granularity.ENTITY)
-        val expectedErrors = listOf(
-            "/test.main/test_entity/primitive_field: `entity` granularity is not yet supported",
-            "/test.main/test_entity/enumeration_field: `entity` granularity is not yet supported",
-            "/test.main/test_entity/association_field: `entity` granularity is not yet supported",
-        )
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
     fun `Entity granularity must fail for composition single-fields`() {
         val metaModelJson = getCompositionMetaModelJson(Multiplicity.OPTIONAL, Granularity.ENTITY)
         val expectedErrors = listOf(
@@ -117,17 +92,6 @@ class GranularityValidationTests {
     @Test
     fun `Sub-tree granularity must fail for non-composition single-fields`() {
         val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.OPTIONAL, Granularity.SUB_TREE)
-        val expectedErrors = listOf(
-            "/test.main/test_entity/primitive_field: `sub_tree` granularity is supported only for composition fields",
-            "/test.main/test_entity/enumeration_field: `sub_tree` granularity is supported only for composition fields",
-            "/test.main/test_entity/association_field: `sub_tree` granularity is supported only for composition fields",
-        )
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
-    fun `Sub-tree granularity must fail for non-composition list-fields`() {
-        val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.LIST, Granularity.SUB_TREE)
         val expectedErrors = listOf(
             "/test.main/test_entity/primitive_field: `sub_tree` granularity is supported only for composition fields",
             "/test.main/test_entity/enumeration_field: `sub_tree` granularity is supported only for composition fields",

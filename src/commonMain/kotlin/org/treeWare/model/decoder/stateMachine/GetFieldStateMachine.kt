@@ -35,58 +35,29 @@ private fun getScalarStateMachine(
     stack: DecodingStack,
     errors: MutableList<String>,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
-): DecodingStateMachine =
-    if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
-        val listElementStateMachine = ScalarValueModelStateMachine(
-            true,
-            { listFieldModel.getOrNewValue() as MutableScalarValueModel },
-            stack
-        )
-        wrapListElementStateMachine(
-            field,
-            listElementStateMachine,
-            isWrappedElements = true,
-            stack,
-            errors,
-            multiAuxDecodingStateMachineFactory
-        )
-    } else (field as MutableSingleFieldModel).let { singleFieldModel ->
-        ScalarValueModelStateMachine(
-            false,
-            { singleFieldModel.getOrNewValue() as MutableScalarValueModel },
-            stack
-        )
-    }
+): DecodingStateMachine {
+    val singleFieldModel = field as MutableSingleFieldModel
+    return ScalarValueModelStateMachine(
+        false,
+        { singleFieldModel.getOrNewValue() as MutableScalarValueModel },
+        stack
+    )
+}
 
 private fun getPassword1wayStateMachine(
     field: MutableFieldModel,
     stack: DecodingStack,
     errors: MutableList<String>,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
-): DecodingStateMachine =
-    if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
-        val listElementStateMachine = Password1wayModelStateMachine(
-            true,
-            { listFieldModel.getOrNewValue() as MutablePassword1wayModel },
-            stack,
-            multiAuxDecodingStateMachineFactory
-        )
-        wrapListElementStateMachine(
-            listFieldModel,
-            listElementStateMachine,
-            isWrappedElements = false,
-            stack,
-            errors,
-            multiAuxDecodingStateMachineFactory
-        )
-    } else (field as MutableSingleFieldModel).let { singleFieldModel ->
-        Password1wayModelStateMachine(
-            false,
-            { singleFieldModel.getOrNewValue() as MutablePassword1wayModel },
-            stack,
-            multiAuxDecodingStateMachineFactory
-        )
-    }
+): DecodingStateMachine {
+    val singleFieldModel = field as MutableSingleFieldModel
+    return Password1wayModelStateMachine(
+        false,
+        { singleFieldModel.getOrNewValue() as MutablePassword1wayModel },
+        stack,
+        multiAuxDecodingStateMachineFactory
+    )
+}
 
 
 private fun getPassword2wayStateMachine(
@@ -94,30 +65,15 @@ private fun getPassword2wayStateMachine(
     stack: DecodingStack,
     errors: MutableList<String>,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
-): DecodingStateMachine =
-    if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
-        val listElementStateMachine = Password2wayModelStateMachine(
-            true,
-            { listFieldModel.getOrNewValue() as MutablePassword2wayModel },
-            stack,
-            multiAuxDecodingStateMachineFactory
-        )
-        wrapListElementStateMachine(
-            listFieldModel,
-            listElementStateMachine,
-            isWrappedElements = false,
-            stack,
-            errors,
-            multiAuxDecodingStateMachineFactory
-        )
-    } else (field as MutableSingleFieldModel).let { singleFieldModel ->
-        Password2wayModelStateMachine(
-            false,
-            { singleFieldModel.getOrNewValue() as MutablePassword2wayModel },
-            stack,
-            multiAuxDecodingStateMachineFactory
-        )
-    }
+): DecodingStateMachine {
+    val singleFieldModel = field as MutableSingleFieldModel
+    return Password2wayModelStateMachine(
+        false,
+        { singleFieldModel.getOrNewValue() as MutablePassword2wayModel },
+        stack,
+        multiAuxDecodingStateMachineFactory
+    )
+}
 
 private fun getAssociationStateMachine(
     field: MutableFieldModel,
@@ -125,42 +81,21 @@ private fun getAssociationStateMachine(
     options: ModelDecoderOptions,
     errors: MutableList<String>,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
-): DecodingStateMachine =
-    if (isListField(field)) (field as MutableListFieldModel).let { listFieldModel ->
-        val listElementStateMachine = BaseEntityStateMachine(
-            listFieldModel,
-            {
-                val association = listFieldModel.getOrNewValue() as MutableAssociationModel
-                association.value
-            },
-            stack,
-            options,
-            errors,
-            multiAuxDecodingStateMachineFactory,
-            null
-        )
-        wrapListElementStateMachine(
-            listFieldModel,
-            listElementStateMachine,
-            isWrappedElements = false,
-            stack,
-            errors,
-            multiAuxDecodingStateMachineFactory
-        )
-    } else (field as MutableSingleFieldModel).let { singleFieldModel ->
-        BaseEntityStateMachine(
-            null,
-            {
-                val association = singleFieldModel.getOrNewValue() as MutableAssociationModel
-                association.value
-            },
-            stack,
-            options,
-            errors,
-            multiAuxDecodingStateMachineFactory,
-            null
-        )
-    }
+): DecodingStateMachine {
+    val singleFieldModel = field as MutableSingleFieldModel
+    return BaseEntityStateMachine(
+        null,
+        {
+            val association = singleFieldModel.getOrNewValue() as MutableAssociationModel
+            association.value
+        },
+        stack,
+        options,
+        errors,
+        multiAuxDecodingStateMachineFactory,
+        null
+    )
+}
 
 private fun getCompositionStateMachine(
     field: MutableFieldModel,
@@ -191,20 +126,6 @@ private fun getCompositionStateMachine(
             "Entities must not be null; use empty object {} instead"
         )
     }
-
-private fun wrapListElementStateMachine(
-    listFieldModel: MutableListFieldModel,
-    listElementStateMachine: ValueDecodingStateMachine,
-    isWrappedElements: Boolean,
-    stack: DecodingStack,
-    errors: MutableList<String>,
-    multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory
-): DecodingStateMachine {
-    val elementStateMachine =
-        if (!isWrappedElements) listElementStateMachine
-        else ValueAndAuxStateMachine(true, listElementStateMachine, stack, multiAuxDecodingStateMachineFactory)
-    return CollectionFieldModelStateMachine(listFieldModel, elementStateMachine, stack, errors)
-}
 
 private fun wrapSetElementStateMachine(
     setFieldModel: MutableSetFieldModel,

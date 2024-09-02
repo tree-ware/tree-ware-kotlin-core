@@ -54,24 +54,6 @@ class Leader1Adapter<Return>(
     override fun visitSingleField(leaderField1: SingleFieldModel): Return = defaultVisitReturn
     override fun leaveSingleField(leaderField1: SingleFieldModel) {}
 
-    override fun visitListField(leaderField1: ListFieldModel): Return {
-        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/field/association" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/unique/fields" -> defaultVisitReturn
-            null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
-            else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
-        }
-    }
-
-    override fun leaveListField(leaderField1: ListFieldModel) {
-        return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/field/association" -> Unit
-            "/tree_ware_meta_model.main/unique/fields" -> Unit
-            null -> Unit // TODO(deepak-nulu): for meta-meta-models; should not be needed
-            else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
-        }
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel): Return {
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
             "/tree_ware_meta_model.main/meta_model/packages" -> defaultVisitReturn

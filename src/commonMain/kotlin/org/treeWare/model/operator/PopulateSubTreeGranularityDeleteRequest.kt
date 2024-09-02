@@ -2,7 +2,10 @@ package org.treeWare.model.operator
 
 import org.treeWare.metaModel.Granularity
 import org.treeWare.metaModel.getGranularityMeta
-import org.treeWare.model.core.*
+import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.core.MutableSetFieldModel
+import org.treeWare.model.core.MutableSingleFieldModel
+import org.treeWare.model.core.isCompositionKey
 import org.treeWare.model.operator.set.aux.SetAux
 import org.treeWare.model.operator.set.aux.getSetAux
 import org.treeWare.model.operator.set.aux.setSetAux
@@ -55,15 +58,6 @@ private class PopulateSubTreeGranularityDeleteRequestVisitor :
     }
 
     override fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel) {
-        modelPathStack.popField()
-    }
-
-    override fun visitMutableListField(leaderField1: MutableListFieldModel): TraversalAction {
-        modelPathStack.pushField(leaderField1)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveMutableListField(leaderField1: MutableListFieldModel) {
         modelPathStack.popField()
     }
 

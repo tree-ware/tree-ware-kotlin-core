@@ -165,16 +165,6 @@
               "multiplicity": "optional"
             },
             {
-              "name": "card_colors",
-              "number": 3,
-              "type": "enumeration",
-              "enumeration": {
-                "name": "address_book_color",
-                "package": "address_book.main"
-              },
-              "multiplicity": "list"
-            },
-            {
               "name": "background_color",
               "number": 4,
               "type": "enumeration",
@@ -242,13 +232,6 @@
               "multiplicity": "optional"
             },
             {
-              "name": "email",
-              "number": 5,
-              "type": "string",
-              "multiplicity": "list",
-              "regex": "[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+"
-            },
-            {
               "name": "picture",
               "number": 6,
               "type": "blob",
@@ -271,22 +254,10 @@
               "multiplicity": "optional"
             },
             {
-              "name": "previous_passwords",
-              "number": 9,
-              "type": "password1way",
-              "multiplicity": "list"
-            },
-            {
               "name": "main_secret",
               "number": 10,
               "type": "password2way",
               "multiplicity": "optional"
-            },
-            {
-              "name": "other_secrets",
-              "number": 11,
-              "type": "password2way",
-              "multiplicity": "list"
             },
             {
               "name": "group",

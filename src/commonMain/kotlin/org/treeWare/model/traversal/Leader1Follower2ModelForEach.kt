@@ -73,19 +73,6 @@ fun <Return> dispatchVisit(
         )
         else null
     }
-    ModelElementType.LIST_FIELD -> {
-        if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.LIST_FIELD)
-        if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.LIST_FIELD)
-        if (
-            (follower1 == null || follower1.elementType == ModelElementType.LIST_FIELD) &&
-            (follower2 == null || follower2.elementType == ModelElementType.LIST_FIELD)
-        ) visitor.visitListField(
-            leader as ListFieldModel,
-            follower1 as ListFieldModel?,
-            follower2 as ListFieldModel?,
-        )
-        else null
-    }
     ModelElementType.SET_FIELD -> {
         if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.SET_FIELD)
         if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.SET_FIELD)
@@ -208,18 +195,6 @@ fun <Return> dispatchLeave(
                 leader as SingleFieldModel,
                 follower1 as SingleFieldModel?,
                 follower2 as SingleFieldModel?,
-            )
-        }
-        ModelElementType.LIST_FIELD -> {
-            if (follower1 != null) assertInDevMode(follower1.elementType == ModelElementType.LIST_FIELD)
-            if (follower2 != null) assertInDevMode(follower2.elementType == ModelElementType.LIST_FIELD)
-            if (
-                (follower1 == null || follower1.elementType == ModelElementType.LIST_FIELD) &&
-                (follower2 == null || follower2.elementType == ModelElementType.LIST_FIELD)
-            ) visitor.leaveListField(
-                leader as ListFieldModel,
-                follower1 as ListFieldModel?,
-                follower2 as ListFieldModel?,
             )
         }
         ModelElementType.SET_FIELD -> {

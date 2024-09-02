@@ -77,16 +77,6 @@
                 "field": "is_coastal_city",
                 "value": "true"
               }
-            },
-            {
-              "name": "related_city_info",
-              "number": 30,
-              "type": "association",
-              "association": {
-                "entity": "address_book_city_info",
-                "package": "address_book.city"
-              },
-              "multiplicity": "list"
             }
           ]
         }

@@ -33,11 +33,6 @@ internal class AssociationValidationVisitor : AbstractLeader1ModelVisitor<Traver
         return checkForMultiplePaths()
     }
 
-    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
-        hasNonKeyFields = true
-        return TraversalAction.ABORT_TREE
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel): TraversalAction = checkForMultiplePaths()
 
     override fun leaveSetField(leaderField1: SetFieldModel) {

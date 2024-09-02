@@ -93,9 +93,6 @@ fun getFieldType(fieldModel: FieldModel): FieldType =
 fun isKeyField(fieldModel: FieldModel): Boolean =
     fieldModel.meta?.let { isKeyFieldMeta(it) } ?: throw IllegalStateException()
 
-fun isListField(fieldModel: FieldModel): Boolean =
-    fieldModel.meta?.let { isListFieldMeta(it) } ?: throw IllegalStateException()
-
 fun isSetField(fieldModel: FieldModel): Boolean =
     fieldModel.meta?.let { isSetFieldMeta(it) } ?: throw IllegalStateException()
 

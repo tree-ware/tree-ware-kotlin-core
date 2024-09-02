@@ -75,10 +75,6 @@ private abstract class BaseEntityFollowerState(
                 move.element as SingleFieldModel,
                 FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
             )
-            ModelElementType.LIST_FIELD -> visitField(
-                move.element as ListFieldModel,
-                FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
-            )
             ModelElementType.SET_FIELD -> visitField(
                 move.element as SetFieldModel,
                 FollowerModelCursorMove(CursorMoveDirection.VISIT, null)
@@ -141,37 +137,6 @@ private class SingleFieldFollowerState(
                 stateStack
             ) else dispatchVisit(followerValue, stateFactoryVisitor)
                 ?: throw IllegalStateException("null single-field state")
-            stateStack.addFirst(elementState)
-            elementState.visitCursorMove
-        }
-    }
-}
-
-private class ListFieldFollowerState(
-    private val field: ListFieldModel,
-    stack: FollowerStateStack,
-    private val stateFactoryVisitor: FollowerStateFactoryVisitor
-) : FollowerState(field, stack) {
-    override val visitCursorMove = FollowerModelCursorMove(CursorMoveDirection.VISIT, field)
-    private var listIndex = -1
-
-    override fun follow(move: Leader1ModelCursorMove): FollowerModelCursorMove? = when (move.direction) {
-        CursorMoveDirection.LEAVE -> when (move.element.elementType) {
-            ModelElementType.LIST_FIELD -> {
-                stateStack.removeFirst()
-                FollowerModelCursorMove(CursorMoveDirection.LEAVE, field)
-            }
-            else -> super.follow(move)
-        }
-        CursorMoveDirection.VISIT -> {
-            // Follow list elements by index.
-            ++listIndex
-            val followerValue: ElementModel? = field.values.getOrNull(listIndex)
-            val elementState = if (followerValue == null) NullFollowerState(
-                FollowerModelCursorMove(CursorMoveDirection.VISIT, null),
-                stateStack
-            ) else dispatchVisit(followerValue, stateFactoryVisitor)
-                ?: throw IllegalStateException("null list-field state")
             stateStack.addFirst(elementState)
             elementState.visitCursorMove
         }
@@ -284,9 +249,6 @@ private class FollowerStateFactoryVisitor(
 
     override fun visitSingleField(leaderField1: SingleFieldModel) =
         SingleFieldFollowerState(leaderField1, stateStack, this)
-
-    override fun visitListField(leaderField1: ListFieldModel) =
-        ListFieldFollowerState(leaderField1, stateStack, this)
 
     override fun visitSetField(leaderField1: SetFieldModel) =
         SetFieldFollowerState(leaderField1, stateStack, this, followerEntityEquals)

@@ -38,9 +38,6 @@ fun <Return> dispatchVisit(
     ModelElementType.SINGLE_FIELD -> {
         visitor.visitSingleField(leader as SingleFieldModel)
     }
-    ModelElementType.LIST_FIELD -> {
-        visitor.visitListField(leader as ListFieldModel)
-    }
     ModelElementType.SET_FIELD -> {
         visitor.visitSetField(leader as SetFieldModel)
     }
@@ -75,9 +72,6 @@ fun <Return> dispatchLeave(
         }
         ModelElementType.SINGLE_FIELD -> {
             visitor.leaveSingleField(leader as SingleFieldModel)
-        }
-        ModelElementType.LIST_FIELD -> {
-            visitor.leaveListField(leader as ListFieldModel)
         }
         ModelElementType.SET_FIELD -> {
             visitor.leaveSetField(leader as SetFieldModel)

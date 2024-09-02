@@ -17,12 +17,6 @@ abstract class AbstractLeaderManyModelVisitor<Return>(
 
     override fun leaveSingleField(leaderFieldList: List<SingleFieldModel?>) {}
 
-    override fun visitListField(leaderFieldList: List<ListFieldModel?>): Return {
-        return defaultVisitReturn
-    }
-
-    override fun leaveListField(leaderFieldList: List<ListFieldModel?>) {}
-
     override fun visitSetField(leaderFieldList: List<SetFieldModel?>): Return {
         return defaultVisitReturn
     }

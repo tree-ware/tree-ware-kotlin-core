@@ -53,16 +53,6 @@ class LeaderManyPrintVisitor(private val bufferedSink: BufferedSink) :
         prettyPrinter.unindent()
     }
 
-    override fun visitListField(leaderFieldList: List<ListFieldModel?>): TraversalAction {
-        printFieldNames("List field", leaderFieldList)
-        prettyPrinter.indent()
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveListField(leaderFieldList: List<ListFieldModel?>) {
-        prettyPrinter.unindent()
-    }
-
     override fun visitSetField(leaderFieldList: List<SetFieldModel?>): TraversalAction {
         printFieldNames("Set field", leaderFieldList)
         prettyPrinter.indent()

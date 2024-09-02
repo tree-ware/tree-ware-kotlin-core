@@ -13,9 +13,6 @@ interface Leader1MutableModelVisitor<Return> {
     fun visitMutableSingleField(leaderField1: MutableSingleFieldModel): Return
     fun leaveMutableSingleField(leaderField1: MutableSingleFieldModel)
 
-    fun visitMutableListField(leaderField1: MutableListFieldModel): Return
-    fun leaveMutableListField(leaderField1: MutableListFieldModel)
-
     fun visitMutableSetField(leaderField1: MutableSetFieldModel): Return
     fun leaveMutableSetField(leaderField1: MutableSetFieldModel)
 

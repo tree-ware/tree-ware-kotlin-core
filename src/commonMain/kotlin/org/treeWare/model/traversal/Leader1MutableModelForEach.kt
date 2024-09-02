@@ -30,7 +30,6 @@ fun <Return> dispatchVisit(
 ): Return? = when (leader.elementType) {
     ModelElementType.ENTITY -> visitor.visitMutableEntity(leader as MutableEntityModel)
     ModelElementType.SINGLE_FIELD -> visitor.visitMutableSingleField(leader as MutableSingleFieldModel)
-    ModelElementType.LIST_FIELD -> visitor.visitMutableListField(leader as MutableListFieldModel)
     ModelElementType.SET_FIELD -> visitor.visitMutableSetField(leader as MutableSetFieldModel)
     ModelElementType.PRIMITIVE -> visitor.visitMutablePrimitive(leader as MutablePrimitiveModel)
     ModelElementType.ALIAS -> visitor.visitMutableAlias(leader as MutableAliasModel)
@@ -46,7 +45,6 @@ fun <Return> dispatchLeave(
 ) = when (leader.elementType) {
     ModelElementType.ENTITY -> visitor.leaveMutableEntity(leader as MutableEntityModel)
     ModelElementType.SINGLE_FIELD -> visitor.leaveMutableSingleField(leader as MutableSingleFieldModel)
-    ModelElementType.LIST_FIELD -> visitor.leaveMutableListField(leader as MutableListFieldModel)
     ModelElementType.SET_FIELD -> visitor.leaveMutableSetField(leader as MutableSetFieldModel)
     ModelElementType.PRIMITIVE -> visitor.leaveMutablePrimitive(leader as MutablePrimitiveModel)
     ModelElementType.ALIAS -> visitor.leaveMutableAlias(leader as MutableAliasModel)

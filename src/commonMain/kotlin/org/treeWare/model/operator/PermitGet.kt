@@ -88,13 +88,6 @@ private class PermitGetVisitor(
         } else leaveLeafField()
     }
 
-    override fun visitListField(leaderField1: ListFieldModel, followerField1: ListFieldModel?): TraversalAction =
-        visitLeafField(leaderField1, followerField1)
-
-    override fun leaveListField(leaderField1: ListFieldModel, followerField1: ListFieldModel?) {
-        leaveLeafField()
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel, followerField1: SetFieldModel?): TraversalAction =
         visitBranchField(leaderField1, followerField1)
 

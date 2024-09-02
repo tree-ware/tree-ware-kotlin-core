@@ -106,27 +106,6 @@ private class SingleFieldLeaderState(
     }
 }
 
-private class ListFieldLeaderState(
-    field: ListFieldModel,
-    stack: LeaderStateStack,
-    stateFactoryVisitor: LeaderStateFactoryVisitor
-) : LeaderState(field, stack) {
-    override val visitCursorMove = Leader1ModelCursorMove(CursorMoveDirection.VISIT, field)
-    override val leaveCursorMove = Leader1ModelCursorMove(CursorMoveDirection.LEAVE, field)
-    override val actionIterator: Iterator<LeaderStateAction>
-
-    init {
-        actionIterator = IteratorAdapter({ field.values.iterator() }) { value ->
-            {
-                val valueState =
-                    dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null list-field state")
-                stateStack.addFirst(valueState)
-                valueState.visitCursorMove
-            }
-        }
-    }
-}
-
 private class SetFieldLeaderState(
     field: SetFieldModel,
     stack: LeaderStateStack,
@@ -198,7 +177,6 @@ private class LeaderStateFactoryVisitor(
     override fun visitSingleField(leaderField1: SingleFieldModel) =
         SingleFieldLeaderState(leaderField1, stateStack, this)
 
-    override fun visitListField(leaderField1: ListFieldModel) = ListFieldLeaderState(leaderField1, stateStack, this)
     override fun visitSetField(leaderField1: SetFieldModel) = SetFieldLeaderState(leaderField1, stateStack, this)
 
     // Values

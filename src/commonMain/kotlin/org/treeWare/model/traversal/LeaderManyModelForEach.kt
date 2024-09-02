@@ -35,7 +35,6 @@ fun <Return> dispatchVisit(
 ): Return? = when (elementType) {
     ModelElementType.ENTITY -> visitor.visitEntity(leaders as List<EntityModel?>)
     ModelElementType.SINGLE_FIELD -> visitor.visitSingleField(leaders as List<SingleFieldModel?>)
-    ModelElementType.LIST_FIELD -> visitor.visitListField(leaders as List<ListFieldModel?>)
     ModelElementType.SET_FIELD -> visitor.visitSetField(leaders as List<SetFieldModel?>)
     ModelElementType.PRIMITIVE -> visitor.visitPrimitive(leaders as List<PrimitiveModel?>)
     ModelElementType.ALIAS -> visitor.visitAlias(leaders as List<AliasModel?>)
@@ -52,7 +51,6 @@ fun <Return> dispatchLeave(
 ) = when (elementType) {
     ModelElementType.ENTITY -> visitor.leaveEntity(leaders as List<EntityModel?>)
     ModelElementType.SINGLE_FIELD -> visitor.leaveSingleField(leaders as List<SingleFieldModel?>)
-    ModelElementType.LIST_FIELD -> visitor.leaveListField(leaders as List<ListFieldModel?>)
     ModelElementType.SET_FIELD -> visitor.leaveSetField(leaders as List<SetFieldModel?>)
     ModelElementType.PRIMITIVE -> visitor.leavePrimitive(leaders as List<PrimitiveModel?>)
     ModelElementType.ALIAS -> visitor.leaveAlias(leaders as List<AliasModel?>)

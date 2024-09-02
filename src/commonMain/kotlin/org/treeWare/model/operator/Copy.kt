@@ -43,16 +43,6 @@ private class CopyVisitor(
         modelStack.removeFirst()
     }
 
-    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
-        val action = visitField(leaderField1)
-        if (replaceLists) (modelStack.first() as MutableListFieldModel).clear()
-        return action
-    }
-
-    override fun leaveListField(leaderField1: ListFieldModel) {
-        modelStack.removeFirst()
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel): TraversalAction = visitField(leaderField1)
 
     override fun leaveSetField(leaderField1: SetFieldModel) {

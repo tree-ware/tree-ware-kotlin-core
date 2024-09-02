@@ -1,12 +1,13 @@
 package org.treeWare.model.encoder
 
-import org.treeWare.metaModel.*
+import org.treeWare.metaModel.FieldType
+import org.treeWare.metaModel.getFieldTypeMeta
+import org.treeWare.metaModel.getMetaName
+import org.treeWare.metaModel.isCollectionFieldMeta
 import org.treeWare.model.core.*
 import org.treeWare.model.traversal.Leader1ModelVisitor
 import org.treeWare.model.traversal.TraversalAction
 import org.treeWare.util.encodeBase64
-
-const val VALUE_KEY = "value"
 
 class ModelEncodingVisitor(
     private val wireFormatEncoder: WireFormatEncoder,
@@ -43,17 +44,6 @@ class ModelEncodingVisitor(
 
     override fun leaveSingleField(leaderField1: SingleFieldModel) {}
 
-    override fun visitListField(leaderField1: ListFieldModel): TraversalAction {
-        val fieldName = getFieldName(leaderField1)
-        encodeAuxs(fieldName, leaderField1)
-        wireFormatEncoder.encodeListStart(fieldName)
-        return TraversalAction.CONTINUE
-    }
-
-    override fun leaveListField(leaderField1: ListFieldModel) {
-        wireFormatEncoder.encodeListEnd()
-    }
-
     override fun visitSetField(leaderField1: SetFieldModel): TraversalAction {
         val fieldName = getFieldName(leaderField1)
         encodeAuxs(fieldName, leaderField1)
@@ -68,10 +58,8 @@ class ModelEncodingVisitor(
     // Values
 
     override fun visitPrimitive(leaderValue1: PrimitiveModel): TraversalAction {
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
-        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
-        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
-        if (isListElement) wireFormatEncoder.encodeObjectStart(null)
+        val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
         encodeAuxs(auxFieldName, leaderValue1)
         val value = leaderValue1.value
         // Integers in JavaScript are limited to 53 bits. So 64-bit values ("long", "timestamp")
@@ -97,10 +85,7 @@ class ModelEncodingVisitor(
         return TraversalAction.CONTINUE
     }
 
-    override fun leavePrimitive(leaderValue1: PrimitiveModel) {
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
-        if (isListElement) wireFormatEncoder.encodeObjectEnd()
-    }
+    override fun leavePrimitive(leaderValue1: PrimitiveModel) {}
 
     override fun visitAlias(leaderValue1: AliasModel): TraversalAction = TraversalAction.CONTINUE
     override fun leaveAlias(leaderValue1: AliasModel) {}
@@ -114,12 +99,10 @@ class ModelEncodingVisitor(
             }
         }
 
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
-        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        val auxFieldName = leaderValue1.parent.meta?.let { getMetaName(it) }
+        encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) encodeAuxs(null, leaderValue1)
         leaderValue1.unhashed?.also {
             if (encodePasswords == EncodePasswords.ALL) wireFormatEncoder.encodeStringField("unhashed", it)
         }
@@ -144,12 +127,10 @@ class ModelEncodingVisitor(
             }
         }
 
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
         val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
-        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        val auxFieldName = leaderValue1.parent.meta?.let { getMetaName(it) }
+        encodeAuxs(auxFieldName, leaderValue1)
         wireFormatEncoder.encodeObjectStart(fieldName)
-        if (isListElement) encodeAuxs(null, leaderValue1)
         leaderValue1.unencrypted?.also {
             if (encodePasswords == EncodePasswords.ALL) wireFormatEncoder.encodeStringField("unencrypted", it)
         }
@@ -166,25 +147,19 @@ class ModelEncodingVisitor(
     override fun leavePassword2way(leaderValue1: Password2wayModel) {}
 
     override fun visitEnumeration(leaderValue1: EnumerationModel): TraversalAction {
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
-        val fieldName = if (isListElement) VALUE_KEY else leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
-        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (isListElement) wireFormatEncoder.encodeObjectStart(null)
+        val fieldName = leaderValue1.parent.meta?.let { getMetaName(it) } ?: ""
+        val auxFieldName = leaderValue1.parent.meta?.let { getMetaName(it) }
         encodeAuxs(auxFieldName, leaderValue1)
         val value = leaderValue1.value
         wireFormatEncoder.encodeStringField(fieldName, value)
         return TraversalAction.CONTINUE
     }
 
-    override fun leaveEnumeration(leaderValue1: EnumerationModel) {
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
-        if (isListElement) wireFormatEncoder.encodeObjectEnd()
-    }
+    override fun leaveEnumeration(leaderValue1: EnumerationModel) {}
 
     override fun visitAssociation(leaderValue1: AssociationModel): TraversalAction {
-        val isListElement = leaderValue1.parent.meta?.let { isListFieldMeta(it) } ?: false
-        val auxFieldName = if (isListElement) null else leaderValue1.parent.meta?.let { getMetaName(it) }
-        if (!isListElement) encodeAuxs(auxFieldName, leaderValue1)
+        val auxFieldName = leaderValue1.parent.meta?.let { getMetaName(it) }
+        encodeAuxs(auxFieldName, leaderValue1)
         isEncodingAssociation = true
         return TraversalAction.CONTINUE
     }
