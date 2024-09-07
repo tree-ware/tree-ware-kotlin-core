@@ -39,7 +39,7 @@ class UniquesValidationTests {
             |           "type": "global",
             |           "fields": [
             |             {
-            |               "value": "serial_number"
+            |               "name": "serial_number"
             |             }
             |           ]
             |         },
@@ -47,7 +47,7 @@ class UniquesValidationTests {
             |           "name": "duplicate",
             |           "fields": [
             |             {
-            |               "value": "mac_address"
+            |               "name": "mac_address"
             |             }
             |           ]
             |         }
@@ -89,7 +89,7 @@ class UniquesValidationTests {
             |           "type": "invalid",
             |           "fields": [
             |             {
-            |               "value": "serial_number"
+            |               "name": "serial_number"
             |             }
             |           ]
             |         }
@@ -192,10 +192,10 @@ class UniquesValidationTests {
             |           "type": "global",
             |           "fields": [
             |             {
-            |               "value": "not_defined_1"
+            |               "name": "not_defined_1"
             |             },
             |             {
-            |               "value": "not_defined_2"
+            |               "name": "not_defined_2"
             |             }
             |           ]
             |         }
@@ -229,12 +229,6 @@ class UniquesValidationTests {
             |           "is_key": true
             |         },
             |         {
-            |           "name": "list_field",
-            |           "number": 2,
-            |           "type": "string",
-            |           "multiplicity": "list"
-            |         },
-            |         {
             |           "name": "set_field",
             |           "number": 3,
             |           "type": "composition",
@@ -251,10 +245,7 @@ class UniquesValidationTests {
             |           "type": "global",
             |           "fields": [
             |             {
-            |               "value": "list_field"
-            |             },
-            |             {
-            |               "value": "set_field"
+            |               "name": "set_field"
             |             }
             |           ]
             |         }
@@ -266,8 +257,7 @@ class UniquesValidationTests {
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
         val expectedErrors = listOf(
-            "Collection fields are not supported in uniques: Package 1 entity 0 unique 0 field 0: list_field",
-            "Collection fields are not supported in uniques: Package 1 entity 0 unique 0 field 1: set_field"
+            "Collection fields are not supported in uniques: Package 1 entity 0 unique 0 field 0: set_field"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -303,7 +293,7 @@ class UniquesValidationTests {
             |           "type": "global",
             |           "fields": [
             |             {
-            |               "value": "composition_field"
+            |               "name": "composition_field"
             |             }
             |           ]
             |         }
@@ -361,10 +351,10 @@ class UniquesValidationTests {
             |           "type": "global",
             |           "fields": [
             |             {
-            |               "value": "make"
+            |               "name": "make"
             |             },
             |             {
-            |               "value": "serial_number"
+            |               "name": "serial_number"
             |             }
             |           ]
             |         },
@@ -372,7 +362,7 @@ class UniquesValidationTests {
             |           "name": "association",
             |           "fields": [
             |             {
-            |               "value": "association_field"
+            |               "name": "association_field"
             |             }
             |           ]
             |         }

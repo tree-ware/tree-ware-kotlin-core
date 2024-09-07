@@ -3,18 +3,7 @@
   "last_updated": "1587147731",
   "settings": {
     "last_name_first": true,
-    "encrypt_hero_name": false,
-    "card_colors": [
-      {
-        "value": "orange"
-      },
-      {
-        "value": "green"
-      },
-      {
-        "value": "blue"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "person": [
     {
@@ -22,14 +11,6 @@
       "first_name": "Clark",
       "last_name": "Kent",
       "hero_name": "Superman",
-      "email": [
-        {
-          "value": "clark.kent@dailyplanet.com"
-        },
-        {
-          "value": "superman@dc.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
       "relation": [
         {
@@ -49,11 +30,6 @@
       "first_name": "Lois",
       "last_name": "Lane",
       "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
-      "email": [
-        {
-          "value": "lois.lane@dailyplanet.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
       "relation": [
         {
@@ -77,31 +53,7 @@
         "state": "New York",
         "country": "United States of America"
       },
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Albany",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Princeton",
-                "state": "New Jersey",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "info": "Capital of New York state",
@@ -109,24 +61,10 @@
         "name": "Albany",
         "state": "New York",
         "country": "United States of America"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "New York City",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       "info": "Home of Princeton University",
-      "related_city_info": [],
       "city": {
         "name": "Princeton",
         "state": "New Jersey",

@@ -35,7 +35,7 @@ class GetDelegateWildcardEntitiesTests {
             delegate.getComposition(
                 "/settings",
                 ofType(),
-                fieldsWithNames("last_name_first", "card_colors"),
+                fieldsWithNames("last_name_first"),
                 ofType()
             )
         } answers {
@@ -113,7 +113,7 @@ class GetDelegateWildcardEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
         } answers {
@@ -142,7 +142,7 @@ class GetDelegateWildcardEntitiesTests {
             delegate.getComposition(
                 "/settings",
                 ofType(),
-                fieldsWithNames("last_name_first", "card_colors"),
+                fieldsWithNames("last_name_first"),
                 ofType()
             )
             delegate.getCompositionSet(
@@ -170,7 +170,7 @@ class GetDelegateWildcardEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
         }

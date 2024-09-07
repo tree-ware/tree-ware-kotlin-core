@@ -29,15 +29,7 @@ class SetDelegateTests {
             |  "settings__set_": "create",
             |  "settings": {
             |    "last_name_first": true,
-            |    "encrypt_hero_name": false,
-            |    "card_colors": [
-            |      {
-            |        "value": "orange"
-            |      },
-            |      {
-            |        "value": "green"
-            |      }
-            |    ]
+            |    "encrypt_hero_name": false
             |  },
             |  "person": [
             |    {
@@ -102,7 +94,7 @@ class SetDelegateTests {
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
-                fieldsWithNames("last_name_first", "encrypt_hero_name", "card_colors")
+                fieldsWithNames("last_name_first", "encrypt_hero_name")
             )
             delegate.setEntity(
                 SetAux.CREATE,
@@ -135,15 +127,7 @@ class SetDelegateTests {
             |  "settings": {
             |    "set_": "create",
             |    "last_name_first": true,
-            |    "encrypt_hero_name": false,
-            |    "card_colors": [
-            |      {
-            |        "value": "orange"
-            |      },
-            |      {
-            |        "value": "green"
-            |      }
-            |    ]
+            |    "encrypt_hero_name": false
             |  },
             |  "person": [
             |    {
@@ -203,7 +187,7 @@ class SetDelegateTests {
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
-                fieldsWithNames("last_name_first", "encrypt_hero_name", "card_colors")
+                fieldsWithNames("last_name_first", "encrypt_hero_name")
             )
             delegate.setEntity(
                 SetAux.CREATE,
@@ -236,15 +220,7 @@ class SetDelegateTests {
             |  "settings": {
             |    "set_": "create",
             |    "last_name_first": true,
-            |    "encrypt_hero_name": false,
-            |    "card_colors": [
-            |      {
-            |        "value": "orange"
-            |      },
-            |      {
-            |        "value": "green"
-            |      }
-            |    ]
+            |    "encrypt_hero_name": false
             |  },
             |  "person__set_": "update",
             |  "person": [
@@ -305,7 +281,7 @@ class SetDelegateTests {
                 ofType(),
                 fieldsWithNames(),
                 fieldsWithNames(),
-                fieldsWithNames("last_name_first", "encrypt_hero_name", "card_colors")
+                fieldsWithNames("last_name_first", "encrypt_hero_name")
             )
             delegate.setEntity(
                 SetAux.CREATE,
@@ -580,35 +556,9 @@ class SetDelegateTests {
             |        "state": "New York",
             |        "country": "United States of America"
             |      },
-            |      "info": "One of the most populous and most densely populated major city in USA",
-            |      "related_city_info": [
-            |        {
-            |          "city_info": [
-            |            {
-            |              "city": {
-            |                "name": "Albany",
-            |                "state": "New York",
-            |                "country": "United States of America"
-            |              }
-            |            }
-            |          ]
-            |        }
-            |      ]
+            |      "info": "One of the most populous and most densely populated major city in USA"
             |    },
             |    {
-            |      "related_city_info": [
-            |        {
-            |          "city_info": [
-            |            {
-            |              "city": {
-            |                "name": "New York City",
-            |                "state": "New York",
-            |                "country": "United States of America"
-            |              }
-            |            }
-            |          ]
-            |        }
-            |      ],
             |      "info": "Capital of New York state",
             |      "city": {
             |        "name": "Albany",
@@ -675,7 +625,7 @@ class SetDelegateTests {
                 "/city_info/New York City/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
-                fieldsWithNames("related_city_info"),
+                fieldsWithNames(),
                 fieldsWithNames("info")
             )
             delegate.setEntity(
@@ -685,7 +635,7 @@ class SetDelegateTests {
                 "/city_info/Albany/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
-                fieldsWithNames("related_city_info"),
+                fieldsWithNames(),
                 fieldsWithNames("info")
             )
             delegate.end()

@@ -4,15 +4,7 @@
   "settings__set_": "create",
   "settings": {
     "last_name_first": true,
-    "encrypt_hero_name": false,
-    "card_colors": [
-      {
-        "value": "orange"
-      },
-      {
-        "value": "green"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "person": [
     {

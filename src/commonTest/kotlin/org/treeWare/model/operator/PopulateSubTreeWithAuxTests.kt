@@ -53,7 +53,6 @@ class PopulateSubTreeWithAuxTests {
                 "set_": "delete",
                 "last_name_first": null,
                 "encrypt_hero_name": null,
-                "card_colors": [],
                 "background_color": null,
                 "advanced": {
                   "set_": "delete",
@@ -106,7 +105,6 @@ class PopulateSubTreeWithAuxTests {
                   "first_name": null,
                   "last_name": null,
                   "hero_name": null,
-                  "email": [],
                   "picture": null,
                   "relation": [
                     {
@@ -117,9 +115,7 @@ class PopulateSubTreeWithAuxTests {
                     }
                   ],
                   "password": null,
-                  "previous_passwords": [],
                   "main_secret": null,
-                  "other_secrets": [],
                   "group": null,
                   "is_hero": null,
                   "hero_details": {
@@ -199,8 +195,7 @@ class PopulateSubTreeWithAuxTests {
                     "longitude": null
                   },
                   "is_coastal_city": null,
-                  "water_body_name": null,
-                  "related_city_info": []
+                  "water_body_name": null
                 }
               ]
             }

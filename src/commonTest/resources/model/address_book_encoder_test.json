@@ -5,21 +5,7 @@
   "settings__aux_": "Aux for settings",
   "settings": {
     "last_name_first": true,
-    "encrypt_hero_name": false,
-    "card_colors": [
-      {
-        "aux_": "Aux for scalar element in list",
-        "value": "orange"
-      },
-      {
-        "aux_": "Aux for list element green",
-        "value": "green"
-      },
-      {
-        "aux_": "Aux for another scalar list element",
-        "value": "blue"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "groups": [
     {
@@ -129,45 +115,7 @@
         "country": "United States of America"
       },
       "info__aux_": "Aux for info",
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info__aux_": "Aux for related city list",
-      "related_city_info": [
-        {
-          "aux_": "Aux for association element in list",
-          "city_info": [
-            {
-              "city": {
-                "name": "Albany",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Princeton",
-                "state": "New Jersey",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "aux_": "Aux for association element in list after an element without aux",
-          "city_info": [
-            {
-              "city": {
-                "name": "San Francisco",
-                "state": "California",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "info": "Capital of New York state",
@@ -175,24 +123,10 @@
         "name": "Albany",
         "state": "New York",
         "country": "United States of America"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "New York City",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       "info": "Home of Princeton University",
-      "related_city_info": [],
       "city": {
         "name": "Princeton",
         "state": "New Jersey",

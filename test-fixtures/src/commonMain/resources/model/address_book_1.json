@@ -3,18 +3,7 @@
   "last_updated": "1587147731",
   "settings": {
     "last_name_first": true,
-    "encrypt_hero_name": false,
-    "card_colors": [
-      {
-        "value": "orange"
-      },
-      {
-        "value": "green"
-      },
-      {
-        "value": "blue"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "groups": [
     {
@@ -47,14 +36,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "clark.kent@dailyplanet.com"
-        },
-        {
-          "value": "superman@dc.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
       "relation": [
         {
@@ -72,27 +53,9 @@
       "password": {
         "unhashed": "kryptonite"
       },
-      "previous_passwords": [
-        {
-          "unhashed": "hello123"
-        },
-        {
-          "hashed": "test-hashed-superman",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "unencrypted": "Alien from Krypton"
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "secret1"
-        },
-        {
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     },
     {
       "first_name": "Lois",
@@ -110,11 +73,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "lois.lane@dailyplanet.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
       "relation": [
         {
@@ -133,28 +91,10 @@
         "hashed": "test-hashed-lois",
         "hash_version": 1
       },
-      "previous_passwords": [
-        {
-          "unhashed": "password1"
-        },
-        {
-          "hashed": "test-hashed-password2",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "encrypted": "test-encrypted-main-secret",
         "cipher_version": 1
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "secret1"
-        },
-        {
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     }
   ],
   "city_info": [
@@ -164,31 +104,7 @@
         "state": "New York",
         "country": "United States of America"
       },
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Albany",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Princeton",
-                "state": "New Jersey",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "info": "Capital of New York state",
@@ -196,24 +112,10 @@
         "name": "Albany",
         "state": "New York",
         "country": "United States of America"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "New York City",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       "info": "Home of Princeton University",
-      "related_city_info": [],
       "city": {
         "name": "Princeton",
         "state": "New Jersey",

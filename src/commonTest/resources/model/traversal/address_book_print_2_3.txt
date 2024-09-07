@@ -9,10 +9,6 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
         Primitive: false, true
       Single field: null, encrypt_hero_name
         Primitive: null, false
-      List field: card_colors, card_colors
-        Enumeration: yellow, orange
-        Enumeration: orange, green
-        Enumeration: blue, null
   Set field: person, person
     Entity: address_book.main/address_book_person, address_book.main/address_book_person
       Single field: id, id
@@ -23,9 +19,6 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
         Primitive: null, Kent
       Single field: null, hero_name
         Primitive: null, Superman
-      List field: email, null
-        Primitive: clark.kent@dailyplanet.com, null
-        Primitive: superman@dc.com, null
       Single field: picture, null
         Primitive: UGljdHVyZSBvZiBDbGFyayBLZW50, null
       Set field: relation, null
@@ -43,14 +36,8 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
                       Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd, null
       Single field: password, password
         Password1way: {hello123, null, 0}, {kryptonite, null, 0}
-      List field: previous_passwords, previous_passwords
-        Password1way: {null, test-hashed-superman, 1}, {hello123, null, 0}
-        Password1way: null, {null, test-hashed-superman, 1}
       Single field: main_secret, null
         Password2way: {Alien from Krypton, null, 0}, null
-      List field: null, other_secrets
-        Password2way: null, {secret1, null, 0}
-        Password2way: null, {null, test-encrypted-secret2, 1}
       Single field: group, null
         Association: ...
           Entity: address_book.main/address_book_root, null
@@ -69,8 +56,6 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
         Primitive: null, Lois
       Single field: null, last_name
         Primitive: null, Lane
-      List field: null, email
-        Primitive: null, lois.lane@dailyplanet.com
       Single field: null, picture
         Primitive: null, UGljdHVyZSBvZiBMb2lzIExhbmU=
       Set field: null, relation
@@ -88,14 +73,8 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
                       Primitive: null, cc477201-48ec-4367-83a4-7fdbd92f8a6f
       Single field: null, password
         Password1way: null, {null, test-hashed-lois, 1}
-      List field: null, previous_passwords
-        Password1way: null, {password1, null, 0}
-        Password1way: null, {null, test-hashed-password2, 1}
       Single field: null, main_secret
         Password2way: null, {null, test-encrypted-main-secret, 1}
-      List field: null, other_secrets
-        Password2way: null, {secret1, null, 0}
-        Password2way: null, {null, test-encrypted-secret2, 1}
       Single field: null, group
         Association: ...
           Entity: null, address_book.main/address_book_root
@@ -119,40 +98,6 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
             Primitive: United States of America, United States of America
       Single field: info, info
         Primitive: One of the most populous and most densely populated major city in USA, One of the most populous and most densely populated major city in USA
-      List field: related_city_info, related_city_info
-        Association: ...
-          Entity: address_book.main/address_book_root, address_book.main/address_book_root
-            Set field: city_info, city_info
-              Entity: address_book.city/address_book_city_info, null
-                Single field: city, null
-                  Entity: address_book.city/address_book_city, null
-                    Single field: name, null
-                      Primitive: Princeton, null
-                    Single field: state, null
-                      Primitive: New Jersey, null
-                    Single field: country, null
-                      Primitive: United States of America, null
-              Entity: null, address_book.city/address_book_city_info
-                Single field: null, city
-                  Entity: null, address_book.city/address_book_city
-                    Single field: null, name
-                      Primitive: null, Albany
-                    Single field: null, state
-                      Primitive: null, New York
-                    Single field: null, country
-                      Primitive: null, United States of America
-        Association: ...
-          Entity: null, address_book.main/address_book_root
-            Set field: null, city_info
-              Entity: null, address_book.city/address_book_city_info
-                Single field: null, city
-                  Entity: null, address_book.city/address_book_city
-                    Single field: null, name
-                      Primitive: null, Princeton
-                    Single field: null, state
-                      Primitive: null, New Jersey
-                    Single field: null, country
-                      Primitive: null, United States of America
     Entity: address_book.city/address_book_city_info, null
       Single field: city, null
         Entity: address_book.city/address_book_city, null
@@ -164,19 +109,6 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
             Primitive: United States of America, null
       Single field: info, null
         Primitive: Capital of New York state, null
-      List field: related_city_info, null
-        Association: ...
-          Entity: address_book.main/address_book_root, null
-            Set field: city_info, null
-              Entity: address_book.city/address_book_city_info, null
-                Single field: city, null
-                  Entity: address_book.city/address_book_city, null
-                    Single field: name, null
-                      Primitive: New York City, null
-                    Single field: state, null
-                      Primitive: New York, null
-                    Single field: country, null
-                      Primitive: United States of America, null
     Entity: address_book.city/address_book_city_info, address_book.city/address_book_city_info
       Single field: city, city
         Entity: address_book.city/address_book_city, address_book.city/address_book_city
@@ -199,7 +131,6 @@ Entity: address_book.main/address_book_root, address_book.main/address_book_root
             Primitive: null, United States of America
       Single field: null, info
         Primitive: null, Home of Princeton University
-      List field: null, related_city_info
   Set field: groups, groups
     Entity: address_book.main/group, address_book.main/group
       Single field: name, name

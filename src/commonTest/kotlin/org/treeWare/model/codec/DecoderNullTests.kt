@@ -36,20 +36,6 @@ class DecoderNullTests {
     }
 
     @Test
-    fun `Decoding must fail for null primitive-lists`() {
-        val modelJson = """
-            |{
-            |  "settings": {
-            |    "card_colors": null
-            |  }
-            |}
-        """.trimMargin()
-        val expectedDecodeErrors = listOf("Lists must not be null; use empty array [] instead")
-        val model = AddressBookMutableEntityModelFactory.create()
-        decodeJsonStringIntoEntity(modelJson, expectedDecodeErrors = expectedDecodeErrors, entity = model)
-    }
-
-    @Test
     fun `Decoding must fail for null composition-lists`() {
         val modelJson = """
             |{

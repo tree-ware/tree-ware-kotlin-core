@@ -92,9 +92,10 @@ private fun populateMainEntities(entitiesMeta: MutableSetFieldModel) {
     populateEntityEntity(entityEntityMeta)
     val fieldEntityMeta = newEntityMetaMeta(entitiesMeta, "field")
     populateFieldEntity(fieldEntityMeta)
-    // TODO #### revert following commented-out code
-//    val uniqueEntityMeta = newEntityMetaMeta(entitiesMeta, "unique")
-//    populateUniqueEntity(uniqueEntityMeta)
+    val uniqueEntityMeta = newEntityMetaMeta(entitiesMeta, "unique")
+    populateUniqueEntity(uniqueEntityMeta)
+    val uniqueFieldEntityMeta = newEntityMetaMeta(entitiesMeta, "unique_field")
+    populateUniqueEntity(uniqueFieldEntityMeta)
     val enumerationInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "enumeration_info")
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
     val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")
@@ -150,8 +151,7 @@ private fun populateEntityEntity(entityEntityMeta: MutableEntityModel) {
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newPrimitiveFieldMetaMeta(fields, "info", null, "string", "optional")
     newCompositionFieldMetaMeta(fields, "fields", null, "field", META_MODEL_MAIN_PACKAGE, "set")
-    // TODO #### revert following commented-out code
-//    newCompositionFieldMetaMeta(fields, "uniques", null, "unique", META_MODEL_MAIN_PACKAGE, "set")
+    newCompositionFieldMetaMeta(fields, "uniques", null, "unique", META_MODEL_MAIN_PACKAGE, "set")
 }
 
 private fun populateFieldEntity(fieldEntityMeta: MutableEntityModel) {
@@ -177,9 +177,12 @@ private fun populateUniqueEntity(uniqueEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(uniqueEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
     newEnumerationFieldMetaMeta(fields, "type", null, "unique_type", META_MODEL_MAIN_PACKAGE, "optional")
-    // TODO #### change the following from a list of strings, to a set of entities where each entity has a "name"
-    //           string field
-    newPrimitiveFieldMetaMeta(fields, "fields", null, "string", "set")
+    newCompositionFieldMetaMeta(fields, "fields", null, "unique_field", META_MODEL_MAIN_PACKAGE, "set")
+}
+
+private fun populateUniqueFieldEntity(uniqueFieldEntityMeta: MutableEntityModel) {
+    val fields = newFieldsMetaMeta(uniqueFieldEntityMeta)
+    newPrimitiveFieldMetaMeta(fields, "name", null, "string", null, true)
 }
 
 private fun populateEnumerationInfoEntity(enumerationInfoEntityMeta: MutableEntityModel) {

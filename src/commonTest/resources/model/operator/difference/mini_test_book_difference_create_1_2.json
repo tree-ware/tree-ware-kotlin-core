@@ -35,11 +35,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "p2e1@test.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
       "relation": [
         {
@@ -58,28 +53,10 @@
         "hashed": "test-hashed-p2",
         "hash_version": 1
       },
-      "previous_passwords": [
-        {
-          "unhashed": "p2password1"
-        },
-        {
-          "hashed": "p2-test-hashed-password2",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "encrypted": "p2-test-encrypted-main-secret",
         "cipher_version": 1
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "p2 secret1"
-        },
-        {
-          "encrypted": "p2- test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     }
   ],
   "city_info": [
@@ -89,20 +66,7 @@
         "name": "Test City D",
         "state": "Test State D",
         "country": "Test Country D"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Test City A",
-                "state": "Test State A",
-                "country": "Test Country A"
-              }
-            }
-          ]
-        }
-      ]
+      }
     }
   ],
   "groups": [

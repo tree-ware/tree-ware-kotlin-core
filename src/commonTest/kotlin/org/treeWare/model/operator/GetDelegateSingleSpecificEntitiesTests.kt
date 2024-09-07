@@ -80,7 +80,7 @@ class GetDelegateSingleSpecificEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
         } answers {
@@ -126,7 +126,7 @@ class GetDelegateSingleSpecificEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
         }

@@ -2,12 +2,7 @@
   "name": "Super Heroes",
   "last_updated": "1587147731",
   "settings": {
-    "last_name_first": true,
-    "card_colors": [
-      {
-        "value": "orange"
-      }
-    ]
+    "last_name_first": true
   },
   "person": [
     {
@@ -50,20 +45,7 @@
         "state": "New York",
         "country": "United States of America"
       },
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Albany",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "city": {

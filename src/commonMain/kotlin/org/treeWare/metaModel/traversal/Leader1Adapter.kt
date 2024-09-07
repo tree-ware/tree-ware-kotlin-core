@@ -21,6 +21,7 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/entity" -> adaptee.visitEntityMeta(leaderEntity1)
             "/tree_ware_meta_model.main/field" -> adaptee.visitFieldMeta(leaderEntity1)
             "/tree_ware_meta_model.main/unique" -> defaultVisitReturn
+            "/tree_ware_meta_model.main/unique_field" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity_info" -> defaultVisitReturn
             "/tree_ware_meta_model.main/enumeration_info" -> defaultVisitReturn
             "/tree_ware_meta_model.main/exists_if_clause" -> defaultVisitReturn
@@ -41,6 +42,7 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/entity" -> adaptee.leaveEntityMeta(leaderEntity1)
             "/tree_ware_meta_model.main/field" -> adaptee.leaveFieldMeta(leaderEntity1)
             "/tree_ware_meta_model.main/unique" -> Unit
+            "/tree_ware_meta_model.main/unique_field" -> Unit
             "/tree_ware_meta_model.main/entity_info" -> Unit
             "/tree_ware_meta_model.main/enumeration_info" -> Unit
             "/tree_ware_meta_model.main/exists_if_clause" -> Unit
@@ -62,6 +64,7 @@ class Leader1Adapter<Return>(
             "/tree_ware_meta_model.main/package/entities" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity/fields" -> defaultVisitReturn
             "/tree_ware_meta_model.main/entity/uniques" -> defaultVisitReturn
+            "/tree_ware_meta_model.main/unique/fields" -> defaultVisitReturn
             null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }

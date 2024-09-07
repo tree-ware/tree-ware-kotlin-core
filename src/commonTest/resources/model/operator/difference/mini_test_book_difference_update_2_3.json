@@ -1,31 +1,7 @@
 {
-  "settings": {
-    "card_colors": [
-      {
-        "value": "orange"
-      },
-      {
-        "value": "red"
-      },
-      {
-        "value": "yellow"
-      },
-      {
-        "value": "green"
-      }
-    ]
-  },
   "person": [
     {
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-      "email": [
-        {
-          "value": "p1e1@test.com"
-        },
-        {
-          "value": "p1e3@test.com"
-        }
-      ],
       "group": {
         "groups": [
           {
@@ -38,28 +14,6 @@
           }
         ]
       }
-    }
-  ],
-  "city_info": [
-    {
-      "city": {
-        "name": "Test City D",
-        "state": "Test State D",
-        "country": "Test Country D"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Test City B",
-                "state": "Test State B",
-                "country": "Test Country B"
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }

@@ -124,7 +124,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
         } answers {
@@ -146,16 +146,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
             )
 
             GetCompositionSetResult.Entities(listOf(newYork))
-        }
-        every {
-            delegate.getCompositionSet(
-                "/city_info",
-                ofType(),
-                fieldsWithNames("city"),
-                fieldsWithNames("info"),
-                ofType()
-            )
-        } answers {
+        } andThenAnswer {
             val keys = arg<List<SingleFieldModel>>(2)
             assertEquals(1, keys.size)
             val cityInfo = arg<MutableSetFieldModel>(4)
@@ -208,7 +199,7 @@ class GetDelegateMultipleSpecificEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
             delegate.getCompositionSet(

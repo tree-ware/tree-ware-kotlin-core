@@ -15,14 +15,6 @@ class KeyValidationTests {
     }
 
     @Test
-    fun `Multiplicity must not be 'list' for key fields`() {
-        val metaModelJson = getNonCompositionListMetaModelJson()
-        val expectedErrors =
-            0.until(FIELD_COUNT - 1).map { "Package 1 entity 0 field $it is a key but not defined as required" }
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
     fun `Multiplicity must not be 'set' for key fields`() {
         val metaModelJson = getCompositionSetMetaModelJson()
         val expectedErrors = listOf("Package 1 entity 0 field 0 is a key but not defined as required")
@@ -96,42 +88,6 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "type": "composition",
         |           "composition": {
         |             "entity": "entity3",
-        |             "package": "test.common"
-        |           },
-        |           "is_key": true
-        |           $multiplicityJson
-        |         }
-        |       ]
-        |     }
-        |   ]
-        | }
-    """.trimMargin()
-    return newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, mainPackageJson)
-}
-
-// NOTE: Compositions cannot be lists, hence getMetaModelJson() cannot be used in some tests.
-private fun getNonCompositionListMetaModelJson(): String {
-    val multiplicityJson = getMultiplicityJson("list")
-    val mainPackageJson = """
-        | {
-        |   "name": "test.main",
-        |   "entities": [
-        |     {
-        |       "name": "main_entity1",
-        |       "fields": [
-        |         {
-        |           "name": "primitive_field",
-        |           "number": 1,
-        |           "type": "string",
-        |           "is_key": true
-        |           $multiplicityJson
-        |         },
-        |         {
-        |           "name": "enumeration_field",
-        |           "number": 2,
-        |           "type": "enumeration",
-        |           "enumeration": {
-        |             "name": "enumeration1",
         |             "package": "test.common"
         |           },
         |           "is_key": true

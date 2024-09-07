@@ -3,21 +3,7 @@
   "last_updated": "1587147731",
   "settings": {
     "last_name_first": true,
-    "encrypt_hero_name": false,
-    "card_colors": [
-      {
-        "value": "orange"
-      },
-      {
-        "value": "red"
-      },
-      {
-        "value": "yellow"
-      },
-      {
-        "value": "green"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "groups": [
     {
@@ -61,14 +47,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "p1e1@test.com"
-        },
-        {
-          "value": "p1e3@test.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
       "relation": [
         {
@@ -97,27 +75,9 @@
       "password": {
         "unhashed": "p1CurrentPassword"
       },
-      "previous_passwords": [
-        {
-          "unhashed": "p1PreviousPassword1"
-        },
-        {
-          "hashed": "test-hashed-previousPassword",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "unencrypted": "p1 Main secret"
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "p1 secret1"
-        },
-        {
-          "encrypted": "p1 test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     },
     {
       "first_name": "Person 2 first",
@@ -135,11 +95,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "p2e1@test.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
       "relation": [
         {
@@ -158,28 +113,10 @@
         "hashed": "test-hashed-p2",
         "hash_version": 1
       },
-      "previous_passwords": [
-        {
-          "unhashed": "p2password1"
-        },
-        {
-          "hashed": "p2-test-hashed-password2",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "encrypted": "p2-test-encrypted-main-secret",
         "cipher_version": 1
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "p2 secret1"
-        },
-        {
-          "encrypted": "p2- test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     }
   ],
   "city_info": [
@@ -189,31 +126,7 @@
         "state": "Test State A",
         "country": "Test Country A"
       },
-      "info": "City A info",
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Test City B",
-                "state": "Test State B",
-                "country": "Test Country B"
-              }
-            }
-          ]
-        },
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Test City C",
-                "state": "Test State C",
-                "country": "Test Country C"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "City A info"
     },
     {
       "info": "Test City B info",
@@ -221,24 +134,10 @@
         "name": "Test City B",
         "state": "Test State B",
         "country": "Test Country B"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Test City A",
-                "state": "Test State A",
-                "country": "Test Country A"
-              }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       "info": "Test City C info",
-      "related_city_info": [],
       "city": {
         "name": "Test City C",
         "state": "Test State C",
@@ -251,20 +150,7 @@
         "name": "Test City D",
         "state": "Test State D",
         "country": "Test Country D"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Test City B",
-                "state": "Test State B",
-                "country": "Test Country B"
-              }
-            }
-          ]
-        }
-      ]
+      }
     }
   ]
 }

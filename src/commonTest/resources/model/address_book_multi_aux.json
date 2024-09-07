@@ -15,26 +15,7 @@
     "last_name_first": true,
     "encrypt_hero_name__aux1_": "Aux1 for encrypt_hero_name",
     "encrypt_hero_name__aux2_": "Aux2 for encrypt_hero_name",
-    "encrypt_hero_name": false,
-    "card_colors__aux1_": "Aux1 at card_colors list level",
-    "card_colors__aux2_": "Aux2 at card_colors list level",
-    "card_colors": [
-      {
-        "aux1_": "Aux1 with scalar element in list",
-        "aux2_": "Aux2 with scalar element in list",
-        "value": "orange"
-      },
-      {
-        "aux1_": "Aux1 with list element green",
-        "aux2_": "Aux2 with list element green",
-        "value": "green"
-      },
-      {
-        "aux1_": "Aux1 in another scalar list element",
-        "aux2_": "Aux2 in another scalar list element",
-        "value": "blue"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "groups__aux1_": "Aux1 for groups",
   "groups__aux2_": "Aux2 for groups",
@@ -87,20 +68,6 @@
           }
         ]
       },
-      "email__aux1_": "Aux1 at list level for person email",
-      "email__aux2_": "Aux2 at list level for person email",
-      "email": [
-        {
-          "aux1_": "Aux1 with string element in list",
-          "aux2_": "Aux2 with string element in list",
-          "value": "clark.kent@dailyplanet.com"
-        },
-        {
-          "aux1_": "Yet another aux1 with a list string element",
-          "aux2_": "Yet another aux2 with a list string element",
-          "value": "superman@dc.com"
-        }
-      ],
       "relation__aux1_": "Aux1 at relation composition list level",
       "relation__aux2_": "Aux2 at relation composition list level",
       "relation": [
@@ -129,39 +96,11 @@
       "password": {
         "unhashed": "kryptonite"
       },
-      "previous_passwords__aux1_": "Aux1 with previous passwords",
-      "previous_passwords__aux2_": "Aux2 with previous passwords",
-      "previous_passwords": [
-        {
-          "aux1_": "Aux1 with unhashed password in a list",
-          "aux2_": "Aux2 with unhashed password in a list",
-          "unhashed": "hello123"
-        },
-        {
-          "aux1_": "Aux1 with hashed password in a list",
-          "aux2_": "Aux2 with hashed password in a list",
-          "hashed": "test-hashed-superman",
-          "hash_version": 1
-        }
-      ],
       "main_secret__aux1_": "Aux1 with main secret",
       "main_secret__aux2_": "Aux2 with main secret",
       "main_secret": {
         "unencrypted": "Alien from Krypton"
-      },
-      "other_secrets": [
-        {
-          "aux1_": "Aux1 with unencrypted password in a list",
-          "aux2_": "Aux2 with unencrypted password in a list",
-          "unencrypted": "secret1"
-        },
-        {
-          "aux1_": "Aux1 with encrypted password in a list",
-          "aux2_": "Aux2 with encrypted password in a list",
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     },
     {
       "aux1_": "Aux1 with composition element but no aux1 in sub-tree",
@@ -181,11 +120,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "lois.lane@dailyplanet.com"
-        }
-      ],
       "relation": [
         {
           "id": "16634916-8f83-4376-ad42-37038e108a0b",
@@ -203,28 +137,10 @@
         "hashed": "test-hashed-lois",
         "hash_version": 1
       },
-      "previous_passwords": [
-        {
-          "unhashed": "password1"
-        },
-        {
-          "hashed": "test-hashed-password2",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "encrypted": "test-encrypted-main-secret",
         "cipher_version": 1
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "secret1"
-        },
-        {
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     }
   ],
   "city_info__aux1_": "Aux1 with city info list",
@@ -240,48 +156,7 @@
       },
       "info__aux1_": "Aux1 in info",
       "info__aux2_": "Aux2 in info",
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info__aux1_": "Aux1 in related city list",
-      "related_city_info__aux2_": "Aux2 in related city list",
-      "related_city_info": [
-        {
-          "aux1_": "Aux1 with association element in list",
-          "aux2_": "Aux2 with association element in list",
-          "city_info": [
-            {
-              "city": {
-                "name": "Albany",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "Princeton",
-                "state": "New Jersey",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "aux1_": "Aux1 with association element in list after an element without an aux1",
-          "aux2_": "Aux2 with association element in list after an element without an aux2",
-          "city_info": [
-            {
-              "city": {
-                "name": "San Francisco",
-                "state": "California",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "info": "Capital of New York state",
@@ -289,24 +164,10 @@
         "name": "Albany",
         "state": "New York",
         "country": "United States of America"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "New York City",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       "info": "Home of Princeton University",
-      "related_city_info": [],
       "city": {
         "name": "Princeton",
         "state": "New Jersey",

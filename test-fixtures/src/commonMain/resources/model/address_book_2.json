@@ -7,22 +7,7 @@
   "settings__aux2_": "Aux2 in settings",
   "settings": {
     "last_name_first__aux2_": "Aux2 for last_name_first",
-    "last_name_first": false,
-    "card_colors__aux2_": "Aux2 at card_colors list level",
-    "card_colors": [
-      {
-        "aux2_": "Aux2 for card color 1",
-        "value": "yellow"
-      },
-      {
-        "aux2_": "Aux2 for card color 2",
-        "value": "orange"
-      },
-      {
-        "aux2_": "Aux2 for card color 3",
-        "value": "blue"
-      }
-    ]
+    "last_name_first": false
   },
   "groups__aux2_": "Aux2 for groups",
   "groups": [
@@ -53,31 +38,12 @@
           }
         ]
       },
-      "email__aux2_": "Aux2 at list level for person email",
-      "email": [
-        {
-          "aux2_": "Aux2 for clark.kent email",
-          "value": "clark.kent@dailyplanet.com"
-        },
-        {
-          "aux2_": "Aux2 for superman email",
-          "value": "superman@dc.com"
-        }
-      ],
       "password__aux2_": "Aux2 for password",
       "password": {
         "unhashed": "hello123"
       },
       "picture__aux2_": "Aux2 for picture",
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
-      "previous_passwords__aux2_": "Aux2 with previous passwords",
-      "previous_passwords": [
-        {
-          "aux2_": "Aux2 for previous password 1",
-          "hashed": "test-hashed-superman",
-          "hash_version": 1
-        }
-      ],
       "main_secret__aux2_": "Aux2 with main secret",
       "main_secret": {
         "unencrypted": "Alien from Krypton"
@@ -110,22 +76,7 @@
         "country": "United States of America"
       },
       "info__aux2_": "Aux2 in info",
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info__aux2_": "Aux2 in related city list",
-      "related_city_info": [
-        {
-          "aux2_": "Aux2 with association 1 in list",
-          "city_info": [
-            {
-              "city": {
-                "name": "Princeton",
-                "state": "New Jersey",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "info": "Capital of New York state",
@@ -133,20 +84,7 @@
         "name": "Albany",
         "state": "New York",
         "country": "United States of America"
-      },
-      "related_city_info": [
-        {
-          "city_info": [
-            {
-              "city": {
-                "name": "New York City",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       "info": "The cultural and financial center of Northern California",

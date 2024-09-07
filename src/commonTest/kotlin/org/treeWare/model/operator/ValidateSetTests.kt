@@ -217,51 +217,6 @@ class ValidateSetTests {
     }
 
     @Test
-    fun `validateSet() must return errors if string regex constraint is not met`() {
-        val modelJson = """
-            |{
-            |  "set_": "create",
-            |  "name": "Super Heroes",
-            |  "person": [
-            |    {
-            |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-            |      "first_name": "Clark",
-            |      "last_name": "Kent",
-            |      "is_hero": true,
-            |      "email": [
-            |        {
-            |          "value": "valid@email.com"
-            |        },
-            |        {
-            |          "value": "invalid_email_1"
-            |        },
-            |        {
-            |          "value": "also-valid@another_email.com"
-            |        },
-            |        {
-            |          "value": "invalid_email_2"
-            |        }
-            |      ]
-            |    }
-            |  ]
-            |}
-        """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
-        decodeJsonStringIntoEntity(
-            modelJson,
-            multiAuxDecodingStateMachineFactory = auxDecodingFactory,
-            entity = model
-        )
-
-        val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/email/1: string 'invalid_email_1' does not match regex '[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+'",
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/email/3: string 'invalid_email_2' does not match regex '[a-zA-Z\\.\\-_]+@[a-zA-Z\\.\\-_]+'"
-        )
-        val actualErrors = validateSet(model)
-        assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
-    }
-
-    @Test
     fun `validateSet() must return errors if constraints are not met in composition keys`() {
         val modelJson = """
             |{
@@ -316,10 +271,7 @@ class ValidateSetTests {
             |        "country": "United States of America"
             |      },
             |      "info": "One of the most populous and most densely populated major city in USA",
-            |      "is_coastal_city": false,
-            |      "related_city_info": [
-            |        {}
-            |      ]
+            |      "is_coastal_city": false
             |    }
             |  ]
             |}
@@ -332,8 +284,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type",
-            "/city_info/New York City/New York/United States of America/related_city_info/0: association has an invalid target type"
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -368,21 +319,7 @@ class ValidateSetTests {
             |        "country": "United States of America"
             |      },
             |      "info": "One of the most populous and most densely populated major city in USA",
-            |      "is_coastal_city": false,
-            |      "related_city_info": [
-            |        {
-            |          "groups": [
-            |            {
-            |              "name": "DC",
-            |              "sub_groups": [
-            |                {
-            |                  "name": "Superman"
-            |                }
-            |              ]
-            |            }
-            |          ]
-            |        }
-            |      ]
+            |      "is_coastal_city": false
             |    }
             |  ]
             |}
@@ -395,8 +332,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type",
-            "/city_info/New York City/New York/United States of America/related_city_info/0: association has an invalid target type"
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -438,37 +374,9 @@ class ValidateSetTests {
             |        "country": "United States of America"
             |      },
             |      "info": "One of the most populous and most densely populated major city in USA",
-            |      "is_coastal_city": false,
-            |      "related_city_info": [
-            |        {
-            |          "city_info": [
-            |            {
-            |              "info": "non-key field for causing error",
-            |              "city": {
-            |                "name": "Albany",
-            |                "state": "New York",
-            |                "country": "United States of America"
-            |              }
-            |            }
-            |          ]
-            |        }
-            |      ]
+            |      "is_coastal_city": false
             |    },
             |    {
-            |      "related_city_info": [
-            |        {
-            |          "city_info": [
-            |            {
-            |              "city": {
-            |                "name": "New York City",
-            |                "state": "New York",
-            |                "country": "United States of America"
-            |              }
-            |            }
-            |          ],
-            |          "name": "non-key field for causing error"
-            |        }
-            |      ],
             |      "info": "Capital of New York state",
             |      "is_coastal_city": false,
             |      "city": {
@@ -488,9 +396,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has non-key fields",
-            "/city_info/New York City/New York/United States of America/related_city_info/0: association has non-key fields",
-            "/city_info/Albany/New York/United States of America/related_city_info/0: association has non-key fields"
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has non-key fields"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -531,37 +437,9 @@ class ValidateSetTests {
             |        "country": "United States of America"
             |      },
             |      "info": "One of the most populous and most densely populated major city in USA",
-            |      "is_coastal_city": false,
-            |      "related_city_info": [
-            |        {
-            |          "person": [],
-            |          "city_info": [
-            |            {
-            |              "city": {
-            |                "name": "Albany",
-            |                "state": "New York",
-            |                "country": "United States of America"
-            |              }
-            |            }
-            |          ]
-            |        }
-            |      ]
+            |      "is_coastal_city": false
             |    },
             |    {
-            |      "related_city_info": [
-            |        {
-            |          "city_info": [
-            |            {
-            |              "city": {
-            |                "name": "New York City",
-            |                "state": "New York",
-            |                "country": "United States of America"
-            |              }
-            |            }
-            |          ],
-            |          "person": []
-            |        }
-            |      ],
             |      "info": "Capital of New York state",
             |      "is_coastal_city": false,
             |      "city": {
@@ -581,9 +459,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has multiple paths",
-            "/city_info/New York City/New York/United States of America/related_city_info/0: association has multiple paths",
-            "/city_info/Albany/New York/United States of America/related_city_info/0: association has multiple paths"
+            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has multiple paths"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -617,17 +493,7 @@ class ValidateSetTests {
             |        "state": "New York",
             |        "country": "United States of America"
             |      },
-            |      "info": "One of the most populous and most densely populated major city in USA",
-            |      "related_city_info": [
-            |        {
-            |          "city_info": [
-            |            {
-            |              "city": {
-            |              }
-            |            }
-            |          ]
-            |        }
-            |      ]
+            |      "info": "One of the most populous and most densely populated major city in USA"
             |    }
             |  ]
             |}
@@ -635,7 +501,6 @@ class ValidateSetTests {
         val expectedDecodeErrors = listOf(
             "Missing key fields [name] in instance of /address_book.main/group",
             "Missing key fields [name] in instance of /address_book.main/group",
-            "Missing key fields [name, state, country] in instance of /address_book.city/address_book_city",
         )
         val model =
             AddressBookMutableEntityModelFactory.create()

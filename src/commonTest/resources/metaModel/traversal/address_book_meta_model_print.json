@@ -35,7 +35,6 @@
       "entity:address_book_settings": {
         "field:last_name_first": {},
         "field:encrypt_hero_name": {},
-        "field:card_colors": {},
         "field:background_color": {},
         "field:advanced": {}
       },
@@ -47,13 +46,10 @@
         "field:first_name": {},
         "field:last_name": {},
         "field:hero_name": {},
-        "field:email": {},
         "field:picture": {},
         "field:relation": {},
         "field:password": {},
-        "field:previous_passwords": {},
         "field:main_secret": {},
-        "field:other_secrets": {},
         "field:group": {},
         "field:is_hero": {},
         "field:hero_details": {}
@@ -84,8 +80,7 @@
         "field:info": {},
         "field:city_center": {},
         "field:is_coastal_city": {},
-        "field:water_body_name": {},
-        "field:related_city_info": {}
+        "field:water_body_name": {}
       }
     },
     "package:org.tree_ware.meta_model.geo": {

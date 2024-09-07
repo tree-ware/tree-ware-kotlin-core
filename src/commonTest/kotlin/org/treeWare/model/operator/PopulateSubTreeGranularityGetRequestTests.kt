@@ -69,7 +69,6 @@ class PopulateSubTreeGranularityGetRequestTests {
                   "first_name": null,
                   "last_name": null,
                   "hero_name": null,
-                  "email": [],
                   "picture": null,
                   "relation": [
                     {
@@ -79,9 +78,7 @@ class PopulateSubTreeGranularityGetRequestTests {
                     }
                   ],
                   "password": null,
-                  "previous_passwords": [],
                   "main_secret": null,
-                  "other_secrets": [],
                   "group": null,
                   "is_hero": null,
                   "hero_details": {

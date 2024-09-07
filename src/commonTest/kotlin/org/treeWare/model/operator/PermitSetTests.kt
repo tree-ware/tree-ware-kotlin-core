@@ -728,28 +728,6 @@ class PermitSetTests {
         |        ]
         |      }
         |    }
-        |  ],
-        |  "city_info": [
-        |    {
-        |      "city": {
-        |        "name": "Albany",
-        |        "state": "New York",
-        |        "country": "United States of America"
-        |      },
-        |      "related_city_info": [
-        |        {
-        |          "city_info": [
-        |            {
-        |              "city": {
-        |                "name": "New York City",
-        |                "state": "New York",
-        |                "country": "United States of America"
-        |              }
-        |            }
-        |          ]
-        |        }
-        |      ]
-        |    }
         |  ]
         |}
     """.trimMargin()
@@ -794,23 +772,12 @@ class PermitSetTests {
         val createAssociationJson = newAssociationSetJson(SetAux.CREATE)
         val rbac = newAssociationRbac(false)
         // The `person` entity is expected along with its ID because it is a create request.
-        // `related_city_info` is expected as an empty list since empty lists are meaningful and are not pruned.
         val expectedPermittedJson = """
             |{
             |  "set_": "create",
             |  "person": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
-            |    }
-            |  ],
-            |  "city_info": [
-            |    {
-            |      "city": {
-            |        "name": "Albany",
-            |        "state": "New York",
-            |        "country": "United States of America"
-            |      },
-            |      "related_city_info": []
             |    }
             |  ]
             |}
@@ -829,23 +796,7 @@ class PermitSetTests {
     fun `UPDATE association must fail if user does not have read permission for target`() {
         val updateAssociationJson = newAssociationSetJson(SetAux.UPDATE)
         val rbac = newAssociationRbac(false)
-        // `related_city_info` is expected as an empty list since empty lists are meaningful and are not pruned.
-        val expectedPermittedJson = """
-            |{
-            |  "set_": "update",
-            |  "city_info": [
-            |    {
-            |      "city": {
-            |        "name": "Albany",
-            |        "state": "New York",
-            |        "country": "United States of America"
-            |      },
-            |      "related_city_info": []
-            |    }
-            |  ]
-            |}
-        """.trimMargin()
-        testPermitSet(updateAssociationJson, rbac, expectedPermittedJson, false)
+        testPermitSet(updateAssociationJson, rbac, expectedPermittedJson = null, false)
     }
 
     @Test

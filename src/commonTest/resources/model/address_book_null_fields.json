@@ -14,9 +14,7 @@
         }
       ],
       "password": null,
-      "previous_passwords": [],
-      "main_secret": null,
-      "other_secrets": []
+      "main_secret": null
     }
   ],
   "city_info": [

@@ -36,7 +36,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             delegate.getComposition(
                 "/settings",
                 ofType(),
-                fieldsWithNames("last_name_first", "card_colors"),
+                fieldsWithNames("last_name_first"),
                 ofType()
             )
         } answers {
@@ -153,7 +153,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
         } answers {
@@ -175,16 +175,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             )
 
             GetCompositionSetResult.Entities(listOf(newYork))
-        }
-        every {
-            delegate.getCompositionSet(
-                "/city_info",
-                ofType(),
-                fieldsWithNames("city"),
-                fieldsWithNames("info"),
-                ofType()
-            )
-        } answers {
+        } andThenAnswer {
             val keys = arg<List<SingleFieldModel>>(2)
             assertEquals(1, keys.size)
             val cityInfo = arg<MutableSetFieldModel>(4)
@@ -227,7 +218,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
             delegate.getComposition(
                 "/settings",
                 ofType(),
-                fieldsWithNames("last_name_first", "card_colors"),
+                fieldsWithNames("last_name_first"),
                 ofType()
             )
             delegate.getCompositionSet(
@@ -269,7 +260,7 @@ class GetDelegateSpecificAndWildcardEntitiesTests {
                 "/city_info",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info", "related_city_info"),
+                fieldsWithNames("info"),
                 ofType()
             )
             delegate.getCompositionSet(

@@ -201,11 +201,14 @@ private fun validateUniqueField(
     uniqueId: String,
     uniqueFieldIndex: Int
 ): List<String> {
+    // Get the specified field name.
     val uniqueFieldId = getId(uniqueId, "field", uniqueFieldIndex)
-    val uniqueFieldMeta = uniqueFieldElementMeta as? PrimitiveModel
-        ?: return listOf("$uniqueFieldId is not a PrimitiveModel. It is: ${uniqueFieldElementMeta::class.simpleName}")
-    val uniqueFieldName = uniqueFieldMeta.value as? String
-        ?: return listOf("$uniqueFieldId is not a string. It is: ${getClassName(uniqueFieldElementMeta.value)}")
+    val uniqueFieldMeta = uniqueFieldElementMeta as? EntityModel
+        ?: return listOf("$uniqueFieldId is not an EntityModel. It is: ${uniqueFieldElementMeta::class.simpleName}")
+    val uniqueFieldName = runCatching { getSingleString(uniqueFieldMeta, "name") }.getOrNull()
+        ?: return listOf("$uniqueFieldId 'name' string field not found")
+
+    // Validate that the specified field exists and is of a valid type.
     val entityField = runCatching { getFieldMeta(entityMeta, uniqueFieldName) }.getOrNull()
         ?: return listOf("$uniqueFieldId not found: $uniqueFieldName")
     if (isCollectionFieldMeta(entityField)) return listOf("Collection fields are not supported in uniques: $uniqueFieldId: $uniqueFieldName")

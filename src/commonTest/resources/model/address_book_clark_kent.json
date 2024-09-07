@@ -17,14 +17,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "clark.kent@dailyplanet.com"
-        },
-        {
-          "value": "superman@dc.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
       "relation": [
         {
@@ -42,27 +34,9 @@
       "password": {
         "unhashed": "kryptonite"
       },
-      "previous_passwords": [
-        {
-          "unhashed": "hello123"
-        },
-        {
-          "hashed": "test-hashed-superman",
-          "hash_version": 1
-        }
-      ],
       "main_secret": {
         "unencrypted": "Alien from Krypton"
-      },
-      "other_secrets": [
-        {
-          "unencrypted": "secret1"
-        },
-        {
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ]
+      }
     }
   ]
 }

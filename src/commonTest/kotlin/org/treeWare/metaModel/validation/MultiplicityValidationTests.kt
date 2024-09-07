@@ -26,13 +26,6 @@ class MultiplicityValidationTests {
     }
 
     @Test
-    fun `Multiplicity must not be 'list' for compositions`() {
-        val metaModelJson = getMetaModelJson("list")
-        val expectedErrors = listOf("Package 1 entity 0 field 3 is a composition field and they cannot be lists")
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
     fun `Multiplicity must be specified with a valid value`() {
         val metaModelJson = getMetaModelJson("invalid")
         val expectedDecodeErrors = listOf("JSON decoding failed at line 97 column 30, 1874 characters from the start")

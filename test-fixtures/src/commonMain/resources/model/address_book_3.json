@@ -9,18 +9,7 @@
     "last_name_first__aux3_": "Aux3 for last_name_first",
     "last_name_first": true,
     "encrypt_hero_name__aux3_": "Aux3 for encrypt_hero_name",
-    "encrypt_hero_name": false,
-    "card_colors__aux3_": "Aux3 at card_colors list level",
-    "card_colors": [
-      {
-        "aux3_": "Aux3 for card color 1",
-        "value": "orange"
-      },
-      {
-        "aux3_": "Aux3 for card color 2",
-        "value": "green"
-      }
-    ]
+    "encrypt_hero_name": false
   },
   "groups__aux3_": "Aux3 for groups",
   "groups": [
@@ -47,36 +36,11 @@
       "last_name": "Kent",
       "hero_name__aux3_": "Aux3 for hero_name",
       "hero_name": "Superman",
-      "other_secrets__aux3_": "Aux3 for other secrets",
-      "other_secrets": [
-        {
-          "aux3_": "Aux3 with unencrypted password in a list",
-          "unencrypted": "secret1"
-        },
-        {
-          "aux3_": "Aux3 with encrypted password in a list",
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ],
       "password__aux2_": "Aux2 for password from address_book_3",
       "password__aux3_": "Aux3 for password",
       "password": {
         "unhashed": "kryptonite"
-      },
-      "previous_passwords__aux3_": "Aux3 with previous passwords",
-      "previous_passwords": [
-        {
-          "aux2_": "Aux2 for unhashed password in a list from address_book_3",
-          "aux3_": "Aux3 for unhashed password in a list",
-          "unhashed": "hello123"
-        },
-        {
-          "aux3_": "Aux3 for hashed password in a list",
-          "hashed": "test-hashed-superman",
-          "hash_version": 1
-        }
-      ]
+      }
     },
     {
       "aux3_": "Aux3 with composition element but no aux3 in sub-tree",
@@ -95,11 +59,6 @@
           }
         ]
       },
-      "email": [
-        {
-          "value": "lois.lane@dailyplanet.com"
-        }
-      ],
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
       "main_secret": {
         "encrypted": "test-encrypted-main-secret",
@@ -121,24 +80,6 @@
             ]
           }
         }
-      ],
-      "other_secrets": [
-        {
-          "unencrypted": "secret1"
-        },
-        {
-          "encrypted": "test-encrypted-secret2",
-          "cipher_version": 1
-        }
-      ],
-      "previous_passwords": [
-        {
-          "unhashed": "password1"
-        },
-        {
-          "hashed": "test-hashed-password2",
-          "hash_version": 1
-        }
       ]
     }
   ],
@@ -152,38 +93,10 @@
         "country": "United States of America"
       },
       "info__aux3_": "Aux3 in info",
-      "info": "One of the most populous and most densely populated major city in USA",
-      "related_city_info__aux3_": "Aux3 in related city list",
-      "related_city_info": [
-        {
-          "aux3_": "Aux3 with association 1 in list",
-          "city_info": [
-            {
-              "city": {
-                "name": "Albany",
-                "state": "New York",
-                "country": "United States of America"
-              }
-            }
-          ]
-        },
-        {
-          "aux3_": "Aux3 with association 2 in list",
-          "city_info": [
-            {
-              "city": {
-                "name": "Princeton",
-                "state": "New Jersey",
-                "country": "United States of America"
-              }
-            }
-          ]
-        }
-      ]
+      "info": "One of the most populous and most densely populated major city in USA"
     },
     {
       "info": "Home of Princeton University",
-      "related_city_info": [],
       "city": {
         "name": "Princeton",
         "state": "New Jersey",

@@ -9,10 +9,6 @@ Entity: address_book.main/address_book_root
         Primitive: true
       Single field: encrypt_hero_name
         Primitive: false
-      List field: card_colors
-        Enumeration: orange
-        Enumeration: green
-        Enumeration: blue
   Set field: groups
     Entity: address_book.main/group
       Single field: name
@@ -109,43 +105,6 @@ Entity: address_book.main/address_book_root
             Primitive: United States of America
       Single field: info
         Primitive: One of the most populous and most densely populated major city in USA
-      List field: related_city_info
-        Association: ...
-          Entity: address_book.main/address_book_root
-            Set field: city_info
-              Entity: address_book.city/address_book_city_info
-                Single field: city
-                  Entity: address_book.city/address_book_city
-                    Single field: name
-                      Primitive: Albany
-                    Single field: state
-                      Primitive: New York
-                    Single field: country
-                      Primitive: United States of America
-        Association: ...
-          Entity: address_book.main/address_book_root
-            Set field: city_info
-              Entity: address_book.city/address_book_city_info
-                Single field: city
-                  Entity: address_book.city/address_book_city
-                    Single field: name
-                      Primitive: Princeton
-                    Single field: state
-                      Primitive: New Jersey
-                    Single field: country
-                      Primitive: United States of America
-        Association: ...
-          Entity: address_book.main/address_book_root
-            Set field: city_info
-              Entity: address_book.city/address_book_city_info
-                Single field: city
-                  Entity: address_book.city/address_book_city
-                    Single field: name
-                      Primitive: San Francisco
-                    Single field: state
-                      Primitive: California
-                    Single field: country
-                      Primitive: United States of America
     Entity: address_book.city/address_book_city_info
       Single field: info
         Primitive: Capital of New York state
@@ -157,23 +116,9 @@ Entity: address_book.main/address_book_root
             Primitive: New York
           Single field: country
             Primitive: United States of America
-      List field: related_city_info
-        Association: ...
-          Entity: address_book.main/address_book_root
-            Set field: city_info
-              Entity: address_book.city/address_book_city_info
-                Single field: city
-                  Entity: address_book.city/address_book_city
-                    Single field: name
-                      Primitive: New York City
-                    Single field: state
-                      Primitive: New York
-                    Single field: country
-                      Primitive: United States of America
     Entity: address_book.city/address_book_city_info
       Single field: info
         Primitive: Home of Princeton University
-      List field: related_city_info
       Single field: city
         Entity: address_book.city/address_book_city
           Single field: name

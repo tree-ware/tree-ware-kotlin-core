@@ -269,22 +269,6 @@ class ExistsIfValidationTests {
     }
 
     @Test
-    fun `exists_if EQUALS clause field must not be a list field`() {
-        val metaModelJson = getMetaModelJson(
-            """
-            |{
-            |  "operator": "equals",
-            |  "field": "list_field",
-            |  "value": "unimportant"
-            |}
-            """.trimMargin()
-        )
-        val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `list_field` is not a single field")
-        assertJsonStringValidationErrors(metaModelJson, expectedErrors)
-    }
-
-    @Test
     fun `exists_if EQUALS clause field must not be a set field`() {
         val metaModelJson = getMetaModelJson(
             """
@@ -443,12 +427,6 @@ private fun getMetaModelJson(existsIfJsonValue: String?): String {
         |             "entity": "entity1",
         |             "package": "test.common"
         |           }
-        |         },
-        |         {
-        |           "name": "list_field",
-        |           "number": 10,
-        |           "type": "uint8",
-        |           "multiplicity": "list"
         |         },
         |         {
         |           "name": "set_field",
