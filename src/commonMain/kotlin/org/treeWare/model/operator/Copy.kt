@@ -119,7 +119,7 @@ private class CopyVisitor(
         val copyField = if (modelStack.isEmpty()) to
         else {
             val leaderFieldName = getFieldName(leaderField1)
-            val copyParent = modelStack.first() as MutableBaseEntityModel
+            val copyParent = modelStack.first() as MutableEntityModel
             copyParent.getOrNewField(leaderFieldName)
         }
         modelStack.addFirst(copyField)

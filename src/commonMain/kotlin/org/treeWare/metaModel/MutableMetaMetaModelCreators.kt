@@ -184,7 +184,7 @@ private fun getNamedEntityMeta(): MutableEntityModel {
 // meta-meta-meta-models, we cannot use model setters to create
 // meta-meta-models.
 
-private fun newCompositionSingleField(entity: MutableBaseEntityModel, name: String): MutableEntityModel {
+private fun newCompositionSingleField(entity: MutableEntityModel, name: String): MutableEntityModel {
     val field = MutableSingleFieldModel(null, entity, MutableEntityModel.fieldValueFactory)
     entity.fields[name] = field
     val value = MutableEntityModel(null, field)
@@ -192,28 +192,28 @@ private fun newCompositionSingleField(entity: MutableBaseEntityModel, name: Stri
     return value
 }
 
-private fun newStringSingleField(entity: MutableBaseEntityModel, name: String, value: String) {
+private fun newStringSingleField(entity: MutableEntityModel, name: String, value: String) {
     val field = MutableSingleFieldModel(stringFieldMeta, entity, MutablePrimitiveModel.fieldValueFactory)
     entity.fields[name] = field
     val primitive = MutablePrimitiveModel(field, value)
     field.value = primitive
 }
 
-private fun newBooleanSingleField(entity: MutableBaseEntityModel, name: String, value: Boolean) {
+private fun newBooleanSingleField(entity: MutableEntityModel, name: String, value: Boolean) {
     val field = MutableSingleFieldModel(booleanFieldMeta, entity, MutablePrimitiveModel.fieldValueFactory)
     entity.fields[name] = field
     val primitive = MutablePrimitiveModel(field, value)
     field.value = primitive
 }
 
-private fun newEnumerationSingleField(entity: MutableBaseEntityModel, name: String, value: String) {
+private fun newEnumerationSingleField(entity: MutableEntityModel, name: String, value: String) {
     val field = MutableSingleFieldModel(null, entity, MutableEnumerationModel.fieldValueFactory)
     entity.fields[name] = field
     val enumeration = MutableEnumerationModel(field, value)
     field.value = enumeration
 }
 
-private fun newCompositionSetField(entity: MutableBaseEntityModel, name: String): MutableSetFieldModel {
+private fun newCompositionSetField(entity: MutableEntityModel, name: String): MutableSetFieldModel {
     val field = MutableSetFieldModel(null, entity, MutableEntityModel.fieldValueFactory)
     entity.fields[name] = field
     return field

@@ -8,7 +8,7 @@ import org.treeWare.model.traversal.mutableForEach
 
 // TODO(deepak-nulu): handle self-referential compositions and longer cycles.
 
-typealias AuxSetter = (entity: MutableBaseEntityModel) -> Unit
+typealias AuxSetter = (entity: MutableEntityModel) -> Unit
 
 /**
  * Populate the sub-tree of the specified entity.
@@ -16,7 +16,7 @@ typealias AuxSetter = (entity: MutableBaseEntityModel) -> Unit
  * @return `false` if sub-tree is not empty and could not be populated, `true` if sub-tree is successfully populated.
  */
 fun populateSubTree(
-    entity: MutableBaseEntityModel,
+    entity: MutableEntityModel,
     populateNonKeyNonCompositionFields: Boolean,
     auxSetter: AuxSetter? = null
 ): Boolean {

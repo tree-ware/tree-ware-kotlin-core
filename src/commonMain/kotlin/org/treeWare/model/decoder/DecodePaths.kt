@@ -36,7 +36,7 @@ sealed interface DecodePathResult {
     data class Field(override val element: MutableFieldModel, override val trailingWildcards: Int = 0) : Element
 
     /** A set-field entity pointed to by the path. */
-    data class Entity(override val element: MutableBaseEntityModel, override val trailingWildcards: Int = 0) : Element
+    data class Entity(override val element: MutableEntityModel, override val trailingWildcards: Int = 0) : Element
 
     data class Error(val error: String) : DecodePathResult
 }

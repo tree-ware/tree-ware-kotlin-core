@@ -1,11 +1,11 @@
 package org.treeWare.model.core
 
-fun getOrNewMutableSingleEntity(entityModel: MutableBaseEntityModel, fieldName: String): MutableEntityModel {
+fun getOrNewMutableSingleEntity(entityModel: MutableEntityModel, fieldName: String): MutableEntityModel {
     val singleField = getOrNewMutableSingleField(entityModel, fieldName)
     return singleField.getOrNewValue() as MutableEntityModel
 }
 
-fun getOrNewMutableSingleAssociation(entityModel: MutableBaseEntityModel, fieldName: String): MutableAssociationModel {
+fun getOrNewMutableSingleAssociation(entityModel: MutableEntityModel, fieldName: String): MutableAssociationModel {
     val singleField = getOrNewMutableSingleField(entityModel, fieldName)
     return singleField.getOrNewValue() as MutableAssociationModel
 }
@@ -13,14 +13,14 @@ fun getOrNewMutableSingleAssociation(entityModel: MutableBaseEntityModel, fieldN
 fun getNewMutableSetEntity(setField: MutableSetFieldModel): MutableEntityModel =
     setField.getOrNewValue() as MutableEntityModel
 
-fun getOrNewMutableSingleField(entityModel: MutableBaseEntityModel, fieldName: String): MutableSingleFieldModel =
+fun getOrNewMutableSingleField(entityModel: MutableEntityModel, fieldName: String): MutableSingleFieldModel =
     entityModel.getOrNewField(fieldName) as MutableSingleFieldModel
 
-fun getOrNewMutableSetField(entityModel: MutableBaseEntityModel, fieldName: String): MutableSetFieldModel =
+fun getOrNewMutableSetField(entityModel: MutableEntityModel, fieldName: String): MutableSetFieldModel =
     entityModel.getOrNewField(fieldName) as MutableSetFieldModel
 
 fun setDoubleSingleField(
-    entityModel: MutableBaseEntityModel,
+    entityModel: MutableEntityModel,
     fieldName: String,
     value: Double
 ): MutableSingleFieldModel {
@@ -31,7 +31,7 @@ fun setDoubleSingleField(
 }
 
 fun setStringSingleField(
-    entityModel: MutableBaseEntityModel,
+    entityModel: MutableEntityModel,
     fieldName: String,
     value: String
 ): MutableSingleFieldModel {
@@ -41,26 +41,26 @@ fun setStringSingleField(
     return field
 }
 
-fun setUuidSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: String) {
+fun setUuidSingleField(entityModel: MutableEntityModel, fieldName: String, value: String) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
 }
 
-fun setTimestampSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: ULong) {
+fun setTimestampSingleField(entityModel: MutableEntityModel, fieldName: String, value: ULong) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.value = value
 }
 
-fun setBooleanSingleField(entityModel: MutableBaseEntityModel, fieldName: String, value: Boolean) {
+fun setBooleanSingleField(entityModel: MutableEntityModel, fieldName: String, value: Boolean) {
     val field = getOrNewMutableSingleField(entityModel, fieldName)
     val primitive = field.getOrNewValue() as MutablePrimitiveModel
     primitive.setValue(value)
 }
 
 fun setPassword1waySingleField(
-    entityModel: MutableBaseEntityModel,
+    entityModel: MutableEntityModel,
     fieldName: String,
     configure: MutablePassword1wayModel.() -> Unit
 ) {
@@ -70,7 +70,7 @@ fun setPassword1waySingleField(
 }
 
 fun setPassword2waySingleField(
-    entityModel: MutableBaseEntityModel,
+    entityModel: MutableEntityModel,
     fieldName: String,
     configure: MutablePassword2wayModel.() -> Unit
 ) {
@@ -80,7 +80,7 @@ fun setPassword2waySingleField(
 }
 
 fun setEnumerationSingleField(
-    entityModel: MutableBaseEntityModel,
+    entityModel: MutableEntityModel,
     fieldName: String,
     value: String
 ): MutableSingleFieldModel {

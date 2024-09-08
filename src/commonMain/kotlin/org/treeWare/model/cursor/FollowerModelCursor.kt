@@ -5,7 +5,7 @@ import org.treeWare.model.core.*
 import org.treeWare.model.traversal.AbstractLeader1ModelVisitor
 import org.treeWare.model.traversal.dispatchVisit
 
-typealias EntityEquals = (leaderEntity: BaseEntityModel, followerEntity: BaseEntityModel) -> Boolean
+typealias EntityEquals = (leaderEntity: EntityModel, followerEntity: EntityModel) -> Boolean
 
 class FollowerModelCursor(private val initial: ElementModel, followerEntityEquals: EntityEquals? = null) {
     private val stateStack = FollowerStateStack()
@@ -65,7 +65,7 @@ private class NullFollowerState(
 }
 
 private abstract class BaseEntityFollowerState(
-    private val baseEntity: BaseEntityModel,
+    private val baseEntity: EntityModel,
     stack: FollowerStateStack,
     private val stateFactoryVisitor: FollowerStateFactoryVisitor
 ) : FollowerState(baseEntity, stack) {
@@ -161,7 +161,7 @@ private class SetFieldFollowerState(
         }
         CursorMoveDirection.VISIT -> {
             // Follow set elements by matching.
-            val leaderValue = move.element as BaseEntityModel
+            val leaderValue = move.element as EntityModel
             val followerValue: ElementModel? =
                 if (followerEntityEquals != null) getEntityMatching(leaderValue, field, followerEntityEquals)
                 else field.getValueMatching(leaderValue)
@@ -177,12 +177,12 @@ private class SetFieldFollowerState(
 }
 
 private fun getEntityMatching(
-    leaderEntity: BaseEntityModel,
+    leaderEntity: EntityModel,
     followerSetField: SetFieldModel,
     followerEntityEquals: EntityEquals
-): BaseEntityModel? = followerSetField.values.find {
-    followerEntityEquals(leaderEntity, it as BaseEntityModel)
-} as BaseEntityModel?
+): EntityModel? = followerSetField.values.find {
+    followerEntityEquals(leaderEntity, it as EntityModel)
+} as EntityModel?
 
 // Values
 

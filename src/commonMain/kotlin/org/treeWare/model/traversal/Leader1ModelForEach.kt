@@ -98,6 +98,6 @@ fun <Return> dispatchLeave(
 }
 
 private fun logDispatch(logPrefix: String, direction: String, leader: ElementModel) {
-    println("$logPrefix $direction ${leader.elementType} ${(leader.meta as? BaseEntityModel)?.let { getMetaName(it) }}")
+    println("$logPrefix $direction ${leader.elementType} ${(leader.meta as? EntityModel)?.let { getMetaName(it) }}")
     System.out.flush()
 }

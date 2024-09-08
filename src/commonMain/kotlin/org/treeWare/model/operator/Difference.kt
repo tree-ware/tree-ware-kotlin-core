@@ -169,17 +169,17 @@ private class DifferenceVisitor(
         val fieldInclusions = Inclusions()
         inclusionStack.addFirst(fieldInclusions)
 
-        val createParent = createStack.first() as MutableBaseEntityModel?
+        val createParent = createStack.first() as MutableEntityModel?
             ?: throw IllegalStateException("Create-field parent is null")
         val createField = createParent.getOrNewField(fieldName)
         createStack.addFirst(createField)
 
-        val deleteParent = deleteStack.first() as MutableBaseEntityModel?
+        val deleteParent = deleteStack.first() as MutableEntityModel?
             ?: throw IllegalStateException("Delete-field parent is null")
         val deleteField = deleteParent.getOrNewField(fieldName)
         deleteStack.addFirst(deleteField)
 
-        val updateParent = updateStack.first() as MutableBaseEntityModel?
+        val updateParent = updateStack.first() as MutableEntityModel?
             ?: throw IllegalStateException("Update-field parent is null")
         val updateField = updateParent.getOrNewField(fieldName)
         updateStack.addFirst(updateField)
@@ -212,7 +212,7 @@ private class DifferenceVisitor(
     private fun leaveField(stack: ArrayDeque<MutableElementModel?>, include: Boolean) {
         val outputField = stack.removeFirst() as MutableFieldModel
         if (!include && !isKeyField(outputField)) {
-            val outputParent = stack.first() as MutableBaseEntityModel
+            val outputParent = stack.first() as MutableEntityModel
             outputParent.detachField(outputField)
         }
     }

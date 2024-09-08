@@ -43,12 +43,12 @@ fun getEnumerationValueMeta(enumerationMeta: EntityModel, number: UInt): EntityM
     } as? EntityModel
 }
 
-fun getParentEnumerationMeta(enumerationValueMeta: EntityModel): BaseEntityModel? = enumerationValueMeta.parent?.parent
+fun getParentEnumerationMeta(enumerationValueMeta: EntityModel): EntityModel? = enumerationValueMeta.parent?.parent
 
 fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
 
-fun isEntityMeta(entityMeta: BaseEntityModel): Boolean =
+fun isEntityMeta(entityMeta: EntityModel): Boolean =
     getMetaModelFullName(entityMeta) == "/tree_ware_meta_model.main/entity"
 
 fun getPackageName(entityMeta: EntityModel): String = getMetaName(entityMeta.parent?.parent)
@@ -100,17 +100,17 @@ fun getUniquesMeta(entityMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(entityMeta, "uniques") }.getOrNull()
 
 // TODO(cleanup): getMetaName() should return `String?`. Callers should handle the null value as applicable.
-fun getMetaName(meta: BaseEntityModel?): String = meta?.let { getSingleString(it, "name") } ?: ""
+fun getMetaName(meta: EntityModel?): String = meta?.let { getSingleString(it, "name") } ?: ""
 
-fun getMetaNumber(meta: BaseEntityModel?): UInt? = meta?.let { getOptionalSingleUint32(it, "number") }
+fun getMetaNumber(meta: EntityModel?): UInt? = meta?.let { getOptionalSingleUint32(it, "number") }
 
-fun getMetaInfo(meta: BaseEntityModel?): String? = meta?.let { getOptionalSingleString(it, "info") }
+fun getMetaInfo(meta: EntityModel?): String? = meta?.let { getOptionalSingleString(it, "info") }
 
 fun getFieldTypeMeta(fieldMeta: EntityModel?): FieldType? = fieldMeta?.let {
     FieldType.valueOf(getSingleEnumeration(fieldMeta, "type").uppercase())
 }
 
-fun getParentEntityMeta(fieldMeta: EntityModel): BaseEntityModel? = fieldMeta.parent?.parent
+fun getParentEntityMeta(fieldMeta: EntityModel): EntityModel? = fieldMeta.parent?.parent
 
 fun getEnumerationInfoMeta(fieldMeta: EntityModel): EntityModel =
     getSingleEntity(fieldMeta, "enumeration")

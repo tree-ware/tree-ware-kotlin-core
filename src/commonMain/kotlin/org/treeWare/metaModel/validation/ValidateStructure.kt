@@ -278,7 +278,7 @@ private fun validateConstraints(fieldMeta: EntityModel, fieldId: String): List<S
 
 // Helpers
 
-private fun validateSingleStringField(meta: BaseEntityModel, fieldName: String, id: String): List<String> =
+private fun validateSingleStringField(meta: EntityModel, fieldName: String, id: String): List<String> =
     when (runCatching { getSingleString(meta, fieldName) }.getOrNull()) {
         null -> listOf("$id $fieldName is missing")
         else -> listOf()

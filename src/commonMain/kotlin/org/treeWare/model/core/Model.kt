@@ -20,8 +20,12 @@ data class Keys(val available: List<SingleFieldModel>, val missing: List<String>
 
 val EmptyKeys = Keys(emptyList(), emptyList())
 
-interface BaseEntityModel : ElementModel {
+interface EntityModel : ElementModel {
+    override val elementType: ModelElementType
+        get() = ModelElementType.ENTITY
+
     override val meta: EntityModel?
+    override val parent: FieldModel?
 
     val fields: Map<String, FieldModel>
 
@@ -37,18 +41,11 @@ interface BaseEntityModel : ElementModel {
     fun getKeyValues(): List<Any?>
 }
 
-interface EntityModel : BaseEntityModel {
-    override val elementType: ModelElementType
-        get() = ModelElementType.ENTITY
-
-    override val parent: FieldModel?
-}
-
 // Fields
 
 interface FieldModel : ElementModel {
     override val meta: EntityModel?
-    override val parent: BaseEntityModel?
+    override val parent: EntityModel?
 }
 
 interface SingleFieldModel : FieldModel {

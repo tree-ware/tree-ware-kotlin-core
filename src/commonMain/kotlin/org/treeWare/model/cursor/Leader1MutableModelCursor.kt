@@ -59,7 +59,7 @@ private abstract class LeaderMutableModelState(
 }
 
 private abstract class BaseEntityLeaderMutableModelState(
-    baseEntity: MutableBaseEntityModel,
+    baseEntity: MutableEntityModel,
     stack: LeaderMutableModelStateStack,
     stateFactoryVisitor: LeaderMutableModelStateFactoryVisitor
 ) : LeaderMutableModelState(baseEntity, stack) {

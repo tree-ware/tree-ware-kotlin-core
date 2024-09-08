@@ -9,7 +9,7 @@ import org.treeWare.util.assertInDevMode
 
 class BaseEntityStateMachine(
     private val parentCollectionField: MutableCollectionFieldModel?,
-    private val baseFactory: () -> MutableBaseEntityModel,
+    private val baseFactory: () -> MutableEntityModel,
     private val stack: DecodingStack,
     private val options: ModelDecoderOptions,
     private val errors: MutableList<String>,
@@ -18,7 +18,7 @@ class BaseEntityStateMachine(
 ) : ValueDecodingStateMachine, AbstractDecodingStateMachine(true) {
     private val auxStateMachinesMap = HashMap<String, LinkedHashMap<String, AuxDecodingStateMachine>>()
 
-    private var base: MutableBaseEntityModel? = null
+    private var base: MutableEntityModel? = null
     private var entityMeta: EntityModel? = null
     private val logger = logging()
 

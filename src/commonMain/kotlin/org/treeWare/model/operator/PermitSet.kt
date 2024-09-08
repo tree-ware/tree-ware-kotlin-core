@@ -189,7 +189,7 @@ private class PermitSetVisitor(
             return TraversalAction.ABORT_SUB_TREE
         }
 
-        val permittedParent = permittedStack.first() as MutableBaseEntityModel
+        val permittedParent = permittedStack.first() as MutableEntityModel
         val leaderFieldName = getFieldName(leaderField1)
         val permittedField = permittedParent.getOrNewField(leaderFieldName)
         copySetAux(leaderField1, permittedField)
@@ -218,7 +218,7 @@ private class PermitSetVisitor(
             return TraversalAction.ABORT_SUB_TREE
         }
 
-        val permittedParent = permittedStack.first() as MutableBaseEntityModel
+        val permittedParent = permittedStack.first() as MutableEntityModel
         val leaderFieldName = getFieldName(leaderField1)
         val permittedField = permittedParent.getOrNewField(leaderFieldName)
         copySetAux(leaderField1, permittedField)

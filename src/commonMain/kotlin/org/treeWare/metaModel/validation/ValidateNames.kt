@@ -36,7 +36,7 @@ private class State {
 
     fun getFullName(): String = nameParts.joinToString("/")
 
-    fun pushName(meta: MutableBaseEntityModel, regex: Regex) {
+    fun pushName(meta: MutableEntityModel, regex: Regex) {
         val name = getMetaName(meta)
         nameParts.add(name)
         val fullName = getFullName()

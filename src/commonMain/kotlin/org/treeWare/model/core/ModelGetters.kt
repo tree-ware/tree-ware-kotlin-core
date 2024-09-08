@@ -10,75 +10,75 @@ fun isCompositionKey(entityModel: EntityModel): Boolean = entityModel.parent?.le
 
 fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent?.meta?.let { getMetaName(it) }
 
-fun getSingleEntity(entityModel: BaseEntityModel, fieldName: String): EntityModel {
+fun getSingleEntity(entityModel: EntityModel, fieldName: String): EntityModel {
     val singleField = getSingleField(entityModel, fieldName)
     return singleField.value as? EntityModel ?: throw IllegalStateException()
 }
 
-fun getOptionalSingleEntity(entityModel: BaseEntityModel, fieldName: String): EntityModel? {
+fun getOptionalSingleEntity(entityModel: EntityModel, fieldName: String): EntityModel? {
     val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
     return singleField.value as? EntityModel ?: throw IllegalStateException()
 }
 
-fun getSingleString(entityModel: BaseEntityModel, fieldName: String): String {
+fun getSingleString(entityModel: EntityModel, fieldName: String): String {
     val singleField = getSingleField(entityModel, fieldName)
     val primitive = singleField.value as? PrimitiveModel ?: throw IllegalStateException()
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
-fun getOptionalSingleString(entityModel: BaseEntityModel, fieldName: String): String? {
+fun getOptionalSingleString(entityModel: EntityModel, fieldName: String): String? {
     val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
     return primitive.value as? String ?: throw IllegalStateException()
 }
 
-fun getSingleBoolean(entityModel: BaseEntityModel, fieldName: String): Boolean {
+fun getSingleBoolean(entityModel: EntityModel, fieldName: String): Boolean {
     val primitive = getSinglePrimitive(entityModel, fieldName)
     return primitive.value as? Boolean ?: throw IllegalStateException()
 }
 
-fun getOptionalSingleBoolean(entityModel: BaseEntityModel, fieldName: String): Boolean? {
+fun getOptionalSingleBoolean(entityModel: EntityModel, fieldName: String): Boolean? {
     val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
     return primitive.value as? Boolean ?: throw IllegalStateException()
 }
 
-fun getOptionalSingleUint32(entityModel: BaseEntityModel, fieldName: String): UInt? {
+fun getOptionalSingleUint32(entityModel: EntityModel, fieldName: String): UInt? {
     val primitive = getOptionalSinglePrimitive(entityModel, fieldName) ?: return null
     return primitive.value as? UInt ?: throw IllegalStateException()
 }
 
-fun getSingleEnumeration(entityModel: BaseEntityModel, fieldName: String): String {
+fun getSingleEnumeration(entityModel: EntityModel, fieldName: String): String {
     val singleField = getSingleField(entityModel, fieldName)
     val enumeration = singleField.value as? EnumerationModel ?: throw IllegalStateException()
     return enumeration.value
 }
 
-fun getOptionalSingleEnumeration(entityModel: BaseEntityModel, fieldName: String): String? {
+fun getOptionalSingleEnumeration(entityModel: EntityModel, fieldName: String): String? {
     val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
     val enumeration = singleField.value as? EnumerationModel ?: throw IllegalStateException()
     return enumeration.value
 }
 
-fun getSingleDouble(entityModel: BaseEntityModel, fieldName: String): Double? {
+fun getSingleDouble(entityModel: EntityModel, fieldName: String): Double? {
     val singleField = getSingleField(entityModel, fieldName)
     val primitive = singleField.value as? PrimitiveModel ?: return null
     return primitive.value as? Double
 }
 
-fun getSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel =
+fun getSingleField(entityModel: EntityModel, fieldName: String): SingleFieldModel =
     entityModel.getField(fieldName) as? SingleFieldModel ?: throw IllegalStateException()
 
-fun getSinglePrimitive(entityModel: BaseEntityModel, fieldName: String): PrimitiveModel =
+fun getSinglePrimitive(entityModel: EntityModel, fieldName: String): PrimitiveModel =
     getSingleField(entityModel, fieldName).value as? PrimitiveModel ?: throw IllegalStateException()
 
-fun getOptionalSingleField(entityModel: BaseEntityModel, fieldName: String): SingleFieldModel? =
+fun getOptionalSingleField(entityModel: EntityModel, fieldName: String): SingleFieldModel? =
     entityModel.getField(fieldName) as? SingleFieldModel?
 
-fun getOptionalSinglePrimitive(entityModel: BaseEntityModel, fieldName: String): PrimitiveModel? {
+fun getOptionalSinglePrimitive(entityModel: EntityModel, fieldName: String): PrimitiveModel? {
     val singleField = getOptionalSingleField(entityModel, fieldName) ?: return null
     return singleField.value as? PrimitiveModel ?: throw IllegalStateException()
 }
 
-fun getCollectionField(entityModel: BaseEntityModel, fieldName: String): CollectionFieldModel =
+fun getCollectionField(entityModel: EntityModel, fieldName: String): CollectionFieldModel =
     entityModel.getField(fieldName) as? CollectionFieldModel ?: throw IllegalStateException()
 
 fun getFieldName(fieldModel: FieldModel): String =

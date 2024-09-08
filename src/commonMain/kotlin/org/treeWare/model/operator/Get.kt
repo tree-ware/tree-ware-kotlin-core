@@ -24,8 +24,8 @@ fun get(
 }
 
 private fun followerEntityEquals(
-    leaderResponseEntity: BaseEntityModel,
-    followerRequestEntity: BaseEntityModel
+    leaderResponseEntity: EntityModel,
+    followerRequestEntity: EntityModel
 ): Boolean {
     assertInDevMode(getMetaModelFullName(leaderResponseEntity) == getMetaModelFullName(followerRequestEntity))
     val leaderResponseKeyFields = getKeyFields(leaderResponseEntity)
@@ -39,7 +39,7 @@ private fun followerEntityEquals(
     return true
 }
 
-private fun getKeyFields(entity: BaseEntityModel): List<SingleFieldModel> {
+private fun getKeyFields(entity: EntityModel): List<SingleFieldModel> {
     val (keyFields, missingKeys) = entity.getKeyFields(true)
     if (missingKeys.isNotEmpty()) {
         val name = getMetaModelFullName(entity)

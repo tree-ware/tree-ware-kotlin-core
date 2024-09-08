@@ -28,14 +28,20 @@ abstract class MutableElementModel : ElementModel {
     open fun getOrNewValue(): MutableElementModel = throw UnsupportedOperationException()
 }
 
-abstract class MutableBaseEntityModel(
-    override val meta: EntityModel?
-) : MutableElementModel(), BaseEntityModel {
+open class MutableEntityModel(
+    override val meta: EntityModel?,
+    override val parent: MutableFieldModel?
+) : MutableElementModel(), EntityModel {
+    companion object {
+        val fieldValueFactory: FieldValueFactory =
+            { fieldMeta, parent -> MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent) }
+    }
+
     override var fields = LinkedHashMap<String, MutableFieldModel>()
         internal set
 
     override fun matches(that: ElementModel): Boolean {
-        if (that !is BaseEntityModel) return false
+        if (that !is EntityModel) return false
         val (thisKeyFields, missingKeys) = getKeyFields()
         if (missingKeys.isNotEmpty()) {
             val entityMetaName = getMetaModelResolved(meta)?.fullName ?: getMetaName(meta)
@@ -109,7 +115,7 @@ abstract class MutableBaseEntityModel(
             if (keyField == null) missingKeys.add(keyFieldFullName)
             else {
                 if (flatten && isCompositionField(keyField)) {
-                    val childEntity = keyField.value as MutableBaseEntityModel?
+                    val childEntity = keyField.value as MutableEntityModel?
                     if (childEntity == null) missingKeys.add(keyFieldFullName)
                     else childEntity.getKeyFields(true, keyFieldFullName, availableKeys, missingKeys)
                 } else availableKeys.add(keyField)
@@ -125,20 +131,10 @@ abstract class MutableBaseEntityModel(
         }
         return availableKeys.flatMap { keyField ->
             when (getFieldTypeMeta(keyField.meta)) {
-                FieldType.COMPOSITION -> (keyField.value as BaseEntityModel).getKeyValues()
+                FieldType.COMPOSITION -> (keyField.value as EntityModel).getKeyValues()
                 else -> listOf(keyField.value?.let { (it as PrimitiveModel).value })
             }
         }
-    }
-}
-
-open class MutableEntityModel(
-    meta: EntityModel?,
-    override val parent: MutableFieldModel?
-) : MutableBaseEntityModel(meta), EntityModel {
-    companion object {
-        val fieldValueFactory: FieldValueFactory =
-            { fieldMeta, parent -> MutableEntityModel(getMetaModelResolved(fieldMeta)?.compositionMeta, parent) }
     }
 }
 
@@ -146,7 +142,7 @@ open class MutableEntityModel(
 
 abstract class MutableFieldModel(
     override val meta: EntityModel?,
-    override val parent: MutableBaseEntityModel?
+    override val parent: MutableEntityModel?
 ) : MutableElementModel(), FieldModel {
     fun detachFromParent() {
         parent?.detachField(this)
@@ -155,7 +151,7 @@ abstract class MutableFieldModel(
 
 open class MutableSingleFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel?,
+    parent: MutableEntityModel?,
     val valueFactory: FieldValueFactory,
 ) : MutableFieldModel(meta, parent), SingleFieldModel {
     override var value: MutableElementModel? = null
@@ -187,7 +183,7 @@ open class MutableSingleFieldModel(
 
 abstract class MutableCollectionFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel
+    parent: MutableEntityModel
 ) : MutableFieldModel(meta, parent), CollectionFieldModel {
     abstract override val values: MutableCollection<MutableElementModel>
 
@@ -196,7 +192,7 @@ abstract class MutableCollectionFieldModel(
 
 class MutableSetFieldModel(
     meta: EntityModel?,
-    parent: MutableBaseEntityModel,
+    parent: MutableEntityModel,
     val valueFactory: FieldValueFactory,
 ) : MutableCollectionFieldModel(meta, parent), SetFieldModel {
     private val linkedHashMap = LinkedHashMap<ElementModelId, MutableElementModel>()

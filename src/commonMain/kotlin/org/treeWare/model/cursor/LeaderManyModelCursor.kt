@@ -61,11 +61,11 @@ private abstract class BaseEntityLeaderManyState(
     init {
         // Traverse entity fields in the order in which they are defined in
         // the meta-model.
-        val baseEntityMeta = (leaders.nonNullElement as BaseEntityModel?)?.meta
+        val baseEntityMeta = (leaders.nonNullElement as EntityModel?)?.meta
         val fieldNames = baseEntityMeta?.let { getFieldNames(it) } ?: emptyList()
         val fieldLeadersList = fieldNames.mapNotNull { fieldName ->
             val fields = leaders.elements.map { baseEntityElement ->
-                val baseEntity = baseEntityElement as BaseEntityModel?
+                val baseEntity = baseEntityElement as EntityModel?
                 baseEntity?.getField(fieldName)
             }
             val fieldLeaders = Leaders(fields)

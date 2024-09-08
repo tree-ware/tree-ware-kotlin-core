@@ -107,7 +107,7 @@ private class UnionVisitor(
     private fun visitField(leaderFieldList: List<FieldModel?>): TraversalAction {
         val lastLeaderField = leaderFieldList.lastNotNullOf { it }
         val lastLeaderFieldName = getFieldName(lastLeaderField)
-        val parent = modelStack.first() as MutableBaseEntityModel
+        val parent = modelStack.first() as MutableEntityModel
         val unionField = parent.getOrNewField(lastLeaderFieldName)
         visitAux(leaderFieldList, unionField)
         modelStack.addFirst(unionField)

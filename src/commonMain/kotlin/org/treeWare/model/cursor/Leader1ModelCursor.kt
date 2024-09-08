@@ -56,7 +56,7 @@ private abstract class LeaderState(val element: ElementModel, val stateStack: Le
 }
 
 private abstract class BaseEntityLeaderState(
-    baseEntity: BaseEntityModel,
+    baseEntity: EntityModel,
     stack: LeaderStateStack,
     stateFactoryVisitor: LeaderStateFactoryVisitor
 ) : LeaderState(baseEntity, stack) {
