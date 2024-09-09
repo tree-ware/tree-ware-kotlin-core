@@ -1,11 +1,11 @@
 package org.treeWare.model
 
 import org.treeWare.metaModel.addressBookMetaModel
-import org.treeWare.metaModel.getModelRootEntityMeta
+import org.treeWare.metaModel.getResolvedRootMeta
 import org.treeWare.model.core.*
 
 fun newAddressBook(auxName: String): EntityModel {
-    val rootEntityMeta = getModelRootEntityMeta(addressBookMetaModel)
+    val rootEntityMeta = getResolvedRootMeta(addressBookMetaModel)
     val root = MutableEntityModel(rootEntityMeta, null)
     root.setAux(auxName, "Aux at address_book level")
     setStringSingleField(root, "name", "Address Book")

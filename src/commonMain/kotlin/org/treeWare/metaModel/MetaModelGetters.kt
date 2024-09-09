@@ -11,10 +11,10 @@ fun getVersionMeta(meta: EntityModel): EntityModel {
 }
 
 /**
- * Returns the meta-model to be used for the root entity of the model.
- * NOTE: this is different than the getRootMeta() function which returns the root entity of the meta-model.
+ * Returns the resolved root meta. This is the meta to be used for the root entity of the *model*.
+ * NOTE: this is different than the getRootMeta() function which returns the unresolved root entity of the meta-model.
  */
-fun getModelRootEntityMeta(meta: EntityModel): EntityModel =
+fun getResolvedRootMeta(meta: EntityModel): EntityModel =
     getMetaModelResolved(meta)?.compositionMeta ?: throw IllegalStateException("Root entity not found")
 
 fun getRootMeta(meta: EntityModel): EntityModel {

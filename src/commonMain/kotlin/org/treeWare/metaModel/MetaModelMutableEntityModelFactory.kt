@@ -4,7 +4,7 @@ import org.treeWare.model.core.MutableEntityModel
 import org.treeWare.model.core.MutableEntityModelFactory
 
 private val metaMetaModel = newMetaMetaModel()
-private val metaRootEntityMeta = getModelRootEntityMeta(metaMetaModel)
+private val metaRootEntityMeta = getResolvedRootMeta(metaMetaModel)
 
 object MetaModelMutableEntityModelFactory : MutableEntityModelFactory {
     override fun create(): MutableEntityModel {

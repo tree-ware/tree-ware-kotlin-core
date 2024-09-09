@@ -24,4 +24,4 @@ fun newAddressBookMetaModel(hasher: Hasher?, cipher: Cipher?): ValidatedMetaMode
 val addressBookMetaModel = newAddressBookMetaModel(null, null).metaModel
     ?: throw IllegalStateException("Meta-model has validation errors")
 
-val addressBookRootEntityMeta = getModelRootEntityMeta(addressBookMetaModel)
+val addressBookRootEntityMeta = getResolvedRootMeta(addressBookMetaModel)
