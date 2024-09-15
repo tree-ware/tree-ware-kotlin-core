@@ -60,9 +60,9 @@ class GranularityValidationTests {
     fun `Entity granularity must fail for non-composition single-fields`() {
         val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.OPTIONAL, Granularity.ENTITY)
         val expectedErrors = listOf(
-            "/test.main/test_entity/primitive_field: `entity` granularity is not yet supported",
-            "/test.main/test_entity/enumeration_field: `entity` granularity is not yet supported",
-            "/test.main/test_entity/association_field: `entity` granularity is not yet supported",
+            "/org.tree_ware.test.main/test_entity/primitive_field: `entity` granularity is not yet supported",
+            "/org.tree_ware.test.main/test_entity/enumeration_field: `entity` granularity is not yet supported",
+            "/org.tree_ware.test.main/test_entity/association_field: `entity` granularity is not yet supported",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -71,7 +71,7 @@ class GranularityValidationTests {
     fun `Entity granularity must fail for composition single-fields`() {
         val metaModelJson = getCompositionMetaModelJson(Multiplicity.OPTIONAL, Granularity.ENTITY)
         val expectedErrors = listOf(
-            "/test.main/test_entity/composition_field: `entity` granularity is not yet supported",
+            "/org.tree_ware.test.main/test_entity/composition_field: `entity` granularity is not yet supported",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -80,7 +80,7 @@ class GranularityValidationTests {
     fun `Entity granularity must fail for composition set-fields`() {
         val metaModelJson = getCompositionMetaModelJson(Multiplicity.SET, Granularity.ENTITY)
         val expectedErrors = listOf(
-            "/test.main/test_entity/composition_field: `entity` granularity is not yet supported",
+            "/org.tree_ware.test.main/test_entity/composition_field: `entity` granularity is not yet supported",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -93,9 +93,9 @@ class GranularityValidationTests {
     fun `Sub-tree granularity must fail for non-composition single-fields`() {
         val metaModelJson = getNonCompositionMetaModelJson(Multiplicity.OPTIONAL, Granularity.SUB_TREE)
         val expectedErrors = listOf(
-            "/test.main/test_entity/primitive_field: `sub_tree` granularity is supported only for composition fields",
-            "/test.main/test_entity/enumeration_field: `sub_tree` granularity is supported only for composition fields",
-            "/test.main/test_entity/association_field: `sub_tree` granularity is supported only for composition fields",
+            "/org.tree_ware.test.main/test_entity/primitive_field: `sub_tree` granularity is supported only for composition fields",
+            "/org.tree_ware.test.main/test_entity/enumeration_field: `sub_tree` granularity is supported only for composition fields",
+            "/org.tree_ware.test.main/test_entity/association_field: `sub_tree` granularity is supported only for composition fields",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -121,7 +121,7 @@ private fun getNonCompositionMetaModelJson(multiplicity: Multiplicity, granulari
     val granularityJson = getGranularityJson(granularity)
     val mainPackageJson = """
         {
-          "name": "test.main",
+          "name": "org.tree_ware.test.main",
           "entities": [
             {
               "name": "test_entity",
@@ -139,7 +139,7 @@ private fun getNonCompositionMetaModelJson(multiplicity: Multiplicity, granulari
                   "type": "enumeration",
                   "enumeration": {
                     "name": "enumeration1",
-                    "package": "test.common"
+                    "package": "org.tree_ware.test.common"
                   },
                   $granularityJson
                   "multiplicity": "${multiplicity.name.lowercase()}"
@@ -150,7 +150,7 @@ private fun getNonCompositionMetaModelJson(multiplicity: Multiplicity, granulari
                   "type": "association",
                   "association": {
                     "entity": "entity1",
-                    "package": "test.common"
+                    "package": "org.tree_ware.test.common"
                   },
                   $granularityJson
                   "multiplicity": "${multiplicity.name.lowercase()}"
@@ -167,7 +167,7 @@ private fun getCompositionMetaModelJson(multiplicity: Multiplicity, granularity:
     val granularityJson = getGranularityJson(granularity)
     val mainPackageJson = """
         {
-          "name": "test.main",
+          "name": "org.tree_ware.test.main",
           "entities": [
             {
               "name": "test_entity",
@@ -178,7 +178,7 @@ private fun getCompositionMetaModelJson(multiplicity: Multiplicity, granularity:
                   "type": "composition",
                   "composition": {
                     "entity": "entity2",
-                    "package": "test.common"
+                    "package": "org.tree_ware.test.common"
                   },
                   $granularityJson
                   "multiplicity": "${multiplicity.name.lowercase()}"

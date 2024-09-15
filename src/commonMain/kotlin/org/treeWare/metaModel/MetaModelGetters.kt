@@ -49,7 +49,7 @@ fun getEntitiesMeta(packageMeta: EntityModel): CollectionFieldModel? =
     runCatching { getCollectionField(packageMeta, "entities") }.getOrNull()
 
 fun isEntityMeta(entityMeta: EntityModel): Boolean =
-    getMetaModelFullName(entityMeta) == "/tree_ware_meta_model.main/entity"
+    getMetaModelFullName(entityMeta) == "/org.tree_ware.meta_model.main/entity"
 
 fun getPackageName(entityMeta: EntityModel): String = getMetaName(entityMeta.parent?.parent)
 

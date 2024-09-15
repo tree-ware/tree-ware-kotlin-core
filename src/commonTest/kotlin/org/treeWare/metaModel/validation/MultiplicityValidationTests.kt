@@ -28,7 +28,7 @@ class MultiplicityValidationTests {
     @Test
     fun `Multiplicity must be specified with a valid value`() {
         val metaModelJson = getMetaModelJson("invalid")
-        val expectedDecodeErrors = listOf("JSON decoding failed at line 97 column 30, 1874 characters from the start")
+        val expectedDecodeErrors = listOf("JSON decoding failed at line 98 column 30, 1977 characters from the start")
         val expectedValidationErrors = listOf("Meta-model decoding failed")
         assertJsonStringValidationErrors(metaModelJson, expectedValidationErrors, expectedDecodeErrors)
     }
@@ -49,7 +49,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
     val multiplicityJson = getMultiplicityJson(multiplicity)
     val mainPackageJson = """
         | {
-        |   "name": "test.main",
+        |   "name": "org.tree_ware.test.main",
         |   "entities": [
         |     {
         |       "name": "main_entity1",
@@ -66,7 +66,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "type": "enumeration",
         |           "enumeration": {
         |             "name": "enumeration1",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           }
         |           $multiplicityJson
         |         },
@@ -76,7 +76,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "type": "association",
         |           "association": {
         |             "entity": "entity2",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           }
         |           $multiplicityJson
         |         },
@@ -86,7 +86,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "type": "composition",
         |           "composition": {
         |             "entity": "entity3",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           }
         |           $multiplicityJson
         |         }

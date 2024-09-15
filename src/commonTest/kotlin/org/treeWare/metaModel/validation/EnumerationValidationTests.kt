@@ -11,7 +11,7 @@ class EnumerationValidationTests {
     fun `Enumeration must have info`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -36,7 +36,7 @@ class EnumerationValidationTests {
     fun `Enumeration must have non-empty info`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -55,8 +55,8 @@ class EnumerationValidationTests {
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
         val expectedErrors = listOf(
-            "Package 1 entity 0 field 0 enumeration info name is missing",
-            "Package 1 entity 0 field 0 enumeration info package is missing"
+            "Package 1 entity 0 field 0 enumeration info 'name' is missing",
+            "Package 1 entity 0 field 0 enumeration info 'package' is missing"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -65,7 +65,7 @@ class EnumerationValidationTests {
     fun `Enumeration must refer to a defined enumeration`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -76,7 +76,7 @@ class EnumerationValidationTests {
             |           "type": "enumeration",
             |           "enumeration": {
             |             "name": "undefined_enumeration",
-            |             "package": "test.common"
+            |             "package": "org.tree_ware.test.common"
             |           }
             |         }
             |       ]
@@ -86,7 +86,7 @@ class EnumerationValidationTests {
         """.trimMargin()
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
-        val expectedErrors = listOf("Enumeration /test.common/undefined_enumeration cannot be resolved")
+        val expectedErrors = listOf("Enumeration /org.tree_ware.test.common/undefined_enumeration cannot be resolved")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -94,7 +94,7 @@ class EnumerationValidationTests {
     fun `Enumeration must be valid if info can be resolved`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -105,7 +105,7 @@ class EnumerationValidationTests {
             |           "type": "enumeration",
             |           "enumeration": {
             |             "name": "enumeration1",
-            |             "package": "test.common"
+            |             "package": "org.tree_ware.test.common"
             |           }
             |         }
             |       ]

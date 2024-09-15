@@ -12,19 +12,19 @@ class Leader1Adapter<Return>(
     override fun visitEntity(leaderEntity1: EntityModel): Return {
         if (isRootEntity(leaderEntity1)) return adaptee.visitMetaModel(leaderEntity1)
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/meta_model" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/version" -> adaptee.visitVersionMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/enumeration" -> adaptee.visitEnumerationMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/enumeration_value" -> adaptee.visitEnumerationValueMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/entity" -> adaptee.visitEntityMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/field" -> adaptee.visitFieldMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/unique" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/unique_field" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/entity_info" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/enumeration_info" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/exists_if_clause" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/meta_model" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/version" -> adaptee.visitVersionMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/enumeration" -> adaptee.visitEnumerationMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/enumeration_value" -> adaptee.visitEnumerationValueMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/entity" -> adaptee.visitEntityMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/field" -> adaptee.visitFieldMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/unique" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/unique_field" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/entity_info" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/enumeration_info" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/exists_if_clause" -> defaultVisitReturn
             null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
@@ -33,19 +33,19 @@ class Leader1Adapter<Return>(
     override fun leaveEntity(leaderEntity1: EntityModel) {
         if (isRootEntity(leaderEntity1)) return adaptee.leaveMetaModel(leaderEntity1)
         return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/meta_model" -> Unit
-            "/tree_ware_meta_model.main/version" -> adaptee.leaveVersionMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/enumeration" -> adaptee.leaveEnumerationMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/enumeration_value" -> adaptee.leaveEnumerationValueMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/entity" -> adaptee.leaveEntityMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/field" -> adaptee.leaveFieldMeta(leaderEntity1)
-            "/tree_ware_meta_model.main/unique" -> Unit
-            "/tree_ware_meta_model.main/unique_field" -> Unit
-            "/tree_ware_meta_model.main/entity_info" -> Unit
-            "/tree_ware_meta_model.main/enumeration_info" -> Unit
-            "/tree_ware_meta_model.main/exists_if_clause" -> Unit
+            "/org.tree_ware.meta_model.main/meta_model" -> Unit
+            "/org.tree_ware.meta_model.main/version" -> adaptee.leaveVersionMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/enumeration" -> adaptee.leaveEnumerationMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/enumeration_value" -> adaptee.leaveEnumerationValueMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/entity" -> adaptee.leaveEntityMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/field" -> adaptee.leaveFieldMeta(leaderEntity1)
+            "/org.tree_ware.meta_model.main/unique" -> Unit
+            "/org.tree_ware.meta_model.main/unique_field" -> Unit
+            "/org.tree_ware.meta_model.main/entity_info" -> Unit
+            "/org.tree_ware.meta_model.main/enumeration_info" -> Unit
+            "/org.tree_ware.meta_model.main/exists_if_clause" -> Unit
             null -> Unit // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
@@ -58,13 +58,13 @@ class Leader1Adapter<Return>(
 
     override fun visitSetField(leaderField1: SetFieldModel): Return {
         return when (val metaMetaName = leaderField1.getMetaResolved()?.fullName) {
-            "/tree_ware_meta_model.main/meta_model/packages" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/package/enumerations" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/enumeration/values" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/package/entities" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/entity/fields" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/entity/uniques" -> defaultVisitReturn
-            "/tree_ware_meta_model.main/unique/fields" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/meta_model/packages" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/package/enumerations" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/enumeration/values" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/package/entities" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/entity/fields" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/entity/uniques" -> defaultVisitReturn
+            "/org.tree_ware.meta_model.main/unique/fields" -> defaultVisitReturn
             null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }

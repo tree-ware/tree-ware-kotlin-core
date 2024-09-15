@@ -61,7 +61,7 @@ class ConstraintsValidationTests {
 private fun getMetaModelJson(fieldType: String, constraintName: String, constraintValue: String): String {
     val mainPackageJson = """
         |{
-        |  "name": "test.main",
+        |  "name": "org.tree_ware.test.main",
         |  "entities": [
         |    {
         |      "name": "entity1",

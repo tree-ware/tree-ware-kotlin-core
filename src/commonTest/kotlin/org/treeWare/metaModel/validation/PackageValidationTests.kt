@@ -12,13 +12,14 @@ class PackageValidationTests {
         val metaModelJson = """
             | {
             |   "name": "test_meta_model",
+            |   "package": "org.tree_ware.test.main",
             |   "version": {
             |     "semantic": "1.0.0",
             |     "name": "pacific-ocean"
             |   },
             |   "root": {
             |     "entity": "entity1",
-            |     "package": "test.common"
+            |     "package": "org.tree_ware.test.common"
             |   }
             | }
         """.trimMargin()
@@ -31,18 +32,19 @@ class PackageValidationTests {
         val metaModelJson = """
             | {
             |   "name": "test_meta_model",
+            |   "package": "org.tree_ware.test.main",
             |   "version": {
             |     "semantic": "1.0.0",
             |     "name": "pacific-ocean"
             |   },
             |   "root": {
             |     "entity": "entity1",
-            |     "package": "test.common"
+            |     "package": "org.tree_ware.test.common"
             |   },
             |   "packages": []
             | }
         """.trimMargin()
-        val expectedErrors = listOf("Entity /test.common/entity1 cannot be resolved")
+        val expectedErrors = listOf("Entity /org.tree_ware.test.common/entity1 cannot be resolved")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -57,7 +59,7 @@ class PackageValidationTests {
             |   },
             |   "root": {
             |     "entity": "entity1",
-            |     "package": "test.common"
+            |     "package": "org.tree_ware.test.common"
             |   },
             |   "packages": [
             |     {},
@@ -67,10 +69,10 @@ class PackageValidationTests {
             | }
         """.trimMargin()
         val expectedDecodeErrors = listOf(
-            "Missing key fields [name] in instance of /tree_ware_meta_model.main/package",
-            "Missing key fields [name] in instance of /tree_ware_meta_model.main/package"
+            "Missing key fields [name] in instance of /org.tree_ware.meta_model.main/package",
+            "Missing key fields [name] in instance of /org.tree_ware.meta_model.main/package"
         )
-        val expectedErrors = listOf("Entity /test.common/entity1 cannot be resolved")
+        val expectedErrors = listOf("Entity /org.tree_ware.test.common/entity1 cannot be resolved")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 

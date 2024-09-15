@@ -9,7 +9,7 @@ class AssociationValidationTests {
     fun `Association must have info`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -33,7 +33,7 @@ class AssociationValidationTests {
     fun `Association must have non-empty info`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -51,8 +51,8 @@ class AssociationValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Package 1 entity 0 field 0 association info entity is missing",
-            "Package 1 entity 0 field 0 association info package is missing"
+            "Package 1 entity 0 field 0 association info 'entity' is missing",
+            "Package 1 entity 0 field 0 association info 'package' is missing"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -61,7 +61,7 @@ class AssociationValidationTests {
     fun `Association must refer to a defined entity`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -89,7 +89,7 @@ class AssociationValidationTests {
     fun `Association must be valid if info can be resolved`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -117,7 +117,7 @@ class AssociationValidationTests {
     fun `Association must not be a key`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",

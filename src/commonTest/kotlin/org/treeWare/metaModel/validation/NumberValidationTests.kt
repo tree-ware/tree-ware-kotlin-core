@@ -12,7 +12,7 @@ class NumberValidationTests {
     fun `Enumeration values must have a number`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "enumerations": [
             |    {
             |      "name": "test_enumeration",
@@ -27,7 +27,8 @@ class NumberValidationTests {
         """.trimMargin()
         val (metaModel, metaModelErrors) = newTestMetaModel(testPackageJson)
         assertNull(metaModel)
-        val expectedErrors = listOf("Enumeration number is missing for /test.main/test_enumeration/test_value")
+        val expectedErrors =
+            listOf("Enumeration number is missing for /org.tree_ware.test.main/test_enumeration/test_value")
         assertEquals(expectedErrors.joinToString("\n"), metaModelErrors.joinToString("\n"))
     }
 
@@ -35,7 +36,7 @@ class NumberValidationTests {
     fun `First enumeration value number must be 0`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "enumerations": [
             |    {
             |      "name": "test_enumeration",
@@ -51,7 +52,8 @@ class NumberValidationTests {
         """.trimMargin()
         val (metaModel, metaModelErrors) = newTestMetaModel(testPackageJson)
         assertNull(metaModel)
-        val expectedErrors = listOf("First Enumeration number 1 is invalid for /test.main/test_enumeration/test_value")
+        val expectedErrors =
+            listOf("First Enumeration number 1 is invalid for /org.tree_ware.test.main/test_enumeration/test_value")
         assertEquals(expectedErrors.joinToString("\n"), metaModelErrors.joinToString("\n"))
     }
 
@@ -59,7 +61,7 @@ class NumberValidationTests {
     fun `Numbers must not be repeated within an enumeration`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "enumerations": [
             |    {
             |      "name": "test_enumeration",
@@ -88,8 +90,8 @@ class NumberValidationTests {
         val (metaModel, metaModelErrors) = newTestMetaModel(testPackageJson)
         assertNull(metaModel)
         val expectedErrors = listOf(
-            "Enumeration number 0 is a duplicate for /test.main/test_enumeration/test_value_1",
-            "Enumeration number 2 is a duplicate for /test.main/test_enumeration/test_value_3"
+            "Enumeration number 0 is a duplicate for /org.tree_ware.test.main/test_enumeration/test_value_1",
+            "Enumeration number 2 is a duplicate for /org.tree_ware.test.main/test_enumeration/test_value_3"
         )
         assertEquals(expectedErrors.joinToString("\n"), metaModelErrors.joinToString("\n"))
     }
@@ -98,7 +100,7 @@ class NumberValidationTests {
     fun `Numbers may be repeated across enumerations`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "enumerations": [
             |    {
             |      "name": "test_enumeration_1",
@@ -139,7 +141,7 @@ class NumberValidationTests {
     fun `Entity fields must have a number`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "entities": [
             |    {
             |      "name": "test_entity",
@@ -155,7 +157,7 @@ class NumberValidationTests {
         """.trimMargin()
         val (metaModel, metaModelErrors) = newTestMetaModel(testPackageJson)
         assertNull(metaModel)
-        val expectedErrors = listOf("Field number is missing for /test.main/test_entity/test_field")
+        val expectedErrors = listOf("Field number is missing for /org.tree_ware.test.main/test_entity/test_field")
         assertEquals(expectedErrors.joinToString("\n"), metaModelErrors.joinToString("\n"))
     }
 
@@ -163,7 +165,7 @@ class NumberValidationTests {
     fun `Entity fields must have a valid number`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "entities": [
             |    {
             |      "name": "test_entity",
@@ -196,10 +198,10 @@ class NumberValidationTests {
         val (metaModel, metaModelErrors) = newTestMetaModel(testPackageJson)
         assertNull(metaModel)
         val expectedErrors = listOf(
-            "Field number 0 is out of bounds for /test.main/test_entity/test_field_1",
-            "Field number 19000 is out of bounds for /test.main/test_entity/test_field_2",
-            "Field number 19999 is out of bounds for /test.main/test_entity/test_field_3",
-            "Field number 536870912 is out of bounds for /test.main/test_entity/test_field_4"
+            "Field number 0 is out of bounds for /org.tree_ware.test.main/test_entity/test_field_1",
+            "Field number 19000 is out of bounds for /org.tree_ware.test.main/test_entity/test_field_2",
+            "Field number 19999 is out of bounds for /org.tree_ware.test.main/test_entity/test_field_3",
+            "Field number 536870912 is out of bounds for /org.tree_ware.test.main/test_entity/test_field_4"
         )
         assertEquals(expectedErrors.joinToString("\n"), metaModelErrors.joinToString("\n"))
     }
@@ -208,7 +210,7 @@ class NumberValidationTests {
     fun `First entity field number need not be 1`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "entities": [
             |    {
             |      "name": "test_entity",
@@ -233,7 +235,7 @@ class NumberValidationTests {
     fun `Numbers must not be repeated within an entity`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "entities": [
             |    {
             |      "name": "test_entity",
@@ -266,8 +268,8 @@ class NumberValidationTests {
         val (metaModel, metaModelErrors) = newTestMetaModel(testPackageJson)
         assertNull(metaModel)
         val expectedErrors = listOf(
-            "Field number 1 is a duplicate for /test.main/test_entity/test_field_1",
-            "Field number 3 is a duplicate for /test.main/test_entity/test_field_3"
+            "Field number 1 is a duplicate for /org.tree_ware.test.main/test_entity/test_field_1",
+            "Field number 3 is a duplicate for /org.tree_ware.test.main/test_entity/test_field_3"
         )
         assertEquals(expectedErrors.joinToString("\n"), metaModelErrors.joinToString("\n"))
     }
@@ -276,7 +278,7 @@ class NumberValidationTests {
     fun `Numbers may be repeated across entities`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "entities": [
             |    {
             |      "name": "test_entity_1",
@@ -321,7 +323,7 @@ class NumberValidationTests {
     fun `Numbers may be repeated across enumerations and entities`() {
         val testPackageJson = """
             |{
-            |  "name": "test.main",
+            |  "name": "org.tree_ware.test.main",
             |  "enumerations": [
             |    {
             |      "name": "test_enumeration_1",

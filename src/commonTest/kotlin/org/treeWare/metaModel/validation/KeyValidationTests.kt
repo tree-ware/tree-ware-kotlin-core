@@ -59,7 +59,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
     val multiplicityJson = getMultiplicityJson(multiplicity)
     val mainPackageJson = """
         | {
-        |   "name": "test.main",
+        |   "name": "org.tree_ware.test.main",
         |   "entities": [
         |     {
         |       "name": "main_entity1",
@@ -77,7 +77,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "type": "enumeration",
         |           "enumeration": {
         |             "name": "enumeration1",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           },
         |           "is_key": true
         |           $multiplicityJson
@@ -88,7 +88,7 @@ private fun getMetaModelJson(multiplicity: String?): String {
         |           "type": "composition",
         |           "composition": {
         |             "entity": "entity3",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           },
         |           "is_key": true
         |           $multiplicityJson
@@ -106,7 +106,7 @@ private fun getCompositionSetMetaModelJson(): String {
     val multiplicityJson = getMultiplicityJson("set")
     val mainPackageJson = """
         | {
-        |   "name": "test.main",
+        |   "name": "org.tree_ware.test.main",
         |   "entities": [
         |     {
         |       "name": "main_entity1",
@@ -117,7 +117,7 @@ private fun getCompositionSetMetaModelJson(): String {
         |           "type": "composition",
         |           "composition": {
         |             "entity": "entity3",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           },
         |           "is_key": true
         |           $multiplicityJson
@@ -133,7 +133,7 @@ private fun getCompositionSetMetaModelJson(): String {
 private fun getAssociationMetaModelJson(isKey: Boolean): String {
     val mainPackageJson = """
         | {
-        |   "name": "test.main",
+        |   "name": "org.tree_ware.test.main",
         |   "entities": [
         |     {
         |       "name": "main_entity1",
@@ -144,7 +144,7 @@ private fun getAssociationMetaModelJson(isKey: Boolean): String {
         |           "type": "association",
         |           "association": {
         |             "entity": "entity3",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           },
         |           "is_key": $isKey
         |         }
@@ -159,7 +159,7 @@ private fun getAssociationMetaModelJson(isKey: Boolean): String {
 private fun getPasswordsMetaModelJson(isKey: Boolean): String {
     val mainPackageJson = """
         | {
-        |   "name": "test.main",
+        |   "name": "org.tree_ware.test.main",
         |   "entities": [
         |     {
         |       "name": "main_entity1",

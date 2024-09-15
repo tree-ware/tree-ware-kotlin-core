@@ -5,9 +5,10 @@ import org.treeWare.model.core.*
 
 // Functions for creating the meta-meta-model.
 
-fun newMetaMeta(name: String): MutableEntityModel {
+fun newMetaMeta(name: String, packageName: String): MutableEntityModel {
     val metaMeta = MutableEntityModel(null, null)
     newStringSingleField(metaMeta, "name", name)
+    newStringSingleField(metaMeta, "package", packageName)
     return metaMeta
 }
 
@@ -173,7 +174,7 @@ private fun getNamedEntityMeta(): MutableEntityModel {
     val fieldsMeta = newFieldsMetaMeta(entityMeta)
     val fieldMeta = newFieldMetaMeta(fieldsMeta, "name", null, "string", null, true)
     // Resolved aux must be added to `meta` as expected in getKeyFieldsMeta() in MetaModelGetters.kt.
-    val resolvedAux = Resolved("/tree_ware_meta_model.main/entity")
+    val resolvedAux = Resolved("/org.tree_ware.meta_model.main/entity")
     resolvedAux.sortedKeyFieldsMetaInternal.add(fieldMeta)
     entityMeta.setAux(RESOLVED_AUX, resolvedAux)
     return entityMeta

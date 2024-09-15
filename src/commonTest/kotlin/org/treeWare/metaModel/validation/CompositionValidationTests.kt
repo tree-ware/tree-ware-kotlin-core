@@ -9,7 +9,7 @@ class CompositionValidationTests {
     fun `Composition must have info`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -33,7 +33,7 @@ class CompositionValidationTests {
     fun `Composition must have non-empty info`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -51,8 +51,8 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Package 1 entity 0 field 0 composition info entity is missing",
-            "Package 1 entity 0 field 0 composition info package is missing"
+            "Package 1 entity 0 field 0 composition info 'entity' is missing",
+            "Package 1 entity 0 field 0 composition info 'package' is missing"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -61,7 +61,7 @@ class CompositionValidationTests {
     fun `Composition must refer to a defined entity`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -89,7 +89,7 @@ class CompositionValidationTests {
     fun `Composition must be valid if info can be resolved`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -117,7 +117,7 @@ class CompositionValidationTests {
     fun `Composition key target entity must have keys`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -139,7 +139,7 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Composition key field /test.main/test_entity/test_field target entity does not have only primitive keys"
+            "Composition key field /org.tree_ware.test.main/test_entity/test_field target entity does not have only primitive keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -148,7 +148,7 @@ class CompositionValidationTests {
     fun `Composition key target entity must not have composition keys`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -180,8 +180,8 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Composition key field /test.main/test_entity/test_field_1 target entity does not have only primitive keys",
-            "Composition key field /test.main/test_entity/test_field_2 target entity does not have only primitive keys"
+            "Composition key field /org.tree_ware.test.main/test_entity/test_field_1 target entity does not have only primitive keys",
+            "Composition key field /org.tree_ware.test.main/test_entity/test_field_2 target entity does not have only primitive keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -190,7 +190,7 @@ class CompositionValidationTests {
     fun `Composition key target entity must not have non-key fields`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -212,7 +212,7 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Composition key field /test.main/test_entity/test_field target entity does not have only primitive keys"
+            "Composition key field /org.tree_ware.test.main/test_entity/test_field target entity does not have only primitive keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -221,7 +221,7 @@ class CompositionValidationTests {
     fun `Composition key is valid if target entity has only primitive keys`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -250,7 +250,7 @@ class CompositionValidationTests {
     fun `Composition set target entity must have keys`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",
@@ -272,7 +272,7 @@ class CompositionValidationTests {
         """.trimMargin()
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson(), testPackageJson)
         val expectedErrors = listOf(
-            "Composition set field /test.main/test_entity/test_field target entity does not have keys"
+            "Composition set field /org.tree_ware.test.main/test_entity/test_field target entity does not have keys"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -281,7 +281,7 @@ class CompositionValidationTests {
     fun `Composition set is valid if target entity has keys`() {
         val testPackageJson = """
             | {
-            |   "name": "test.main",
+            |   "name": "org.tree_ware.test.main",
             |   "entities": [
             |     {
             |       "name": "test_entity",

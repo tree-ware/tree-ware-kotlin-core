@@ -9,10 +9,10 @@ class NameValidationTests {
     fun `Names must be valid`() {
         val metaModelJson = newTestMetaModelJson(testHelperRootJson(), testHelperPackageJson())
         val expectedDecodeErrors = listOf(
-            "Entity with duplicate keys: /tree_ware_meta_model.main/field: [duplicate_field_name_1]",
-            "Entity with duplicate keys: /tree_ware_meta_model.main/field: [duplicate_field_name_2]",
-            "Entity with duplicate keys: /tree_ware_meta_model.main/enumeration: [duplicate_enumeration_name]",
-            "Entity with duplicate keys: /tree_ware_meta_model.main/enumeration_value: [duplicate_value]"
+            "Entity with duplicate keys: /org.tree_ware.meta_model.main/field: [duplicate_field_name_1]",
+            "Entity with duplicate keys: /org.tree_ware.meta_model.main/field: [duplicate_field_name_2]",
+            "Entity with duplicate keys: /org.tree_ware.meta_model.main/enumeration: [duplicate_enumeration_name]",
+            "Entity with duplicate keys: /org.tree_ware.meta_model.main/enumeration_value: [duplicate_value]"
         )
         val expectedErrors = listOf(
             "Invalid name: /hyphens-not-allowed-for-packages",

@@ -58,7 +58,8 @@ class UniquesValidationTests {
         """.trimMargin()
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
-        val expectedDecodeErrors = listOf("Entity with duplicate keys: /tree_ware_meta_model.main/unique: [duplicate]")
+        val expectedDecodeErrors =
+            listOf("Entity with duplicate keys: /org.tree_ware.meta_model.main/unique: [duplicate]")
         assertJsonStringValidationErrors(metaModelJson, emptyList(), expectedDecodeErrors)
     }
 
@@ -100,7 +101,7 @@ class UniquesValidationTests {
         """.trimMargin()
         val metaModelJson =
             newTestMetaModelJson(testMetaModelCommonRootJson, testMetaModelCommonPackageJson, testPackageJson)
-        val expectedDecodeErrors = listOf("JSON decoding failed at line 108 column 20, 2056 characters from the start")
+        val expectedDecodeErrors = listOf("JSON decoding failed at line 109 column 20, 2145 characters from the start")
         val expectedValidationErrors = listOf("Meta-model decoding failed")
         assertJsonStringValidationErrors(metaModelJson, expectedValidationErrors, expectedDecodeErrors)
     }
@@ -234,7 +235,7 @@ class UniquesValidationTests {
             |           "type": "composition",
             |           "composition": {
             |             "entity": "entity2",
-            |             "package": "test.common"
+            |             "package": "org.tree_ware.test.common"
             |           },
             |           "multiplicity": "set"
             |         }
@@ -283,7 +284,7 @@ class UniquesValidationTests {
             |           "type": "composition",
             |           "composition": {
             |             "entity": "entity2",
-            |             "package": "test.common"
+            |             "package": "org.tree_ware.test.common"
             |           }
             |         }
             |       ],
@@ -336,7 +337,7 @@ class UniquesValidationTests {
             |           "type": "association",
             |           "association": {
             |             "entity": "entity2",
-            |             "package": "test.common"
+            |             "package": "org.tree_ware.test.common"
             |           }
             |         },         
             |         {

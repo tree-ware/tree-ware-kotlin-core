@@ -21,7 +21,7 @@ class ExistsIfValidationTests {
             |{}
             """.trimMargin()
         )
-        val expectedErrors = listOf("/test.main/main_entity/test_field exists_if operator is missing")
+        val expectedErrors = listOf("/org.tree_ware.test.main/main_entity/test_field exists_if operator is missing")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -37,7 +37,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf("Meta-model decoding failed")
-        val expectedDecodeErrors = listOf("JSON decoding failed at line 98 column 15, 1881 characters from the start")
+        val expectedDecodeErrors = listOf("JSON decoding failed at line 99 column 15, 1984 characters from the start")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors, expectedDecodeErrors)
     }
 
@@ -53,10 +53,10 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf(
-            "/test.main/main_entity/test_field exists_if EQUALS clause field missing",
-            "/test.main/main_entity/test_field exists_if EQUALS clause value missing",
-            "/test.main/main_entity/test_field exists_if EQUALS clause arg1 must not be specified",
-            "/test.main/main_entity/test_field exists_if EQUALS clause arg2 must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause value missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause arg1 must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause arg2 must not be specified",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -73,10 +73,10 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf(
-            "/test.main/main_entity/test_field exists_if AND clause field must not be specified",
-            "/test.main/main_entity/test_field exists_if AND clause value must not be specified",
-            "/test.main/main_entity/test_field exists_if AND clause arg1 missing",
-            "/test.main/main_entity/test_field exists_if AND clause arg2 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause field must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause value must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause arg1 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause arg2 missing",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -93,10 +93,10 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf(
-            "/test.main/main_entity/test_field exists_if OR clause field must not be specified",
-            "/test.main/main_entity/test_field exists_if OR clause value must not be specified",
-            "/test.main/main_entity/test_field exists_if OR clause arg1 missing",
-            "/test.main/main_entity/test_field exists_if OR clause arg2 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause field must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause value must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause arg1 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause arg2 missing",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -114,10 +114,10 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf(
-            "/test.main/main_entity/test_field exists_if NOT clause field must not be specified",
-            "/test.main/main_entity/test_field exists_if NOT clause value must not be specified",
-            "/test.main/main_entity/test_field exists_if NOT clause arg1 missing",
-            "/test.main/main_entity/test_field exists_if NOT clause arg2 must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause field must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause value must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause arg1 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause arg2 must not be specified",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -151,23 +151,23 @@ class ExistsIfValidationTests {
         )
         // NOTE: validation is depth-first for nested clauses.
         val expectedErrors = listOf(
-            "/test.main/main_entity/test_field exists_if NOT clause field must not be specified",
-            "/test.main/main_entity/test_field exists_if NOT clause value must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause field must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause value must not be specified",
 
-            "/test.main/main_entity/test_field exists_if AND clause field must not be specified",
-            "/test.main/main_entity/test_field exists_if AND clause value must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause field must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause value must not be specified",
 
-            "/test.main/main_entity/test_field exists_if OR clause field must not be specified",
-            "/test.main/main_entity/test_field exists_if OR clause value must not be specified",
-            "/test.main/main_entity/test_field exists_if OR clause arg1 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause field must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause value must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if OR clause arg1 missing",
 
-            "/test.main/main_entity/test_field exists_if EQUALS clause field missing",
-            "/test.main/main_entity/test_field exists_if EQUALS clause value missing",
-            "/test.main/main_entity/test_field exists_if EQUALS clause arg1 must not be specified",
-            "/test.main/main_entity/test_field exists_if EQUALS clause arg2 must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause value missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause arg1 must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause arg2 must not be specified",
 
-            "/test.main/main_entity/test_field exists_if AND clause arg2 missing",
-            "/test.main/main_entity/test_field exists_if NOT clause arg2 must not be specified",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if AND clause arg2 missing",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if NOT clause arg2 must not be specified",
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -184,7 +184,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `unknown` is not found")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `unknown` is not found")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -200,7 +200,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `test_field` refers to self")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `test_field` refers to self")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -216,7 +216,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `password1way_field` is not a supported field type")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `password1way_field` is not a supported field type")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -232,7 +232,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `password2way_field` is not a supported field type")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `password2way_field` is not a supported field type")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -248,7 +248,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `association_field` is not a supported field type")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `association_field` is not a supported field type")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -264,7 +264,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause field `composition_field` is not a supported field type")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `composition_field` is not a supported field type")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -280,8 +280,8 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors = listOf(
-            "/test.main/main_entity/test_field exists_if EQUALS clause field `set_field` is not a supported field type",
-            "/test.main/main_entity/test_field exists_if EQUALS clause field `set_field` is not a single field"
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `set_field` is not a supported field type",
+            "/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause field `set_field` is not a single field"
         )
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
@@ -298,7 +298,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause value `invalid` is not assignable to field `enumeration_field`")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause value `invalid` is not assignable to field `enumeration_field`")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -314,7 +314,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause value `256` is not assignable to field `uint8_field`")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause value `256` is not assignable to field `uint8_field`")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -330,7 +330,7 @@ class ExistsIfValidationTests {
             """.trimMargin()
         )
         val expectedErrors =
-            listOf("/test.main/main_entity/test_field exists_if EQUALS clause value `invalid` is not assignable to field `boolean_field`")
+            listOf("/org.tree_ware.test.main/main_entity/test_field exists_if EQUALS clause value `invalid` is not assignable to field `boolean_field`")
         assertJsonStringValidationErrors(metaModelJson, expectedErrors)
     }
 
@@ -365,7 +365,7 @@ private fun getMetaModelJson(existsIfJsonValue: String?): String {
     val existsIfJsonFieldValue = if (existsIfJsonValue == null) "" else """, "exists_if": $existsIfJsonValue"""
     val mainPackageJson = """
         | {
-        |   "name": "test.main",
+        |   "name": "org.tree_ware.test.main",
         |   "entities": [
         |     {
         |       "name": "main_entity",
@@ -382,7 +382,7 @@ private fun getMetaModelJson(existsIfJsonValue: String?): String {
         |           "type": "enumeration",
         |           "enumeration": {
         |             "name": "enumeration1",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           }
         |         },
         |         {
@@ -416,7 +416,7 @@ private fun getMetaModelJson(existsIfJsonValue: String?): String {
         |           "type": "association",
         |           "association": {
         |             "entity": "entity1",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           }
         |         },
         |         {
@@ -425,7 +425,7 @@ private fun getMetaModelJson(existsIfJsonValue: String?): String {
         |           "type": "composition",
         |           "composition": {
         |             "entity": "entity1",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           }
         |         },
         |         {
@@ -434,7 +434,7 @@ private fun getMetaModelJson(existsIfJsonValue: String?): String {
         |           "type": "composition",
         |           "composition": {
         |             "entity": "entity2",
-        |             "package": "test.common"
+        |             "package": "org.tree_ware.test.common"
         |           },
         |           "multiplicity": "set"
         |         }

@@ -9,9 +9,10 @@ class VersionValidationTests {
         val metaModelJson = """
             {
               "name": "test_meta_model",
+              "package": "org.tree_ware.test.main",
               "root": {
                 "entity": "entity1",
-                "package": "test.common"
+                "package": "org.tree_ware.test.common"
               },
               "packages": []
             }
@@ -25,10 +26,11 @@ class VersionValidationTests {
         val metaModelJson = """
             {
               "name": "test_meta_model",
+              "package": "org.tree_ware.test.main",
               "version": {},
               "root": {
                 "entity": "entity1",
-                "package": "test.common"
+                "package": "org.tree_ware.test.common"
               },
               "packages": []
             }
@@ -42,12 +44,13 @@ class VersionValidationTests {
         val metaModelJson = """
             {
               "name": "test_meta_model",
+              "package": "org.tree_ware.test.main",
               "version": {
                 "semantic": "1"
               },
               "root": {
                 "entity": "entity1",
-                "package": "test.common"
+                "package": "org.tree_ware.test.common"
               },
               "packages": []
             }

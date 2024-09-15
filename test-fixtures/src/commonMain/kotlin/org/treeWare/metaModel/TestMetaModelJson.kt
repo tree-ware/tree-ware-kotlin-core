@@ -2,7 +2,7 @@ package org.treeWare.metaModel
 
 fun newTestMetaModelJson(rootJson: String?, vararg packageJsonList: String): String = """
     | {
-    |   $testMetaModelCommonVersionJson,
+    |   $testMetaModelCommonJson,
     |   ${rootJson ?: ""}
     |   ${if (rootJson == null) "" else ","}
     |   "packages": [
@@ -15,8 +15,9 @@ fun getMultiplicityJson(multiplicity: String?): String =
     if (multiplicity == null) ""
     else """, "multiplicity": "$multiplicity""""
 
-val testMetaModelCommonVersionJson = """
+val testMetaModelCommonJson = """
     "name": "test_meta_model",
+    "package": "org.tree_ware.test",
     "version": {
       "semantic": "1.0.0",
       "name": "pacific-ocean"
@@ -26,13 +27,13 @@ val testMetaModelCommonVersionJson = """
 val testMetaModelCommonRootJson = """
     | "root": {
     |   "entity": "entity1",
-    |   "package": "test.common"
+    |   "package": "org.tree_ware.test.common"
     | }
 """.trimMargin()
 
 val testMetaModelCommonPackageJson = """
     | {
-    |   "name": "test.common",
+    |   "name": "org.tree_ware.test.common",
     |   "entities": [
     |     {
     |       "name": "entity1",
@@ -48,7 +49,7 @@ val testMetaModelCommonPackageJson = """
     |           "type": "composition",
     |           "composition": {
     |             "entity": "entity2",
-    |             "package": "test.common"
+    |             "package": "org.tree_ware.test.common"
     |           }
     |         }
     |       ]
@@ -68,7 +69,7 @@ val testMetaModelCommonPackageJson = """
     |           "type": "composition",
     |           "composition": {
     |             "entity": "entity3",
-    |             "package": "test.common"
+    |             "package": "org.tree_ware.test.common"
     |           }
     |         }
     |       ]

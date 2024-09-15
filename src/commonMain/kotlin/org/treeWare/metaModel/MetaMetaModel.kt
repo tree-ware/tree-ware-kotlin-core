@@ -42,10 +42,11 @@ enum class ExistsIfOperator { EQUALS, AND, OR, NOT }
 
 enum class Granularity { FIELD, ENTITY, SUB_TREE }
 
-private const val META_MODEL_MAIN_PACKAGE = "tree_ware_meta_model.main"
+private const val META_MODEL_PACKAGE = "org.tree_ware.meta_model"
+private const val META_MODEL_MAIN_PACKAGE = "org.tree_ware.meta_model.main"
 
 fun newMetaMetaModel(): MutableEntityModel {
-    val metaMeta = newMetaMeta("meta_model")
+    val metaMeta = newMetaMeta("meta_model", META_MODEL_PACKAGE)
     populateMetaMeta(metaMeta)
     val errors = validate(metaMeta, null, null, mandatoryFieldNumbers = false)
     if (errors.isNotEmpty()) {
@@ -107,6 +108,7 @@ private fun populateMainEntities(entitiesMeta: MutableSetFieldModel) {
 private fun populateMetaModelEntity(metaModelEntityMeta: MutableEntityModel) {
     val fields = newFieldsMetaMeta(metaModelEntityMeta)
     newPrimitiveFieldMetaMeta(fields, "name", null, "string", "required")
+    newPrimitiveFieldMetaMeta(fields, "package", null, "string", "required")
     newCompositionFieldMetaMeta(fields, "version", null, "version", META_MODEL_MAIN_PACKAGE)
     newCompositionFieldMetaMeta(fields, "root", null, "root", META_MODEL_MAIN_PACKAGE, "required")
     newCompositionFieldMetaMeta(fields, "packages", null, "package", META_MODEL_MAIN_PACKAGE, "set")

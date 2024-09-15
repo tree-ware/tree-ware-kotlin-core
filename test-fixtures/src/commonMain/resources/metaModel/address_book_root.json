@@ -1,5 +1,6 @@
 {
   "name": "address_book",
+  "package": "address_book",
   "version": {
     "semantic": "1.0.0",
     "name": "pacific-ocean"

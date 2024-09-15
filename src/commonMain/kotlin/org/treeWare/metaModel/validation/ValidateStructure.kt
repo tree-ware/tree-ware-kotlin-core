@@ -4,7 +4,10 @@ import io.github.z4kn4fein.semver.toVersionOrNull
 import org.treeWare.metaModel.*
 import org.treeWare.metaModel.aux.ResolvedVersionAux
 import org.treeWare.metaModel.aux.setResolvedVersionAux
-import org.treeWare.model.core.*
+import org.treeWare.model.core.ElementModel
+import org.treeWare.model.core.EntityModel
+import org.treeWare.model.core.getOptionalSingleString
+import org.treeWare.model.core.getSingleString
 
 // TODO(deepak-nulu): replace with a generic validate function which validates a model against its meta-model.
 
@@ -16,6 +19,8 @@ import org.treeWare.model.core.*
  * 1. ResolvedVersionAux is set on `meta` if the version can be resolved
  */
 fun validateStructure(meta: EntityModel) = listOf(
+    validateSingleStringField(meta, "name", "Meta-model"),
+    validateSingleStringField(meta, "package", "Meta-model"),
     validateVersion(meta),
     validateEntityInfo(meta, "Meta-model", "root"),
     validatePackages(meta)
@@ -280,7 +285,7 @@ private fun validateConstraints(fieldMeta: EntityModel, fieldId: String): List<S
 
 private fun validateSingleStringField(meta: EntityModel, fieldName: String, id: String): List<String> =
     when (runCatching { getSingleString(meta, fieldName) }.getOrNull()) {
-        null -> listOf("$id $fieldName is missing")
+        null -> listOf("$id '$fieldName' is missing")
         else -> listOf()
     }
 
