@@ -6,6 +6,8 @@ fun getFullName(elementMeta: ElementModel?): String? = getMetaModelResolved(elem
 
 fun getMetaModelName(meta: EntityModel): String = getMetaName(meta)
 
+fun getMetaModelPackageName(meta: EntityModel): String = getSingleString(meta, "package")
+
 fun getVersionMeta(meta: EntityModel): EntityModel {
     return getSingleEntity(meta, "version")
 }
