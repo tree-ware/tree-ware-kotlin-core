@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "address_book.city",
+      "name": "org.tree_ware.test.address_book.city",
       "info": "Schema for storing city information",
       "entities": [
         {
@@ -40,7 +40,7 @@
               "type": "composition",
               "composition": {
                 "entity": "address_book_city",
-                "package": "address_book.city"
+                "package": "org.tree_ware.test.address_book.city"
               },
               "is_key": true
             },

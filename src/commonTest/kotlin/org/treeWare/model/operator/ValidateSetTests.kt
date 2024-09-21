@@ -499,8 +499,8 @@ class ValidateSetTests {
             |}
         """.trimMargin()
         val expectedDecodeErrors = listOf(
-            "Missing key fields [name] in instance of /address_book.main/group",
-            "Missing key fields [name] in instance of /address_book.main/group",
+            "Missing key fields [name] in instance of /org.tree_ware.test.address_book.main/group",
+            "Missing key fields [name] in instance of /org.tree_ware.test.address_book.main/group",
         )
         val model =
             AddressBookMutableEntityModelFactory.create()

@@ -1,27 +1,27 @@
-Entity: address_book.main/address_book_root
+Entity: org.tree_ware.test.address_book.main/address_book_root
   Single field: name
     Primitive: Address Book
   Single field: last_updated
     Primitive: 1587147731
   Single field: settings
-    Entity: address_book.main/address_book_settings
+    Entity: org.tree_ware.test.address_book.main/address_book_settings
       Single field: last_name_first
         Primitive: true
       Single field: encrypt_hero_name
         Primitive: false
   Set field: groups
-    Entity: address_book.main/group
+    Entity: org.tree_ware.test.address_book.main/group
       Single field: name
         Primitive: DC
       Set field: sub_groups
-        Entity: address_book.main/group
+        Entity: org.tree_ware.test.address_book.main/group
           Single field: name
             Primitive: Superman
-    Entity: address_book.main/group
+    Entity: org.tree_ware.test.address_book.main/group
       Single field: name
         Primitive: Marvel
   Set field: person
-    Entity: address_book.main/address_book_person
+    Entity: org.tree_ware.test.address_book.main/address_book_person
       Single field: id
         Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f
       Single field: first_name
@@ -35,30 +35,30 @@ Entity: address_book.main/address_book_root
       Single field: main_secret
         Password2way: {Alien from Krypton, null, 0}
       Set field: relation
-        Entity: address_book.main/address_book_relation
+        Entity: org.tree_ware.test.address_book.main/address_book_relation
           Single field: id
             Primitive: 05ade278-4b44-43da-a0cc-14463854e397
           Single field: relationship
             Enumeration: colleague
           Single field: person
             Association: ...
-              Entity: address_book.main/address_book_root
+              Entity: org.tree_ware.test.address_book.main/address_book_root
                 Set field: person
-                  Entity: address_book.main/address_book_person
+                  Entity: org.tree_ware.test.address_book.main/address_book_person
                     Single field: id
                       Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd
       Single field: group
         Association: ...
-          Entity: address_book.main/address_book_root
+          Entity: org.tree_ware.test.address_book.main/address_book_root
             Set field: groups
-              Entity: address_book.main/group
+              Entity: org.tree_ware.test.address_book.main/group
                 Single field: name
                   Primitive: DC
                 Set field: sub_groups
-                  Entity: address_book.main/group
+                  Entity: org.tree_ware.test.address_book.main/group
                     Single field: name
                       Primitive: Superman
-    Entity: address_book.main/address_book_person
+    Entity: org.tree_ware.test.address_book.main/address_book_person
       Single field: id
         Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd
       Single field: first_name
@@ -70,33 +70,33 @@ Entity: address_book.main/address_book_root
       Single field: main_secret
         Password2way: {null, test-encrypted-main-secret, 1}
       Set field: relation
-        Entity: address_book.main/address_book_relation
+        Entity: org.tree_ware.test.address_book.main/address_book_relation
           Single field: id
             Primitive: 16634916-8f83-4376-ad42-37038e108a0b
           Single field: relationship
             Enumeration: colleague
           Single field: person
             Association: ...
-              Entity: address_book.main/address_book_root
+              Entity: org.tree_ware.test.address_book.main/address_book_root
                 Set field: person
-                  Entity: address_book.main/address_book_person
+                  Entity: org.tree_ware.test.address_book.main/address_book_person
                     Single field: id
                       Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f
       Single field: group
         Association: ...
-          Entity: address_book.main/address_book_root
+          Entity: org.tree_ware.test.address_book.main/address_book_root
             Set field: groups
-              Entity: address_book.main/group
+              Entity: org.tree_ware.test.address_book.main/group
                 Single field: name
                   Primitive: DC
                 Set field: sub_groups
-                  Entity: address_book.main/group
+                  Entity: org.tree_ware.test.address_book.main/group
                     Single field: name
                       Primitive: Superman
   Set field: city_info
-    Entity: address_book.city/address_book_city_info
+    Entity: org.tree_ware.test.address_book.city/address_book_city_info
       Single field: city
-        Entity: address_book.city/address_book_city
+        Entity: org.tree_ware.test.address_book.city/address_book_city
           Single field: name
             Primitive: New York City
           Single field: state
@@ -105,33 +105,33 @@ Entity: address_book.main/address_book_root
             Primitive: United States of America
       Single field: info
         Primitive: One of the most populous and most densely populated major city in USA
-    Entity: address_book.city/address_book_city_info
+    Entity: org.tree_ware.test.address_book.city/address_book_city_info
       Single field: info
         Primitive: Capital of New York state
       Single field: city
-        Entity: address_book.city/address_book_city
+        Entity: org.tree_ware.test.address_book.city/address_book_city
           Single field: name
             Primitive: Albany
           Single field: state
             Primitive: New York
           Single field: country
             Primitive: United States of America
-    Entity: address_book.city/address_book_city_info
+    Entity: org.tree_ware.test.address_book.city/address_book_city_info
       Single field: info
         Primitive: Home of Princeton University
       Single field: city
-        Entity: address_book.city/address_book_city
+        Entity: org.tree_ware.test.address_book.city/address_book_city
           Single field: name
             Primitive: Princeton
           Single field: state
             Primitive: New Jersey
           Single field: country
             Primitive: United States of America
-    Entity: address_book.city/address_book_city_info
+    Entity: org.tree_ware.test.address_book.city/address_book_city_info
       Single field: info
         Primitive: The cultural and financial center of Northern California
       Single field: city
-        Entity: address_book.city/address_book_city
+        Entity: org.tree_ware.test.address_book.city/address_book_city
           Single field: name
             Primitive: San Francisco
           Single field: state

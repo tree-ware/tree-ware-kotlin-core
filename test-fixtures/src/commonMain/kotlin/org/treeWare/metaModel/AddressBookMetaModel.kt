@@ -5,9 +5,9 @@ import org.treeWare.model.core.Hasher
 import org.treeWare.model.core.defaultRootEntityFactory
 
 val ADDRESS_BOOK_META_MODEL_FILES = listOf(
-    "metaModel/address_book_root.json",
-    "metaModel/address_book_main.json",
-    "metaModel/address_book_city.json",
+    "tree_ware/meta_model/address_book_root.json",
+    "tree_ware/meta_model/address_book_main.json",
+    "tree_ware/meta_model/address_book_city.json",
     "org/treeWare/metaModel/geo.json"
 )
 

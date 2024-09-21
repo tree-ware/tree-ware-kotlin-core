@@ -2,7 +2,7 @@
   "meta_model:address_book": {
     "version:pacific-ocean": {},
     "root": {},
-    "package:address_book.main": {
+    "package:org.tree_ware.test.address_book.main": {
       "enumeration:address_book_color": [
         "white",
         "violet",
@@ -69,7 +69,7 @@
         "field:weaknesses": {}
       }
     },
-    "package:address_book.city": {
+    "package:org.tree_ware.test.address_book.city": {
       "entity:address_book_city": {
         "field:name": {},
         "field:state": {},

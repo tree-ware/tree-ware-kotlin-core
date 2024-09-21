@@ -1,12 +1,12 @@
 {
   "name": "address_book",
-  "package": "address_book",
+  "package": "org.tree_ware.test.address_book",
   "version": {
     "semantic": "1.0.0",
     "name": "pacific-ocean"
   },
   "root": {
     "entity": "address_book_root",
-    "package": "address_book.main"
+    "package": "org.tree_ware.test.address_book.main"
   }
 }

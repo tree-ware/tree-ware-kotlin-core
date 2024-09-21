@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "address_book.main",
+      "name": "org.tree_ware.test.address_book.main",
       "info": "Schema for storing address book information",
       "enumerations": [
         {
@@ -102,7 +102,7 @@
               "type": "composition",
               "composition": {
                 "entity": "address_book_settings",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "optional"
             },
@@ -112,7 +112,7 @@
               "type": "composition",
               "composition": {
                 "entity": "address_book_person",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "set"
             },
@@ -122,7 +122,7 @@
               "type": "composition",
               "composition": {
                 "entity": "address_book_city_info",
-                "package": "address_book.city"
+                "package": "org.tree_ware.test.address_book.city"
               },
               "multiplicity": "set"
             },
@@ -132,7 +132,7 @@
               "type": "composition",
               "composition": {
                 "entity": "group",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "set"
             },
@@ -143,7 +143,7 @@
               "type": "composition",
               "composition": {
                 "entity": "address_book_person",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "granularity": "sub_tree",
               "multiplicity": "set"
@@ -170,7 +170,7 @@
               "type": "enumeration",
               "enumeration": {
                 "name": "address_book_color",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "optional"
             },
@@ -180,7 +180,7 @@
               "type": "composition",
               "composition": {
                 "entity": "advanced_settings",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "optional"
             }
@@ -195,7 +195,7 @@
               "type": "enumeration",
               "enumeration": {
                 "name": "address_book_color",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "optional"
             }
@@ -243,7 +243,7 @@
               "type": "composition",
               "composition": {
                 "entity": "address_book_relation",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "set"
             },
@@ -265,7 +265,7 @@
               "type": "association",
               "association": {
                 "entity": "group",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "optional"
             },
@@ -282,7 +282,7 @@
               "type": "composition",
               "composition": {
                 "entity": "hero_details",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "exists_if": {
                 "operator": "equals",
@@ -316,7 +316,7 @@
               "type": "composition",
               "composition": {
                 "entity": "group",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "set"
             }
@@ -337,7 +337,7 @@
               "type": "enumeration",
               "enumeration": {
                 "name": "address_book_relationship",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               }
             },
             {
@@ -346,7 +346,7 @@
               "type": "association",
               "association": {
                 "entity": "address_book_person",
-                "package": "address_book.main"
+                "package": "org.tree_ware.test.address_book.main"
               },
               "multiplicity": "optional"
             }
