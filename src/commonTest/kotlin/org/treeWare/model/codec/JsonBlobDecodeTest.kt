@@ -14,7 +14,7 @@ class JsonBlobDecodeTest {
     fun `JSON decoder decodes blob values`() {
         val addressBook = AddressBookMutableEntityModelFactory.create()
         decodeJsonFileIntoEntity("model/address_book_1.json", entity = addressBook)
-        val persons = addressBook.fields["person"] as MutableSetFieldModel
+        val persons = addressBook.fields["persons"] as MutableSetFieldModel
 
         val clarkKent = persons.values.first() as MutableEntityModel
         val clarkKentPictureField = clarkKent.fields["picture"] as MutableSingleFieldModel

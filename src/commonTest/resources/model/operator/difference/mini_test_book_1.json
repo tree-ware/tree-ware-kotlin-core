@@ -15,7 +15,7 @@
       ]
     }
   ],
-  "person": [
+  "persons": [
     {
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
       "first_name": "Person 1 first ?",
@@ -34,12 +34,12 @@
         ]
       },
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
-      "relation": [
+      "relations": [
         {
           "id": "40448d9c-14ed-4abc-b751-9b0ef4d9f602",
           "relationship": "unknown",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -52,7 +52,7 @@
       }
     }
   ],
-  "city_info": [
+  "cities": [
     {
       "city": {
         "name": "Test City A",

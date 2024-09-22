@@ -9,7 +9,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root, org.tree_ware.te
         Primitive: false, true
       Single field: null, encrypt_hero_name
         Primitive: null, false
-  Set field: person, person
+  Set field: persons, persons
     Entity: org.tree_ware.test.address_book.main/address_book_person, org.tree_ware.test.address_book.main/address_book_person
       Single field: id, id
         Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f, cc477201-48ec-4367-83a4-7fdbd92f8a6f
@@ -21,7 +21,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root, org.tree_ware.te
         Primitive: null, Superman
       Single field: picture, null
         Primitive: UGljdHVyZSBvZiBDbGFyayBLZW50, null
-      Set field: relation, null
+      Set field: relations, null
         Entity: org.tree_ware.test.address_book.main/address_book_relation, null
           Single field: id, null
             Primitive: 05ade278-4b44-43da-a0cc-14463854e397, null
@@ -30,7 +30,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root, org.tree_ware.te
           Single field: person, null
             Association: ...
               Entity: org.tree_ware.test.address_book.main/address_book_root, null
-                Set field: person, null
+                Set field: persons, null
                   Entity: org.tree_ware.test.address_book.main/address_book_person, null
                     Single field: id, null
                       Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd, null
@@ -58,7 +58,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root, org.tree_ware.te
         Primitive: null, Lane
       Single field: null, picture
         Primitive: null, UGljdHVyZSBvZiBMb2lzIExhbmU=
-      Set field: null, relation
+      Set field: null, relations
         Entity: null, org.tree_ware.test.address_book.main/address_book_relation
           Single field: null, id
             Primitive: null, 16634916-8f83-4376-ad42-37038e108a0b
@@ -67,7 +67,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root, org.tree_ware.te
           Single field: null, person
             Association: ...
               Entity: null, org.tree_ware.test.address_book.main/address_book_root
-                Set field: null, person
+                Set field: null, persons
                   Entity: null, org.tree_ware.test.address_book.main/address_book_person
                     Single field: null, id
                       Primitive: null, cc477201-48ec-4367-83a4-7fdbd92f8a6f
@@ -86,7 +86,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root, org.tree_ware.te
                   Entity: null, org.tree_ware.test.address_book.main/group
                     Single field: null, name
                       Primitive: null, Superman
-  Set field: city_info, city_info
+  Set field: cities, cities
     Entity: org.tree_ware.test.address_book.city/address_book_city_info, org.tree_ware.test.address_book.city/address_book_city_info
       Single field: city, city
         Entity: org.tree_ware.test.address_book.city/address_book_city, org.tree_ware.test.address_book.city/address_book_city

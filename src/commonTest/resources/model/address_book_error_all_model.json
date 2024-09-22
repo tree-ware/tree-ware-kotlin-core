@@ -27,8 +27,8 @@
       "name": "Marvel"
     }
   ],
-  "person__error_": "Error at person list level",
-  "person": [
+  "persons__error_": "Error at person list level",
+  "persons": [
     {
       "error_": "Error with composition element of list",
       "id__error_": "Error in person id",
@@ -52,8 +52,8 @@
           }
         ]
       },
-      "relation__error_": "Error at relation composition list level",
-      "relation": [
+      "relations__error_": "Error at relation composition list level",
+      "relations": [
         {
           "error_": "Some error with composition element of list",
           "id__error_": "Error with id field",
@@ -62,7 +62,7 @@
           "relationship": "colleague",
           "person__error_": "Error with person association",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
               }
@@ -97,12 +97,12 @@
           }
         ]
       },
-      "relation": [
+      "relations": [
         {
           "id": "16634916-8f83-4376-ad42-37038e108a0b",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -120,8 +120,8 @@
       }
     }
   ],
-  "city_info__error_": "Error with city info list",
-  "city_info": [
+  "cities__error_": "Error with city info list",
+  "cities": [
     {
       "city__error_": "Error with 1:1 composition key inside a list",
       "city": {

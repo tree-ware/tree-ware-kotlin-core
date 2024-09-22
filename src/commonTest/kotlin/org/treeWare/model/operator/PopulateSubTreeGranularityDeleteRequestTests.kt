@@ -45,7 +45,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
                 {
                   "set_": "delete",
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": [
+                  "relations": [
                     {
                       "set_": "delete",
                       "id": null
@@ -115,7 +115,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
     fun `The operator must not populate field granularity delete-requests`() {
         val setRequestJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "set_": "delete",
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
@@ -140,7 +140,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
     fun `The operator must not populate field granularity create-requests`() {
         val setRequestJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "set_": "create",
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
@@ -165,7 +165,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
     fun `The operator must not populate field granularity update-requests`() {
         val setRequestJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "set_": "update",
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"

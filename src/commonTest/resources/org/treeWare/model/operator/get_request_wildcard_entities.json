@@ -4,13 +4,13 @@
   "settings": {
     "last_name_first": null
   },
-  "person": [
+  "persons": [
     {
       "id": null,
       "first_name": null,
       "last_name": null,
       "hero_name": null,
-      "relation": [
+      "relations": [
         {
           "id": null,
           "relationship": null,
@@ -20,7 +20,7 @@
       "picture": null
     }
   ],
-  "city_info": [
+  "cities": [
     {
       "city": {
         "name": null,

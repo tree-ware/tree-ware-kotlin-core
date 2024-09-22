@@ -29,7 +29,7 @@
       ]
     }
   ],
-  "person": [
+  "persons": [
     {
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
       "first_name": "Person 1 first",
@@ -48,12 +48,12 @@
         ]
       },
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
-      "relation": [
+      "relations": [
         {
           "id": "40448d9c-14ed-4abc-b751-9b0ef4d9f602",
           "relationship": "unknown",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -64,7 +64,7 @@
           "id": "05ade278-4b44-43da-a0cc-14463854e397",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
               }
@@ -96,12 +96,12 @@
         ]
       },
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
-      "relation": [
+      "relations": [
         {
           "id": "16634916-8f83-4376-ad42-37038e108a0b",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -119,7 +119,7 @@
       }
     }
   ],
-  "city_info": [
+  "cities": [
     {
       "city": {
         "name": "Test City A",

@@ -16,9 +16,9 @@
     "encrypt_hero_name__aux3_": "Aux3 for encrypt_hero_name",
     "encrypt_hero_name": false
   },
-  "person__aux2_": "Aux2 at person list level",
-  "person__aux3_": "Aux3 at person list level",
-  "person": [
+  "persons__aux2_": "Aux2 at persons list level",
+  "persons__aux3_": "Aux3 at persons list level",
+  "persons": [
     {
       "aux2_": "Aux2 with composition element of list",
       "aux3_": "Aux3 with composition element of list",
@@ -33,15 +33,15 @@
       "hero_name": "Superman",
       "picture__aux2_": "Aux2 for picture",
       "picture": "UGljdHVyZSBvZiBDbGFyayBLZW50",
-      "relation__aux2_": "Aux2 at relation composition list level",
-      "relation": [
+      "relations__aux2_": "Aux2 at relations composition list level",
+      "relations": [
         {
           "aux2_": "Some aux2 with composition element of list",
           "id__aux2_": "Aux2 with id field",
           "id": "05ade278-4b44-43da-a0cc-14463854e397",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
               }
@@ -78,12 +78,12 @@
       "first_name": "Lois",
       "last_name": "Lane",
       "picture": "UGljdHVyZSBvZiBMb2lzIExhbmU=",
-      "relation": [
+      "relations": [
         {
           "id": "16634916-8f83-4376-ad42-37038e108a0b",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -113,9 +113,9 @@
       }
     }
   ],
-  "city_info__aux2_": "Aux2 with city info list",
-  "city_info__aux3_": "Aux3 with city info list",
-  "city_info": [
+  "cities__aux2_": "Aux2 with city info list",
+  "cities__aux3_": "Aux3 with city info list",
+  "cities": [
     {
       "city__aux2_": "Aux2 with 1:1 composition key inside a list",
       "city__aux3_": "Aux3 with 1:1 composition key inside a list",

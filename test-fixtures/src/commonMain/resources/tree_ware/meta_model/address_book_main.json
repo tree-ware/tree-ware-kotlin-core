@@ -107,7 +107,7 @@
               "multiplicity": "optional"
             },
             {
-              "name": "person",
+              "name": "persons",
               "number": 4,
               "type": "composition",
               "composition": {
@@ -117,7 +117,7 @@
               "multiplicity": "set"
             },
             {
-              "name": "city_info",
+              "name": "cities",
               "number": 5,
               "type": "composition",
               "composition": {
@@ -238,7 +238,7 @@
               "multiplicity": "optional"
             },
             {
-              "name": "relation",
+              "name": "relations",
               "number": 7,
               "type": "composition",
               "composition": {

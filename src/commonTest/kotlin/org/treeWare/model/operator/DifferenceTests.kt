@@ -360,7 +360,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |    "person": [
+            |    "persons": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark"
@@ -369,7 +369,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |    "person": [
+            |    "persons": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "first_name": "Clark"
@@ -390,7 +390,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -399,7 +399,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -416,12 +416,12 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -430,7 +430,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -450,11 +450,11 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": []
+            |  "persons": []
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "person": []
+            |  "persons": []
             |}""".trimMargin(),
             expectedDelete = null,
             expectedUpdate = null,
@@ -466,7 +466,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
             |      "first_name": "Lois"
@@ -475,7 +475,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -488,7 +488,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -505,7 +505,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -518,7 +518,7 @@ class DifferenceTests {
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -534,7 +534,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -543,13 +543,13 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -565,7 +565,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": []
+            |  "persons": []
             |}""".trimMargin(),
             new = """
             |{
@@ -573,7 +573,7 @@ class DifferenceTests {
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "person": []
+            |  "persons": []
             |}""".trimMargin(),
             expectedUpdate = null,
         )
@@ -584,7 +584,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -597,7 +597,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
             |      "first_name": "Lois"
@@ -607,7 +607,7 @@ class DifferenceTests {
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -623,7 +623,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -632,7 +632,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clarke"
@@ -643,7 +643,7 @@ class DifferenceTests {
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clarke"
@@ -658,7 +658,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark"
@@ -671,7 +671,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clarke"
@@ -686,7 +686,7 @@ class DifferenceTests {
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clarke"
@@ -705,7 +705,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |    "city_info": [
+            |    "cities": [
             |      {
             |        "city": {
             |          "name": "Test City B",
@@ -717,7 +717,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |    "city_info": [
+            |    "cities": [
             |      {
             |        "city": {
             |          "name": "Test City B",
@@ -738,12 +738,12 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |  ]
             |}""".trimMargin(),
             new = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "Test City B",
@@ -755,7 +755,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "Test City B",
@@ -775,7 +775,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "Test City B",
@@ -787,13 +787,13 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |  ]
             |}""".trimMargin(),
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "Test City B",
@@ -816,7 +816,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |    "person": [
+            |    "persons": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "group": {
@@ -836,7 +836,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |    "person": [
+            |    "persons": [
             |      {
             |        "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |        "group": {
@@ -868,7 +868,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -888,7 +888,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             expectedCreate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -916,7 +916,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -940,7 +940,7 @@ class DifferenceTests {
             expectedCreate = null,
             expectedDelete = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -967,7 +967,7 @@ class DifferenceTests {
         verifyDifference(
             old = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -987,7 +987,7 @@ class DifferenceTests {
             |}""".trimMargin(),
             new = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -1009,7 +1009,7 @@ class DifferenceTests {
             expectedDelete = null,
             expectedUpdate = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {

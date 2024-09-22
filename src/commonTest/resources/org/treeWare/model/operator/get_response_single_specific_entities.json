@@ -1,16 +1,16 @@
 {
-  "person": [
+  "persons": [
     {
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
       "first_name": "Clark",
       "last_name": "Kent",
       "hero_name": "Superman",
-      "relation": [
+      "relations": [
         {
           "id": "05ade278-4b44-43da-a0cc-14463854e397",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
               }
@@ -20,7 +20,7 @@
       ]
     }
   ],
-  "city_info": [
+  "cities": [
     {
       "city": {
         "name": "New York City",

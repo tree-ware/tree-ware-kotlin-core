@@ -30,7 +30,7 @@ fun newAddressBook(auxName: String): EntityModel {
     setStringSingleField(marvel, "name", "Marvel")
     groups.addValue(marvel)
 
-    val persons = getOrNewMutableSetField(root, "person")
+    val persons = getOrNewMutableSetField(root, "persons")
     val clark = getNewMutableSetEntity(persons)
     clark.setAux(auxName, "Aux for Clark")
     setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
@@ -43,8 +43,8 @@ fun newAddressBook(auxName: String): EntityModel {
     setPassword2waySingleField(clark, "main_secret") {
         unencrypted = "Alien from Krypton"
     }
-    val clarkRelations = getOrNewMutableSetField(clark, "relation")
-    clarkRelations.setAux(auxName, "Aux for Clark's relation list")
+    val clarkRelations = getOrNewMutableSetField(clark, "relations")
+    clarkRelations.setAux(auxName, "Aux for Clark's relations list")
     val clarkRelationToLois = addRelation(
         clarkRelations,
         "05ade278-4b44-43da-a0cc-14463854e397",
@@ -72,7 +72,7 @@ fun newAddressBook(auxName: String): EntityModel {
         encrypted = "test-encrypted-main-secret"
         cipherVersion = 1
     }
-    val loisRelations = getOrNewMutableSetField(lois, "relation")
+    val loisRelations = getOrNewMutableSetField(lois, "relations")
     val loisRelationToClark = addRelation(
         loisRelations,
         "16634916-8f83-4376-ad42-37038e108a0b",
@@ -87,7 +87,7 @@ fun newAddressBook(auxName: String): EntityModel {
     setGroup(lois, auxName, "Aux for Lois' group", "DC", "Superman")
     persons.addValue(lois)
 
-    val cityInfoSet = getOrNewMutableSetField(root, "city_info")
+    val cityInfoSet = getOrNewMutableSetField(root, "cities")
     cityInfoSet.setAux(auxName, "Aux for city info list")
 
     val newYorkCityInfo = getNewMutableSetEntity(cityInfoSet)
@@ -137,7 +137,7 @@ fun addRelation(
     personId?.also {
         val association = getOrNewMutableSingleAssociation(relation, "person")
         personAux?.also { association.setAux(auxName, it) }
-        val associationPersons = getOrNewMutableSetField(association.value, "person")
+        val associationPersons = getOrNewMutableSetField(association.value, "persons")
         val associationPersonsPerson = getNewMutableSetEntity(associationPersons)
         setUuidSingleField(associationPersonsPerson, "id", personId)
         associationPersons.addValue(associationPersonsPerson)
@@ -176,7 +176,7 @@ fun addRelatedCity(
 ) {
     val relatedAssociation = relatedList.getOrNewValue() as MutableAssociationModel
     aux?.also { relatedAssociation.setAux(auxName, it) }
-    val cityInfoSet = getOrNewMutableSetField(relatedAssociation.value, "city_info")
+    val cityInfoSet = getOrNewMutableSetField(relatedAssociation.value, "cities")
     val cityInfo = getNewMutableSetEntity(cityInfoSet)
     addCity(cityInfo, name, state, country)
     cityInfoSet.addValue(cityInfo)

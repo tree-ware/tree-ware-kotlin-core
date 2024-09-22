@@ -31,7 +31,7 @@ class SetDelegateTests {
             |    "last_name_first": true,
             |    "encrypt_hero_name": false
             |  },
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "create",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -99,8 +99,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/person",
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+                "/persons",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -109,8 +109,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.DELETE,
                 ofType(),
-                "/person",
-                "/person/a8aacf55-7810-4b43-afe5-4344f25435fd",
+                "/persons",
+                "/persons/a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -129,7 +129,7 @@ class SetDelegateTests {
             |    "last_name_first": true,
             |    "encrypt_hero_name": false
             |  },
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "create",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -192,8 +192,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/person",
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+                "/persons",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -202,8 +202,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.DELETE,
                 ofType(),
-                "/person",
-                "/person/2260d15f-2cc0-4b04-83fb-c950c18a6629",
+                "/persons",
+                "/persons/2260d15f-2cc0-4b04-83fb-c950c18a6629",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -222,8 +222,8 @@ class SetDelegateTests {
             |    "last_name_first": true,
             |    "encrypt_hero_name": false
             |  },
-            |  "person__set_": "update",
-            |  "person": [
+            |  "persons__set_": "update",
+            |  "persons": [
             |    {
             |      "set_": "create",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -286,8 +286,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/person",
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+                "/persons",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -297,8 +297,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.UPDATE,
                 ofType(),
-                "/person",
-                "/person/a8aacf55-7810-4b43-afe5-4344f25435fd",
+                "/persons",
+                "/persons/a8aacf55-7810-4b43-afe5-4344f25435fd",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -307,8 +307,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.DELETE,
                 ofType(),
-                "/person",
-                "/person/2260d15f-2cc0-4b04-83fb-c950c18a6629",
+                "/persons",
+                "/persons/2260d15f-2cc0-4b04-83fb-c950c18a6629",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames(),
@@ -461,7 +461,7 @@ class SetDelegateTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "country": "United States of America",
@@ -515,8 +515,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/city_info",
-                "/city_info/New York City/New York/United States of America",
+                "/cities",
+                "/cities/New York City/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
                 fieldsWithNames(),
@@ -532,7 +532,7 @@ class SetDelegateTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -549,7 +549,7 @@ class SetDelegateTests {
             |      }
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",
@@ -611,8 +611,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/person",
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
+                "/persons",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("group"),
@@ -621,8 +621,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/city_info",
-                "/city_info/New York City/New York/United States of America",
+                "/cities",
+                "/cities/New York City/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
                 fieldsWithNames(),
@@ -631,8 +631,8 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "/city_info",
-                "/city_info/Albany/New York/United States of America",
+                "/cities",
+                "/cities/Albany/New York/United States of America",
                 ofType(),
                 fieldsWithNames("name", "state", "country"),
                 fieldsWithNames(),

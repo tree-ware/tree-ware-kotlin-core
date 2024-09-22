@@ -23,7 +23,7 @@ class PopulateSubTreeTests {
     @Test
     fun `populateSubTree() must not succeed if sub-tree root in a set-field has non-key fields`() {
         val model = AddressBookMutableEntityModelFactory.create()
-        val persons = getOrNewMutableSetField(model, "person")
+        val persons = getOrNewMutableSetField(model, "persons")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         setStringSingleField(clark, "first_name", "Clark") // non-key field
@@ -77,7 +77,7 @@ class PopulateSubTreeTests {
     @Test
     fun `populateSubTree() must populate all fields in a set-field entity when populateNonKeyNonCompositionFields is true`() {
         val model = AddressBookMutableEntityModelFactory.create()
-        val persons = getOrNewMutableSetField(model, "person")
+        val persons = getOrNewMutableSetField(model, "persons")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
@@ -86,14 +86,14 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                   "first_name": null,
                   "last_name": null,
                   "hero_name": null,
                   "picture": null,
-                  "relation": [
+                  "relations": [
                     {
                       "id": null,
                       "relationship": null,
@@ -119,7 +119,7 @@ class PopulateSubTreeTests {
     @Test
     fun `populateSubTree() must populate only key & composition fields in a set-field entity when populateNonKeyNonCompositionFields is false`() {
         val model = AddressBookMutableEntityModelFactory.create()
-        val persons = getOrNewMutableSetField(model, "person")
+        val persons = getOrNewMutableSetField(model, "persons")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
         persons.addValue(clark)
@@ -128,10 +128,10 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": [
+                  "relations": [
                     {
                       "id": null
                     }
@@ -148,7 +148,7 @@ class PopulateSubTreeTests {
     @Test
     fun `populateSubTree() must populate all fields in a composite-keyed sub-tree root when populateNonKeyNonCompositionFields is true`() {
         val model = AddressBookMutableEntityModelFactory.create()
-        val cities = getOrNewMutableSetField(model, "city_info")
+        val cities = getOrNewMutableSetField(model, "cities")
         val sanFrancisco = getNewMutableSetEntity(cities)
         val keys = getOrNewMutableSingleEntity(sanFrancisco, "city")
         setStringSingleField(keys, "name", "San Francisco")
@@ -160,7 +160,7 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "city_info": [
+              "cities": [
                 {
                   "city": {
                     "name": "San Francisco",
@@ -185,7 +185,7 @@ class PopulateSubTreeTests {
     @Test
     fun `populateSubTree() must populate only key & composition fields in a composite-keyed sub-tree root when populateNonKeyNonCompositionFields is false`() {
         val model = AddressBookMutableEntityModelFactory.create()
-        val cities = getOrNewMutableSetField(model, "city_info")
+        val cities = getOrNewMutableSetField(model, "cities")
         val sanFrancisco = getNewMutableSetEntity(cities)
         val keys = getOrNewMutableSingleEntity(sanFrancisco, "city")
         setStringSingleField(keys, "name", "San Francisco")
@@ -197,7 +197,7 @@ class PopulateSubTreeTests {
 
         val expectedJson = """
             {
-              "city_info": [
+              "cities": [
                 {
                   "city": {
                     "name": "San Francisco",
@@ -220,7 +220,7 @@ class PopulateSubTreeTests {
         val success = populateSubTree(model, true)
 
         val expectedJsonSnippet = """
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": null,
@@ -239,7 +239,7 @@ class PopulateSubTreeTests {
         val success = populateSubTree(model, false)
 
         val expectedJsonSnippet = """
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": null,

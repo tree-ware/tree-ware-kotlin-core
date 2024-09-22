@@ -21,7 +21,7 @@ class PopulateSubTreeGranularityGetRequestTests {
                   "id": null,
                   "first_name": null,
                   "last_name": null,
-                  "relation": [
+                  "relations": [
                     {
                       "id": null,
                       "relationship": null,
@@ -70,7 +70,7 @@ class PopulateSubTreeGranularityGetRequestTests {
                   "last_name": null,
                   "hero_name": null,
                   "picture": null,
-                  "relation": [
+                  "relations": [
                     {
                       "id": null,
                       "relationship": null,

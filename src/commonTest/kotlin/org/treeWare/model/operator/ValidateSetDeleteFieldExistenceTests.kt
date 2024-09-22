@@ -19,7 +19,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if exists_if fields are not found`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -27,7 +27,7 @@ class ValidateSetDeleteFieldExistenceTests {
             |      "last_name": "Kent"
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "delete",
             |      "city": {
@@ -51,11 +51,11 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if exists_if fields are not found in an ancestor that is not being set`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "hero_name": "Superman",
-            |      "relation": [
+            |      "relations": [
             |        {
             |          "set_": "delete",
             |          "id": "05ade278-4b44-43da-a0cc-14463854e397",
@@ -81,7 +81,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-required fields do not exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "delete",
             |      "city": {
@@ -106,7 +106,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-required fields exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "delete",
             |      "city": {
@@ -132,7 +132,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields do not exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -154,7 +154,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -177,7 +177,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if required fields in a conditionally-optional entity do not exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -202,7 +202,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if required fields in a conditionally-optional entity exist when conditions are met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -233,7 +233,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-required fields exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "delete",
             |      "city": {
@@ -259,7 +259,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-required fields do not exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "delete",
             |      "city": {
@@ -284,7 +284,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
@@ -307,7 +307,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if conditionally-optional fields do not exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "a8aacf55-7810-4b43-afe5-4344f25435fd",
@@ -329,7 +329,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if required fields in a conditionally-optional entity exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -356,7 +356,7 @@ class ValidateSetDeleteFieldExistenceTests {
     fun `validateSet() must not return errors if required fields in a conditionally-optional entity do not exist when conditions are not met`() {
         val modelJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",

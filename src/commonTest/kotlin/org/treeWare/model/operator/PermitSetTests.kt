@@ -89,13 +89,13 @@ class PermitSetTests {
         // Since keys cannot be updated and there is nothing else in the entity to be updated.
         val updateEntitiesSetJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "update",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "update",
             |      "city": {
@@ -115,13 +115,13 @@ class PermitSetTests {
     fun `CREATE entities with only key fields in set-model must not be pruned by the permitSet operator`() {
         val createEntitiesSetJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "create",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "create",
             |      "city": {
@@ -141,13 +141,13 @@ class PermitSetTests {
     fun `DELETE entities with only key fields in set-model must not be pruned by the permitSet operator`() {
         val deleteEntitiesSetJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "set_": "delete",
             |      "city": {
@@ -167,7 +167,7 @@ class PermitSetTests {
     fun `DELETE keyless entities without any fields in set-model must not be pruned by the permitSet operator`() {
         val deleteEntitiesSetJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -357,7 +357,7 @@ class PermitSetTests {
         personsPermissions: PermissionsAux? = null
     ): EntityModel {
         val rbac = AddressBookMutableEntityModelFactory.create()
-        val rbacPersons = getOrNewMutableSetField(rbac, "person")
+        val rbacPersons = getOrNewMutableSetField(rbac, "persons")
         personsPermissions?.also { setPermissionsAux(rbacPersons, it) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
         setUuidSingleField(rbacPerson, "id", personId)
@@ -717,7 +717,7 @@ class PermitSetTests {
     private fun newAssociationSetJson(setAux: SetAux): String = """
         |{
         |  "set_": "${setAux.name.lowercase()}",
-        |  "person": [
+        |  "persons": [
         |    {
         |      "id": "$CLARK_KENT_ID",
         |      "group": {
@@ -739,17 +739,17 @@ class PermitSetTests {
     private fun newAssociationRbac(permitTargets: Boolean): EntityModel {
         val rbac = AddressBookMutableEntityModelFactory.create()
 
-        val personSet = getOrNewMutableSetField(rbac, "person")
-        val clarkKent = getNewMutableSetEntity(personSet)
+        val personsSet = getOrNewMutableSetField(rbac, "persons")
+        val clarkKent = getNewMutableSetEntity(personsSet)
         setUuidSingleField(clarkKent, "id", CLARK_KENT_ID)
         setPermissionsAux(clarkKent, PermissionsAux(crud = PermissionScope.SUB_TREE))
-        personSet.addValue(clarkKent)
+        personsSet.addValue(clarkKent)
 
-        val cityInfoSet = getOrNewMutableSetField(rbac, "city_info")
-        val albanyCityInfo = getNewMutableSetEntity(cityInfoSet)
+        val citiesSet = getOrNewMutableSetField(rbac, "cities")
+        val albanyCityInfo = getNewMutableSetEntity(citiesSet)
         addCity(albanyCityInfo, "Albany", "New York", "United States of America")
         setPermissionsAux(albanyCityInfo, PermissionsAux(crud = PermissionScope.SUB_TREE))
-        cityInfoSet.addValue(albanyCityInfo)
+        citiesSet.addValue(albanyCityInfo)
 
         if (permitTargets) {
             val groups = getOrNewMutableSetField(rbac, "groups")
@@ -758,10 +758,10 @@ class PermitSetTests {
             setPermissionsAux(dc, PermissionsAux(read = PermissionScope.SUB_TREE))
             groups.addValue(dc)
 
-            val newYorkCityInfo = getNewMutableSetEntity(cityInfoSet)
+            val newYorkCityInfo = getNewMutableSetEntity(citiesSet)
             addCity(newYorkCityInfo, "New York City", "New York", "United States of America")
             setPermissionsAux(newYorkCityInfo, PermissionsAux(read = PermissionScope.SUB_TREE))
-            cityInfoSet.addValue(newYorkCityInfo)
+            citiesSet.addValue(newYorkCityInfo)
         }
 
         return rbac
@@ -775,7 +775,7 @@ class PermitSetTests {
         val expectedPermittedJson = """
             |{
             |  "set_": "create",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
             |    }

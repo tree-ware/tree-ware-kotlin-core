@@ -22,9 +22,9 @@ class DecodePathsTests {
             |/settings/last_name_first = true
             |/settings/encrypt_hero_name = false
             |/settings/background_color = white
-            |/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name = Clark
-            |/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/last_name = Kent
-            |/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_name = Superman
+            |/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name = Clark
+            |/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/last_name = Kent
+            |/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_name = Superman
         """.trimMargin()
 
         val expectedJson = """
@@ -36,7 +36,7 @@ class DecodePathsTests {
             |    "encrypt_hero_name": false,
             |    "background_color": "white"
             |  },
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark",
@@ -113,10 +113,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in the root with 0 trailing wildcards`() {
-        val path = "/person"
+        val path = "/persons"
         val expectedJson = """
             {
-              "person": []
+              "persons": []
             }
         """.trimIndent()
 
@@ -176,10 +176,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a primitive-field in a non-wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                   "first_name": null
@@ -198,10 +198,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a composition-field in a non-wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                   "hero_details": null
@@ -220,13 +220,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in a non-wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": []
+                  "relations": []
                 }
               ]
             }
@@ -246,10 +246,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a primitive-field in a wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/*/first_name"
+        val path = "/persons/*/first_name"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
                   "first_name": null
@@ -268,10 +268,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a composition-field in a wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/*/hero_details"
+        val path = "/persons/*/hero_details"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
                   "hero_details": null
@@ -290,13 +290,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in a wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/*/relation"
+        val path = "/persons/*/relations"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
-                  "relation": []
+                  "relations": []
                 }
               ]
             }
@@ -316,10 +316,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in the root with 0 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -338,13 +338,13 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in another non-wildcard set-field entity with 0 trailing wildcards`() {
         val path =
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation/05ade278-4b44-43da-a0cc-14463854e397"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations/05ade278-4b44-43da-a0cc-14463854e397"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": [
+                  "relations": [
                     {
                       "id": "05ade278-4b44-43da-a0cc-14463854e397"
                     }
@@ -364,13 +364,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in another wildcard set-field entity with 0 trailing wildcards`() {
-        val path = "/person/*/relation/05ade278-4b44-43da-a0cc-14463854e397"
+        val path = "/persons/*/relations/05ade278-4b44-43da-a0cc-14463854e397"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
-                  "relation": [
+                  "relations": [
                     {
                       "id": "05ade278-4b44-43da-a0cc-14463854e397"
                     }
@@ -447,10 +447,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode an escaped wildcard key in a field path with 0 trailing wildcards`() {
-        val path = "/person/\\*/first_name"
+        val path = "/persons/\\*/first_name"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "*",
                   "first_name": null
@@ -469,10 +469,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode an escaped wildcard key in a set-field entity path with 0 trailing wildcards`() {
-        val path = "/person/\\*"
+        val path = "/persons/\\*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "*"
                 }
@@ -544,10 +544,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in the root with 1 trailing wildcard`() {
-        val path = "/person/*"
+        val path = "/persons/*"
         val expectedJson = """
             {
-              "person": []
+              "persons": []
             }
         """.trimIndent()
 
@@ -599,7 +599,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error for a primitive-field in a non-wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/*"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/*"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)
@@ -610,10 +610,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a composition-field in a non-wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details/*"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                   "hero_details": null
@@ -632,13 +632,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in a non-wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation/*"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": []
+                  "relations": []
                 }
               ]
             }
@@ -658,7 +658,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error for a primitive-field in a wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/*/first_name/*"
+        val path = "/persons/*/first_name/*"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)
@@ -669,10 +669,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a composition-field in a wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/*/hero_details/*"
+        val path = "/persons/*/hero_details/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
                   "hero_details": null
@@ -691,13 +691,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in a wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/*/relation/*"
+        val path = "/persons/*/relations/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
-                  "relation": []
+                  "relations": []
                 }
               ]
             }
@@ -717,10 +717,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in the root with 1 trailing wildcard`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/*"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -739,13 +739,13 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in another non-wildcard set-field entity with 1 trailing wildcard`() {
         val path =
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation/05ade278-4b44-43da-a0cc-14463854e397/*"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations/05ade278-4b44-43da-a0cc-14463854e397/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": [
+                  "relations": [
                     {
                       "id": "05ade278-4b44-43da-a0cc-14463854e397"
                     }
@@ -765,13 +765,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in another wildcard set-field entity with 1 trailing wildcard`() {
-        val path = "/person/*/relation/05ade278-4b44-43da-a0cc-14463854e397/*"
+        val path = "/persons/*/relations/05ade278-4b44-43da-a0cc-14463854e397/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
-                  "relation": [
+                  "relations": [
                     {
                       "id": "05ade278-4b44-43da-a0cc-14463854e397"
                     }
@@ -832,7 +832,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error for an escaped wildcard key in a primitive-field path with 1 trailing wildcard`() {
-        val path = "/person/\\*/first_name/*"
+        val path = "/persons/\\*/first_name/*"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)
@@ -843,10 +843,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode an escaped wildcard key in a set-field entity path with 1 trailing wildcard`() {
-        val path = "/person/\\*/*"
+        val path = "/persons/\\*/*"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "*"
                 }
@@ -915,10 +915,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in the root with 2 trailing wildcards`() {
-        val path = "/person/**"
+        val path = "/persons/**"
         val expectedJson = """
             {
-              "person": []
+              "persons": []
             }
         """.trimIndent()
 
@@ -970,7 +970,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error for a primitive-field in a non-wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/**"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/**"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)
@@ -981,10 +981,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a composition-field in a non-wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details/**"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/hero_details/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
                   "hero_details": null
@@ -1003,13 +1003,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in a non-wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation/**"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": []
+                  "relations": []
                 }
               ]
             }
@@ -1029,7 +1029,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error for a primitive-field in a wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/*/first_name/**"
+        val path = "/persons/*/first_name/**"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)
@@ -1040,10 +1040,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a composition-field in a wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/*/hero_details/**"
+        val path = "/persons/*/hero_details/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
                   "hero_details": null
@@ -1062,13 +1062,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a set-field in a wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/*/relation/**"
+        val path = "/persons/*/relations/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
-                  "relation": []
+                  "relations": []
                 }
               ]
             }
@@ -1088,10 +1088,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in the root with 2 trailing wildcards`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/**"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -1110,13 +1110,13 @@ class DecodePathsTests {
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in another non-wildcard set-field entity with 2 trailing wildcards`() {
         val path =
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation/05ade278-4b44-43da-a0cc-14463854e397/**"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations/05ade278-4b44-43da-a0cc-14463854e397/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
-                  "relation": [
+                  "relations": [
                     {
                       "id": "05ade278-4b44-43da-a0cc-14463854e397"
                     }
@@ -1136,13 +1136,13 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard set-field entity in another wildcard set-field entity with 2 trailing wildcards`() {
-        val path = "/person/*/relation/05ade278-4b44-43da-a0cc-14463854e397/**"
+        val path = "/persons/*/relations/05ade278-4b44-43da-a0cc-14463854e397/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null,
-                  "relation": [
+                  "relations": [
                     {
                       "id": "05ade278-4b44-43da-a0cc-14463854e397"
                     }
@@ -1203,7 +1203,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error for an escaped wildcard key in a primitive-field path with 2 trailing wildcards`() {
-        val path = "/person/\\*/first_name/**"
+        val path = "/persons/\\*/first_name/**"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)
@@ -1214,10 +1214,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode an escaped wildcard key in a set-field entity path with 2 trailing wildcards`() {
-        val path = "/person/\\*/**"
+        val path = "/persons/\\*/**"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "*"
                 }
@@ -1241,10 +1241,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a non-wildcard key-field path`() {
-        val path = "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/id"
+        val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/id"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
                 }
@@ -1262,10 +1262,10 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must decode a wildcard key-field path`() {
-        val path = "/person/*/id"
+        val path = "/persons/*/id"
         val expectedJson = """
             {
-              "person": [
+              "persons": [
                 {
                   "id": null
                 }
@@ -1342,7 +1342,7 @@ class DecodePathsTests {
 
     @Test
     fun `decodePath() must return an error if a sub-tree-wildcard is used as a key-value in the middle of a path`() {
-        val path = "/person/**/first_name"
+        val path = "/persons/**/first_name"
 
         val model = AddressBookMutableEntityModelFactory.create()
         val result = decodePath(path, null, model)

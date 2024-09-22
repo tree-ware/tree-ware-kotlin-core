@@ -20,7 +20,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root
     Entity: org.tree_ware.test.address_book.main/group
       Single field: name
         Primitive: Marvel
-  Set field: person
+  Set field: persons
     Entity: org.tree_ware.test.address_book.main/address_book_person
       Single field: id
         Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f
@@ -34,7 +34,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root
         Password1way: {kryptonite, null, 0}
       Single field: main_secret
         Password2way: {Alien from Krypton, null, 0}
-      Set field: relation
+      Set field: relations
         Entity: org.tree_ware.test.address_book.main/address_book_relation
           Single field: id
             Primitive: 05ade278-4b44-43da-a0cc-14463854e397
@@ -43,7 +43,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root
           Single field: person
             Association: ...
               Entity: org.tree_ware.test.address_book.main/address_book_root
-                Set field: person
+                Set field: persons
                   Entity: org.tree_ware.test.address_book.main/address_book_person
                     Single field: id
                       Primitive: a8aacf55-7810-4b43-afe5-4344f25435fd
@@ -69,7 +69,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root
         Password1way: {null, test-hashed-lois, 1}
       Single field: main_secret
         Password2way: {null, test-encrypted-main-secret, 1}
-      Set field: relation
+      Set field: relations
         Entity: org.tree_ware.test.address_book.main/address_book_relation
           Single field: id
             Primitive: 16634916-8f83-4376-ad42-37038e108a0b
@@ -78,7 +78,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root
           Single field: person
             Association: ...
               Entity: org.tree_ware.test.address_book.main/address_book_root
-                Set field: person
+                Set field: persons
                   Entity: org.tree_ware.test.address_book.main/address_book_person
                     Single field: id
                       Primitive: cc477201-48ec-4367-83a4-7fdbd92f8a6f
@@ -93,7 +93,7 @@ Entity: org.tree_ware.test.address_book.main/address_book_root
                   Entity: org.tree_ware.test.address_book.main/group
                     Single field: name
                       Primitive: Superman
-  Set field: city_info
+  Set field: cities
     Entity: org.tree_ware.test.address_book.city/address_book_city_info
       Single field: city
         Entity: org.tree_ware.test.address_book.city/address_book_city

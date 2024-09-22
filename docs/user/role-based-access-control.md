@@ -122,7 +122,7 @@ with `sub_tree` scope:
 ```json
 {
   "address_book": {
-    "person": [
+    "persons": [
       {
         "permissions_": {
           "all": "sub_tree"
@@ -142,10 +142,10 @@ person list with `node` scope, and lists only the ID and name fields in the pers
 ```json
 {
   "address_book": {
-    "person__permissions_": {
+    "persons__permissions_": {
       "read": "node"
     },
-    "person": [
+    "persons": [
       {
         "id": null,
         "first_name": null,

@@ -19,8 +19,8 @@
       "name": "Marvel"
     }
   ],
-  "person__aux2_": "Aux2 at person list level",
-  "person": [
+  "persons__aux2_": "Aux2 at persons list level",
+  "persons": [
     {
       "aux2_": "Aux2 with composition element of list",
       "id__aux2_": "Aux2 in person id",
@@ -48,15 +48,15 @@
       "main_secret": {
         "unencrypted": "Alien from Krypton"
       },
-      "relation__aux2_": "Aux2 at relation composition list level",
-      "relation": [
+      "relations__aux2_": "Aux2 at relations composition list level",
+      "relations": [
         {
           "aux2_": "Some aux2 with composition element of list",
           "id__aux2_": "Aux2 with id field",
           "id": "05ade278-4b44-43da-a0cc-14463854e397",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
               }
@@ -66,8 +66,8 @@
       ]
     }
   ],
-  "city_info__aux2_": "Aux2 with city info list",
-  "city_info": [
+  "cities__aux2_": "Aux2 with city info list",
+  "cities": [
     {
       "city__aux2_": "Aux2 with 1:1 composition key inside a list",
       "city": {

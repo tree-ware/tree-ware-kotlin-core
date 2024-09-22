@@ -80,12 +80,12 @@ class PermitGetTests {
     fun `Get-model with only non-wildcard keys must not be pruned by the permitGet operator`() {
         val onlyNonWildcardKeysGetJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "$CLARK_KENT_ID"
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",
@@ -104,12 +104,12 @@ class PermitGetTests {
     fun `Get-model with only wildcard keys must not be pruned by the permitGet operator`() {
         val onlyWildcardKeysGetJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": null
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": null,
@@ -203,7 +203,7 @@ class PermitGetTests {
         personsReadScope: PermissionScope? = null
     ): EntityModel {
         val rbac = AddressBookMutableEntityModelFactory.create()
-        val rbacPersons = getOrNewMutableSetField(rbac, "person")
+        val rbacPersons = getOrNewMutableSetField(rbac, "persons")
         personsReadScope?.also { setPermissionsAux(rbacPersons, PermissionsAux(read = it)) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
         setUuidSingleField(rbacPerson, "id", personId)
@@ -282,7 +282,7 @@ class PermitGetTests {
         // NOTE: wildcards in the get-model will eventually be replaced by explicit keys from the RBAC model.
         val getJson = """
             |{
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": null,
             |      "last_name": null

@@ -3,10 +3,10 @@
   "settings": {
     "last_name_first": null
   },
-  "person": [
+  "persons": [
     {
       "id": null,
-      "relation": [
+      "relations": [
         {
           "id": null,
           "relationship": null,
@@ -17,7 +17,7 @@
       "main_secret": null
     }
   ],
-  "city_info": [
+  "cities": [
     {
       "city": {
         "name": null,

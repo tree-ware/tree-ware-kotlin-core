@@ -23,7 +23,7 @@ class DecoderNullTests {
     fun `Decoding must fail for null composition-keys`() {
         val modelJson = """
             |{
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": null
             |    }
@@ -39,7 +39,7 @@ class DecoderNullTests {
     fun `Decoding must fail for null composition-lists`() {
         val modelJson = """
             |{
-            |  "person": null
+            |  "persons": null
             |}
         """.trimMargin()
         val expectedDecodeErrors = listOf("Lists must not be null; use empty array [] instead")

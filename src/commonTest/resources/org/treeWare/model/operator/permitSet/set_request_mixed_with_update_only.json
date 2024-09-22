@@ -1,7 +1,7 @@
 {
   "set_": "update",
   "name": "Super Heroes",
-  "person": [
+  "persons": [
     {
       "set_": "update",
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",

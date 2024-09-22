@@ -46,7 +46,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/person",
+                "/persons",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name", "picture"),
@@ -72,7 +72,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -91,7 +91,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/person/a8aacf55-7810-4b43-afe5-4344f25435fd/relation",
+                "/persons/a8aacf55-7810-4b43-afe5-4344f25435fd/relations",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -110,7 +110,7 @@ class GetDelegateWildcardEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/city_info",
+                "/cities",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info"),
@@ -146,28 +146,28 @@ class GetDelegateWildcardEntitiesTests {
                 ofType()
             )
             delegate.getCompositionSet(
-                "/person",
+                "/persons",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name", "picture"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/person/a8aacf55-7810-4b43-afe5-4344f25435fd/relation",
+                "/persons/a8aacf55-7810-4b43-afe5-4344f25435fd/relations",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/city_info",
+                "/cities",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info"),

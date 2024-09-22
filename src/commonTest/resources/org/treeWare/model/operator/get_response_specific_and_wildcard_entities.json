@@ -4,13 +4,13 @@
   "settings": {
     "last_name_first": true
   },
-  "person": [
+  "persons": [
     {
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
       "first_name": "Clark",
       "last_name": "Kent",
       "hero_name": "Superman",
-      "relation": [
+      "relations": [
         {
           "id": "05ade278-4b44-43da-a0cc-14463854e397",
           "relationship": "colleague"
@@ -19,7 +19,7 @@
           "id": "3c71ede8-8ded-4038-b6e9-dcc4a0f3a8ce",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "ec983c56-320f-4d66-9dde-f180e8ac3807"
               }
@@ -38,7 +38,7 @@
       "last_name": "Olsen"
     }
   ],
-  "city_info": [
+  "cities": [
     {
       "city": {
         "name": "New York City",

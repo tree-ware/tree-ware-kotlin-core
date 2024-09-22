@@ -20,7 +20,7 @@
       "name": "Marvel"
     }
   ],
-  "person": [
+  "persons": [
     {
       "aux_": "Aux for Clark",
       "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
@@ -33,8 +33,8 @@
       "main_secret": {
         "unencrypted": "Alien from Krypton"
       },
-      "relation__aux_": "Aux for Clark's relation list",
-      "relation": [
+      "relations__aux_": "Aux for Clark's relations list",
+      "relations": [
         {
           "aux_": "Aux for Clark's colleague Lois",
           "id": "05ade278-4b44-43da-a0cc-14463854e397",
@@ -42,7 +42,7 @@
           "relationship": "colleague",
           "person__aux_": "Aux for association to Clark's colleague Lois",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
               }
@@ -76,13 +76,13 @@
         "encrypted": "test-encrypted-main-secret",
         "cipher_version": 1
       },
-      "relation": [
+      "relations": [
         {
           "id": "16634916-8f83-4376-ad42-37038e108a0b",
           "relationship": "colleague",
           "person__aux_": "Aux for association to Lois' colleague Clark",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -105,8 +105,8 @@
       }
     }
   ],
-  "city_info__aux_": "Aux for city info list",
-  "city_info": [
+  "cities__aux_": "Aux for city info list",
+  "cities": [
     {
       "city__aux_": "Aux for 1:1 composition key inside a list",
       "city": {

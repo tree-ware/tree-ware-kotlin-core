@@ -24,8 +24,8 @@
       ]
     }
   ],
-  "person__aux3_": "Aux3 at person list level",
-  "person": [
+  "persons__aux3_": "Aux3 at persons list level",
+  "persons": [
     {
       "aux3_": "Aux3 with composition element of list",
       "id__aux3_": "Aux3 in person id",
@@ -68,12 +68,12 @@
         "hashed": "test-hashed-lois",
         "hash_version": 1
       },
-      "relation": [
+      "relations": [
         {
           "id": "16634916-8f83-4376-ad42-37038e108a0b",
           "relationship": "colleague",
           "person": {
-            "person": [
+            "persons": [
               {
                 "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
               }
@@ -83,8 +83,8 @@
       ]
     }
   ],
-  "city_info__aux3_": "Aux3 with city info list",
-  "city_info": [
+  "cities__aux3_": "Aux3 with city info list",
+  "cities": [
     {
       "city__aux3_": "Aux3 with 1:1 composition key inside a list",
       "city": {

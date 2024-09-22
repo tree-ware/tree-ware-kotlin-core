@@ -16,7 +16,7 @@ class ValidateSetTests {
         val modelJson = """
             |{
             |  "set_": "create",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "is_hero": true
@@ -33,8 +33,8 @@ class ValidateSetTests {
 
         val expectedErrors = listOf(
             "/: required field not found: name",
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: first_name",
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: last_name",
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: first_name",
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f: required field not found: last_name",
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -46,7 +46,7 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark",
@@ -96,7 +96,7 @@ class ValidateSetTests {
         val modelJson = """
             |{
             |  "set_": "update",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "is_hero": true
@@ -149,7 +149,7 @@ class ValidateSetTests {
         val modelJson = """
             |{
             |  "set_": "delete",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "set_": "delete",
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f"
@@ -222,7 +222,7 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "country": "U",
@@ -243,7 +243,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors =
-            listOf("/city_info/New York City/New York/U/city/country: length 1 of string 'U' is less than minimum size 2")
+            listOf("/cities/New York City/New York/U/city/country: length 1 of string 'U' is less than minimum size 2")
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
     }
@@ -254,7 +254,7 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark",
@@ -263,7 +263,7 @@ class ValidateSetTests {
             |      "group": {}
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",
@@ -284,7 +284,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -296,14 +296,14 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark",
             |      "last_name": "Kent",
             |      "is_hero": true,
             |      "group": {
-            |        "person": [
+            |        "persons": [
             |          {
             |            "id": "a8aacf55-7810-4b43-afe5-4344f25435fd"
             |          }
@@ -311,7 +311,7 @@ class ValidateSetTests {
             |      }
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",
@@ -332,7 +332,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has an invalid target type"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -344,7 +344,7 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark",
@@ -366,7 +366,7 @@ class ValidateSetTests {
             |      }
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",
@@ -396,7 +396,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has non-key fields"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has non-key fields"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -408,14 +408,14 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "first_name": "Clark",
             |      "last_name": "Kent",
             |      "is_hero": true,
             |      "group": {
-            |        "person": [],
+            |        "persons": [],
             |        "groups": [
             |          {
             |            "name": "DC",
@@ -429,7 +429,7 @@ class ValidateSetTests {
             |      }
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",
@@ -459,7 +459,7 @@ class ValidateSetTests {
         )
 
         val expectedErrors = listOf(
-            "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has multiple paths"
+            "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/group: association has multiple paths"
         )
         val actualErrors = validateSet(model)
         assertEquals(expectedErrors.joinToString("\n"), actualErrors.joinToString("\n"))
@@ -471,7 +471,7 @@ class ValidateSetTests {
             |{
             |  "set_": "create",
             |  "name": "Super Heroes",
-            |  "person": [
+            |  "persons": [
             |    {
             |      "id": "cc477201-48ec-4367-83a4-7fdbd92f8a6f",
             |      "group": {
@@ -486,7 +486,7 @@ class ValidateSetTests {
             |      }
             |    }
             |  ],
-            |  "city_info": [
+            |  "cities": [
             |    {
             |      "city": {
             |        "name": "New York City",

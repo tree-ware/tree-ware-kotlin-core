@@ -32,7 +32,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/person",
+                "/persons",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
@@ -54,7 +54,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
@@ -77,7 +77,7 @@ class GetDelegateSingleSpecificEntitiesTests {
         }
         every {
             delegate.getCompositionSet(
-                "/city_info",
+                "/cities",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info"),
@@ -109,21 +109,21 @@ class GetDelegateSingleSpecificEntitiesTests {
         verifySequence {
             delegate.getRoot("/", ofType(), fieldsWithNames(), ofType())
             delegate.getCompositionSet(
-                "/person",
+                "/persons",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("first_name", "last_name", "hero_name"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/person/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relation",
+                "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/relations",
                 ofType(),
                 fieldsWithNames("id"),
                 fieldsWithNames("relationship", "person"),
                 ofType()
             )
             delegate.getCompositionSet(
-                "/city_info",
+                "/cities",
                 ofType(),
                 fieldsWithNames("city"),
                 fieldsWithNames("info"),
