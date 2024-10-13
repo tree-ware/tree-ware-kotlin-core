@@ -5,6 +5,9 @@ import org.treeWare.model.core.MutableEntityModel
 abstract class AbstractLeader1MutableMetaModelVisitor<Return>(
     private val defaultVisitReturn: Return
 ) : Leader1MutableMetaModelVisitor<Return> {
+    override fun visitMetaModel(leaderMeta1: MutableEntityModel): Return = defaultVisitReturn
+    override fun leaveMetaModel(leaderMeta1: MutableEntityModel) {}
+
     override fun visitVersionMeta(leaderVersionMeta1: MutableEntityModel): Return = defaultVisitReturn
     override fun leaveVersionMeta(leaderVersionMeta1: MutableEntityModel) {}
 

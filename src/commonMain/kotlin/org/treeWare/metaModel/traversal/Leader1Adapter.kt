@@ -9,10 +9,9 @@ class Leader1Adapter<Return>(
     private val adaptee: Leader1MetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
 ) : Leader1ModelVisitor<Return> {
-    override fun visitEntity(leaderEntity1: EntityModel): Return {
-        if (isRootEntity(leaderEntity1)) return adaptee.visitMetaModel(leaderEntity1)
-        return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
-            "/org.tree_ware.meta_model.main/meta_model" -> defaultVisitReturn
+    override fun visitEntity(leaderEntity1: EntityModel): Return =
+        when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
+            "/org.tree_ware.meta_model.main/meta_model" -> adaptee.visitMetaModel(leaderEntity1)
             "/org.tree_ware.meta_model.main/version" -> adaptee.visitVersionMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
@@ -28,12 +27,10 @@ class Leader1Adapter<Return>(
             null -> defaultVisitReturn // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
-    }
 
-    override fun leaveEntity(leaderEntity1: EntityModel) {
-        if (isRootEntity(leaderEntity1)) return adaptee.leaveMetaModel(leaderEntity1)
-        return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
-            "/org.tree_ware.meta_model.main/meta_model" -> Unit
+    override fun leaveEntity(leaderEntity1: EntityModel) =
+        when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
+            "/org.tree_ware.meta_model.main/meta_model" -> adaptee.leaveMetaModel(leaderEntity1)
             "/org.tree_ware.meta_model.main/version" -> adaptee.leaveVersionMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
@@ -49,7 +46,6 @@ class Leader1Adapter<Return>(
             null -> Unit // TODO(deepak-nulu): for meta-meta-models; should not be needed
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
-    }
 
     // Fields
 

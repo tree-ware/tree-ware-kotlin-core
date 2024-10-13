@@ -7,9 +7,9 @@ class Leader1MutableAdapter<Return>(
     private val adaptee: Leader1MutableMetaModelVisitor<Return>,
     private val defaultVisitReturn: Return
 ) : Leader1MutableModelVisitor<Return> {
-    override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return {
-        return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
-            "/org.tree_ware.meta_model.main/meta_model" -> defaultVisitReturn
+    override fun visitMutableEntity(leaderEntity1: MutableEntityModel): Return =
+        when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
+            "/org.tree_ware.meta_model.main/meta_model" -> adaptee.visitMetaModel(leaderEntity1)
             "/org.tree_ware.meta_model.main/version" -> adaptee.visitVersionMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/root" -> adaptee.visitRootMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/package" -> adaptee.visitPackageMeta(leaderEntity1)
@@ -22,11 +22,10 @@ class Leader1MutableAdapter<Return>(
             "/org.tree_ware.meta_model.main/enumeration_info" -> defaultVisitReturn
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
-    }
 
-    override fun leaveMutableEntity(leaderEntity1: MutableEntityModel) {
-        return when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
-            "/org.tree_ware.meta_model.main/meta_model" -> Unit
+    override fun leaveMutableEntity(leaderEntity1: MutableEntityModel) =
+        when (val metaMetaName = leaderEntity1.getMetaResolved()?.fullName) {
+            "/org.tree_ware.meta_model.main/meta_model" -> adaptee.leaveMetaModel(leaderEntity1)
             "/org.tree_ware.meta_model.main/version" -> adaptee.leaveVersionMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/root" -> adaptee.leaveRootMeta(leaderEntity1)
             "/org.tree_ware.meta_model.main/package" -> adaptee.leavePackageMeta(leaderEntity1)
@@ -39,7 +38,6 @@ class Leader1MutableAdapter<Return>(
             "/org.tree_ware.meta_model.main/enumeration_info" -> Unit
             else -> throw IllegalStateException("Illegal metaMetaName $metaMetaName")
         }
-    }
 
     // Fields
 
