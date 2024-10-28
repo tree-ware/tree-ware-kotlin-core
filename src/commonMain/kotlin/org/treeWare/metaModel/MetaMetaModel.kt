@@ -96,7 +96,7 @@ private fun populateMainEntities(entitiesMeta: MutableSetFieldModel) {
     val uniqueEntityMeta = newEntityMetaMeta(entitiesMeta, "unique")
     populateUniqueEntity(uniqueEntityMeta)
     val uniqueFieldEntityMeta = newEntityMetaMeta(entitiesMeta, "unique_field")
-    populateUniqueEntity(uniqueFieldEntityMeta)
+    populateUniqueFieldEntity(uniqueFieldEntityMeta)
     val enumerationInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "enumeration_info")
     populateEnumerationInfoEntity(enumerationInfoEntityMeta)
     val entityInfoEntityMeta = newEntityMetaMeta(entitiesMeta, "entity_info")

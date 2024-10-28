@@ -79,7 +79,8 @@ fun getOptionalSinglePrimitive(entityModel: EntityModel, fieldName: String): Pri
 }
 
 fun getCollectionField(entityModel: EntityModel, fieldName: String): CollectionFieldModel =
-    entityModel.getField(fieldName) as? CollectionFieldModel ?: throw IllegalStateException()
+    entityModel.getField(fieldName) as? CollectionFieldModel
+        ?: throw IllegalStateException("No collection field named '$fieldName'")
 
 fun getFieldName(fieldModel: FieldModel): String =
     fieldModel.meta?.let { getMetaName(it) } ?: throw IllegalStateException()
