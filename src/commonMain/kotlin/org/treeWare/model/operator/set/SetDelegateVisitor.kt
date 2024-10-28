@@ -34,7 +34,7 @@ class SetDelegateVisitor(
         }
 
         // The field path and entity path are both needed.
-        val fieldPath = if (modelPathStack.isEmpty()) "" else modelPathStack.peekModelPath()
+        val fieldPath = if (modelPathStack.isEmpty()) "/" else modelPathStack.peekModelPath()
         modelPathStack.pushEntity(leaderEntity1)
         val entityPath = modelPathStack.peekModelPath()
 

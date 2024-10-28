@@ -79,7 +79,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.UPDATE,
                 ofType(),
-                "",
+                "/",
                 "/",
                 ofType(),
                 fieldsWithNames(),
@@ -384,7 +384,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "",
+                "/",
                 "/",
                 ofType(),
                 fieldsWithNames(),
@@ -505,7 +505,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "",
+                "/",
                 "/",
                 ofType(),
                 fieldsWithNames(),
@@ -601,7 +601,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "",
+                "/",
                 "/",
                 ofType(),
                 fieldsWithNames(),
@@ -751,7 +751,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "",
+                "/",
                 "/",
                 ofType(),
                 fieldsWithNames(),
@@ -838,7 +838,7 @@ class SetDelegateTests {
             delegate.setEntity(
                 SetAux.CREATE,
                 ofType(),
-                "",
+                "/",
                 "/",
                 ofType(),
                 fieldsWithNames(),
