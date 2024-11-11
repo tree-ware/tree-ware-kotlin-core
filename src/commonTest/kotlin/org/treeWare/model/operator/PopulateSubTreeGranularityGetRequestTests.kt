@@ -84,6 +84,16 @@ class PopulateSubTreeGranularityGetRequestTests {
                   "hero_details": {
                     "strengths": null,
                     "weaknesses": null
+                  },
+                  "keyless": {
+                    "name": null,
+                    "keyless_child": {
+                      "name": null
+                    },
+                    "keyed_child": {
+                      "name": null,
+                      "other": null
+                    }
                   }
                 }
               ]

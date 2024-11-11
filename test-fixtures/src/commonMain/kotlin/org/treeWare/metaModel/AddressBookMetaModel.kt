@@ -8,6 +8,7 @@ val ADDRESS_BOOK_META_MODEL_FILES = listOf(
     "tree_ware/meta_model/address_book_root.json",
     "tree_ware/meta_model/address_book_main.json",
     "tree_ware/meta_model/address_book_city.json",
+    "tree_ware/meta_model/address_book_keyless.json",
     "org/treeWare/metaModel/geo.json"
 )
 

@@ -53,6 +53,16 @@ class PopulateSubTreeGranularityDeleteRequestTests {
                   ],
                   "hero_details": {
                     "set_": "delete"
+                  },
+                  "keyless": {
+                    "set_": "delete",
+                    "keyless_child": {
+                      "set_": "delete"
+                    },
+                    "keyed_child": {
+                      "set_": "delete",
+                      "name": null
+                    }
                   }
                 }
               ]

@@ -52,7 +52,8 @@
         "field:main_secret": {},
         "field:group": {},
         "field:is_hero": {},
-        "field:hero_details": {}
+        "field:hero_details": {},
+        "field:keyless": {}
       },
       "entity:group": {
         "field:name": {},
@@ -80,7 +81,22 @@
         "field:info": {},
         "field:city_center": {},
         "field:is_coastal_city": {},
-        "field:water_body_name": {}
+        "field:water_body_name": {},
+        "field:keyless": {}
+      }
+    },
+    "package:org.tree_ware.test.address_book.keyless": {
+      "entity:keyless": {
+        "field:name": {},
+        "field:keyless_child": {},
+        "field:keyed_child": {}
+      },
+      "entity:keyless_child": {
+        "field:name": {}
+      },
+      "entity:keyed_child": {
+        "field:name": {},
+        "field:other": {}
       }
     },
     "package:org.tree_ware.meta_model.geo": {

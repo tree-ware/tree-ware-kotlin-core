@@ -290,6 +290,17 @@
                 "value": "true"
               },
               "multiplicity": "optional"
+            },
+            {
+              "name": "keyless",
+              "number": 15,
+              "info": "For testing keyless compositions",
+              "type": "composition",
+              "composition": {
+                "entity": "keyless",
+                "package": "org.tree_ware.test.address_book.keyless"
+              },
+              "multiplicity": "optional"
             }
           ]
         },

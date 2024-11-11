@@ -1,0 +1,68 @@
+{
+  "packages": [
+    {
+      "name": "org.tree_ware.test.address_book.keyless",
+      "info": "For testing keyless entities",
+      "entities": [
+        {
+          "name": "keyless",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "type": "string",
+              "max_size": 64
+            },
+            {
+              "name": "keyless_child",
+              "number": 2,
+              "type": "composition",
+              "composition": {
+                "entity": "keyless_child",
+                "package": "org.tree_ware.test.address_book.keyless"
+              }
+            },
+            {
+              "name": "keyed_child",
+              "number": 3,
+              "type": "composition",
+              "composition": {
+                "entity": "keyed_child",
+                "package": "org.tree_ware.test.address_book.keyless"
+              }
+            }
+          ]
+        },
+        {
+          "name": "keyless_child",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "type": "string",
+              "max_size": 64
+            }
+          ]
+        },
+        {
+          "name": "keyed_child",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "type": "string",
+              "max_size": 64,
+              "is_key": true
+            },
+            {
+              "name": "other",
+              "number": 2,
+              "info": "A non-key field for update tests since keys cannot be updated",
+              "type": "int32"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

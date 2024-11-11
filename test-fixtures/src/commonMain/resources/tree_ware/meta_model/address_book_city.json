@@ -77,6 +77,17 @@
                 "field": "is_coastal_city",
                 "value": "true"
               }
+            },
+            {
+              "name": "keyless",
+              "number": 6,
+              "info": "For testing keyless compositions",
+              "type": "composition",
+              "composition": {
+                "entity": "keyless",
+                "package": "org.tree_ware.test.address_book.keyless"
+              },
+              "multiplicity": "optional"
             }
           ]
         }

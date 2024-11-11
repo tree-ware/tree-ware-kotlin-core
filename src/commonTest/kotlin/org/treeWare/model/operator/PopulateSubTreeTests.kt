@@ -107,6 +107,16 @@ class PopulateSubTreeTests {
                   "hero_details": {
                     "strengths": null,
                     "weaknesses": null
+                  },
+                  "keyless": {
+                    "name": null,
+                    "keyless_child": {
+                      "name": null
+                    },
+                    "keyed_child": {
+                      "name": null,
+                      "other": null
+                    }
                   }
                 }
               ]
@@ -136,7 +146,13 @@ class PopulateSubTreeTests {
                       "id": null
                     }
                   ],
-                  "hero_details": {}
+                  "hero_details": {},
+                  "keyless": {
+                    "keyless_child": {},
+                    "keyed_child": {
+                      "name": null
+                    }
+                  }
                 }
               ]
             }
@@ -173,7 +189,17 @@ class PopulateSubTreeTests {
                     "longitude": null
                   },
                   "is_coastal_city": null,
-                  "water_body_name": null
+                  "water_body_name": null,
+                  "keyless": {
+                    "name": null,
+                    "keyless_child": {
+                      "name": null
+                    },
+                    "keyed_child": {
+                      "name": null,
+                      "other": null
+                    }
+                  }
                 }
               ]
             }
@@ -204,7 +230,13 @@ class PopulateSubTreeTests {
                     "state": "California",
                     "country": "USA"
                   },
-                  "city_center": {}
+                  "city_center": {},
+                  "keyless": {
+                    "keyless_child": {},
+                    "keyed_child": {
+                      "name": null
+                    }
+                  }
                 }
               ]
             }

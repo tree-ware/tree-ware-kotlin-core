@@ -122,6 +122,19 @@ class PopulateSubTreeWithAuxTests {
                     "set_": "delete",
                     "strengths": null,
                     "weaknesses": null
+                  },
+                  "keyless": {
+                    "set_": "delete",
+                    "name": null,
+                    "keyless_child": {
+                      "set_": "delete",
+                      "name": null
+                    },
+                    "keyed_child": {
+                      "set_": "delete",
+                      "name": null,
+                      "other": null
+                    }
                   }
                 }
               ]
@@ -155,6 +168,16 @@ class PopulateSubTreeWithAuxTests {
                   ],
                   "hero_details": {
                     "set_": "delete"
+                  },
+                  "keyless": {
+                    "set_": "delete",
+                    "keyless_child": {
+                      "set_": "delete"
+                    },
+                    "keyed_child": {
+                      "set_": "delete",
+                      "name": null
+                    }
                   }
                 }
               ]
@@ -195,7 +218,20 @@ class PopulateSubTreeWithAuxTests {
                     "longitude": null
                   },
                   "is_coastal_city": null,
-                  "water_body_name": null
+                  "water_body_name": null,
+                  "keyless": {
+                    "set_": "delete",
+                    "name": null,
+                    "keyless_child": {
+                      "set_": "delete",
+                      "name": null
+                    },
+                    "keyed_child": {
+                      "set_": "delete",
+                      "name": null,
+                      "other": null
+                    }
+                  }
                 }
               ]
             }
@@ -230,6 +266,16 @@ class PopulateSubTreeWithAuxTests {
                   },
                   "city_center": {
                     "set_": "delete"
+                  },
+                  "keyless": {
+                    "set_": "delete",
+                    "keyless_child": {
+                      "set_": "delete"
+                    },
+                    "keyed_child": {
+                      "set_": "delete",
+                      "name": null
+                    }
                   }
                 }
               ]
