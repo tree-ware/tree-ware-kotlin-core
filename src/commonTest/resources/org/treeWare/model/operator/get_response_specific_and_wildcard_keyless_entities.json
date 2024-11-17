@@ -1,0 +1,28 @@
+{
+  "cities": [
+    {
+      "city": {
+        "name": "New York City",
+        "state": "New York",
+        "country": "United States of America"
+      },
+      "info": "One of the most populous and most densely populated major city in USA",
+      "keyless": {
+        "name": "NYC keyless"
+      }
+    },
+    {
+      "city": {
+        "name": "Albany",
+        "state": "New York",
+        "country": "United States of America"
+      },
+      "info": "Capital of New York state",
+      "keyless": {
+        "keyless_child": {
+          "name": "Albany keyless child"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "cities": [
+    {
+      "city": {
+        "name": "New York City",
+        "state": "New York",
+        "country": "United States of America"
+      },
+      "info": null,
+      "keyless": {
+        "name": null
+      }
+    },
+    {
+      "city": {
+        "name": null,
+        "state": "New York",
+        "country": "United States of America"
+      },
+      "info": null,
+      "keyless": {
+        "keyless_child": {
+          "name": null
+        }
+      }
+    }
+  ]
+}
