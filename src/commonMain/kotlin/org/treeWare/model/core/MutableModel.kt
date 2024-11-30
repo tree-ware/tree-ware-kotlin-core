@@ -124,17 +124,12 @@ open class MutableEntityModel(
     }
 
     override fun getKeyValues(): List<Any?> {
-        val (availableKeys, missingKeys) = getKeyFields()
+        val (availableKeys, missingKeys) = getKeyFields(true)
         if (missingKeys.isNotEmpty()) {
             val entityMetaName = getMetaModelResolved(meta)?.fullName ?: getMetaName(meta)
             throw MissingKeysException("Missing key fields $missingKeys in instance of $entityMetaName")
         }
-        return availableKeys.flatMap { keyField ->
-            when (getFieldTypeMeta(keyField.meta)) {
-                FieldType.COMPOSITION -> (keyField.value as EntityModel).getKeyValues()
-                else -> listOf(keyField.value?.let { (it as PrimitiveModel).value })
-            }
-        }
+        return availableKeys.map { keyField -> keyField.value?.let { (it as PrimitiveModel).value } }
     }
 }
 

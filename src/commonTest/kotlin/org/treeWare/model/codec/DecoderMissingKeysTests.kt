@@ -17,8 +17,8 @@ class DecoderMissingKeysTests {
             "Missing key fields [id] in instance of /org.tree_ware.test.address_book.main/address_book_relation",
             "Missing key fields [id] in instance of /org.tree_ware.test.address_book.main/address_book_person",
             "Missing key fields [city] in instance of /org.tree_ware.test.address_book.city/address_book_city_info",
-            "Missing key fields [name, state, country] in instance of /org.tree_ware.test.address_book.city/address_book_city",
-            "Missing key fields [state, country] in instance of /org.tree_ware.test.address_book.city/address_book_city",
+            "Missing key fields [city/name, city/state, city/country] in instance of /org.tree_ware.test.address_book.city/address_book_city_info",
+            "Missing key fields [city/state, city/country] in instance of /org.tree_ware.test.address_book.city/address_book_city_info",
         )
         testRoundTrip(
             "model/address_book_missing_keys.json",
