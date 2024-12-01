@@ -9,7 +9,8 @@
       "info": "One of the most populous and most densely populated major city in USA",
       "keyless": {
         "name": "NYC keyless"
-      }
+      },
+      "is_coastal_city": true
     },
     {
       "city": {
@@ -18,6 +19,7 @@
         "country": "United States of America"
       },
       "info": "Capital of New York state",
+      "is_coastal_city": true,
       "keyless": {
         "keyless_child": {
           "name": "Albany keyless child"

@@ -60,7 +60,16 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
             )
 
             GetCompositionSetResult.Entities(listOf(nyc))
-        } andThenAnswer {
+        }
+        every {
+            delegate.getCompositionSet(
+                "/cities",
+                ofType(),
+                fieldsWithNames("city"),
+                fieldsWithNames("info", "is_coastal_city"),
+                ofType()
+            )
+        } answers {
             val keys = arg<List<SingleFieldModel>>(2)
             assertEquals(1, keys.size)
             val cityInfo = arg<MutableSetFieldModel>(4)
@@ -79,6 +88,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
                 "info",
                 "One of the most populous and most densely populated major city in USA"
             )
+            setBooleanSingleField(nyc, "is_coastal_city", true)
 
             val albanyCompositeKey = keys.first().value as EntityModel
             val albanyKeys = albanyCompositeKey.getKeyValues()
@@ -92,8 +102,9 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
                 "info",
                 "Capital of New York state"
             )
+            setBooleanSingleField(albany, "is_coastal_city", true)
 
-            GetCompositionSetResult.Entities(listOf(nyc, albany))
+            GetCompositionSetResult.Entities(listOf(albany, nyc))
         }
         every {
             delegate.getComposition(
@@ -149,7 +160,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
                 "/cities",
                 ofType(),
                 fieldsWithNames("city"),
-                fieldsWithNames("info"),
+                fieldsWithNames("info", "is_coastal_city"),
                 ofType()
             )
             delegate.getComposition(
