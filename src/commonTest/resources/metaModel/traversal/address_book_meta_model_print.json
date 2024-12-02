@@ -30,7 +30,8 @@
         "field:persons": {},
         "field:cities": {},
         "field:groups": {},
-        "field:sub_tree_persons": {}
+        "field:sub_tree_persons": {},
+        "field:clubs": {}
       },
       "entity:address_book_settings": {
         "field:last_name_first": {},
@@ -82,6 +83,16 @@
         "field:city_center": {},
         "field:is_coastal_city": {},
         "field:water_body_name": {},
+        "field:keyless": {}
+      }
+    },
+    "package:org.tree_ware.test.address_book.club": {
+      "entity:address_book_club": {
+        "field:name": {},
+        "field:sub_category": {},
+        "field:category": {},
+        "field:info": {},
+        "field:phone": {},
         "field:keyless": {}
       }
     },

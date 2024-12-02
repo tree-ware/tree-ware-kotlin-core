@@ -1,0 +1,58 @@
+{
+  "packages": [
+    {
+      "name": "org.tree_ware.test.address_book.club",
+      "info": "Schema for storing clubs",
+      "entities": [
+        {
+          "name": "address_book_club",
+          "fields": [
+            {
+              "name": "name",
+              "number": 1,
+              "info": "Club name",
+              "type": "string",
+              "is_key": true
+            },
+            {
+              "name": "sub_category",
+              "number": 2,
+              "type": "string",
+              "is_key": true
+            },
+            {
+              "name": "category",
+              "number": 3,
+              "type": "string",
+              "is_key": true
+            },
+            {
+              "name": "info",
+              "number": 4,
+              "info": "Information about the club",
+              "type": "string",
+              "multiplicity": "optional"
+            },
+            {
+              "name": "phone",
+              "number": 5,
+              "info": "Information about the club",
+              "type": "string"
+            },
+            {
+              "name": "keyless",
+              "number": 6,
+              "info": "For testing keyless compositions",
+              "type": "composition",
+              "composition": {
+                "entity": "keyless",
+                "package": "org.tree_ware.test.address_book.keyless"
+              },
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

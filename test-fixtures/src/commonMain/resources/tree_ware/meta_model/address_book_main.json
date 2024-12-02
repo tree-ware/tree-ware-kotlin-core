@@ -147,6 +147,16 @@
               },
               "granularity": "sub_tree",
               "multiplicity": "set"
+            },
+            {
+              "name": "clubs",
+              "number": 8,
+              "type": "composition",
+              "composition": {
+                "entity": "address_book_club",
+                "package": "org.tree_ware.test.address_book.club"
+              },
+              "multiplicity": "set"
             }
           ]
         },
