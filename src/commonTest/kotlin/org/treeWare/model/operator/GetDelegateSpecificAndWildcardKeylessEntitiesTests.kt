@@ -19,10 +19,164 @@ import kotlin.test.assertTrue
 
 class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
     @Test
-    fun `get() must call its delegate for specific and wildcard entities in a request`() {
+    fun entitiesWithMultipleKeysAndKeylessChildren() {
         val request = AddressBookMutableEntityModelFactory.create()
         decodeJsonFileIntoEntity(
-            "org/treeWare/model/operator/get_request_specific_and_wildcard_keyless_entities.json",
+            "org/treeWare/model/operator/get_request_entities_with_multiple_keys_and_keyless_children.json",
+            entity = request
+        )
+
+        val delegate = mockk<GetDelegate>()
+        every {
+            delegate.getRoot("/", ofType(), listOf(), ofType())
+        } answers {
+            val addressBook = arg<MutableEntityModel>(3)
+            GetCompositionResult.Entity(addressBook)
+        }
+        every {
+            delegate.getCompositionSet(
+                "/clubs",
+                ofType(),
+                fieldsWithNames("name", "sub_category", "category"),
+                fieldsWithNames("info"),
+                ofType()
+            )
+        } answers {
+            val keys = arg<List<SingleFieldModel>>(2)
+            assertEquals(3, keys.size)
+            assertEquals("Super Sport", (keys[0].value as? PrimitiveModel)?.value)
+            assertEquals("Gym", (keys[1].value as? PrimitiveModel)?.value)
+            assertEquals("Health", (keys[2].value as? PrimitiveModel)?.value)
+            val club = arg<MutableSetFieldModel>(4)
+
+            val superSport = getNewMutableSetEntity(club)
+            setStringSingleField(superSport, "name", "Super Sport")
+            setStringSingleField(superSport, "sub_category", "Gym")
+            setStringSingleField(superSport, "category", "Health")
+            setStringSingleField(superSport, "info", "A super gym")
+            GetCompositionSetResult.Entities(listOf(superSport))
+        }
+        every {
+            delegate.getCompositionSet(
+                "/clubs",
+                ofType(),
+                fieldsWithNames("name", "sub_category", "category"),
+                fieldsWithNames("info", "phone"),
+                ofType()
+            )
+        } answers {
+            val keys = arg<List<SingleFieldModel>>(2)
+            assertEquals(3, keys.size)
+            assertEquals(null, (keys[0].value as? PrimitiveModel)?.value)
+            assertEquals("Gym", (keys[1].value as? PrimitiveModel)?.value)
+            assertEquals("Health", (keys[2].value as? PrimitiveModel)?.value)
+            val club = arg<MutableSetFieldModel>(4)
+
+            val bestGym = getNewMutableSetEntity(club)
+            setStringSingleField(bestGym, "name", "Best Gym")
+            setStringSingleField(bestGym, "sub_category", "Gym")
+            setStringSingleField(bestGym, "category", "Health")
+            setStringSingleField(bestGym, "info", "The best gym")
+            setStringSingleField(bestGym, "phone", "1-800-gym-best")
+
+            val superSport = getNewMutableSetEntity(club)
+            setStringSingleField(superSport, "name", "Super Sport")
+            setStringSingleField(superSport, "sub_category", "Gym")
+            setStringSingleField(superSport, "category", "Health")
+            setStringSingleField(superSport, "info", "A super gym")
+            setStringSingleField(superSport, "phone", "1-800-gym-supe")
+
+            GetCompositionSetResult.Entities(listOf(bestGym, superSport))
+        }
+        every {
+            delegate.getComposition(
+                "/clubs/Super Sport/Gym/Health/keyless",
+                ofType(),
+                fieldsWithNames("name"),
+                ofType()
+            )
+        } answers {
+            val keylessField = arg<MutableSingleFieldModel>(3)
+            val keyless = keylessField.getOrNewValue() as MutableEntityModel
+            setStringSingleField(keyless, "name", "Super Sport keyless")
+            GetCompositionResult.Entity(keyless)
+        }
+        every {
+            delegate.getComposition(
+                "/clubs/Best Gym/Gym/Health/keyless",
+                ofType(),
+                fieldsWithNames(),
+                ofType()
+            )
+        } answers {
+            val keylessField = arg<MutableSingleFieldModel>(3)
+            val keyless = keylessField.getOrNewValue() as MutableEntityModel
+            GetCompositionResult.Entity(keyless)
+        }
+        every {
+            delegate.getComposition(
+                "/clubs/Best Gym/Gym/Health/keyless/keyless_child",
+                ofType(),
+                fieldsWithNames("name"),
+                ofType()
+            )
+        } answers {
+            val keylessChildField = arg<MutableSingleFieldModel>(3)
+            val keylessChild = keylessChildField.getOrNewValue() as MutableEntityModel
+            setStringSingleField(keylessChild, "name", "Best Gym keyless child")
+            GetCompositionResult.Entity(keylessChild)
+        }
+
+        val response = AddressBookMutableEntityModelFactory.create()
+        val errors = get(request, delegate, null, null, response)
+        verifySequence {
+            delegate.getRoot("/", ofType(), listOf(), ofType())
+            delegate.getCompositionSet(
+                "/clubs",
+                ofType(),
+                fieldsWithNames("name", "sub_category", "category"),
+                fieldsWithNames("info"),
+                ofType()
+            )
+            delegate.getCompositionSet(
+                "/clubs",
+                ofType(),
+                fieldsWithNames("name", "sub_category", "category"),
+                fieldsWithNames("info", "phone"),
+                ofType()
+            )
+            delegate.getComposition(
+                "/clubs/Super Sport/Gym/Health/keyless",
+                ofType(),
+                fieldsWithNames("name"),
+                ofType()
+            )
+            delegate.getComposition(
+                "/clubs/Best Gym/Gym/Health/keyless",
+                ofType(),
+                fieldsWithNames(),
+                ofType()
+            )
+            delegate.getComposition(
+                "/clubs/Best Gym/Gym/Health/keyless/keyless_child",
+                ofType(),
+                fieldsWithNames("name"),
+                ofType()
+            )
+        }
+        assertTrue(errors is Response.Success)
+        assertMatchesJson(
+            response,
+            "org/treeWare/model/operator/get_response_entities_with_multiple_keys_and_keyless_children.json",
+            EncodePasswords.ALL
+        )
+    }
+
+    @Test
+    fun entitiesWithCompositeKeysAndKeylessChildren() {
+        val request = AddressBookMutableEntityModelFactory.create()
+        decodeJsonFileIntoEntity(
+            "org/treeWare/model/operator/get_request_entities_with_composite_keys_and_keyless_children.json",
             entity = request
         )
 
@@ -185,7 +339,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
         assertTrue(errors is Response.Success)
         assertMatchesJson(
             response,
-            "org/treeWare/model/operator/get_response_specific_and_wildcard_keyless_entities.json",
+            "org/treeWare/model/operator/get_response_entities_with_composite_keys_and_keyless_children.json",
             EncodePasswords.ALL
         )
     }

@@ -1,0 +1,25 @@
+{
+  "clubs": [
+    {
+      "name": "Super Sport",
+      "sub_category": "Gym",
+      "category": "Health",
+      "info": null,
+      "keyless": {
+        "name": null
+      }
+    },
+    {
+      "name": null,
+      "sub_category": "Gym",
+      "category": "Health",
+      "info": null,
+      "phone": null,
+      "keyless": {
+        "keyless_child": {
+          "name": null
+        }
+      }
+    }
+  ]
+}

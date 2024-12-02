@@ -1,0 +1,26 @@
+{
+  "clubs": [
+    {
+      "name": "Super Sport",
+      "sub_category": "Gym",
+      "category": "Health",
+      "info": "A super gym",
+      "keyless": {
+        "name": "Super Sport keyless"
+      },
+      "phone": "1-800-gym-supe"
+    },
+    {
+      "name": "Best Gym",
+      "sub_category": "Gym",
+      "category": "Health",
+      "info": "The best gym",
+      "phone": "1-800-gym-best",
+      "keyless": {
+        "keyless_child": {
+          "name": "Best Gym keyless child"
+        }
+      }
+    }
+  ]
+}
