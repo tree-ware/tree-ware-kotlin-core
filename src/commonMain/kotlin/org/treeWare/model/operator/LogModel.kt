@@ -19,10 +19,10 @@ private val coreAuxEncoders = arrayOf(
 )
 
 fun logModel(description: String, element: ElementModel, vararg nonCoreAuxEncoders: Pair<String, AuxEncoder>) {
-    logger.info { description }
+    if (description.isNotEmpty()) logger.info { description }
     val buffer = Buffer()
     val multiAuxEncoder = MultiAuxEncoder(*coreAuxEncoders, *nonCoreAuxEncoders)
     val success = encodeJson(element, buffer, multiAuxEncoder, prettyPrint = true)
     logger.info { buffer.readUtf8() }
-    logger.info { "$description encoding succeeded: $success" }
+    if (!success) logger.info { "$description encoding failed" }
 }

@@ -18,7 +18,7 @@ class GetDelegateVisitor(
     private val modelPathStack = ModelPathStack()
 
     override fun visitEntity(leaderEntity1: EntityModel, followerEntity1: EntityModel?): TraversalAction {
-        if (followerEntity1?.parent == null) return visitRootEntity(leaderEntity1, followerEntity1)
+        if (leaderEntity1.parent == null) return visitRootEntity(leaderEntity1, followerEntity1)
         modelPathStack.pushEntity(leaderEntity1)
         return TraversalAction.CONTINUE
     }
