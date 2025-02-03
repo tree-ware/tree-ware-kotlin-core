@@ -48,7 +48,7 @@ private const val META_MODEL_MAIN_PACKAGE = "org.tree_ware.meta_model.main"
 fun newMetaMetaModel(): MutableEntityModel {
     val metaMeta = newMetaMeta("meta_model", META_MODEL_PACKAGE)
     populateMetaMeta(metaMeta)
-    val errors = validate(metaMeta, null, null, mandatoryFieldNumbers = false)
+    val errors = validate(metaMeta, null, null, ::metaModelRootEntityFactory, mandatoryFieldNumbers = false)
     if (errors.isNotEmpty()) {
         val logger = logging()
         errors.forEach { logger.error { it } }

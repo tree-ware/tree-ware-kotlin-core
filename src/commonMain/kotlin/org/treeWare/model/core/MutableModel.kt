@@ -434,7 +434,7 @@ class MutableAssociationModel(override val parent: MutableFieldModel) : MutableE
     init {
         val resolvedAssociation = getMetaModelResolved(parent.meta)?.associationMeta
             ?: throw IllegalStateException("Association has not been resolved")
-        value = resolvedAssociation.rootEntityFactory(resolvedAssociation.rootEntityMeta, parent)
+        value = resolvedAssociation.rootEntityFactory(parent)
     }
 
     override fun getOrNewValue(): MutableElementModel = value
@@ -454,9 +454,7 @@ class MutableAssociationModel(override val parent: MutableFieldModel) : MutableE
 
 // region Helpers
 
-typealias RootEntityFactory = (rootMeta: EntityModel, parent: MutableFieldModel) -> MutableEntityModel
-
-fun defaultRootEntityFactory(rootMeta: EntityModel, parent: MutableFieldModel) = MutableEntityModel(rootMeta, parent)
+typealias EntityFactory = (parent: MutableFieldModel?) -> MutableEntityModel
 
 typealias FieldValueFactory = (fieldMeta: EntityModel, parent: MutableFieldModel) -> MutableElementModel
 

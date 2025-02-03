@@ -8,8 +8,8 @@ import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.aux.MetaModelAuxPlugin
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.Cipher
+import org.treeWare.model.core.EntityFactory
 import org.treeWare.model.core.Hasher
-import org.treeWare.model.core.RootEntityFactory
 import org.treeWare.model.decoder.decodeJsonEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.util.getFileSource
@@ -22,7 +22,7 @@ fun newMetaModelFromJsonFiles(
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: RootEntityFactory,
+    rootEntityFactory: EntityFactory,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean,
     fileSystem: FileSystem = FileSystem.RESOURCES
@@ -49,7 +49,7 @@ fun newMetaModelFromJsonStrings(
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: RootEntityFactory,
+    rootEntityFactory: EntityFactory,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean
 ): ValidatedMetaModel {
@@ -71,11 +71,11 @@ fun newMetaModelFromJsonReaders(
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: RootEntityFactory,
+    rootEntityFactory: EntityFactory,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean,
 ): ValidatedMetaModel {
-    val metaModel = MetaModelMutableEntityModelFactory.create()
+    val metaModel = metaModelRootEntityFactory(null)
     // TODO(performance): change MultiAuxDecodingStateMachineFactory() varargs to list to avoid array copies.
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*metaModelAuxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }

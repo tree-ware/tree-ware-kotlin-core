@@ -1,7 +1,7 @@
 package org.treeWare.model.codec
 
 import okio.Buffer
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.decoder.DecodePathResult
 import org.treeWare.model.decoder.decodePath
@@ -47,7 +47,7 @@ class DecodePathsTests {
             |}
         """.trimMargin()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val errors = decodePaths(Buffer().writeUtf8(paths), model)
 
         assertEquals("", errors.joinToString("\n"))
@@ -67,7 +67,7 @@ class DecodePathsTests {
             {}
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -86,7 +86,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -103,7 +103,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -120,7 +120,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -143,7 +143,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -162,7 +162,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -188,7 +188,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -210,7 +210,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -232,7 +232,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -258,7 +258,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -280,7 +280,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -302,7 +302,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -327,7 +327,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -354,7 +354,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -380,7 +380,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -411,7 +411,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -437,7 +437,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -459,7 +459,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -480,7 +480,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -501,7 +501,7 @@ class DecodePathsTests {
             {}
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -515,7 +515,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in the root with 1 trailing wildcard`() {
         val path = "/name/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -534,7 +534,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -551,7 +551,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -567,7 +567,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in a single-field entity with 1 trailing wildcard`() {
         val path = "/settings/last_name_first/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -585,7 +585,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -601,7 +601,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in a non-wildcard set-field entity with 1 trailing wildcard`() {
         val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -622,7 +622,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -644,7 +644,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -660,7 +660,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in a wildcard set-field entity with 1 trailing wildcard`() {
         val path = "/persons/*/first_name/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -681,7 +681,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -703,7 +703,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -728,7 +728,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -755,7 +755,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -781,7 +781,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -797,7 +797,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field path with escaped keys with 1 trailing wildcard`() {
         val path = "/groups/Group\\/1\\\\/sub_groups/Group\\/1\\\\\\/1/info/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -822,7 +822,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -834,7 +834,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for an escaped wildcard key in a primitive-field path with 1 trailing wildcard`() {
         val path = "/persons/\\*/first_name/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -854,7 +854,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -875,7 +875,7 @@ class DecodePathsTests {
             {}
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -889,7 +889,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in the root with 2 trailing wildcards`() {
         val path = "/name/**"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -905,7 +905,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -922,7 +922,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -938,7 +938,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in a single-field entity with 2 trailing wildcards`() {
         val path = "/settings/last_name_first/**"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -956,7 +956,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -972,7 +972,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in a non-wildcard set-field entity with 2 trailing wildcards`() {
         val path = "/persons/cc477201-48ec-4367-83a4-7fdbd92f8a6f/first_name/**"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -993,7 +993,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -1015,7 +1015,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -1031,7 +1031,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field in a wildcard set-field entity with 2 trailing wildcards`() {
         val path = "/persons/*/first_name/**"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1052,7 +1052,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -1074,7 +1074,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -1099,7 +1099,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -1126,7 +1126,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -1152,7 +1152,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -1168,7 +1168,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for a primitive-field path with escaped keys with 2 trailing wildcards`() {
         val path = "/groups/Group\\/1\\\\/sub_groups/Group\\/1\\\\\\/1/info/**"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1193,7 +1193,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -1205,7 +1205,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error for an escaped wildcard key in a primitive-field path with 2 trailing wildcards`() {
         val path = "/persons/\\*/first_name/**"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1225,7 +1225,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Entity>(result, result.toString())
@@ -1252,7 +1252,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -1273,7 +1273,7 @@ class DecodePathsTests {
             }
         """.trimIndent()
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Field>(result, result.toString())
@@ -1289,7 +1289,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error if the path ends with a slash`() {
         val path = "/name/"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1300,7 +1300,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error if the path contains unknown elements`() {
         val path = "/unknown_entity/unknown_field_name"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1311,7 +1311,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error if a non-composition field is in the middle of a path`() {
         val path = "/name/invalid_field_name"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1322,7 +1322,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error if a wildcard is used as a field-name in the middle of a path`() {
         val path = "/*/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1333,7 +1333,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error if a sub-tree-wildcard is used as a field-name in the middle of a path`() {
         val path = "/**/*"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())
@@ -1344,7 +1344,7 @@ class DecodePathsTests {
     fun `decodePath() must return an error if a sub-tree-wildcard is used as a key-value in the middle of a path`() {
         val path = "/persons/**/first_name"
 
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val result = decodePath(path, null, model)
 
         assertIs<DecodePathResult.Error>(result, result.toString())

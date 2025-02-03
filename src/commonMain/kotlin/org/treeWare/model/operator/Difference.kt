@@ -8,17 +8,17 @@ import org.treeWare.model.traversal.forEach
 fun difference(
     oldModel: EntityModel,
     newModel: EntityModel,
-    mutableEntityModelFactory: MutableEntityModelFactory
+    entityFactory: EntityFactory,
 ): DifferenceModels {
-    val differenceVisitor = DifferenceVisitor(mutableEntityModelFactory)
+    val differenceVisitor = DifferenceVisitor(entityFactory)
     forEach(listOf(oldModel, newModel), differenceVisitor, false)
     return differenceVisitor.output
 }
 
 private class DifferenceVisitor(
-    private val mutableEntityModelFactory: MutableEntityModelFactory
+    private val entityFactory: EntityFactory,
 ) : AbstractLeaderManyModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
-    val output: DifferenceModels = newDifferenceModels(mutableEntityModelFactory)
+    val output: DifferenceModels = newDifferenceModels(entityFactory)
 
     private val createStack = ArrayDeque<MutableElementModel?>()
     private val deleteStack = ArrayDeque<MutableElementModel?>()
@@ -224,13 +224,13 @@ private class DifferenceVisitor(
 
         // TODO(performance): support difference with EntityModel to avoid copying the associations
 
-        val oldModel = mutableEntityModelFactory.create()
+        val oldModel = entityFactory(null)
         copy(oldPathTree, oldModel)
 
-        val newModel = mutableEntityModelFactory.create()
+        val newModel = entityFactory(null)
         copy(newPathTree, newModel)
 
-        val associationsDifferenceModels = difference(oldModel, newModel, mutableEntityModelFactory)
+        val associationsDifferenceModels = difference(oldModel, newModel, entityFactory)
         return !associationsDifferenceModels.isDifferent()
     }
 }

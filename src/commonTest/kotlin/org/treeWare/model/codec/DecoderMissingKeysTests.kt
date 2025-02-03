@@ -1,7 +1,7 @@
 package org.treeWare.model.codec
 
 import okio.buffer
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.decoder.ModelDecoderOptions
 import org.treeWare.model.decoder.OnMissingKeys
 import org.treeWare.model.decoder.decodeJsonEntity
@@ -30,7 +30,7 @@ class DecoderMissingKeysTests {
 
     @Test
     fun `OnMissingKeys ABORT_WITH_ERROR must abort and report an error when keys are missing`() {
-        val addressBook = AddressBookMutableEntityModelFactory.create()
+        val addressBook = addressBookRootEntityFactory(null)
         val decodeErrors = getFileSource("model/address_book_missing_keys.json").use {
             decodeJsonEntity(
                 it.buffer(),

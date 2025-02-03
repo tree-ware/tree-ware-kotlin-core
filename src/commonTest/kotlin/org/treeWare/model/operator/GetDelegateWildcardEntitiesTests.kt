@@ -3,9 +3,13 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.mockk.fieldsWithNames
-import org.treeWare.model.*
+import org.treeWare.model.addCity
+import org.treeWare.model.addRelation
+import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.core.*
+import org.treeWare.model.decodeJsonFileIntoEntity
 import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.operator.get.GetCompositionResult
 import org.treeWare.model.operator.get.GetCompositionSetResult
@@ -16,7 +20,7 @@ import kotlin.test.assertTrue
 class GetDelegateWildcardEntitiesTests {
     @Test
     fun `get() must call its delegate for wildcard entities in a request`() {
-        val request = AddressBookMutableEntityModelFactory.create()
+        val request = addressBookRootEntityFactory(null)
         decodeJsonFileIntoEntity(
             "org/treeWare/model/operator/get_request_wildcard_entities.json",
             entity = request
@@ -134,7 +138,7 @@ class GetDelegateWildcardEntitiesTests {
             GetCompositionSetResult.Entities(listOf(newYork, albany))
         }
 
-        val response = AddressBookMutableEntityModelFactory.create()
+        val response = addressBookRootEntityFactory(null)
         val errors = get(request, delegate, null, null, response)
 
         verifySequence {

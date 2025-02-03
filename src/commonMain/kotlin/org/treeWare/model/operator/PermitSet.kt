@@ -18,16 +18,16 @@ import org.treeWare.util.assertInDevMode
 fun permitSet(
     set: EntityModel,
     rbac: EntityModel,
-    mutableEntityModelFactory: MutableEntityModelFactory
+    rootEntityFactory: EntityFactory
 ): PermitResponse {
-    val visitor = PermitSetVisitor(rbac, mutableEntityModelFactory)
+    val visitor = PermitSetVisitor(rbac, rootEntityFactory)
     forEach(set, rbac, visitor, false)
     return visitor.permitResponse
 }
 
 private class PermitSetVisitor(
     private val rbac: EntityModel,
-    private val mutableEntityModelFactory: MutableEntityModelFactory
+    private val rootEntityFactory: EntityFactory
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {
@@ -52,9 +52,7 @@ private class PermitSetVisitor(
         // permitted in the sub-tree. On the way up, if there are no permitted fields in the sub-tree, the entity will
         // be removed.
         val permittedParent = permittedStack.firstOrNull()
-        val permittedEntity =
-            if (permittedParent == null) mutableEntityModelFactory.create().also { permittedRoot = it }
-            else permittedParent.getOrNewValue()
+        val permittedEntity = permittedParent?.getOrNewValue() ?: rootEntityFactory(null).also { permittedRoot = it }
         copySetAux(leaderEntity1, permittedEntity)
         permittedStack.addFirst(permittedEntity)
         return TraversalAction.CONTINUE
@@ -164,7 +162,7 @@ private class PermitSetVisitor(
         val setAux = setAuxStack.peekActive()
         if (setAux == SetAux.CREATE || setAux == SetAux.UPDATE) {
             val target = leaderValue1.value
-            val targetPermitted = permitGet(target, rbac, mutableEntityModelFactory)
+            val targetPermitted = permitGet(target, rbac, rootEntityFactory)
             if (targetPermitted !is FullyPermitted) {
                 partiallyDenied = true
                 if (permittedParent.elementType == ModelElementType.SINGLE_FIELD) permittedParent.detachFromParent()

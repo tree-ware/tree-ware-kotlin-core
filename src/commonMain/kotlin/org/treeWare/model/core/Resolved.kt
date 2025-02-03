@@ -36,8 +36,7 @@ class Resolved(val fullName: String) {
 }
 
 data class ResolvedAssociationMeta(
-    val rootEntityMeta: EntityModel,
     val targetEntityMeta: EntityModel,
     val isRecursive: Boolean,
-    val rootEntityFactory: RootEntityFactory,
+    val rootEntityFactory: EntityFactory,
 )

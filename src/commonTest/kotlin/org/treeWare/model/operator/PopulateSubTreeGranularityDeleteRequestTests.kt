@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
@@ -28,7 +28,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -83,7 +83,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -108,7 +108,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -133,7 +133,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -158,7 +158,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -183,7 +183,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -209,7 +209,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -237,7 +237,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
@@ -263,7 +263,7 @@ class PopulateSubTreeGranularityDeleteRequestTests {
               ]
             }
         """.trimIndent()
-        val setRequest = AddressBookMutableEntityModelFactory.create()
+        val setRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setRequestJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,

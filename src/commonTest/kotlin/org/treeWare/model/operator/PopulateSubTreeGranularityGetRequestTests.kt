@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.encoder.EncodePasswords
@@ -37,7 +37,7 @@ class PopulateSubTreeGranularityGetRequestTests {
               ]
             }
         """.trimIndent()
-        val getRequest = AddressBookMutableEntityModelFactory.create()
+        val getRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(getRequestJson, entity = getRequest)
 
         populateSubTreeGranularityGetRequest(getRequest)
@@ -56,7 +56,7 @@ class PopulateSubTreeGranularityGetRequestTests {
               ]
             }
         """.trimIndent()
-        val getRequest = AddressBookMutableEntityModelFactory.create()
+        val getRequest = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(getRequestJson, entity = getRequest)
 
         populateSubTreeGranularityGetRequest(getRequest)

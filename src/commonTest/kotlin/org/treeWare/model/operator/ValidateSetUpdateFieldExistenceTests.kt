@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
@@ -390,7 +390,7 @@ class ValidateSetUpdateFieldExistenceTests {
 private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
 
 private fun getModel(modelJson: String): EntityModel {
-    val model = AddressBookMutableEntityModelFactory.create()
+    val model = addressBookRootEntityFactory(null)
     decodeJsonStringIntoEntity(
         modelJson,
         multiAuxDecodingStateMachineFactory = auxDecodingFactory,

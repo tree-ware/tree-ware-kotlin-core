@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.getNewMutableSetEntity
@@ -37,9 +37,9 @@ class PermitGetTests {
         expectedPermittedJson: String?,
         isFullyPermitted: Boolean
     ) {
-        val getModel = AddressBookMutableEntityModelFactory.create()
+        val getModel = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(getJson, entity = getModel)
-        val actual = permitGet(getModel, rbac, AddressBookMutableEntityModelFactory)
+        val actual = permitGet(getModel, rbac, ::addressBookRootEntityFactory)
         if (expectedPermittedJson == null) {
             when (actual) {
                 is FullyPermitted -> assertMatchesJsonString(
@@ -129,7 +129,7 @@ class PermitGetTests {
     // region No-level RBAC tests
 
     private fun newNoLevelRbac(): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
         return rbac
     }
 
@@ -150,7 +150,7 @@ class PermitGetTests {
     // region Root-level RBAC tests
 
     private fun newRootRbac(readScope: PermissionScope): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
         setPermissionsAux(rbac, PermissionsAux(read = readScope))
         return rbac
     }
@@ -202,7 +202,7 @@ class PermitGetTests {
         personReadScope: PermissionScope,
         personsReadScope: PermissionScope? = null
     ): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
         val rbacPersons = getOrNewMutableSetField(rbac, "persons")
         personsReadScope?.also { setPermissionsAux(rbacPersons, PermissionsAux(read = it)) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)

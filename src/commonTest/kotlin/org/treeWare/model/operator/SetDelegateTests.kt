@@ -3,8 +3,8 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.mockk.fieldsWithNames
-import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.operator.set.SetDelegate
@@ -47,7 +47,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -150,7 +150,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -244,7 +244,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -352,7 +352,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -473,7 +473,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -569,7 +569,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -651,7 +651,7 @@ class SetDelegateTests {
             |  "last_updated": "1587147731"
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -700,7 +700,7 @@ class SetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -802,7 +802,7 @@ class SetDelegateTests {
             |  "last_updated": "1587147731"
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,

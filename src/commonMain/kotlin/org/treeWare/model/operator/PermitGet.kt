@@ -18,15 +18,15 @@ import org.treeWare.model.traversal.forEach
 fun permitGet(
     get: EntityModel,
     rbac: EntityModel,
-    mutableEntityModelFactory: MutableEntityModelFactory
+    rootEntityFactory: EntityFactory
 ): PermitResponse {
-    val visitor = PermitGetVisitor(mutableEntityModelFactory)
+    val visitor = PermitGetVisitor(rootEntityFactory)
     forEach(get, rbac, visitor, false)
     return visitor.permitResponse
 }
 
 private class PermitGetVisitor(
-    private val mutableEntityModelFactory: MutableEntityModelFactory
+    private val rootEntityFactory: EntityFactory
 ) : AbstractLeader1Follower1ModelVisitor<TraversalAction>(TraversalAction.CONTINUE) {
     val permitResponse: PermitResponse
         get() {
@@ -48,9 +48,7 @@ private class PermitGetVisitor(
         // permitted in the sub-tree. On the way up, if there are no permitted fields in the sub-tree, the entity will
         // be removed.
         val permittedParent = permittedStack.firstOrNull()
-        val permittedEntity =
-            if (permittedParent == null) mutableEntityModelFactory.create().also { permittedRoot = it }
-            else permittedParent.getOrNewValue()
+        val permittedEntity = permittedParent?.getOrNewValue() ?: rootEntityFactory(null).also { permittedRoot = it }
         permittedStack.addFirst(permittedEntity)
         return TraversalAction.CONTINUE
     }

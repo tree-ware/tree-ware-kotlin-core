@@ -1,7 +1,7 @@
 package org.treeWare.model.operator.set
 
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.metaModel.aux.ExistsIfClause
-import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.core.EntityModel
 import org.treeWare.model.core.getSingleEntity
 import org.treeWare.model.decodeJsonStringIntoEntity
@@ -23,7 +23,7 @@ class EvaluateExistsIfClauseTests {
     )
 
     private fun getSettingsEntity(modelJson: String): EntityModel {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(modelJson, entity = model)
         return getSingleEntity(model, "settings")
     }
