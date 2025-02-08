@@ -19,7 +19,7 @@ fun newAddressBookMetaModel(hasher: Hasher?, cipher: Cipher?): ValidatedMetaMode
     false,
     hasher,
     cipher,
-    ::metaModelRootEntityFactory,
+    ::addressBookRootEntityFactory,
     emptyList(),
     true
 )

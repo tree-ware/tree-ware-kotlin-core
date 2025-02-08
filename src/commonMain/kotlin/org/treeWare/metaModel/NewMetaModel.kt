@@ -22,7 +22,7 @@ fun newMetaModelFromJsonFiles(
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: EntityFactory,
+    rootEntityFactory: EntityFactory?,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean,
     fileSystem: FileSystem = FileSystem.RESOURCES
@@ -49,7 +49,7 @@ fun newMetaModelFromJsonStrings(
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: EntityFactory,
+    rootEntityFactory: EntityFactory?,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean
 ): ValidatedMetaModel {
@@ -71,7 +71,7 @@ fun newMetaModelFromJsonReaders(
     logMetaModelFullNames: Boolean,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: EntityFactory,
+    rootEntityFactory: EntityFactory?,
     metaModelAuxPlugins: List<MetaModelAuxPlugin>,
     logErrors: Boolean,
 ): ValidatedMetaModel {

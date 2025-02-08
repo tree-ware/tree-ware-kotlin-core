@@ -4,7 +4,15 @@ import io.github.z4kn4fein.semver.Version
 import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.core.MutableFieldModel
 import org.treeWare.model.core.MutableSetFieldModel
+
+private val metaMetaModel = newMetaMetaModel()
+
+private val metaModelRootEntityMeta = getResolvedRootMeta(metaMetaModel)
+
+fun metaModelRootEntityFactory(parent: MutableFieldModel?) =
+    MutableEntityModel(metaModelRootEntityMeta, parent)
 
 enum class Multiplicity { REQUIRED, OPTIONAL, SET }
 
