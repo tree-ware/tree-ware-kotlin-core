@@ -4,7 +4,7 @@
 // conveys this.
 allprojects {
     group = "org.tree-ware.tree-ware-kotlin-core"
-    version = "0.4.0.0-SNAPSHOT" // TODO #### drop -SNAPSHOT
+    version = "0.4.0.0"
 }
 
 val jbcryptVersion = "0.4"
