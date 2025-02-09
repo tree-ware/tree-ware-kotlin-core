@@ -1,6 +1,9 @@
 package org.treeWare.metaModel.validation
 
-import org.treeWare.model.core.*
+import org.treeWare.model.core.Cipher
+import org.treeWare.model.core.EntityFactory
+import org.treeWare.model.core.Hasher
+import org.treeWare.model.core.MutableEntityModel
 
 /**
  * Validates the specified meta-model.
@@ -17,7 +20,7 @@ fun validate(
     meta: MutableEntityModel,
     hasher: Hasher?,
     cipher: Cipher?,
-    rootEntityFactory: RootEntityFactory = ::defaultRootEntityFactory,
+    rootEntityFactory: EntityFactory?,
     logFullNames: Boolean = false,
     mandatoryFieldNumbers: Boolean = true
 ): List<String> {

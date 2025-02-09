@@ -4,7 +4,15 @@ import io.github.z4kn4fein.semver.Version
 import org.lighthousegames.logging.logging
 import org.treeWare.metaModel.validation.validate
 import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.core.MutableFieldModel
 import org.treeWare.model.core.MutableSetFieldModel
+
+private val metaMetaModel = newMetaMetaModel()
+
+private val metaModelRootEntityMeta = getResolvedRootMeta(metaMetaModel)
+
+fun metaModelRootEntityFactory(parent: MutableFieldModel?) =
+    MutableEntityModel(metaModelRootEntityMeta, parent)
 
 enum class Multiplicity { REQUIRED, OPTIONAL, SET }
 
@@ -48,7 +56,7 @@ private const val META_MODEL_MAIN_PACKAGE = "org.tree_ware.meta_model.main"
 fun newMetaMetaModel(): MutableEntityModel {
     val metaMeta = newMetaMeta("meta_model", META_MODEL_PACKAGE)
     populateMetaMeta(metaMeta)
-    val errors = validate(metaMeta, null, null, mandatoryFieldNumbers = false)
+    val errors = validate(metaMeta, null, null, ::metaModelRootEntityFactory, mandatoryFieldNumbers = false)
     if (errors.isNotEmpty()) {
         val logger = logging()
         errors.forEach { logger.error { it } }

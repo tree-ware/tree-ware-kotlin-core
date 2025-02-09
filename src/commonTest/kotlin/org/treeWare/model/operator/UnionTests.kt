@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
@@ -31,19 +31,19 @@ class UnionTests {
             aux3 to { StringAuxStateMachine(it) }
         )
 
-        val input1 = AddressBookMutableEntityModelFactory.create()
+        val input1 = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             jsonInput1,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory,
             entity = input1
         )
-        val input2 = AddressBookMutableEntityModelFactory.create()
+        val input2 = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             jsonInput2,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingStateMachineFactory,
             entity = input2
         )
-        val output = AddressBookMutableEntityModelFactory.create()
+        val output = addressBookRootEntityFactory(null)
         union(listOf(input1, input2), output)
         assertMatchesJson(
             output, expectedOutputJsonFile, EncodePasswords.ALL, MultiAuxEncoder(

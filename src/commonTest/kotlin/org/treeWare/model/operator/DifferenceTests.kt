@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.EntityModel
@@ -1056,19 +1056,19 @@ class DifferenceTests {
         val jsonInput2 = readFile("model/operator/difference/mini_test_book_2.json")
         val expectedMergeTestResult = "model/operator/difference/mini_test_book_2_reordered.json"
 
-        val input1 = AddressBookMutableEntityModelFactory.create()
+        val input1 = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(jsonInput1, entity = input1)
-        val input2 = AddressBookMutableEntityModelFactory.create()
+        val input2 = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(jsonInput2, entity = input2)
-        val output = difference(input1, input2, AddressBookMutableEntityModelFactory)
+        val output = difference(input1, input2, ::addressBookRootEntityFactory)
         val createOutput = output.createModel
         val updateOutput = output.updateModel
 
         assertFalse(createOutput.isEmpty())
         assertFalse(updateOutput.isEmpty())
 
-        val mergeCreateOutput = AddressBookMutableEntityModelFactory.create()
-        val mergeUpdateOutput = AddressBookMutableEntityModelFactory.create()
+        val mergeCreateOutput = addressBookRootEntityFactory(null)
+        val mergeUpdateOutput = addressBookRootEntityFactory(null)
         union(listOf(input1, createOutput), mergeCreateOutput)
         union(listOf(mergeCreateOutput, updateOutput), mergeUpdateOutput)
         assertMatchesJson(
@@ -1085,11 +1085,11 @@ class DifferenceTests {
         assertNotEquals(jsonInput1, jsonInput2)
 
 
-        val input1 = AddressBookMutableEntityModelFactory.create()
+        val input1 = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(jsonInput1, entity = input1)
-        val input2 = AddressBookMutableEntityModelFactory.create()
+        val input2 = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(jsonInput2, entity = input2)
-        val output = difference(input2, input1, AddressBookMutableEntityModelFactory)
+        val output = difference(input2, input1, ::addressBookRootEntityFactory)
         val createOutput = output.createModel
         val deleteOutput = output.deleteModel
 
@@ -1137,12 +1137,12 @@ private fun verifyDifference(
     expectedDelete: String?,
     expectedUpdate: String?
 ) {
-    val oldModel = AddressBookMutableEntityModelFactory.create()
+    val oldModel = addressBookRootEntityFactory(null)
     decodeJsonStringIntoEntity(old, entity = oldModel)
-    val newModel = AddressBookMutableEntityModelFactory.create()
+    val newModel = addressBookRootEntityFactory(null)
     decodeJsonStringIntoEntity(new, entity = newModel)
 
-    val difference = difference(oldModel, newModel, AddressBookMutableEntityModelFactory)
+    val difference = difference(oldModel, newModel, ::addressBookRootEntityFactory)
 
     verifyDifferenceModel("create", expectedCreate, difference.createModel)
     verifyDifferenceModel("delete", expectedDelete, difference.deleteModel)

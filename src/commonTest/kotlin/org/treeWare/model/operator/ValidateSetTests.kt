@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.operator.set.aux.SET_AUX_NAME
@@ -24,7 +24,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -56,7 +56,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -77,7 +77,7 @@ class ValidateSetTests {
             |  "settings": {}
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -104,7 +104,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -129,7 +129,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -157,7 +157,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -178,7 +178,7 @@ class ValidateSetTests {
             |  "last_updated": "1587147731"
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -203,7 +203,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -235,7 +235,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -276,7 +276,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -324,7 +324,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -388,7 +388,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -451,7 +451,7 @@ class ValidateSetTests {
             |  ]
             |}
         """.trimMargin()
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             modelJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
@@ -503,7 +503,7 @@ class ValidateSetTests {
             "Missing key fields [name] in instance of /org.tree_ware.test.address_book.main/group",
         )
         val model =
-            AddressBookMutableEntityModelFactory.create()
+            addressBookRootEntityFactory(null)
         // NOTE: The following function will assert if the decode errors do not match the above expectedDecodeErrors.
         decodeJsonStringIntoEntity(
             modelJson,

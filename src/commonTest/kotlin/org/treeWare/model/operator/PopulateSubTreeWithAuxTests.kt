@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.assertContainsJsonString
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
@@ -19,7 +19,7 @@ private val multiAuxEncoder = MultiAuxEncoder(SET_AUX_NAME to SetAuxEncoder())
 class PopulateSubTreeWithAuxTests {
     @Test
     fun `populateSubTree() must return an error if sub-tree root in a single-field has non-key fields`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val settings = getOrNewMutableSingleEntity(model, "settings")
         setBooleanSingleField(settings, "last_name_first", true) // non-key field
 
@@ -29,7 +29,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must return an error if sub-tree root in a set-field has non-key fields`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val persons = getOrNewMutableSetField(model, "persons")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
@@ -42,7 +42,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate all fields in a single-field entity when populateNonKeyNonCompositionFields is true`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val settings = getOrNewMutableSingleEntity(model, "settings")
 
         val success = populateSubTree(settings, true) { setSetAux(it, SetAux.DELETE) }
@@ -67,7 +67,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate only composition fields in a single-field entity when populateNonKeyNonCompositionFields is false`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val settings = getOrNewMutableSingleEntity(model, "settings")
 
         val success = populateSubTree(settings, false) { setSetAux(it, SetAux.DELETE) }
@@ -88,7 +88,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate all fields in a set-field entity when populateNonKeyNonCompositionFields is true`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val persons = getOrNewMutableSetField(model, "persons")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
@@ -146,7 +146,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate only key & composition fields in a set-field entity when populateNonKeyNonCompositionFields is false`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val persons = getOrNewMutableSetField(model, "persons")
         val clark = getNewMutableSetEntity(persons)
         setUuidSingleField(clark, "id", "cc477201-48ec-4367-83a4-7fdbd92f8a6f")
@@ -189,7 +189,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate all fields in a composite-keyed sub-tree root when populateNonKeyNonCompositionFields is true`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val cities = getOrNewMutableSetField(model, "cities")
         val sanFrancisco = getNewMutableSetEntity(cities)
         val keys = getOrNewMutableSingleEntity(sanFrancisco, "city")
@@ -242,7 +242,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate only key & composition fields in a composite-keyed sub-tree root when populateNonKeyNonCompositionFields is false`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
         val cities = getOrNewMutableSetField(model, "cities")
         val sanFrancisco = getNewMutableSetEntity(cities)
         val keys = getOrNewMutableSingleEntity(sanFrancisco, "city")
@@ -287,7 +287,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate sub-trees that have composite-keyed entities in them when populateNonKeyNonCompositionFields is true`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
 
         val success = populateSubTree(model, true) { setSetAux(it, SetAux.DELETE) }
 
@@ -308,7 +308,7 @@ class PopulateSubTreeWithAuxTests {
 
     @Test
     fun `populateSubTree() must populate sub-trees that have composite-keyed entities in them when populateNonKeyNonCompositionFields is false`() {
-        val model = AddressBookMutableEntityModelFactory.create()
+        val model = addressBookRootEntityFactory(null)
 
         val success = populateSubTree(model, false) { setSetAux(it, SetAux.DELETE) }
 

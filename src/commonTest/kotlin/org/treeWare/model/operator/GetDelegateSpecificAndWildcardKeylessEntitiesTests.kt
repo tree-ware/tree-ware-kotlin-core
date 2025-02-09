@@ -3,8 +3,8 @@ package org.treeWare.model.operator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.mockk.fieldsWithNames
-import org.treeWare.model.AddressBookMutableEntityModelFactory
 import org.treeWare.model.addCity
 import org.treeWare.model.assertMatchesJson
 import org.treeWare.model.core.*
@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
     @Test
     fun entitiesWithMultipleKeysAndKeylessChildren() {
-        val request = AddressBookMutableEntityModelFactory.create()
+        val request = addressBookRootEntityFactory(null)
         decodeJsonFileIntoEntity(
             "org/treeWare/model/operator/get_request_entities_with_multiple_keys_and_keyless_children.json",
             entity = request
@@ -127,7 +127,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
             GetCompositionResult.Entity(keylessChild)
         }
 
-        val response = AddressBookMutableEntityModelFactory.create()
+        val response = addressBookRootEntityFactory(null)
         val errors = get(request, delegate, null, null, response)
         verifySequence {
             delegate.getRoot("/", ofType(), listOf(), ofType())
@@ -174,7 +174,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
 
     @Test
     fun entitiesWithCompositeKeysAndKeylessChildren() {
-        val request = AddressBookMutableEntityModelFactory.create()
+        val request = addressBookRootEntityFactory(null)
         decodeJsonFileIntoEntity(
             "org/treeWare/model/operator/get_request_entities_with_composite_keys_and_keyless_children.json",
             entity = request
@@ -299,7 +299,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
             GetCompositionResult.Entity(keylessChild)
         }
 
-        val response = AddressBookMutableEntityModelFactory.create()
+        val response = addressBookRootEntityFactory(null)
         val errors = get(request, delegate, null, null, response)
         verifySequence {
             delegate.getRoot("/", ofType(), listOf(), ofType())

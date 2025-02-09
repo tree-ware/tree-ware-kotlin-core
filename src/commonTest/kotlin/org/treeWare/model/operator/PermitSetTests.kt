@@ -1,6 +1,6 @@
 package org.treeWare.model.operator
 
-import org.treeWare.model.AddressBookMutableEntityModelFactory
+import org.treeWare.metaModel.addressBookRootEntityFactory
 import org.treeWare.model.addCity
 import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.*
@@ -38,14 +38,14 @@ class PermitSetTests {
         expectedPermittedJson: String?,
         isFullyPermitted: Boolean
     ) {
-        val setModel = AddressBookMutableEntityModelFactory.create()
+        val setModel = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             setJson,
             multiAuxDecodingStateMachineFactory = multiAuxDecodingFactory,
             entity = setModel
         )
         assertMatchesJsonString(setModel, setJson, EncodePasswords.ALL, multiAuxEncoder)
-        val actual = permitSet(setModel, rbac, AddressBookMutableEntityModelFactory)
+        val actual = permitSet(setModel, rbac, ::addressBookRootEntityFactory)
         if (expectedPermittedJson == null) {
             when (actual) {
                 is FullyPermitted -> assertMatchesJsonString(
@@ -187,7 +187,7 @@ class PermitSetTests {
     // region No-level RBAC tests
 
     private fun newNoLevelRbac(): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
         return rbac
     }
 
@@ -202,7 +202,7 @@ class PermitSetTests {
     // region Root-level RBAC tests
 
     private fun newRootRbac(permissions: PermissionsAux): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
         setPermissionsAux(rbac, permissions)
         return rbac
     }
@@ -356,7 +356,7 @@ class PermitSetTests {
         personPermissions: PermissionsAux,
         personsPermissions: PermissionsAux? = null
     ): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
         val rbacPersons = getOrNewMutableSetField(rbac, "persons")
         personsPermissions?.also { setPermissionsAux(rbacPersons, it) }
         val rbacPerson = getNewMutableSetEntity(rbacPersons)
@@ -737,7 +737,7 @@ class PermitSetTests {
      * If `permitTargets` is `true`, also grant permissions for the association targets.
      */
     private fun newAssociationRbac(permitTargets: Boolean): EntityModel {
-        val rbac = AddressBookMutableEntityModelFactory.create()
+        val rbac = addressBookRootEntityFactory(null)
 
         val personsSet = getOrNewMutableSetField(rbac, "persons")
         val clarkKent = getNewMutableSetEntity(personsSet)

@@ -55,7 +55,7 @@ private fun assertJsonValidationErrors(
     val multiAuxDecodingStateMachineFactory =
         MultiAuxDecodingStateMachineFactory(*auxPlugins.map { it.auxName to it.auxDecodingStateMachineFactory }
             .toTypedArray())
-    val metaModel = MetaModelMutableEntityModelFactory.create()
+    val metaModel = metaModelRootEntityFactory(null)
     val decodeErrors = decodeJsonEntity(
         bufferedSource,
         metaModel,
@@ -70,7 +70,7 @@ private fun assertJsonValidationErrors(
 }
 
 private fun validate(metaModel: MutableEntityModel, auxPlugins: Array<out MetaModelAuxPlugin>): List<String> {
-    val baseErrors = validate(metaModel, null, null)
+    val baseErrors = validate(metaModel, null, null, ::metaModelRootEntityFactory)
     if (baseErrors.isNotEmpty()) return baseErrors
     return auxPlugins.flatMap { it.validate(metaModel) }
 }
