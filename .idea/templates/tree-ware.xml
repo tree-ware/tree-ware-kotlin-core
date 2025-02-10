@@ -1,15 +1,11 @@
 <templateSet group="tree-ware">
-  <template name="mmstart" value="{&#10;  &quot;meta_model&quot;: {&#10;$END$&#10;  }&#10;}" description="Start a meta-model definition" toReformat="true" toShortenFQNames="true">
-    <context>
-      <option name="JSON" value="true" />
-      <option name="JSON_PROPERTY_KEYS" value="false" />
-      <option name="JSON_STRING_VALUES" value="false" />
-    </context>
-  </template>
-  <template name="mmroot" value="&quot;root&quot;: {&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;entity&quot;: &quot;$ROOT_ENTITY$&quot;,&#10;  &quot;package&quot;: &quot;$PACKAGE$&quot;&#10;}," description="Define the meta-model root" toReformat="false" toShortenFQNames="true">
+  <template name="mmstart" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;package&quot;: &quot;$PACKAGE$&quot;,&#10;  &quot;version&quot;: {&#10;    &quot;semantic&quot;: &quot;$VERSION_SEMANTIC$&quot;,&#10;    &quot;name&quot;: &quot;$VERSION_NAME$&quot;&#10;  },&#10;  &quot;root&quot;: {&#10;    &quot;entity&quot;: &quot;$ROOT_ENTITY$&quot;,&#10;    &quot;package&quot;: &quot;$ROOT_PACKAGE$&quot;&#10;  }&#10;}" description="Start a meta-model definition" toReformat="true" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="ROOT_ENTITY" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="PACKAGE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="VERSION_SEMANTIC" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="VERSION_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ROOT_ENTITY" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ROOT_PACKAGE" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
@@ -65,7 +61,7 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmstring" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;string&quot;&#10;}," description="Add a string field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfieldstring" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;string&quot;&#10;}," description="Add a string field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
@@ -75,7 +71,7 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmbool" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;boolean&quot;&#10;}," description="Add a boolean field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfieldbool" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;boolean&quot;&#10;}," description="Add a boolean field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
@@ -98,13 +94,6 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmlist" value="&quot;multiplicity&quot;: &quot;list&quot;," description="Define this field as a list" toReformat="false" toShortenFQNames="true">
-    <context>
-      <option name="JSON" value="true" />
-      <option name="JSON_PROPERTY_KEYS" value="false" />
-      <option name="JSON_STRING_VALUES" value="false" />
-    </context>
-  </template>
   <template name="mmset" value="&quot;multiplicity&quot;: &quot;set&quot;," description="Define this field as a set" toReformat="false" toShortenFQNames="true">
     <context>
       <option name="JSON" value="true" />
@@ -112,7 +101,7 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmenumfield" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;enumeration&quot;,&#10;  &quot;enumeration&quot;: {&#10;    &quot;name&quot;: &quot;$ENUM_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENUM_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new enum field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfieldenum" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;enumeration&quot;,&#10;  &quot;enumeration&quot;: {&#10;    &quot;name&quot;: &quot;$ENUM_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENUM_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new enum field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
@@ -124,7 +113,7 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmcompo" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;composition&quot;,&#10;  &quot;composition&quot;: {&#10;    &quot;name&quot;: &quot;$ENTITY_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENTITY_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new composition field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfieldcompo" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;composition&quot;,&#10;  &quot;composition&quot;: {&#10;    &quot;entity&quot;: &quot;$ENTITY_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENTITY_PACKAGE_NAME$&quot;&#10;  },$END$&#10;}," description="Add a new composition field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
@@ -136,17 +125,19 @@
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmassoc" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;association&quot;,&#10;  &quot;association&quot;: [&#10;    {&#10;      &quot;value&quot;: &quot;$PATH_VALUE$&quot;&#10;    },$END$&#10;  ]&#10;},&#10;" description="Add a new association field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfieldassoc" value="{&#10;  &quot;name&quot;: &quot;$NAME$&quot;,&#10;  &quot;number&quot;: $NUMBER$,&#10;  &quot;info&quot;: &quot;$INFO$&quot;,&#10;  &quot;type&quot;: &quot;association&quot;,&#10;  &quot;association&quot;: {&#10;    &quot;entity&quot;: &quot;$ENTITY_NAME$&quot;,&#10;    &quot;package&quot;: &quot;$ENTITY_PACKAGE_NAME$&quot;&#10;  }$END$&#10;},&#10;" description="Add a new association field" toReformat="false" toShortenFQNames="true">
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="NUMBER" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="INFO" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="PATH_VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ENTITY_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ENTITY_PACKAGE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
       <option name="JSON_STRING_VALUES" value="false" />
     </context>
   </template>
-  <template name="mmuuidkey" value="{&#10;  &quot;name&quot;: &quot;id&quot;,&#10;  &quot;number&quot;: 1,&#10;  &quot;type&quot;: &quot;uuid&quot;,&#10;  &quot;is_key&quot;: true&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
+  <template name="mmfielduuidkey" value="{&#10;  &quot;name&quot;: &quot;id&quot;,&#10;  &quot;number&quot;: 1,&#10;  &quot;type&quot;: &quot;uuid&quot;,&#10;  &quot;is_key&quot;: true&#10;}," description="Add a new field" toReformat="false" toShortenFQNames="true">
     <context>
       <option name="JSON" value="true" />
       <option name="JSON_PROPERTY_KEYS" value="false" />
