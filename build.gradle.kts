@@ -4,21 +4,21 @@
 // conveys this.
 allprojects {
     group = "org.tree-ware.tree-ware-kotlin-core"
-    version = "0.4.0.0"
+    version = "0.5.0.0"
 }
 
 val jbcryptVersion = "0.4"
 val jsonVersion = "1.1.4"
-val kotlinxBenchmarkVersion = "0.4.4"
-val kotlinxCoroutinesVersion = "1.6.2"
-val loggingVersion = "1.1.1"
-val mockkVersion = "1.12.0"
-val okioVersion = "3.2.0"
-val semverVersion = "1.3.3"
+val kotlinxBenchmarkVersion = "0.4.13"
+val kotlinxCoroutinesVersion = "1.10.1"
+val loggingVersion = "2.0.3"
+val mockkVersion = "1.13.16"
+val okioVersion = "3.10.2"
+val semverVersion = "2.0.0"
 
 plugins {
-    kotlin("multiplatform") version "1.7.0"
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
+    kotlin("multiplatform") version "2.1.10"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.13"
     id("maven-publish")
 }
 
@@ -30,9 +30,6 @@ kotlin {
     jvm {
         compilations {
             create("benchmarks")
-            all {
-                kotlinOptions.jvmTarget = "1.8"
-            }
         }
         withJava()
         testRuns["test"].executionTask.configure {
@@ -45,44 +42,39 @@ kotlin {
             }
         }
     }
+
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api("io.github.z4kn4fein:semver:$semverVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-                api("org.lighthousegames:logging:$loggingVersion")
-                api("com.squareup.okio:okio:$okioVersion")
-            }
+        commonMain.dependencies {
+            api("io.github.z4kn4fein:semver:$semverVersion")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+            api("org.lighthousegames:logging:$loggingVersion")
+            api("com.squareup.okio:okio:$okioVersion")
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(project(":test-fixtures"))
-                implementation("io.mockk:mockk-common:$mockkVersion")
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(project(":test-fixtures"))
+            implementation("io.mockk:mockk:$mockkVersion")
+            implementation(kotlin("test"))
         }
         val commonBenchmarks by creating {
-            dependsOn(commonMain)
+            dependsOn(commonMain.get())
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$kotlinxBenchmarkVersion")
             }
         }
-        val jvmMain by getting {
-            dependencies {
-                implementation("javax.json:javax.json-api:$jsonVersion")
-                implementation("org.glassfish:javax.json:$jsonVersion")
-                implementation("org.mindrot:jbcrypt:$jbcryptVersion")
-            }
+        jvmMain.dependencies {
+            implementation("javax.json:javax.json-api:$jsonVersion")
+            implementation("org.glassfish:javax.json:$jsonVersion")
+            implementation("org.mindrot:jbcrypt:$jbcryptVersion")
         }
-        val jvmTest by getting {
-            dependencies {
-                implementation(project(":test-fixtures"))
-                implementation("io.mockk:mockk:$mockkVersion")
-            }
+        jvmTest.dependencies {
+            implementation(project(":test-fixtures"))
+            implementation("io.mockk:mockk:$mockkVersion")
         }
         val jvmBenchmarks by getting {
             dependsOn(commonBenchmarks)
-            dependsOn(jvmMain)
+            dependsOn(jvmMain.get())
         }
     }
 }
