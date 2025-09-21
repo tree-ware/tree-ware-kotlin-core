@@ -1,4 +1,4 @@
-val log4j2Version = "2.24.3"
+val log4j2Version = "2.19.0"
 val mockkVersion = "1.13.16"
 
 plugins {
@@ -31,7 +31,8 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation("io.mockk:mockk:$mockkVersion")
-            implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
+            implementation("org.apache.logging.log4j:log4j-core:${log4j2Version}")
+            implementation("org.apache.logging.log4j:log4j-slf4j2-impl:${log4j2Version}")
         }
     }
 }
