@@ -3,13 +3,11 @@ package org.treeWare.json
 import okio.BufferedSource
 import okio.EOFException
 import org.treeWare.util.ImmutableTokenPosition
-import org.treeWare.util.MutableTokenPosition
 import org.treeWare.util.TokenBuilder
 import org.treeWare.util.TokenPosition
 
 private enum class NestingState {
-    // TODO #### remove unused enum values
-    OBJECT_START, ARRAY_START, STRING_START, KEY_NAME, COLON, OBJECT_VALUE, ARRAY_VALUE, COMMA
+    OBJECT_START, ARRAY_START, STRING_START, COMMA
 }
 
 private class TokenizeState(bufferedSource: BufferedSource) {
@@ -18,7 +16,7 @@ private class TokenizeState(bufferedSource: BufferedSource) {
 
     fun setTokenStart(charactersDelta: Int) {
         val start = tokenBuilder.getPosition()
-        // TODO #### avoid having to create a new instance
+        // TODO avoid having to create a new instance
         tokenStart = ImmutableTokenPosition(
             start.line,
             start.column + charactersDelta,
