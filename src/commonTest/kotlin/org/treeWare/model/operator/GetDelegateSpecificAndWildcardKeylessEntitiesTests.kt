@@ -28,7 +28,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.getRoot("/", ofType(), listOf(), ofType())
+            delegate.getRoot("/", ofType(), emptyList(), ofType())
         } answers {
             val addressBook = arg<MutableEntityModel>(3)
             GetCompositionResult.Entity(addressBook)
@@ -130,7 +130,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
         val response = addressBookRootEntityFactory(null)
         val errors = get(request, delegate, null, null, response)
         verifySequence {
-            delegate.getRoot("/", ofType(), listOf(), ofType())
+            delegate.getRoot("/", ofType(), emptyList(), ofType())
             delegate.getCompositionSet(
                 "/clubs",
                 ofType(),
@@ -182,7 +182,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
 
         val delegate = mockk<GetDelegate>()
         every {
-            delegate.getRoot("/", ofType(), listOf(), ofType())
+            delegate.getRoot("/", ofType(), emptyList(), ofType())
         } answers {
             val addressBook = arg<MutableEntityModel>(3)
             GetCompositionResult.Entity(addressBook)
@@ -302,7 +302,7 @@ class GetDelegateSpecificAndWildcardKeylessEntitiesTests {
         val response = addressBookRootEntityFactory(null)
         val errors = get(request, delegate, null, null, response)
         verifySequence {
-            delegate.getRoot("/", ofType(), listOf(), ofType())
+            delegate.getRoot("/", ofType(), emptyList(), ofType())
             delegate.getCompositionSet(
                 "/cities",
                 ofType(),

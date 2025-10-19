@@ -23,7 +23,7 @@ fun testRoundTrip(
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     encodePasswords: EncodePasswords = EncodePasswords.NONE,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedDecodeErrors: List<String> = listOf(),
+    expectedDecodeErrors: List<String> = emptyList(),
     hasher: Hasher? = null,
     cipher: Cipher? = null,
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
@@ -44,7 +44,7 @@ fun testRoundTrip(
 fun decodeJsonStringIntoEntity(
     jsonString: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedDecodeErrors: List<String> = listOf(),
+    expectedDecodeErrors: List<String> = emptyList(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
     entity: MutableEntityModel
 ) {
@@ -61,7 +61,7 @@ fun decodeJsonStringIntoEntity(
 fun decodeJsonFileIntoEntity(
     jsonFilePath: String,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedDecodeErrors: List<String> = listOf(),
+    expectedDecodeErrors: List<String> = emptyList(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
     entity: MutableEntityModel
 ) = getFileSource(jsonFilePath).use {
@@ -77,7 +77,7 @@ fun decodeJsonFileIntoEntity(
 fun decodeJsonIntoEntity(
     bufferedSource: BufferedSource,
     options: ModelDecoderOptions = ModelDecoderOptions(),
-    expectedDecodeErrors: List<String> = listOf(),
+    expectedDecodeErrors: List<String> = emptyList(),
     multiAuxDecodingStateMachineFactory: MultiAuxDecodingStateMachineFactory = MultiAuxDecodingStateMachineFactory(),
     entity: MutableEntityModel
 ) {
