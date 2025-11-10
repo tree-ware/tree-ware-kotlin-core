@@ -1,0 +1,269 @@
+[33mc52c158[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32muse-emptylist[m[33m, [m[1;31morigin/use-emptylist[m[33m, [m[1;32mmain[m[33m)[m Remove gradlew.bat from PR
+[33m1cc62f4[m[33m ([m[1;31morigin/fix-field-nullpointer[m[33m, [m[1;32mfix-field-nullpointer[m[33m)[m Fix NullPointerException in field existence check
+[33m6085c4f[m[33m ([m[1;33mtag: [m[1;33m0.5.1.0[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Add case-conversion utility functions
+[33m9df0028[m Add an interface for meta-model information
+[33mab2c42c[m[33m ([m[1;33mtag: [m[1;33m0.5.0.1[m[33m)[m Send warning and error logs to stderr
+[33m8ab7f62[m[33m ([m[1;33mtag: [m[1;33m0.5.0.0[m[33m)[m Configure JitPack to use JDK 11 for building
+[33mb7ecdad[m Upgrade Gradle, Kotlin, and dependencies
+[33md8c4f6f[m Update IntelliJ live templates for defining meta-models
+[33m70b99ab[m[33m ([m[1;33mtag: [m[1;33m0.4.0.0[m[33m)[m Consolidate two root-entity factories into one (#211)
+[33me920372[m[33m ([m[1;33mtag: [m[1;33m0.3.0.2[m[33m)[m Fix GetDelegateVisitor
+[33m13757fd[m Add multi-key entity unit-test
+[33m0ea0051[m Add multi-key entity to meta-model
+[33m92958af[m Update keyless entity unit-test
+[33m2886033[m Simplify getKeyValues()
+[33mdbdec9c[m Add keyless entity unit-test
+[33mff05efa[m Add keyless entity to meta-model
+[33mcbc4014[m Use `/` as the field-path for root entity
+[33m25f1e89[m Fix handling of unique-fields in adapter
+[33m3f5b7ee[m[33m ([m[1;33mtag: [m[1;33m0.3.0.1[m[33m)[m Add methods for meta-model to mutable-meta-model-visitor
+[33m7213d94[m[33m ([m[1;33mtag: [m[1;33m0.3.0.0[m[33m)[m Set project version to 0.3.0.0
+[33m6efc5a5[m Rename set-fields to plurals per style guide
+[33maebd0e4[m Update the package names in the test meta-model
+[33m88db67a[m Add getter for meta-model package name
+[33mff777fe[m Require package name for meta-model as a whole
+[33mfde5f02[m Rename function that gets the root meta for the model root
+[33m831b847[m Drop BaseEntity since it now has only 1 subclass
+[33m04e601a[m Drop support for lists 2/2
+[33m377a98b[m Drop support for lists 1/N
+[33me0880cc[m Simplify meta-model root definition
+[33m469b230[m Rename testEntityRoundTrip() to testRoundTrip()
+[33md63d360[m Drop MainModel & MutableMainModel
+[33m7ebe05a[m Migrate meta-model from main-model to root-entity
+[33m3f6bd1a[m Make "/" the entity-path for root entities
+[33m66c8265[m Migrate Permit operators from main-model to root-entity
+[33mac2b9d0[m Migrate Get operator from main-model to root-entity
+[33m3b3e3fd[m Migrate Set operator from main-model to root-entity
+[33m0c69da2[m Migrate path-decoder from main-model to root-entity
+[33m5a18acb[m Use factory to create model (root) instances
+[33m8eb0c19[m Migrate Union & Difference operators from main-model to root-entity
+[33me5b53dc[m Migrate JSON based tests from main-model to root-entity
+[33mb4ba85d[m Use root-entity in Copy operator tests
+[33mf5c1ae9[m Create main-model & root-entity versions of address_book_1.json
+[33ma3cc875[m Rename function to get the root-entity of a model
+[33md0d8046[m Decode JSON entities
+[33mc457046[m Build address book without MutableMainModel
+[33mba970d0[m Make parent field optional for entities
+[33m98dbd94[m[33m ([m[1;33mtag: [m[1;33m0.2.0.0[m[33m)[m Drop SNAPSHOT from this library's version
+[33m0aae21f[m Rename Errors to Response & replace SetResponse
+[33m2835832[m Revert getNewValue() to getOrNewValue()
+[33m0f1afe4[m Support use of keys to get set-field elements
+[33m9788e80[m Use a factory in association meta for root entity
+[33m4633f70[m Implement functions for setting password fields
+[33m1dcd125[m Correct the Kotlin type to ULong for TIMESTAMP fields
+[33m39f7655[m Open getCompositionFactory() for overriding in subclasses
+[33ma4ac738[m Move FieldValueFactory implementations into the model classes
+[33m338defb[m Allow creation of compositions to be overridden
+[33m3f5bb67[m Allow generated model instances in testRoundTrip()
+[33mf608bea[m Make a few enhancements for code-generation
+[33me9b156d[m Allow filesystem to be specified when reading files
+[33meaf62c3[m Pass output directory to diagram encoder
+[33mb0170c3[m Rename createInstance() to getNewInstance() for consistency
+[33m200e692[m Restrict newMutableValueModel() usage to mutable-model classes
+[33m913073f[m Stop using disconnected-model-creators
+[33m144fb85[m Use MetaModelMutableMainModelFactory
+[33mba80264[m Replace newChildValue()
+[33mc9bd588[m Drop generic types & constraints from operators
+[33md62abb9[m Pass output model as input parameter to operators
+[33mb5faf16[m Add isEmpty() to MainModel class
+[33ma5f42de[m Move model creation out of decodeJson()
+[33m79f16e2[m Move model creation out of difference, get, union operators
+[33mc0d93ef[m Move model creation out of the RBAC operators
+[33mb38753d[m Bump tzinfo from 1.2.9 to 1.2.10 in /docs
+[33m4f5d900[m Bump activesupport from 6.0.4.4 to 6.0.6.1 in /docs
+[33m874f1d8[m Bump nokogiri from 1.13.3 to 1.14.3 in /docs
+[33mab9a774[m[33m ([m[1;33mtag: [m[1;33m0.1.0.3[m[33m)[m Handle decoding of empty/blank JSON
+[33mf9d4bca[m Move a few files to test-fixtures library
+[33m62908ef[m[33m ([m[1;33mtag: [m[1;33m0.1.0.2[m[33m)[m Use the same version for all libraries in the repo
+[33mf489434[m Support reading of resources from zip files
+[33m2c81cf2[m[33m ([m[1;33mtag: [m[1;33m0.1.0.0[m[33m)[m Enable publishing to JitPack
+[33mdd77df4[m Move all files from jvmTest to commonTest
+[33mffcb2d5[m Make DecodePaths common code
+[33mc197664[m Migrate to multiplatform JSON tokenizer
+[33mca926cd[m Include position with each JSON token
+[33m7109693[m Track position in JSON stream and report in errors
+[33m83c9fd5[m Refactor multiplatform JSON tokenizer
+[33m17568fb[m Implement file utilities using okio
+[33m9a6929d[m Stop using Buffer.peek() in the JSON tokenizer
+[33m25d2841[m Add a benchmark for the JSON tokenizer
+[33m587ea45[m Add a multi-platform JSON tokenizer
+[33m86a5325[m Use ISO 8601 UTC date/time/zone in log messages
+[33m5578869[m Use multiplatform okio.Sink instead of java.io.Writer
+[33m0315f48[m Drop non-core method from core-library interface
+[33m749cb32[m Catch & ignore dot-to-pdf conversion exceptions
+[33mf3f97c0[m Tag integration tests to allow inclusion/exclusion
+[33m6dd217d[m Upgrade gradle to 7.5.1
+[33m960204a[m Move readFile() from test to main
+[33m8063a16[m Make the semver library an API dependency
+[33mcff5419[m Require `version` definition in meta-models
+[33ma559dfc[m Add design doc for versioning
+[33m7c2e7b4[m Add feature-flags design document
+[33m6157441[m Enhance single model-path decoding
+[33me11bdb5[m Migrate model paths to URL syntax
+[33m1b315d0[m Add getter for meta-model enumeration value parent
+[33m9c264a7[m Return an error if set-requests contain null strings
+[33md0162e8[m Update model granularity docs
+[33m0d00a06[m Populate granular sub-trees in get-requests
+[33m8bbd4b2[m Populate granular sub-trees in delete-requests
+[33me82fca0[m Add an operator for populating sub-trees
+[33mcfc097d[m Use PDF format for diagrams instead of PNG format
+[33mf9607a2[m Enforce update-request required fields for sub-tree granularity
+[33m742f951[m Consider granularity while validating set_ aux
+[33me59558a[m Define granularity in a meta-model
+[33m8aadd52[m Improve error messages from exists_if evaluation
+[33m928ffa9[m Permit deletion of keyless entities without any fields
+[33mb57c722[m Determine if a field is unconditionally-required
+[33mcc8bd91[m Support conditionally-existing fields
+[33m09a516e[m Add set-field forEach methods that handle typecasts
+[33m364d8cf[m Add a document about meta-models
+[33maa2813b[m Fix model granularity document title
+[33m2569533[m Document model granularity
+[33m8cc5199[m Document conditionally-required fields
+[33ma875338[m Require all required fields in create-requests
+[33m1223a2f[m Support enumerations in the path decoder
+[33m73e7ba4[m Implement first cut of path decoder
+[33m7845245[m Update RBAC docs
+[33mfca085a[m Add a utility function and class
+[33m0659c95[m Create diagram directory if it does not exist
+[33m6d3f058[m Replace repetitive dot encoding code with function
+[33m31d3ce5[m Indicate if input is fully/partially/not permitted
+[33md2a49cf[m Add error-code to get-delegate return types
+[33mae76804[m Change return type of set-delegate methods to SetResponse
+[33m1d6ec12[m Add an error code to get/set responses
+[33me019fa1[m Change return type of set() to SetResponse
+[33mb302b28[m Return errors as a JSON list of ElementModelError
+[33m2bdcc0b[m Relocate GetResponse and SetResponse classes
+[33mf1ccc06[m Extract validation of set-request from set()
+[33mcb729cc[m Add a helper function to set SetAux data
+[33m713edd5[m Add support for difference operator update tree
+[33mca19280[m Use a helper function to set permissions aux data
+[33me9fe533[m Implement permitSet operator
+[33mb3b1224[m Add a geo.point field to the test meta-model
+[33mf100dc0[m Improve the permitGet operator
+[33mb08f477[m Implement permitGet operator
+[33m7abed16[m Add difference operator
+[33m151a4ba[m Update tree-ware meta-model IntelliJ IDEA live templates
+[33mb7123b7[m Make self references connect to top
+[33ma27c3c4[m Upgrade Kotlin to 1.7.0
+[33maacdf9d[m Rename composition/association info fields for clarity
+[33m1ccd410[m Use a shared meta-model instance in tests
+[33mba7aeef[m Rename GetDelegate methods from fetchX() to getX()
+[33m1c05d83[m Add a method to set a DOUBLE field
+[33m0e59efb[m Use entity-delegates in get() operator
+[33m57e6939[m Support null values in JSON for password types
+[33m59444d2[m Replace lists when merging get() response
+[33m129f970[m Use field-path instead of entity-path for set() & get()
+[33m0ac5ddb[m Allow get-delegate to return errors
+[33mff8f531[m Implement a generic get-operator
+[33mb50a057[m Add a function to JSON-encode a list of elements
+[33mf2ff975[m Add a method for merging an entity into a set
+[33m77736c1[m Move EntityPathStack so it can be used in other operators
+[33mc7c7f4f[m Parameterize entity matching to support null keys
+[33mcd4b091[m Decode JSON into model fields
+[33mac0f969[m Support null values in JSON for all single field types
+[33m3413345[m Remove old "get" action code, resources, and tests
+[33mc48200c[m Add aux-plugin for set_ aux
+[33m0946e7c[m Catch and return exceptions as decode errors
+[33maec3613[m Add a unit test for missing association keys
+[33m33b97f4[m Return errors with tree path and message separated
+[33mef52a2f[m Implement a generic set-operator
+[33m3df005c[m Fix compiler warnings
+[33md356908[m Store recursive meta-model fields in meta-model aux
+[33mb1beb97[m Store meta-model parents in meta-model aux
+[33m7e0cbf6[m Update meta-model IntelliJ live-templates
+[33m90b1179[m Update RBAC docs
+[33m44a33c1[m Support custom handling of entities via operator delegates
+[33mef1063f[m Support uniqueness definitions in the meta-model
+[33m550241c[m Bump nokogiri from 1.13.0 to 1.13.3 in /docs
+[33mcf96ef7[m Specify association paths in the model
+[33m63174e1[m Support field numbers in the meta-model
+[33mdd98ef5[m Expose the multiplatform logging library to other modules
+[33mc83dd67[m Upgrade Kotlin to 1.6.10
+[33mf3156cc[m Delete accidentally committed build directory
+[33m37aa709[m Convert core library into a multiplatform library
+[33mf0d8666[m Add more user and contributor documentation
+[33mb6279a6[m Document reading of models from a DB
+[33m397c45c[m Document setting of models in a DB
+[33m6b03fd0[m Refactor common parts of the docs
+[33m99c3c8d[m Support the definition of string constraints
+[33mb01f28c[m Make minor edits in the RBAC user doc
+[33m7fa994d[m Drop page titles from table-of-contents in user docs
+[33mcf5026e[m Support aux plugins in meta-model test utilities
+[33m7752b60[m Support more numeric types
+[33mec05c53[m Copy documents from the wiki to the docs directory
+[33m14f65c2[m Set up documentation structure
+[33m88aa0dc[m Drop RootEntity model class
+[33mcfdadb8[m Make MainModel a subclass of SingleFieldModel
+[33me092c60[m Add helper function to get entity parent field name
+[33mb7366c0[m Drop obsolete model-type
+[33m59a2a0e[m Test JSON encoding by itself
+[33mae40fe8[m Remove duplicate test
+[33mb1cc692[m Fix parameter names in model getter functions
+[33ma20e151[m Use helper functions to get root names
+[33m923be19[m Store resolved root entity in parent main-meta
+[33m7612008[m Rename getMetaAux() to getMetaResolved()
+[33m3057558[m Add helper function to get meta-model Resolved aux
+[33mb9ba1d2[m Make forEach and visitor methods non-suspending
+[33mea5fc89[m Include type name in visitor method names
+[33m0f75637[m Rename cursor classes for naming consistency
+[33mfe1a174[m Drop "Follower0" from file/class/interface names
+[33m131eaa1[m Remove empty tests
+[33m2a15301[m Fix compiler & code-inspector warnings
+[33m9586d95[m Mitigate Log4Shell vulnerability
+[33m83a40ab[m Add new aux values to immutable models
+[33md9d5df2[m Set meta-models for model enumerations
+[33m25ed09d[m Move reusable functions from test to main
+[33m55d7f07[m Log meta-model full-names at INFO level
+[33m9838117[m Encapsulate meta-model aux codec & validation
+[33m1831a07[m Move non-mutating methods from MutableModel to Model
+[33m3b75752[m Restrict composition keys to primitive keys only
+[33md8e7bfd[m Remove dead code in the model encoding visitor
+[33mfcf7a3c[m Make the parent for entity-keys optional
+[33md308448[m Use space between key & value only in pretty mode
+[33m4e28067[m Traverse mutable models & meta-models
+[33mfdac4b5[m Fix the unit-test broken by the previous commit
+[33m86d1d9e[m Take the union of aux values as well
+[33m0f597a1[m Create a meta-model from a list of JSON files
+[33m0a7158a[m Add meta-model codec tests
+[33mf93df73[m Update developer docs
+[33m5158eb4[m Traverse a meta-model with a meta-model visitor
+[33m4412236[m Add an operator for printing a model for debugging
+[33mf4404a3[m Save JSON templates for defining a meta-model
+[33mdb5d13a[m Support multiple aux values in the codec
+[33m3c2e17d[m Support multiple aux values in each model element
+[33mbe4a2ee[m Support multi-file meta-model definitions
+[33m70af4be[m Make visitor methods non-suspending
+[33m3fba46e[m Implement copy and union operators
+[33mf521565[m Traverse multiple leader models
+[33m4331f39[m Drop unneeded cursor-move subclasses
+[33mf87a758[m Add a test utility for deserializing a JSON string
+[33m6b5c95a[m Move metaModel tests to same package as the source
+[33me8d9621[m Ensure password fields are not key fields
+[33m469c5e0[m Validate 'set' fields
+[33mc95b91a[m Handle duplicate entities
+[33m7f9bf3c[m Drop isWildcardModel parameter
+[33m5513e04[m Handle missing keys
+[33m4d19d2f[m Enhance a composition validation test
+[33mbd60a92[m Use searchable sets for composition lists
+[33mf98c9c5[m Rename operator package to traversal
+[33m8518c4b[m Rename encryptionVersion to cipherVersion
+[33mee5d094[m Test server-side decoding of JSON model passwords
+[33m4a664bc[m Pass hasher & cipher to password field meta-models
+[33m94d5def[m Make hasher and cipher polymorphic
+[33m3b67584[m Encode passwords as specified
+[33mc744c70[m Decode passwords in JSON models
+[33m34ba4af[m Access hasher/cipher via meta-model
+[33m2ec1e67[m Support password values
+[33m072ab4c[m Support blob values
+[33mfdf1a58[m Show multiplicity in lower-case
+[33meb1c2f1[m Rename Model to MainModel
+[33m2869009[m Revert “entity” fields to “composition” fields
+[33m12de0a0[m Use enums for field-type and multiplicity
+[33m44d1ef5[m Remove the codec package level
+[33macc1360[m Move files out of the common package
+[33m4f81be5[m Delete all schema code
+[33m4a338f5[m Validate key fields
+[33m29f256f[m Check composition key/list field targets for keys
+[33m44567b8[m Check association lists for keys in their paths
+[33m6c0aea6[m Add meta-model package and entity tests
+[33mbf9bf5a[m Migrate remaining schema tests to meta-model tests
