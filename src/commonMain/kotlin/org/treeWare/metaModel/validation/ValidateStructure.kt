@@ -69,7 +69,7 @@ private fun validateEnumerations(packageMeta: EntityModel, packageId: String): L
             packageId,
             enumerationIndex
         )
-    } ?: listOf()
+    } ?: emptyList()
 }
 
 private fun validateEnumeration(
@@ -121,7 +121,7 @@ private fun validateEntities(packageMeta: EntityModel, packageId: String): List<
             packageId,
             entityIndex
         )
-    } ?: listOf()
+    } ?: emptyList()
 }
 
 private fun validateEntity(
@@ -172,7 +172,7 @@ private fun validateFieldType(fieldMeta: EntityModel, fieldId: String): List<Str
         FieldType.ENUMERATION -> validateEnumerationInfo(fieldMeta, fieldId)
         FieldType.ASSOCIATION -> validateEntityInfo(fieldMeta, fieldId, "association")
         FieldType.COMPOSITION -> validateEntityInfo(fieldMeta, fieldId, "composition")
-        else -> listOf()
+        else -> emptyList()
     }
 }
 
@@ -248,17 +248,17 @@ private fun validateFieldMultiplicity(fieldMeta: EntityModel, fieldId: String): 
     if (!Multiplicity.values().contains(multiplicityMeta)) {
         return listOf("$fieldId has an invalid multiplicity: ${multiplicityMeta.name.lowercase()}")
     }
-    val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull() ?: return listOf()
+    val fieldTypeMeta = runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull() ?: return emptyList()
     return when (multiplicityMeta) {
         Multiplicity.SET ->
-            if (fieldTypeMeta == FieldType.COMPOSITION) listOf()
+            if (fieldTypeMeta == FieldType.COMPOSITION) emptyList()
             else listOf("$fieldId cannot be a 'set'. Only compositions can be sets.")
-        else -> listOf()
+        else -> emptyList()
     }
 }
 
 private fun validateFieldIsKey(fieldMeta: EntityModel, fieldId: String): List<String> {
-    if (!isKeyFieldMeta(fieldMeta)) return listOf()
+    if (!isKeyFieldMeta(fieldMeta)) return emptyList()
     val errors = mutableListOf<String>()
     if (getMultiplicityMeta(fieldMeta) != Multiplicity.REQUIRED) errors.add("$fieldId is a key but not defined as required")
     when (runCatching { getFieldTypeMeta(fieldMeta) }.getOrNull()) {
@@ -286,7 +286,7 @@ private fun validateConstraints(fieldMeta: EntityModel, fieldId: String): List<S
 private fun validateSingleStringField(meta: EntityModel, fieldName: String, id: String): List<String> =
     when (runCatching { getSingleString(meta, fieldName) }.getOrNull()) {
         null -> listOf("$id '$fieldName' is missing")
-        else -> listOf()
+        else -> emptyList()
     }
 
 private fun getPackageId(packageIndex: Int) = "Package $packageIndex"
