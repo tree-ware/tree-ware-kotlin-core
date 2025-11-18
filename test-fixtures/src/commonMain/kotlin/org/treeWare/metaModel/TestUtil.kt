@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 fun assertJsonStringValidationErrors(
     metaModelJsonString: String,
     expectedValidationErrors: List<String>,
-    expectedDecodeErrors: List<String> = listOf(),
+    expectedDecodeErrors: List<String> = emptyList(),
     options: ModelDecoderOptions = ModelDecoderOptions(),
     vararg auxPlugins: MetaModelAuxPlugin
 ) {
@@ -32,7 +32,7 @@ fun assertJsonStringValidationErrors(
 fun assertJsonFileValidationErrors(
     metaModelJsonFile: String,
     expectedValidationErrors: List<String>,
-    expectedDecodeErrors: List<String> = listOf(),
+    expectedDecodeErrors: List<String> = emptyList(),
     options: ModelDecoderOptions = ModelDecoderOptions(),
     vararg auxPlugins: MetaModelAuxPlugin
 ) = getFileSource(metaModelJsonFile).use {

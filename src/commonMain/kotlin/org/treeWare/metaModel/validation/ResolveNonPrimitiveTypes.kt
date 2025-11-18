@@ -87,7 +87,7 @@ private fun resolveEntities(
             nonPrimitiveTypes
         )
     }
-        ?: listOf()
+        ?: emptyList()
 }
 
 private fun resolveEntity(
@@ -154,7 +154,7 @@ private fun resolveField(
             nonPrimitiveTypes
         )
         FieldType.COMPOSITION -> resolveCompositionField(fieldMeta, nonPrimitiveTypes)
-        else -> listOf()
+        else -> emptyList()
     }
 }
 
@@ -162,14 +162,14 @@ fun resolvePassword1wayField(fieldMeta: EntityModel, hasher: Hasher?): List<Stri
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in password1way field")
     resolved.password1wayHasher = hasher
-    return listOf()
+    return emptyList()
 }
 
 fun resolvePassword2wayField(fieldMeta: EntityModel, cipher: Cipher?): List<String> {
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in password2way field")
     resolved.password2wayCipher = cipher
-    return listOf()
+    return emptyList()
 }
 
 private fun resolveEnumerationField(
@@ -185,7 +185,7 @@ private fun resolveEnumerationField(
     val resolved = getMetaModelResolved(fieldMeta)
         ?: throw IllegalStateException("Resolved aux is missing in enumeration field targeting $targetFullName")
     resolved.enumerationMeta = targetEnumeration
-    return listOf()
+    return emptyList()
 }
 
 private fun resolveAssociationField(

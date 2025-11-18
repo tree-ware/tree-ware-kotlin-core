@@ -100,7 +100,7 @@ private class SingleFieldLeaderMutableModelState(
     init {
         val value = field.value
         val actionList =
-            if (value == null) listOf()
+            if (value == null) emptyList()
             else listOf<LeaderMutableModelStateAction>({
                 val valueState =
                     dispatchVisit(value, stateFactoryVisitor) ?: throw IllegalStateException("null single-field state")
