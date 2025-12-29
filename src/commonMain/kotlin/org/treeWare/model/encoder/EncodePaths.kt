@@ -9,20 +9,9 @@ fun encodePaths(
     element: ElementModel,
     sink: Sink,
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
-    encodePasswords: EncodePasswords = EncodePasswords.NONE,
-    prettyPrint: Boolean = false,
-    indentSizeInSpaces: Int = 2
+    encodePasswords: EncodePasswords = EncodePasswords.NONE
+
 ): Boolean {
     return false
 }
 
-fun encodePaths(
-    elements: List<ElementModel>,
-    sink: Sink,
-    multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
-    encodePasswords: EncodePasswords = EncodePasswords.NONE,
-    prettyPrint: Boolean = false,
-    indentSizeInSpaces: Int = 2
-): Boolean {
-    return false
-}
