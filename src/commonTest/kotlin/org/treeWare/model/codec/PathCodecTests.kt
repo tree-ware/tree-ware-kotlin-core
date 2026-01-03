@@ -1,9 +1,16 @@
 package org.treeWare.model.codec
 
 import okio.Buffer
-import org.treeWare.model.decoder.decodeJsonToModel
+import okio.buffer
+import org.treeWare.metaModel.getResolvedRootMeta
+import org.treeWare.metaModel.newAddressBookMetaModel
+import org.treeWare.model.core.ElementModel
+import org.treeWare.model.core.MutableEntityModel
+import org.treeWare.model.decoder.ModelDecoderOptions
+import org.treeWare.model.decoder.decodeJsonEntity
+import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
 import org.treeWare.model.encoder.encodePaths
-import org.treeWare.model.test.readResource
+import org.treeWare.util.getFileSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -11,23 +18,32 @@ class PathCodecTests {
 
     @Test
     fun path_codec_data_round_trip_must_be_lossless() {
-        // 1. Read JSON input (same file used in JsonCodecTests)
-        val json = readResource("model/address_book_1.json")
+        val entityMeta = newAddressBookMetaModel().metaModel
+            ?.let { getResolvedRootMeta(it) }
+            ?: error("Meta-model has validation errors")
 
-        // 2. Deserialize JSON -> Tree-Ware model
-        val model = decodeJsonToModel(json)
+        val entity = MutableEntityModel(entityMeta, null)
 
-        // 3. Encode paths
+        getFileSource("model/address_book_1.json").use { source ->
+            decodeJsonEntity(
+                source.buffer(),
+                entity,
+                ModelDecoderOptions(),
+                MultiAuxDecodingStateMachineFactory()
+            )
+        }
+
+        val model: ElementModel = entity
+
         val sink = Buffer()
         encodePaths(model, sink)
 
-        // 4. Read actual paths output
         val actualPaths = sink.readUtf8()
 
-        // 5. Read expected paths file (already committed earlier)
-        val expectedPaths = readResource("model/address_book_1.txt")
+        val expectedPaths = getFileSource("model/address_book_1.txt").use {
+            it.buffer().readUtf8()
+        }
 
-        // 6. Compare (EXPECTED TO FAIL until encodePaths is implemented)
         assertEquals(expectedPaths, actualPaths)
     }
 }
