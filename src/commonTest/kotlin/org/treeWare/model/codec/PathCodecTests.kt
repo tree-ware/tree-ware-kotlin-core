@@ -20,7 +20,7 @@ class PathCodecTests {
     fun path_codec_data_round_trip_must_be_lossless() {
         val entityMeta = newAddressBookMetaModel().metaModel
             ?.let { getResolvedRootMeta(it) }
-            ?: error("Meta-model has validation errors")
+            ?: error("Invalid meta-model")
 
         val entity = MutableEntityModel(entityMeta, null)
 
@@ -40,9 +40,8 @@ class PathCodecTests {
 
         val actualPaths = sink.readUtf8()
 
-        val expectedPaths = getFileSource("model/address_book_1.txt").use {
-            it.buffer().readUtf8()
-        }
+        val expectedPaths = getFileSource("model/address_book_1.txt")
+            .use { it.buffer().readUtf8() }
 
         assertEquals(expectedPaths, actualPaths)
     }
