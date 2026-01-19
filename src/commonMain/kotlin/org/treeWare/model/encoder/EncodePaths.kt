@@ -12,6 +12,6 @@ fun encodePaths(
     multiAuxEncoder: MultiAuxEncoder = MultiAuxEncoder(),
     encodePasswords: EncodePasswords = EncodePasswords.NONE
 ): Boolean = sink.buffered().use { bufferedSink ->
-    val encodingVisitor = PathEncodingVisitor(bufferedSink)
-    forEach(element, encodingVisitor, true) != TraversalAction.ABORT_TREE
+    val pathEncodingVisitor = PathEncodingVisitor(bufferedSink, multiAuxEncoder, encodePasswords)
+    forEach(element, pathEncodingVisitor, true) != TraversalAction.ABORT_TREE
 }
