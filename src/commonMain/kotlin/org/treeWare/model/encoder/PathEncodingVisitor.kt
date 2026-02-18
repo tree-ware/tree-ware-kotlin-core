@@ -51,26 +51,7 @@ class PathEncodingVisitor(
     override fun visitPrimitive(leaderValue1: PrimitiveModel): TraversalAction {
         val path = modelPathStack.peekModelPath()
         val value = leaderValue1.value
-        val encodedValue = when (leaderValue1.parent.meta?.let { getFieldTypeMeta(it) }) {
-            FieldType.BOOLEAN -> value.toString()
-            FieldType.UINT8,
-            FieldType.UINT16,
-            FieldType.UINT32,
-            FieldType.INT8,
-            FieldType.INT16,
-            FieldType.INT32,
-            FieldType.FLOAT,
-            FieldType.DOUBLE -> value.toString()
-            FieldType.UINT64,
-            FieldType.INT64,
-            FieldType.BIG_INTEGER,
-            FieldType.BIG_DECIMAL,
-            FieldType.TIMESTAMP -> value.toString()
-            FieldType.BLOB -> "\"${encodeBase64(value as ByteArray)}\""
-            else -> "\"${value.toString()}\""
-        }
 
-        // Write path = value
         val formattedValue = when (leaderValue1.parent.meta?.let { getFieldTypeMeta(it) }) {
             FieldType.BOOLEAN,
             FieldType.UINT8,
@@ -86,7 +67,8 @@ class PathEncodingVisitor(
             FieldType.BIG_INTEGER,
             FieldType.BIG_DECIMAL,
             FieldType.TIMESTAMP -> value.toString()
-            else -> "\"${value.toString()}\""
+            FieldType.BLOB -> "\"${encodeBase64(value as ByteArray)}\""
+            else -> "\"${value}\""
         }
 
         sink.writeUtf8("$path = $formattedValue\n")
