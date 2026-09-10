@@ -211,6 +211,16 @@ class MutableSetFieldModel(
     override fun addValue(value: MutableElementModel) {
         linkedHashMap[newElementModelId(value)] = value
     }
+
+    /** Removes the value matching the specified element. Returns `true` if a value was removed. */
+    fun removeValue(value: ElementModel): Boolean {
+        val id = try {
+            newElementModelId(value)
+        } catch (e: MissingKeysException) {
+            return false
+        }
+        return linkedHashMap.remove(id) != null
+    }
 }
 
 // Values
