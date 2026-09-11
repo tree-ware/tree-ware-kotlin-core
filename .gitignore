@@ -8,6 +8,7 @@
 /out/
 
 generated/
+.kotlin/
 
 # Ignore Gradle GUI config
 gradle-app.setting
