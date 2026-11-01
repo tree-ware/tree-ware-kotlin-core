@@ -29,7 +29,7 @@ import org.treeWare.model.operator.set.aux.SetAux
  * calls from [org.treeWare.model.operator.set], so only keys, associations and other
  * (non-composition) fields are copied for each entity.
  */
-class InMemorySetDelegate(private val target: MutableEntityModel) : SetDelegate {
+class InMemorySetDelegate(private val inMemoryRoot: MutableEntityModel) : SetDelegate {
     override fun begin(): Response = Response.Success
 
     override fun setEntity(
@@ -61,8 +61,8 @@ class InMemorySetDelegate(private val target: MutableEntityModel) : SetDelegate 
         other: List<FieldModel>
     ): Response {
         when (setAux) {
-            SetAux.CREATE, SetAux.UPDATE -> copyFields(target, associations + other)
-            SetAux.DELETE -> target.detachAllFields()
+            SetAux.CREATE, SetAux.UPDATE -> copyFields(inMemoryRoot, associations + other)
+            SetAux.DELETE -> inMemoryRoot.detachAllFields()
         }
         return Response.Success
     }
@@ -80,7 +80,7 @@ class InMemorySetDelegate(private val target: MutableEntityModel) : SetDelegate 
             ?: return error(entityPath, "entity has no field name")
         val requestParentEntity = requestParentField.parent
             ?: return error(entityPath, "parent field has no parent entity")
-        val targetParent = target.findCorrespondingEntity(requestParentEntity)
+        val targetParent = inMemoryRoot.findCorrespondingEntity(requestParentEntity)
             ?: // A delete for a missing ancestor is a no-op: the entity is already gone.
             return if (setAux == SetAux.DELETE) Response.Success
             else error(entityPath, "parent entity not found")
