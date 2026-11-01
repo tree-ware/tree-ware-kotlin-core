@@ -6,6 +6,20 @@ fun getMetaModelFullName(element: ElementModel): String? = getMetaModelResolved(
 
 fun isRootEntity(entityModel: EntityModel): Boolean = entityModel.parent == null
 
+/**
+ * Returns the path from the root of the tree to this entity, inclusive of both ends.
+ * The path is built by walking this entity's parent links up to the root.
+ */
+fun EntityModel.getPathFromRoot(): List<EntityModel> {
+    val chain = ArrayDeque<EntityModel>()
+    var current: EntityModel? = this
+    while (current != null) {
+        chain.addFirst(current)
+        current = current.parent?.parent
+    }
+    return chain.toList()
+}
+
 fun isCompositionKey(entityModel: EntityModel): Boolean = entityModel.parent?.let { isKeyField(it) } ?: false
 
 fun getEntityFieldName(entityModel: EntityModel): String? = entityModel.parent?.meta?.let { getMetaName(it) }

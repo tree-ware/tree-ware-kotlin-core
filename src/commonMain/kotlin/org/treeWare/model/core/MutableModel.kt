@@ -105,25 +105,30 @@ open class MutableEntityModel(
      */
     fun findCorrespondingEntity(entity: EntityModel): MutableEntityModel? {
         if (isRootEntity(entity)) return this
-        // Build the path from the request root to the request entity using parent links.
-        val chain = ArrayDeque<EntityModel>()
-        var current: EntityModel? = entity
-        while (current != null) {
-            chain.addFirst(current)
-            current = current.parent?.parent
-        }
+        return findEntityByPath(entity.getPathFromRoot())
+    }
+
+    /**
+     * Returns the entity in this tree found by following the specified path, or null if
+     * there is no corresponding entity.
+     *
+     * The path must start at the root of another tree, with the first element corresponding
+     * to this root entity. Each subsequent element is matched by field name for single
+     * entities and by key values for set entities.
+     */
+    fun findEntityByPath(path: List<EntityModel>): MutableEntityModel? {
         var targetCurrent = this
-        // The first element is the request root, which maps to this root entity.
-        for (index in 1 until chain.size) {
-            val requestChild = chain[index]
-            val fieldName = getEntityFieldName(requestChild) ?: return null
+        // The first element is the root of the other tree, which maps to this root entity.
+        for (index in 1 until path.size) {
+            val pathChild = path[index]
+            val fieldName = getEntityFieldName(pathChild) ?: return null
             val targetField = targetCurrent.getField(fieldName) ?: return null
             targetCurrent = when (targetField.elementType) {
                 ModelElementType.SINGLE_FIELD ->
                     (targetField as? MutableSingleFieldModel)?.value as? MutableEntityModel
                         ?: return null
                 ModelElementType.SET_FIELD -> try {
-                    (targetField as? MutableSetFieldModel)?.getValueMatching(requestChild) as? MutableEntityModel
+                    (targetField as? MutableSetFieldModel)?.getValueMatching(pathChild) as? MutableEntityModel
                 } catch (e: MissingKeysException) {
                     null
                 } ?: return null
