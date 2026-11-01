@@ -80,7 +80,7 @@ class InMemorySetDelegate(private val target: MutableEntityModel) : SetDelegate 
             ?: return error(entityPath, "entity has no field name")
         val requestParentEntity = requestParentField.parent
             ?: return error(entityPath, "parent field has no parent entity")
-        val targetParent = findTargetEntity(requestParentEntity)
+        val targetParent = target.findCorrespondingEntity(requestParentEntity)
             ?: // A delete for a missing ancestor is a no-op: the entity is already gone.
             return if (setAux == SetAux.DELETE) Response.Success
             else error(entityPath, "parent entity not found")
@@ -154,37 +154,6 @@ class InMemorySetDelegate(private val target: MutableEntityModel) : SetDelegate 
             }
         }
         return Response.Success
-    }
-
-    /** Finds the target entity matching the specified request entity, or null if it is missing. */
-    private fun findTargetEntity(requestEntity: EntityModel): MutableEntityModel? {
-        if (isRootEntity(requestEntity)) return target
-        // Build the path from the request root to the request entity using parent links.
-        val chain = ArrayDeque<EntityModel>()
-        var current: EntityModel? = requestEntity
-        while (current != null) {
-            chain.addFirst(current)
-            current = current.parent?.parent
-        }
-        var targetCurrent = target
-        // The first element is the request root, which maps to the target root.
-        for (index in 1 until chain.size) {
-            val requestChild = chain[index]
-            val fieldName = getEntityFieldName(requestChild) ?: return null
-            val targetField = targetCurrent.getField(fieldName) ?: return null
-            targetCurrent = when (targetField.elementType) {
-                ModelElementType.SINGLE_FIELD ->
-                    (targetField as? MutableSingleFieldModel)?.value as? MutableEntityModel
-                        ?: return null
-                ModelElementType.SET_FIELD -> try {
-                    (targetField as? MutableSetFieldModel)?.getValueMatching(requestChild) as? MutableEntityModel
-                } catch (e: MissingKeysException) {
-                    null
-                } ?: return null
-                else -> return null
-            }
-        }
-        return targetCurrent
     }
 
     /**

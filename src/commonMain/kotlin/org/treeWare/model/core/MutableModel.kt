@@ -94,6 +94,45 @@ open class MutableEntityModel(
         fields.clear()
     }
 
+    /**
+     * Returns the entity from this root tree that corresponds to the specified entity
+     * from another tree, or null if there is no corresponding entity.
+     *
+     * The specified entity may be the root of the other tree or any of its descendants.
+     * Correspondence is determined by walking the parent links of the specified entity
+     * up to its root and then walking down from this root entity, matching single
+     * entities by field name and set entities by key values.
+     */
+    fun findCorrespondingEntity(entity: EntityModel): MutableEntityModel? {
+        if (isRootEntity(entity)) return this
+        // Build the path from the request root to the request entity using parent links.
+        val chain = ArrayDeque<EntityModel>()
+        var current: EntityModel? = entity
+        while (current != null) {
+            chain.addFirst(current)
+            current = current.parent?.parent
+        }
+        var targetCurrent = this
+        // The first element is the request root, which maps to this root entity.
+        for (index in 1 until chain.size) {
+            val requestChild = chain[index]
+            val fieldName = getEntityFieldName(requestChild) ?: return null
+            val targetField = targetCurrent.getField(fieldName) ?: return null
+            targetCurrent = when (targetField.elementType) {
+                ModelElementType.SINGLE_FIELD ->
+                    (targetField as? MutableSingleFieldModel)?.value as? MutableEntityModel
+                        ?: return null
+                ModelElementType.SET_FIELD -> try {
+                    (targetField as? MutableSetFieldModel)?.getValueMatching(requestChild) as? MutableEntityModel
+                } catch (e: MissingKeysException) {
+                    null
+                } ?: return null
+                else -> return null
+            }
+        }
+        return targetCurrent
+    }
+
     override fun getKeyFields(flatten: Boolean): Keys {
         val availableKeys = mutableListOf<SingleFieldModel>()
         val missingKeys = mutableListOf<String>()
