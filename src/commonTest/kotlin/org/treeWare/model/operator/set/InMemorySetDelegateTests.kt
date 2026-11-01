@@ -1,16 +1,11 @@
 package org.treeWare.model.operator.set
 
 import org.treeWare.metaModel.addressBookRootEntityFactory
-import org.treeWare.model.core.AssociationModel
-import org.treeWare.model.core.EntityModel
+import org.treeWare.model.assertMatchesJsonString
 import org.treeWare.model.core.MutableEntityModel
-import org.treeWare.model.core.MutableSetFieldModel
-import org.treeWare.model.core.SingleFieldModel
-import org.treeWare.model.core.getOptionalSingleBoolean
-import org.treeWare.model.core.getOptionalSingleEntity
-import org.treeWare.model.core.getOptionalSingleString
 import org.treeWare.model.decodeJsonStringIntoEntity
 import org.treeWare.model.decoder.stateMachine.MultiAuxDecodingStateMachineFactory
+import org.treeWare.model.encoder.EncodePasswords
 import org.treeWare.model.operator.ErrorCode
 import org.treeWare.model.operator.Response
 import org.treeWare.model.operator.set
@@ -19,8 +14,6 @@ import org.treeWare.model.operator.set.aux.SetAuxStateMachine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 private val auxDecodingFactory = MultiAuxDecodingStateMachineFactory(SET_AUX_NAME to { SetAuxStateMachine(it) })
@@ -68,22 +61,33 @@ class InMemorySetDelegateTests {
         )
         assertIs<Response.Success>(response)
 
-        assertEquals("Super Heroes", getOptionalSingleString(target, "name"))
-
-        val settings = getOptionalSingleEntity(target, "settings")
-        assertNotNull(settings)
-        assertEquals(true, getOptionalSingleBoolean(settings, "last_name_first"))
-        assertEquals(false, getOptionalSingleBoolean(settings, "encrypt_hero_name"))
-
-        val clark = findSetEntityByField(target, "persons", "id", CLARK_ID)
-        assertNotNull(clark)
-        assertEquals("Clark", getOptionalSingleString(clark, "first_name"))
-        assertEquals("Kent", getOptionalSingleString(clark, "last_name"))
-
-        val dc = findSetEntityByField(target, "groups", "name", "DC")
-        assertNotNull(dc)
-        val superman = findSetEntityByField(dc, "sub_groups", "name", "Superman")
-        assertNotNull(superman)
+        val expectedJson = """
+            |{
+            |  "name": "Super Heroes",
+            |  "settings": {
+            |    "last_name_first": true,
+            |    "encrypt_hero_name": false
+            |  },
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent"
+            |    }
+            |  ],
+            |  "groups": [
+            |    {
+            |      "name": "DC",
+            |      "sub_groups": [
+            |        {
+            |          "name": "Superman"
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -125,12 +129,20 @@ class InMemorySetDelegateTests {
         )
         assertIs<Response.Success>(response)
 
-        val clark = findSetEntityByField(target, "persons", "id", CLARK_ID)
-        assertNotNull(clark)
-        assertEquals("Clark", getOptionalSingleString(clark, "first_name"))
-        assertEquals("Kent", getOptionalSingleString(clark, "last_name"))
-        assertEquals("Superman", getOptionalSingleString(clark, "hero_name"))
-        assertEquals("Super Heroes", getOptionalSingleString(target, "name"))
+        val expectedJson = """
+            |{
+            |  "name": "Super Heroes",
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent",
+            |      "hero_name": "Superman"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -152,8 +164,18 @@ class InMemorySetDelegateTests {
         val response = applySet(target, createJson)
         assertSetError(response, "/persons/$CLARK_ID", "already exists")
 
-        val persons = target.getField("persons") as MutableSetFieldModel
-        assertEquals(1, persons.values.size)
+        // The failed duplicate create must leave the target unchanged.
+        val expectedJson = """
+            |{
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "first_name": "Clark"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -171,6 +193,16 @@ class InMemorySetDelegateTests {
 
         val response = applySet(target, createJson)
         assertSetError(response, "/settings", "already exists")
+
+        // The failed duplicate create must leave the target unchanged.
+        val expectedJson = """
+            |{
+            |  "settings": {
+            |    "last_name_first": true
+            |  }
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -204,6 +236,9 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertSetError(missingSettingsResponse, "/settings", "not found")
+
+        // The failed updates must leave the target empty.
+        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
     }
 
     @Test
@@ -230,6 +265,9 @@ class InMemorySetDelegateTests {
         // The sub-group is created, but its parent group "DC" is neither in the
         // request (no set_ aux) nor in the target model.
         assertSetError(response, "/groups/DC/sub_groups/Superman", "parent entity not found")
+
+        // The failed create must leave the target empty.
+        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
     }
 
     @Test
@@ -272,10 +310,17 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(deleteResponse)
-        assertNull(findSetEntityByField(target, "persons", "id", CLARK_ID))
-        val lois = findSetEntityByField(target, "persons", "id", LOIS_ID)
-        assertNotNull(lois)
-        assertEquals("Lois", getOptionalSingleString(lois, "first_name"))
+        val expectedJson = """
+            |{
+            |  "persons": [
+            |    {
+            |      "id": "$LOIS_ID",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
 
         // Deleting an already-deleted entity is a no-op.
         val repeatDeleteResponse = applySet(
@@ -292,6 +337,7 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(repeatDeleteResponse)
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -322,7 +368,7 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(deleteResponse)
-        assertNull(target.getField("settings"))
+        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
 
         val repeatDeleteResponse = applySet(
             target,
@@ -335,6 +381,7 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(repeatDeleteResponse)
+        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
     }
 
     @Test
@@ -384,7 +431,13 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(deleteResponse)
-        assertNull(findSetEntityByField(target, "groups", "name", "DC"))
+        // The emptied groups set-field is still present in the target.
+        val expectedJson = """
+            |{
+            |  "groups": []
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -404,7 +457,7 @@ class InMemorySetDelegateTests {
 
         val deleteResponse = applySet(target, """{ "set_": "delete" }""")
         assertIs<Response.Success>(deleteResponse)
-        assertTrue(target.fields.isEmpty())
+        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
     }
 
     @Test
@@ -433,16 +486,22 @@ class InMemorySetDelegateTests {
             )
         )
 
-        val cities = target.getField("cities") as MutableSetFieldModel
-        assertEquals(1, cities.values.size)
-        val cityInfo = cities.values.first() as MutableEntityModel
-        val city = getOptionalSingleEntity(cityInfo, "city")
-        assertNotNull(city)
-        assertEquals("New York City", getOptionalSingleString(city, "name"))
-        assertEquals(
-            "One of the most populous cities in USA",
-            getOptionalSingleString(cityInfo, "info")
-        )
+        val expectedJson = """
+            |{
+            |  "name": "Super Heroes",
+            |  "cities": [
+            |    {
+            |      "city": {
+            |        "country": "United States of America",
+            |        "state": "New York",
+            |        "name": "New York City"
+            |      },
+            |      "info": "One of the most populous cities in USA"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
 
         // Update the non-key field of the city info.
         val updateResponse = applySet(
@@ -464,10 +523,22 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(updateResponse)
-        assertEquals("The Big Apple", getOptionalSingleString(cityInfo, "info"))
-        val updatedCity = getOptionalSingleEntity(cityInfo, "city")
-        assertNotNull(updatedCity)
-        assertEquals("New York City", getOptionalSingleString(updatedCity, "name"))
+        val expectedUpdatedJson = """
+            |{
+            |  "name": "Super Heroes",
+            |  "cities": [
+            |    {
+            |      "city": {
+            |        "country": "United States of America",
+            |        "state": "New York",
+            |        "name": "New York City"
+            |      },
+            |      "info": "The Big Apple"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedUpdatedJson, EncodePasswords.NONE)
 
         // A duplicate create with the same composition keys must fail.
         val duplicateResponse = applySet(
@@ -493,6 +564,9 @@ class InMemorySetDelegateTests {
             "/cities/New York City/New York/United States of America",
             "already exists"
         )
+
+        // The failed duplicate create must leave the target unchanged.
+        assertMatchesJsonString(target, expectedUpdatedJson, EncodePasswords.NONE)
     }
 
     @Test
@@ -527,11 +601,31 @@ class InMemorySetDelegateTests {
             )
         )
 
-        val clark = findSetEntityByField(target, "persons", "id", CLARK_ID)
-        assertNotNull(clark)
-        assertAssociationGroup(clark, "DC", "Superman")
+        val expectedJson = """
+            |{
+            |  "name": "Super Heroes",
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "DC",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Superman"
+            |              }
+            |            ]
+            |          }
+            |        ]
+            |      }
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
 
-        // Updating the association must replace it.
+        // Updating the association merges the new path into the existing one.
         val updateResponse = applySet(
             target,
             """
@@ -558,7 +652,37 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(updateResponse)
-        assertAssociationGroup(clark, "Marvel", "Spider-Man")
+        val expectedUpdatedJson = """
+            |{
+            |  "name": "Super Heroes",
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "group": {
+            |        "groups": [
+            |          {
+            |            "name": "DC",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Superman"
+            |              }
+            |            ]
+            |          },
+            |          {
+            |            "name": "Marvel",
+            |            "sub_groups": [
+            |              {
+            |                "name": "Spider-Man"
+            |              }
+            |            ]
+            |          }
+            |        ]
+            |      }
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+        assertMatchesJsonString(target, expectedUpdatedJson, EncodePasswords.NONE)
     }
 
     // Helpers
@@ -571,33 +695,6 @@ class InMemorySetDelegateTests {
             entity = request
         )
         return set(request, InMemorySetDelegate(target), null)
-    }
-
-    private fun findSetEntityByField(
-        parent: EntityModel,
-        setFieldName: String,
-        keyFieldName: String,
-        keyValue: String
-    ): MutableEntityModel? {
-        val setField = parent.getField(setFieldName) as? MutableSetFieldModel ?: return null
-        return setField.values.map { it as MutableEntityModel }.firstOrNull { entity ->
-            getOptionalSingleString(entity, keyFieldName) == keyValue
-        }
-    }
-
-    private fun assertAssociationGroup(
-        person: MutableEntityModel,
-        groupName: String,
-        subGroupName: String
-    ) {
-        val groupField = person.getField("group") as? SingleFieldModel
-        assertNotNull(groupField)
-        val association = groupField.value as? AssociationModel
-        assertNotNull(association)
-        val group = findSetEntityByField(association.value, "groups", "name", groupName)
-        assertNotNull(group)
-        val subGroup = findSetEntityByField(group, "sub_groups", "name", subGroupName)
-        assertNotNull(subGroup)
     }
 
     private fun assertSetError(response: Response, path: String, messageSnippet: String) {
