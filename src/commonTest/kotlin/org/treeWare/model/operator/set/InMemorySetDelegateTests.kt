@@ -24,9 +24,9 @@ private const val LOIS_ID = "a8aacf55-7810-4b43-afe5-4344f25435fd"
 class InMemorySetDelegateTests {
     @Test
     fun `create must add root fields, single entities and set entities`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = addressBookRootEntityFactory(null)
         val response = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "set_": "update",
@@ -87,34 +87,28 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `update must merge fields and leave other fields intact`() {
-        val target = addressBookRootEntityFactory(null)
-        assertIs<Response.Success>(
-            applySet(
-                target,
-                """
-                |{
-                |  "set_": "update",
-                |  "name": "Super Heroes",
-                |  "persons": [
-                |    {
-                |      "set_": "create",
-                |      "id": "$CLARK_ID",
-                |      "first_name": "Clark",
-                |      "last_name": "Kent"
-                |    }
-                |  ]
-                |}
-                """.trimMargin()
-            )
+        val inMemoryRoot = newInMemoryRoot(
+            """
+            |{
+            |  "name": "Super Heroes",
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "first_name": "Clark",
+            |      "last_name": "Kent"
+            |    }
+            |  ]
+            |}
+            """.trimMargin()
         )
 
         val response = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "persons": [
@@ -142,12 +136,12 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `create must fail for duplicate entities`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = addressBookRootEntityFactory(null)
         val createJson = """
             |{
             |  "persons": [
@@ -159,12 +153,12 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertIs<Response.Success>(applySet(target, createJson))
+        assertIs<Response.Success>(applySet(inMemoryRoot, createJson))
 
-        val response = applySet(target, createJson)
+        val response = applySet(inMemoryRoot, createJson)
         assertSetError(response, "/persons/$CLARK_ID", "already exists")
 
-        // The failed duplicate create must leave the target unchanged.
+        // The failed duplicate create must leave the in-memory root unchanged.
         val expectedJson = """
             |{
             |  "persons": [
@@ -175,12 +169,12 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `create must fail for duplicate single entities`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = addressBookRootEntityFactory(null)
         val createJson = """
             |{
             |  "settings": {
@@ -189,12 +183,12 @@ class InMemorySetDelegateTests {
             |  }
             |}
         """.trimMargin()
-        assertIs<Response.Success>(applySet(target, createJson))
+        assertIs<Response.Success>(applySet(inMemoryRoot, createJson))
 
-        val response = applySet(target, createJson)
+        val response = applySet(inMemoryRoot, createJson)
         assertSetError(response, "/settings", "already exists")
 
-        // The failed duplicate create must leave the target unchanged.
+        // The failed duplicate create must leave the in-memory root unchanged.
         val expectedJson = """
             |{
             |  "settings": {
@@ -202,14 +196,14 @@ class InMemorySetDelegateTests {
             |  }
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `update must fail for missing entities`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = newInMemoryRoot("{}")
         val response = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "persons": [
@@ -225,7 +219,7 @@ class InMemorySetDelegateTests {
         assertSetError(response, "/persons/$CLARK_ID", "not found")
 
         val missingSettingsResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "settings": {
@@ -237,15 +231,15 @@ class InMemorySetDelegateTests {
         )
         assertSetError(missingSettingsResponse, "/settings", "not found")
 
-        // The failed updates must leave the target empty.
-        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
+        // The failed updates must leave the in-memory root empty.
+        assertMatchesJsonString(inMemoryRoot, "{}", EncodePasswords.NONE)
     }
 
     @Test
     fun `create must fail when the parent entity is missing`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = newInMemoryRoot("{}")
         val response = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "groups": [
@@ -263,41 +257,34 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         // The sub-group is created, but its parent group "DC" is neither in the
-        // request (no set_ aux) nor in the target model.
+        // request (no set_ aux) nor in the in-memory-root model.
         assertSetError(response, "/groups/DC/sub_groups/Superman", "parent entity not found")
 
-        // The failed create must leave the target empty.
-        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
+        // The failed create must leave the in-memory root empty.
+        assertMatchesJsonString(inMemoryRoot, "{}", EncodePasswords.NONE)
     }
 
     @Test
     fun `delete must remove set entities and be idempotent`() {
-        val target = addressBookRootEntityFactory(null)
-        assertIs<Response.Success>(
-            applySet(
-                target,
-                """
-                |{
-                |  "set_": "update",
-                |  "persons": [
-                |    {
-                |      "set_": "create",
-                |      "id": "$CLARK_ID",
-                |      "first_name": "Clark"
-                |    },
-                |    {
-                |      "set_": "create",
-                |      "id": "$LOIS_ID",
-                |      "first_name": "Lois"
-                |    }
-                |  ]
-                |}
-                """.trimMargin()
-            )
+        val inMemoryRoot = newInMemoryRoot(
+            """
+            |{
+            |  "persons": [
+            |    {
+            |      "id": "$CLARK_ID",
+            |      "first_name": "Clark"
+            |    },
+            |    {
+            |      "id": "$LOIS_ID",
+            |      "first_name": "Lois"
+            |    }
+            |  ]
+            |}
+            """.trimMargin()
         )
 
         val deleteResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "persons": [
@@ -320,11 +307,11 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
 
         // Deleting an already-deleted entity is a no-op.
         val repeatDeleteResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "persons": [
@@ -337,28 +324,23 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(repeatDeleteResponse)
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `delete must detach single entities and be idempotent`() {
-        val target = addressBookRootEntityFactory(null)
-        assertIs<Response.Success>(
-            applySet(
-                target,
-                """
-                |{
-                |  "settings": {
-                |    "set_": "create",
-                |    "last_name_first": true
-                |  }
-                |}
-                """.trimMargin()
-            )
+        val inMemoryRoot = newInMemoryRoot(
+            """
+            |{
+            |  "settings": {
+            |    "last_name_first": true
+            |  }
+            |}
+            """.trimMargin()
         )
 
         val deleteResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "settings": {
@@ -368,10 +350,10 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(deleteResponse)
-        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, "{}", EncodePasswords.NONE)
 
         val repeatDeleteResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "settings": {
@@ -381,38 +363,32 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(repeatDeleteResponse)
-        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, "{}", EncodePasswords.NONE)
     }
 
     @Test
     fun `delete must remove nested entities along with their parent`() {
-        val target = addressBookRootEntityFactory(null)
-        assertIs<Response.Success>(
-            applySet(
-                target,
-                """
-                |{
-                |  "groups": [
-                |    {
-                |      "set_": "create",
-                |      "name": "DC",
-                |      "sub_groups": [
-                |        {
-                |          "set_": "create",
-                |          "name": "Superman"
-                |        }
-                |      ]
-                |    }
-                |  ]
-                |}
-                """.trimMargin()
-            )
+        val inMemoryRoot = newInMemoryRoot(
+            """
+            |{
+            |  "groups": [
+            |    {
+            |      "name": "DC",
+            |      "sub_groups": [
+            |        {
+            |          "name": "Superman"
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            """.trimMargin()
         )
 
         // Deleting the parent group also deletes nested sub-groups, so the
         // follow-up delete of the already-removed sub-group is a no-op.
         val deleteResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "groups": [
@@ -431,41 +407,36 @@ class InMemorySetDelegateTests {
             """.trimMargin()
         )
         assertIs<Response.Success>(deleteResponse)
-        // The emptied groups set-field is still present in the target.
+        // The emptied groups set-field is still present in the in-memory root.
         val expectedJson = """
             |{
             |  "groups": []
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `delete must clear the root entity`() {
-        val target = addressBookRootEntityFactory(null)
-        assertIs<Response.Success>(
-            applySet(
-                target,
-                """
-                |{
-                |  "set_": "update",
-                |  "name": "Super Heroes"
-                |}
-                """.trimMargin()
-            )
+        val inMemoryRoot = newInMemoryRoot(
+            """
+            |{
+            |  "name": "Super Heroes"
+            |}
+            """.trimMargin()
         )
 
-        val deleteResponse = applySet(target, """{ "set_": "delete" }""")
+        val deleteResponse = applySet(inMemoryRoot, """{ "set_": "delete" }""")
         assertIs<Response.Success>(deleteResponse)
-        assertMatchesJsonString(target, "{}", EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, "{}", EncodePasswords.NONE)
     }
 
     @Test
     fun `create and update must handle entities with composition keys`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = addressBookRootEntityFactory(null)
         assertIs<Response.Success>(
             applySet(
-                target,
+                inMemoryRoot,
                 """
                 |{
                 |  "set_": "update",
@@ -501,11 +472,11 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
 
         // Update the non-key field of the city info.
         val updateResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "cities": [
@@ -538,11 +509,11 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedUpdatedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedUpdatedJson, EncodePasswords.NONE)
 
         // A duplicate create with the same composition keys must fail.
         val duplicateResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "cities": [
@@ -565,16 +536,16 @@ class InMemorySetDelegateTests {
             "already exists"
         )
 
-        // The failed duplicate create must leave the target unchanged.
-        assertMatchesJsonString(target, expectedUpdatedJson, EncodePasswords.NONE)
+        // The failed duplicate create must leave the in-memory root unchanged.
+        assertMatchesJsonString(inMemoryRoot, expectedUpdatedJson, EncodePasswords.NONE)
     }
 
     @Test
     fun `create and update must handle associations`() {
-        val target = addressBookRootEntityFactory(null)
+        val inMemoryRoot = addressBookRootEntityFactory(null)
         assertIs<Response.Success>(
             applySet(
-                target,
+                inMemoryRoot,
                 """
                 |{
                 |  "set_": "create",
@@ -623,11 +594,11 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedJson, EncodePasswords.NONE)
 
         // Updating the association merges the new path into the existing one.
         val updateResponse = applySet(
-            target,
+            inMemoryRoot,
             """
             |{
             |  "persons": [
@@ -682,19 +653,25 @@ class InMemorySetDelegateTests {
             |  ]
             |}
         """.trimMargin()
-        assertMatchesJsonString(target, expectedUpdatedJson, EncodePasswords.NONE)
+        assertMatchesJsonString(inMemoryRoot, expectedUpdatedJson, EncodePasswords.NONE)
     }
 
     // Helpers
 
-    private fun applySet(target: MutableEntityModel, requestJson: String): Response {
+    private fun newInMemoryRoot(modelJson: String): MutableEntityModel {
+        val inMemoryRoot = addressBookRootEntityFactory(null)
+        decodeJsonStringIntoEntity(modelJson, entity = inMemoryRoot)
+        return inMemoryRoot
+    }
+
+    private fun applySet(inMemoryRoot: MutableEntityModel, requestJson: String): Response {
         val request = addressBookRootEntityFactory(null)
         decodeJsonStringIntoEntity(
             requestJson,
             multiAuxDecodingStateMachineFactory = auxDecodingFactory,
             entity = request
         )
-        return set(request, InMemorySetDelegate(target), null)
+        return set(request, InMemorySetDelegate(inMemoryRoot), null)
     }
 
     private fun assertSetError(response: Response, path: String, messageSnippet: String) {
